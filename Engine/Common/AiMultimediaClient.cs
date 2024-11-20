@@ -7,6 +7,8 @@ using OpenAI.Images;
 using System;
 using System.ClientModel;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -107,23 +109,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private string SaveImageAndAddAttachment(Plugins.Core.VsFunctions.ImageInfo imageInfo, byte[] imageBytes)
 		{
 			var now = DateTime.Now;
-			var fileName = $"image_{now:yyyyMMdd_HHmmss_fff}_{imageInfo.Width}x{imageInfo.Height}.png";
+			var pngName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.png";
+			var jsonName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.json";
 			// Save image here.
 			var folderPath = Global.GetPath(Item);
-			var relativePath = Path.Combine(Item.Name, fileName);
+			var relativePath = Path.Combine(Item.Name, pngName);
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
-			var fullPath = Path.Combine(folderPath, fileName);
+			var fullPath = Path.Combine(folderPath, pngName);
 			imageInfo.Path = relativePath;
 			imageInfo.FullPath = fullPath;
 			File.WriteAllBytes(fullPath, imageBytes);
 			// Get last messages from the chat list. It will be an assistant message.
 			var message = Item.Messages.Last();
-			var imageData = Client.Serialize(imageInfo);
+			var jsonContents = Client.Serialize(imageInfo);
+			File.WriteAllText(jsonName, jsonContents);
 			message.Attachments.Add(new MessageAttachments
 			{
-				Title = "Image",
-				Data = imageData,
+				Title = pngName,
+				Data = jsonContents,
 				SendType = AttachmentSendType.None,
 				Type = Plugins.Core.VsFunctions.ContextType.Image,
 			});
@@ -164,7 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private async Task<ImageClient> GetImageClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
 		{
 			var client = new Client(rItem.AiService);
-			var aiClient = await client.GetAiClient(cancellationToken);
+			var aiClient = await client.GetAiClient(false, cancellationToken);
 			return aiClient.GetImageClient(rItem.AiModel);
 		}
 
@@ -237,6 +241,42 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		private string GetMaskFileName(string originalImagePath)
+		{
+			var path = System.IO.Path.GetDirectoryName(originalImagePath);
+			var baseName = System.IO.Path.GetFileNameWithoutExtension(originalImagePath);
+			var ext = System.IO.Path.GetExtension(originalImagePath);
+			var maskFullName = System.IO.Path.Combine(path, $"{baseName}.mask{ext}");
+			return maskFullName;
+		}
+
+		private MemoryStream GetDefaultMaskStream(string originalImagePath)
+		{
+			var maskStream = new MemoryStream();
+			// Create a default mask with the same dimensions as the original image
+			using (var originalImage = new Bitmap(originalImagePath))
+			{
+				int width = originalImage.Width;
+				int height = originalImage.Height;
+				// Create a new bitmap for the mask with the same dimensions
+				var maskBitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+				// Set the entire mask to fully transparent (alpha=0)
+				using (Graphics g = Graphics.FromImage(maskBitmap))
+				{
+					// Fill the mask with transparent color
+					g.Clear(Color.Transparent);
+				}
+				// Save the mask bitmap to a MemoryStream in PNG format
+				maskBitmap.Save(maskStream, ImageFormat.Png);
+				// Reset the position of the stream to the beginning
+				maskStream.Position = 0;
+				// Dispose of the mask bitmap
+				maskBitmap.Dispose();
+			}
+			// Note: maskStream must remain open until after the API call
+			return maskStream;
+		}
+
 		public async Task<OperationResult<string>> ModifyImageAsync(
 			string originalImagePath,
 			string prompt,
@@ -245,52 +285,45 @@ namespace JocysCom.VS.AiCompanion.Engine
 		)
 		{
 			// Try to get reserved template item.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateGenerateImage);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateModifyImage);
 			if (rItem == null)
-				return new OperationResult<string>(new Exception($"Can't find '{Item.TemplateGenerateImage}'"));
+				return new OperationResult<string>(new Exception($"Can't find '{Item.TemplateModifyImage}'"));
 			if (string.IsNullOrWhiteSpace(prompt))
 				return new OperationResult<string>(new Exception($"Prompt can't be empty!"));
-
 			var (id, cancellationTokenSource, cancellationToken) = CreateOperationCancellationToken(rItem.AiService.ResponseTimeout);
-
+			Stream maskStream = null;
 			try
 			{
 				AddTaskToUI(id, cancellationTokenSource);
-
 				var imageClient = await GetImageClientAsync(rItem, cancellationToken);
-
 				var (imageWidth, imageHeight) = GetImageDimensions(imageSize);
-
 				// Create image edit options
 				var imageEditOptions = new ImageEditOptions()
 				{
 					Size = new GeneratedImageSize(imageWidth, imageHeight),
 					ResponseFormat = GeneratedImageFormat.Bytes,
 				};
-
 				// Ensure the original image exists
 				if (!File.Exists(originalImagePath))
 					return new OperationResult<string>(new FileNotFoundException("Original image file not found", originalImagePath));
-
 				var imageFilename = Path.GetFileName(originalImagePath);
-
 				// Initialize mask stream and filename
-				Stream maskStream = null;
 				string maskFilename = null;
-
 				if (!string.IsNullOrWhiteSpace(maskImagePath))
 				{
 					// Ensure the mask image exists
 					if (!File.Exists(maskImagePath))
 						return new OperationResult<string>(new FileNotFoundException("Mask image file not found", maskImagePath));
-
 					// Open the mask image file as a stream
 					maskStream = File.OpenRead(maskImagePath);
 					maskFilename = Path.GetFileName(maskImagePath);
 				}
-
+				else
+				{
+					maskFilename = GetMaskFileName(originalImagePath);
+					maskStream = GetDefaultMaskStream(originalImagePath);
+				}
 				ClientResult<GeneratedImage> response = null;
-
 				// Open the original image file as a stream
 				using (var imageStream = File.OpenRead(originalImagePath))
 				{
@@ -305,9 +338,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						cancellationToken: cancellationToken
 					);
 				}
-
 				var bytes = response?.Value?.ImageBytes;
-
 				// Check if images are generated
 				if (bytes != null)
 				{
@@ -335,6 +366,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			finally
 			{
 				RemoveTaskFromUI(id, cancellationTokenSource);
+
+				// Dispose of the mask stream if it was created
+				if (maskStream != null)
+					maskStream.Dispose();
 			}
 		}
 

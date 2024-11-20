@@ -534,6 +534,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string TemplateGenerateImage { get => _TemplateGenerateImage; set => SetProperty(ref _TemplateGenerateImage, value); }
 		string _TemplateGenerateImage;
 
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_ModifyImage)]
+		public string TemplateModifyImage { get => _TemplateModifyImage; set => SetProperty(ref _TemplateModifyImage, value); }
+		string _TemplateModifyImage;
+
+
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToVideo)]
 		public string TemplateTextToVideo { get => _TemplateTextToVideo; set => SetProperty(ref _TemplateTextToVideo, value); }
 		string _TemplateTextToVideo;

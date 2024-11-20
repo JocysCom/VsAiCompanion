@@ -27,6 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public const string TemplateAIComputerUse = "AI - Computer Use";
 
 		public const string TemplatePlugin_Model_GenerateImage = "® System - Generate Image";
+		public const string TemplatePlugin_Model_ModifyImage = "® System - Modify Image";
 		public const string TemplatePlugin_Model_TextToAudio = "® System - Text-To-Audio";
 		public const string TemplatePlugin_Model_AudioToText = "® System - Audio-To-Text";
 		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";
@@ -44,6 +45,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				TempalteListsUpdateUserProfile,
 				TemplateAIChatPersonalized,
 				TemplateAIComputerUse,
+				TemplatePlugin_Model_GenerateImage,
+				TemplatePlugin_Model_ModifyImage,
 				TemplatePlugin_Model_TextToAudio,
 				TemplatePlugin_Model_AudioToText,
 				TemplatePlugin_Model_VideoToText,

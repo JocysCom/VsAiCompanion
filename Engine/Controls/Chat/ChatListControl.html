@@ -193,6 +193,7 @@
 		.display-none {
 			display: none !important;
 		}
+
 	</style>
 	<style>
 
@@ -427,7 +428,7 @@
 				// Make sure characters like `<` or `>` are not treated as HTML element characters.
 				instructions = ConvertForDisplayAsHtml(instructions);
 				instructions = parseMarkdown(instructions);
-				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "");
+				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "", false);
 				buttons += box.buttonHTML;
 				messageInstructionsHTML = box.panelHTML;
 			}
@@ -445,13 +446,16 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var ii = JSON.parse(a.Data);
+						var link = document.createElement("a");
+						link.href = "file://" + ii.FullPath;
+						link.target = "_blank";
 						var img = document.createElement('img');
 						img.alt = ii.Prompt;
-						img.style.width = ii.Width + "px";
-						img.style.height = ii.Height + "px";
-						//img.src = ii.Path;
+						img.style.width = Math.round(ii.Width / 2) + "px";
+						img.style.height = Math.round(ii.Height / 2) + "px";
 						img.src = ii.FullPath;
-						aData = img.outerHTML;
+						link.appendChild(img);
+						aData = link.outerHTML;
 					}
 					else if (a.IsMarkdown) {
 						aData = (a.Data) ? a.Data : "";
@@ -524,7 +528,7 @@
 			}
 		}
 
-		function AddAttachmentBox(attachmentId, title, instructions, data, showBox) {
+		function AddAttachmentBox(attachmentId, title, instructions, data, displayPanelContent) {
 			var showInstructions = (instructions) && instructions.trim().length > 0;
 			var showData = (data) && data.trim().length > 0;
 			// Return if nothing to show.
@@ -534,11 +538,11 @@
 			panelHTML = panelHTML
 				.replace(/{Id}/g, attachmentId)
 				.replace(/{Title}/g, title)
-				.replace(/{BoxStyle}/g, showBox ? "" : "display: none")
+				.replace(/{PanelClass}/g, displayPanelContent ? "" : "display-none")
 				.replace(/{Instructions}/g, instructions)
 				.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
 				.replace(/{Data}/g, data)
-				.replace(/{DataClass}/g, showData ? "" : "display-none;")
+				.replace(/{DataClass}/g, showData ? "" : "display-none")
 				.replace(/{TitleButtons}/g, "");
 			var buttonHTML = document.getElementById("expandableBoxButtonTemplate").innerHTML;
 			buttonHTML = buttonHTML
@@ -555,15 +559,16 @@
 					sender.classList.remove('clicked');
 				}, 500);
 			}
-			var element = document.getElementById(attachmentId + "_panel");
 			var button = document.getElementById(attachmentId + "_button");
+			var panel = document.getElementById(attachmentId + "_panel");
 			// Toggle visibility
-			if (element.style.display === "none") {
-				element.style.display = "inline-block";
-				button.classList.add('expandable-button-visible');
+			var isPanelHidden = panel.classList.contains("display-none");
+			if (isPanelHidden) {
+				panel.classList.remove("display-none");
+				button.classList.add("expandable-button-visible");
 			} else {
-				element.style.display = "none";
-				button.classList.remove('expandable-button-visible');
+				panel.classList.add("display-none");
+				button.classList.remove("expandable-button-visible");
 			}
 		}
 
@@ -923,48 +928,50 @@
 	</script>
 </head>
 <body>
-	<!-- Buttons that will be displayed in the title above the Markdown code block. -->
-	<div style="display: none" id="expandableBoxCopyButtonTemplate">
-		<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataCopy')">Copy</button>
-		<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
-	</div>
-	<div style="display: none" id="expandableBoxButtonTemplate">
-		<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
-			<span>{Title}</span>
-		</button>
-	</div>
-	<div id="expandableBoxPanelTemplate">
-		<div class="expandable-box" id="{Id}_panel" style="{BoxStyle}">
-			<div class="expandable-head">
-				<span class="expandable-head-text">{Title}</span>
-				<span class="expandable-head-indicator" style="display: none;">…</span>
-				<span class="expandable-head-buttons">{TitleButtons}</span>
-			</div>
-			<div class="expandable-body">
-				<div class="expandable-instructions {InstructionsClass}" id="{Id}_instructions">
-					{Instructions}
+	<div style="display: none">
+		<!-- Buttons that will be displayed in the title above the Markdown code block. -->
+		<div id="expandableBoxCopyButtonTemplate">
+			<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataCopy')">Copy</button>
+			<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
+		</div>
+		<div id="expandableBoxButtonTemplate">
+			<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
+				<span>{Title}</span>
+			</button>
+		</div>
+		<div id="expandableBoxPanelTemplate">
+			<div class="expandable-box {PanelClass}" id="{Id}_panel" style="display: inline-block;">
+				<div class="expandable-head">
+					<span class="expandable-head-text">{Title}</span>
+					<!--<span class="expandable-head-indicator" style="display: none;">…</span>-->
+					<span class="expandable-head-buttons">{TitleButtons}</span>
 				</div>
-				<div class="expandable-data {DataClass}" id="{Id}_data">
-					{Data}
+				<div class="expandable-body">
+					<div class="expandable-instructions {InstructionsClass}" id="{Id}_instructions">
+						{Instructions}
+					</div>
+					<div class="expandable-data {DataClass}" id="{Id}_data">
+						{Data}
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div style="display: none" id="messageTemplate">
-		<div class="chat-container color-{Type}" id="{Id}">
-			<div class="chat-user icon-{Type} item-{Automated}"></div>
-			<div class="chat-message color-{Type}">
-				<div class="chat-message-head">
-					<span class="chat-date">{Date}</span>
-					<button class="chat-button chat-button-red" onclick="MessageAction(this, '{Id}', 'Remove')" title="Remove" aria-label="Remove">❌</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')" title="Use" aria-label="Use">📥</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')" title="Edit" aria-label="Edit">✎</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')" title="Copy" aria-label="Copy">📄</button>
-					<button class="chat-button item-{Automated} chat-button-green regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;" title="Regenerate" aria-label="Regenerate">🔃</button>
-					{Buttons}
+		<div id="messageTemplate">
+			<div class="chat-container color-{Type}" id="{Id}">
+				<div class="chat-user icon-{Type} item-{Automated}"></div>
+				<div class="chat-message color-{Type}">
+					<div class="chat-message-head">
+						<span class="chat-date">{Date}</span>
+						<button class="chat-button chat-button-red" onclick="MessageAction(this, '{Id}', 'Remove')" title="Remove" aria-label="Remove">❌</button>
+						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')" title="Use" aria-label="Use">📥</button>
+						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')" title="Edit" aria-label="Edit">✎</button>
+						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')" title="Copy" aria-label="Copy">📄</button>
+						<button class="chat-button item-{Automated} chat-button-green regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;" title="Regenerate" aria-label="Regenerate">🔃</button>
+						{Buttons}
+					</div>
+					<div class="chat-message-body {BodyHide}">{Body}</div>
+					<div class="chat-message-data {DataHide}">{Data}</div>
 				</div>
-				<div class="chat-message-body {BodyHide}">{Body}</div>
-				<div class="chat-message-data {DataHide}">{Data}</div>
 			</div>
 		</div>
 	</div>

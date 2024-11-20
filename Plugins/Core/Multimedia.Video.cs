@@ -121,8 +121,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="prompt">A textual description of the desired image.</param>
 		/// <param name="imageSize">The width of the generated image in pixels (default is `size_1024x1024`).</param>
-		/// <param name="imageStyle"> The style to apply to the generated image. Default is `vivid`.</param>
-		/// <param name="imageQuality"> The quality level of the generated image. Default is `standard`</param>
+		/// <param name="imageStyle">The style to apply to the generated image. Default is `vivid`.</param>
+		/// <param name="imageQuality">The quality level of the generated image. Default is `standard`</param>
 		/// <returns>Operation result containing the path to the generated image.</returns>
 		[RiskLevel(RiskLevel.None)]
 		public async Task<OperationResult<string>> GenerateImage(
@@ -143,9 +143,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Modify an image using the specified prompt.
 		/// </summary>
 		/// <param name="originalImagePath">Full file path to the original image.</param>
-		/// <param name="prompt">A textual description of the desired image.</param>
+		/// <param name="prompt">A textual description of the desired image. Prompt should describe the full new image, not just the erased area of the mask.</param>
 		/// <param name="imageSize">The width of the generated new image in pixels (default is `size_1024x1024`).</param>
-		/// <param name="maskImagePath">Path to the mask.</param>
+		/// <param name="maskImagePath">Path to the mask.  The transparent areas of the mask indicate where the image should be edited.</param>
 		/// <returns>Operation result containing the path to the generated image.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		public async Task<OperationResult<string>> ModifyImage(

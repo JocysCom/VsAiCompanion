@@ -241,12 +241,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToText = ai.VideoToText;
 					mm.GetTempFolderPath = AppHelper.GetTempFolderPath;
 					mm.GenerateImageCallback = ai.GenerateImageAsync;
+					mm.ModifyImageCallback = ai.ModifyImageAsync;
 					mm.GetStructuredImageAnalysisInstructions = () => Global.AppSettings.StructuredImageAnalysisInstructions;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
 					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, true, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
 					mm.VideoToText = null;
+					mm.ModifyImageCallback = null;
 					mm.GenerateImageCallback = null;
 					mm.GetTempFolderPath = null;
 					mm.AISpeakCallback = null;

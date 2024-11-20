@@ -10,28 +10,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 	{
 		public MessageAttachments()
 		{
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			InitDefault();
 			SendType = AttachmentSendType.Temp;
 		}
 
 		public MessageAttachments(ContextType attachmentType, string language, string data)
 		{
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			InitDefault();
+			SendType = AttachmentSendType.Temp;
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
-			SendType = AttachmentSendType.Temp;
 			SetData(data, language);
-		}
-
-		public void SetData(string contents, string language)
-		{
-			Data = MarkdownHelper.CreateMarkdownCodeBlock(contents, language);
-			IsMarkdown = true;
 		}
 
 		public MessageAttachments(ContextType attachmentType, object dataToJson)
 		{
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			InitDefault();
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
 			var options = new JsonSerializerOptions();
@@ -39,6 +33,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var data = JsonSerializer.Serialize(dataToJson, options);
 			SetData(data, "json");
 		}
+		
+		private void InitDefault()
+		{
+			_Id = Guid.NewGuid().ToString("N");
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+		
+		public void SetData(string contents, string language)
+		{
+			Data = MarkdownHelper.CreateMarkdownCodeBlock(contents, language);
+			IsMarkdown = true;
+		}
+		
+		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
+		string _Id;
 
 		/// <summary>
 		/// If true, the attachment will always be included as part of the body.

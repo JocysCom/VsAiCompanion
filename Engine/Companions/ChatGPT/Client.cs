@@ -7,7 +7,6 @@ using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI;
 using OpenAI.Chat;
-using OpenAI.Images;
 using System;
 using System.ClientModel.Primitives;
 using System.Collections.Concurrent;
@@ -284,7 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public event EventHandler MessageDone;
 
-		public async Task<OpenAIClient> GetAiClient(CancellationToken cancellationToken = default)
+		public async Task<OpenAIClient> GetAiClient(bool useLogger = true, CancellationToken cancellationToken = default)
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
@@ -300,21 +299,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			else
 			{
 				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
-				// Create HttpClient with HttpClientLogger handler
-				var logger = new HttpClientLogger(new HttpClientHandler());
-				// Create the HttpClient to use HttpClientLogger
-				var httpClient = new HttpClient(logger)
-				{
-					BaseAddress = endpoint,
-					Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
-				};
-				// Register the handler in the HttpPipeline (hypothetical approach)
-				var transport = new HttpClientPipelineTransport(httpClient);
 				//var pipeline = new HttpPipeline(transport);
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-				options.Transport = transport;
 				options.Endpoint = endpoint;
+				if (useLogger)
+				{
+					// Create HttpClient with HttpClientLogger handler
+					var logger = new HttpClientLogger(new HttpClientHandler());
+					// Create the HttpClient to use HttpClientLogger
+					var httpClient = new HttpClient(logger)
+					{
+						BaseAddress = endpoint,
+						Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
+					};
+					// Register the handler in the HttpPipeline (hypothetical approach)
+					var transport = new HttpClientPipelineTransport(httpClient);
+					options.Transport = transport;
+				}
 				client = new OpenAIClient(credential, options);
 				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				//prop.SetValue(client, false);
@@ -881,73 +883,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		private static object GetDefault(Type type)
 		{
 			return _defaultValuesCache.GetOrAdd(type, t => (t.IsValueType ? Activator.CreateInstance(t) : null));
-		}
-
-		#endregion
-
-		#region Generate Images
-
-		public async Task<OperationResult<byte[]>> GenerateImageAsync(
-			string model,
-			string prompt,
-			int imageWidth = 512,
-			int imageHeight = 512,
-			Plugins.Core.image_style imageStyle = Plugins.Core.image_style.vivid,
-			Plugins.Core.image_quality imageQuality = Plugins.Core.image_quality.standard,
-			CancellationToken cancellationToken = default
-		)
-		{
-			var client = await GetAiClient(cancellationToken);
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
-			var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, cancellationToken);
-
-			var id = Guid.NewGuid();
-			ControlsHelper.AppInvoke(() =>
-			{
-				// If you have a UI component that tracks tasks, add this task to it
-				Global.MainControl.InfoPanel.AddTask(id);
-			});
-
-			try
-			{
-				// Create image generation options
-				var imageGenerationOptions = new ImageGenerationOptions()
-				{
-					Size = new GeneratedImageSize(imageWidth, imageHeight),
-					Quality = new GeneratedImageQuality(imageQuality.ToString()),
-					ResponseFormat = GeneratedImageFormat.Bytes,
-					Style = new GeneratedImageStyle(imageStyle.ToString()),
-				};
-				// Call the image generation API
-				var imageClient = client.GetImageClient(model);
-				var response = await imageClient.GenerateImageAsync(prompt, imageGenerationOptions, linkedTokenSource.Token);
-				var bytes = response?.Value?.ImageBytes;
-				// Check if images are generated
-				if (bytes != null)
-				{
-					// Return the URI of the first generated image
-					var imageBytes = bytes.ToArray();
-					return new OperationResult<byte[]>(imageBytes);
-				}
-				else
-				{
-					return new OperationResult<byte[]>(new Exception("No images were generated."));
-				}
-			}
-			catch (Exception ex)
-			{
-				// Return any exceptions encountered
-				return new OperationResult<byte[]>(ex);
-			}
-			finally
-			{
-				ControlsHelper.AppInvoke(() =>
-				{
-					// Remove the task from the UI component
-					Global.MainControl.InfoPanel.RemoveTask(id);
-				});
-			}
 		}
 
 		#endregion
