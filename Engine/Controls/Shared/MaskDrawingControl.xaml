@@ -5,9 +5,9 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Name="This"
 	d:DesignHeight="120"
 	d:DesignWidth="240"
-	Name="This"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<Grid>
@@ -15,7 +15,11 @@
 		<Image x:Name="BaseImage" Stretch="Uniform" />
 
 		<!--  InkCanvas for Mask Drawing  -->
-		<InkCanvas x:Name="MaskCanvas" Background="Transparent" />
+		<InkCanvas
+			x:Name="MaskCanvas"
+			Width="240"
+			Height="120"
+			Background="Transparent" />
 
 		<!--  Controls Panel  -->
 		<StackPanel

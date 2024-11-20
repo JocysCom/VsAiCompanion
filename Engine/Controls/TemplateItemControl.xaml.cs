@@ -168,21 +168,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (string.IsNullOrEmpty(actionString))
 				return;
 			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
-			if (action != MessageAction.Use && action != MessageAction.Edit && action != MessageAction.Regenerate)
-				return;
-			var id = e[0];
-			var message = ChatPanel.MessagesPanel.Messages.FirstOrDefault(x => x.Id == id);
+			var ids = (e[0] ?? "").Split('_');
+			var messageId = ids[0];
+			var message = ChatPanel.MessagesPanel.Messages.FirstOrDefault(x => x.Id == messageId);
 			if (message == null)
 				return;
 			if (action == MessageAction.Use)
 			{
 				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
 				ChatPanel.EditMessageId = null;
+				ChatPanel.EditAttachmentId = null;
 				ChatPanel.FocusChatInputTextBox();
 			}
-			if (action == MessageAction.Regenerate)
+			else if (action == MessageAction.Regenerate)
 			{
-				ChatPanel.EditMessageId = id;
+				ChatPanel.EditMessageId = messageId;
 				ChatPanel.FocusChatInputTextBox();
 				var voiceInstructions = GetVoiceInstructions();
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, message.Body, extraInstructions: voiceInstructions);
@@ -190,8 +190,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			else if (action == MessageAction.Edit)
 			{
 				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
-				ChatPanel.EditMessageId = id;
+				ChatPanel.EditMessageId = messageId;
 				ChatPanel.FocusChatInputTextBox();
+			}
+			else if (action == MessageAction.EditAttachment)
+			{
+				var attachmentId = ids[1];
+				ChatPanel.EditMessageId = messageId;
+				ChatPanel.EditAttachmentId = attachmentId;
+				ChatPanel.MaskDrawingTabItem.Visibility = Visibility.Visible;
 			}
 		}
 

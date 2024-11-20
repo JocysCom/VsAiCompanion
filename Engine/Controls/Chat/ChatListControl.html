@@ -428,7 +428,7 @@
 				// Make sure characters like `<` or `>` are not treated as HTML element characters.
 				instructions = ConvertForDisplayAsHtml(instructions);
 				instructions = parseMarkdown(instructions);
-				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "", false);
+				var box = AddAttachmentBox(idPrefix + message.Id + "_instructions", "Instructions", instructions, "", false);
 				buttons += box.buttonHTML;
 				messageInstructionsHTML = box.panelHTML;
 			}
@@ -481,7 +481,7 @@
 					if (a.SendType === AttachmentSendType.User) {
 						aTitle += " ᵁ";
 					}
-					var box = AddAttachmentBox(message.Id + "_" + i, aTitle, aInstructions, aData, displayPanelContent);
+					var box = AddAttachmentBox(idPrefix + message.Id + "_" + a.Id, aTitle, aInstructions, aData, displayPanelContent, a.Type);
 					buttons += box.buttonHTML;
 					data += "\r\n\r\n" + box.panelHTML;
 				}
@@ -528,39 +528,49 @@
 			}
 		}
 
-		function AddAttachmentBox(attachmentId, title, instructions, data, displayPanelContent) {
+		/*
+			id = "{messageId}_{attachmentId}".
+		*/
+		function AddAttachmentBox(id, title, instructions, data, displayPanelContent, contextType) {
 			var showInstructions = (instructions) && instructions.trim().length > 0;
 			var showData = (data) && data.trim().length > 0;
 			// Return if nothing to show.
 			if (!showInstructions && !showData)
 				return { buttonHTML: "", panelHTML: "" };
-			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
-			panelHTML = panelHTML
-				.replace(/{Id}/g, attachmentId)
+			// Show hide attachment buttons.
+			var buttonHTML = document.getElementById("expandableBoxShowHideDataButtonTemplate").innerHTML
+				.replace(/{Id}/g, id)
+				.replace(/{Title}/g, title);
+
+			var titleButtonsHTML = "";
+			if (contextType === ContextType.Image) {
+				titleButtonsHTML = document.getElementById("expandableBoxImageButtonTemplate").innerHTML
+					.replace(/{Id}/g, id);
+			}
+			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML
+				.replace(/{Id}/g, id)
 				.replace(/{Title}/g, title)
 				.replace(/{PanelClass}/g, displayPanelContent ? "" : "display-none")
 				.replace(/{Instructions}/g, instructions)
 				.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
 				.replace(/{Data}/g, data)
 				.replace(/{DataClass}/g, showData ? "" : "display-none")
-				.replace(/{TitleButtons}/g, "");
-			var buttonHTML = document.getElementById("expandableBoxButtonTemplate").innerHTML;
-			buttonHTML = buttonHTML
-				.replace(/{Id}/g, attachmentId)
-				.replace(/{Title}/g, title)
+				.replace(/{TitleButtons}/g, titleButtonsHTML);
 			return { buttonHTML: buttonHTML, panelHTML: panelHTML };
 		}
 
-		// attachmentId = "{messageId}_{attachmentIndex}".
-		function AttachmentButton_Click(sender, attachmentId) {
+		/*
+			id = "{messageId}_{attachmentId}".
+		*/
+		function AttachmentButton_Click(sender, id) {
 			if (sender !== null) {
 				sender.classList.add('clicked');
 				setTimeout(function () {
 					sender.classList.remove('clicked');
 				}, 500);
 			}
-			var button = document.getElementById(attachmentId + "_button");
-			var panel = document.getElementById(attachmentId + "_panel");
+			var button = document.getElementById(id + "_button");
+			var panel = document.getElementById(id + "_panel");
 			// Toggle visibility
 			var isPanelHidden = panel.classList.contains("display-none");
 			if (isPanelHidden) {
@@ -687,15 +697,6 @@
 			return document.activeElement && document.activeElement !== document.body;
 		}
 
-		function MessageAction(button, messageId, action) {
-			button.classList.add('clicked');
-			setTimeout(function () {
-				button.classList.remove('clicked');
-			}, 500);
-			var id = messageId.substr(idPrefix.length);
-			window.external.MessageAction(id, action, "");
-		}
-
 		function FormatDateTime(datetime) {
 			var currentDate = new Date();
 			var targetDate = new Date(datetime);
@@ -801,13 +802,20 @@
 			}).replace(/-/g, "");
 		}
 
-		function CodeActionButton_Click(button, codeId, action) {
+		function MessageAction(button, id, action) {
 			button.classList.add('clicked');
 			setTimeout(function () {
 				button.classList.remove('clicked');
 			}, 500);
-			var panel = document.getElementById(codeId + "_data");
-			window.external.MessageAction("", action, panel.innerText);
+			if (action == 'DataCopy' || action == 'DataApply') {
+				// id = "{idPrefix}_{randomGuid}"
+				var panel = document.getElementById(id + "_data");
+				window.external.MessageAction("", action, panel.innerText);
+			} else {
+				// id = "{idPrefix}_{messageId}[_{attachmentId}]"
+				var messageId = id.substr(idPrefix.length);
+				window.external.MessageAction(messageId, action, "");
+			}
 		}
 
 		function parseMarkdown(body, boxedCode) {
@@ -826,14 +834,14 @@
 				spacesRx = new RegExp("\\s+</code>", "g")
 				html = html.replace(spacesRx, "</code>");
 				if (boxedCode) {
-					var id = generateGUID();
+					var id = "rnd_" + generateGUID();
 					var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
 					buttonHTML = buttonHTML
-						.replace(/{Id}/g, idPrefix + id);
+						.replace(/{Id}/g, id);
 					var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
 					panelHTML = panelHTML
 						.replace("display: none;", "")
-						.replace(/{Id}/g, idPrefix + id)
+						.replace(/{Id}/g, id)
 						.replace(/{Title}/g, lang)
 						.replace(/{Instructions}/g, "aaa")
 						.replace(/{InstructionsClass}/g, "display-none")
@@ -931,13 +939,16 @@
 	<div style="display: none">
 		<!-- Buttons that will be displayed in the title above the Markdown code block. -->
 		<div id="expandableBoxCopyButtonTemplate">
-			<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataCopy')">Copy</button>
-			<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
+			<button class="chat-button" onclick="MessageAction(this, '{Id}', 'DataCopy')">Copy</button>
+			<button class="chat-button" onclick="MessageAction(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
 		</div>
-		<div id="expandableBoxButtonTemplate">
+		<div id="expandableBoxShowHideDataButtonTemplate">
 			<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
 				<span>{Title}</span>
 			</button>
+		</div>
+		<div id="expandableBoxImageButtonTemplate">
+			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'EditAttachment')" title="Edit" aria-label="Edit">✎</button>
 		</div>
 		<div id="expandableBoxPanelTemplate">
 			<div class="expandable-box {PanelClass}" id="{Id}_panel" style="display: inline-block;">

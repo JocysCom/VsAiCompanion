@@ -34,6 +34,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
+		public string EditAttachmentId
+		{
+			get { return _EditAttachmentId; }
+			set { _EditAttachmentId = value; UpdateMessageEdit(); }
+		}
+		string _EditAttachmentId;
+
 		public string EditMessageId
 		{
 			get { return _EditMessageId; }
@@ -143,6 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public void UpdateMessageEditDebounced()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
+			var isAttachmentEdit = !string.IsNullOrEmpty(EditAttachmentId);
 			AppHelper.UpdateHelp(SendButton,
 				isEdit ? MainResources.main_Chat_Apply_Name : MainResources.main_Chat_Send_Name,
 				isEdit ? MainResources.main_Chat_Apply_Help : MainResources.main_Chat_Send_Help);
@@ -153,6 +161,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (!isEdit && MessageOptionsTabItem.IsSelected)
 				ChatMessageTabItem.IsSelected = true;
 			MessageOptionsTabItem.Visibility = isEdit ? Visibility.Visible : Visibility.Collapsed;
+			MaskDrawingTabItem.Visibility = isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
 			SendButtonIcon.Content = isEdit
 				? Resources[Icons_Default.Icon_button_ok]
@@ -206,6 +215,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				}
 			}
 			EditMessageId = null;
+			EditAttachmentId = null;
 		}
 
 		/// <summary>
@@ -229,6 +239,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				}
 			}
 			EditMessageId = null;
+			EditAttachmentId = null;
 		}
 
 		private void SendButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -270,6 +281,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				DataTextBox.PART_ContentTextBox.Text = "";
 				EditMessageId = null;
+				EditAttachmentId = null;
 				UpdateMessageEdit();
 			}
 			else

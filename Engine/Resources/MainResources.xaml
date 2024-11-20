@@ -388,6 +388,8 @@
 	<sys:String x:Key="main_Value">Value</sys:String>
 
 	<!--  ***  -->
+	<sys:String x:Key="main_Image">Image</sys:String>
+	<sys:String x:Key="main_Mask">Mask</sys:String>
 	<sys:String x:Key="main_Role">Role</sys:String>
 	<sys:String x:Key="main_Steps">Steps</sys:String>
 	<sys:String x:Key="main_EndGoal">End Goal</sys:String>

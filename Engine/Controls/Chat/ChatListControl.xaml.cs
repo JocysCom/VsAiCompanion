@@ -276,8 +276,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
 				return;
 			}
-			var id = e[0];
-			var message = Messages.FirstOrDefault(x => x.Id == id);
+			var ids = (e[0] ?? "").Split('_');
+			var messageId = ids[0];
+			var message = Messages.FirstOrDefault(x => x.Id == messageId);
 			switch (action)
 			{
 				case MessageAction.Remove:

@@ -33,19 +33,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var data = JsonSerializer.Serialize(dataToJson, options);
 			SetData(data, "json");
 		}
-		
+
 		private void InitDefault()
 		{
-			_Id = Guid.NewGuid().ToString("N");
+			_Id = System.Guid.NewGuid().ToString("N");
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
-		
+
 		public void SetData(string contents, string language)
 		{
 			Data = MarkdownHelper.CreateMarkdownCodeBlock(contents, language);
 			IsMarkdown = true;
 		}
-		
+
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
 
