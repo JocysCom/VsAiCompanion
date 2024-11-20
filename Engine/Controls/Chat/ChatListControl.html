@@ -437,10 +437,12 @@
 				for (var i = 0; i < attachments.length; i++) {
 					var a = attachments[i];
 					var aData = "";
+					var displayPanelContent = false;
 					// If data use markdown then...
 					// Example: ```{Language}\r\n{Data}\r\n```
 					console.log("a.ContextType: "  + a.Type);
 					if (a.Type === ContextType.Image) {
+						displayPanelContent = true;
 						console.log(a.Data);
 						var ii = JSON.parse(a.Data);
 						var img = document.createElement('img');
@@ -475,7 +477,7 @@
 					if (a.SendType === AttachmentSendType.User) {
 						aTitle += " ᵁ";
 					}
-					var box = AddAttachmentBox(message.Id + "_" + i, aTitle, aInstructions, aData);
+					var box = AddAttachmentBox(message.Id + "_" + i, aTitle, aInstructions, aData, displayPanelContent);
 					buttons += box.buttonHTML;
 					data += "\r\n\r\n" + box.panelHTML;
 				}
@@ -522,7 +524,7 @@
 			}
 		}
 
-		function AddAttachmentBox(attachmentId, title, instructions, data) {
+		function AddAttachmentBox(attachmentId, title, instructions, data, showBox) {
 			var showInstructions = (instructions) && instructions.trim().length > 0;
 			var showData = (data) && data.trim().length > 0;
 			// Return if nothing to show.
@@ -532,6 +534,7 @@
 			panelHTML = panelHTML
 				.replace(/{Id}/g, attachmentId)
 				.replace(/{Title}/g, title)
+				.replace(/{BoxStyle}/g, showBox ? "" : "display: none")
 				.replace(/{Instructions}/g, instructions)
 				.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
 				.replace(/{Data}/g, data)
@@ -931,7 +934,7 @@
 		</button>
 	</div>
 	<div id="expandableBoxPanelTemplate">
-		<div class="expandable-box" id="{Id}_panel" style="display: none;">
+		<div class="expandable-box" id="{Id}_panel" style="{BoxStyle}">
 			<div class="expandable-head">
 				<span class="expandable-head-text">{Title}</span>
 				<span class="expandable-head-indicator" style="display: none;">…</span>
