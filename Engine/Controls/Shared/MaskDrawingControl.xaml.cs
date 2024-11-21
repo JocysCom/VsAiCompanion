@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -95,6 +98,43 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			using (var fs = new FileStream(maskFilePath, FileMode.Create, FileAccess.Write))
 			{
 				encoder.Save(fs);
+			}
+		}
+
+		public void LoadSelectionsIntoInkCanvas(string jsonString)
+		{
+			// Assume you have your JSON data as a string.
+			//string jsonString = File.ReadAllText("selections.json");
+			// Deserialize the JSON string into a list of ObjectSelection instances.
+			var selections = JsonConvert.DeserializeObject<List<ObjectSelection>>(jsonString);
+			LoadSelections(selections);
+		}
+
+		public void LoadSelections(List<ObjectSelection> selections)
+		{
+			// Iterate through each selection and add it to the InkCanvas.
+			foreach (var selection in selections)
+			{
+				// Convert selection data points to StylusPointCollection.
+				StylusPointCollection stylusPoints = new StylusPointCollection();
+				foreach (var point in selection.SelectionData)
+				{
+					stylusPoints.Add(new StylusPoint(point.X, point.Y));
+				}
+
+				// Create a stroke with the stylus points.
+				Stroke stroke = new Stroke(stylusPoints)
+				{
+					DrawingAttributes = new DrawingAttributes()
+					{
+						Color = Colors.Red,       // Set the color of the stroke.
+						Width = 2,                // Set the width of the stroke.
+						Height = 2
+					}
+				};
+
+				// Add the stroke to the InkCanvas.
+				MaskCanvas.Strokes.Add(stroke);
 			}
 		}
 
