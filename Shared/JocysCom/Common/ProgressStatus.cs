@@ -31,8 +31,11 @@ namespace JocysCom.ClassLibrary
 		/// <summary>The task or the data item has been updated.</summary>
 		Updated = Processing << 2,
 
-		/// <summary>Processing has resumed after a pause.</summary>
-		Skipped = Updated << 2,
+		/// <summary>Processing ignored the item.</summary>
+		Ignored = Updated << 2,
+
+		/// <summary>Processing skipped the item.</summary>
+		Skipped = Ignored << 2,
 
 		/// <summary>The processing has been paused.</summary>
 		Paused = Skipped << 2,

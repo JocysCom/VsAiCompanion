@@ -58,7 +58,7 @@
 		<PackageReference Include="CsvHelper" />
 		<PackageReference Include="DiffPlex.Wpf" />
 		<PackageReference Include="DnsClient" />
-		<PackageReference Include="Ignore" />
+		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
 		<PackageReference Include="MailKit" />
 		<PackageReference Include="Microsoft.CognitiveServices.Speech" />
 		<PackageReference Include="Microsoft.Graph" />

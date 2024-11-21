@@ -242,7 +242,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					includePatterns,
 					excludePatterns,
 					useGitIgnore
-				);
+				).OrderBy(x => x.FullName).ToList();
 			}
 			catch (Exception ex)
 			{

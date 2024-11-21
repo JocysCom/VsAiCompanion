@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -265,18 +264,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			// Setup file finder.
 			var fileFinder = new FileFinder();
-			var IncludePatterns = GetIgnoreFromText(includePatterns);
-			var ExcludePatterns = GetIgnoreFromText(excludePatterns);
+			var globPatterns = new GlobPatterns(excludePatterns, includePatterns, useGitIgnore);
 			fileFinder.IsIgnored = (string parentPath, string filePath, long fileLength) =>
 			{
-				var relativePath = GetRelativePathToIgnore(parentPath, filePath);
-				if (IncludePatterns != null && IsIgnored(relativePath, IncludePatterns) == false)
-					return true;
-				if (ExcludePatterns != null && IsIgnored(relativePath, ExcludePatterns) == true)
-					return true;
-				if (useGitIgnore && IsIgnored(filePath, true, true))
-					return true;
-				return false;
+				return globPatterns.IsIgnored(parentPath, filePath);
 			};
 			// Do search.
 			var files = fileFinder.GetFiles(searchPattern, allDirectories, new[] { path });
@@ -285,173 +276,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		#endregion
 
-		#region Ignore Files
-
-		/// <summary>
-		/// Creates an <see cref="Ignore.Ignore"/> object from the given text.
-		/// </summary>
-		/// <param name="text">The text content to parse into ignore rules.</param>
-		/// <returns>
-		/// An <see cref="Ignore.Ignore"/> object containing the parsed rules, or <c>null</c> if no valid rules were found.
-		/// </returns>
-		public Ignore.Ignore GetIgnoreFromText(string text)
-		{
-			if (text == null)
-				return null;
-			var ignore = new Ignore.Ignore();
-			var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
-			var containsRules = false;
-			foreach (var line in lines)
-			{
-				if (string.IsNullOrWhiteSpace(line))
-					continue;
-				if (line.TrimStart().StartsWith("#"))
-					continue;
-				ignore.Add(line);
-				containsRules = true;
-			}
-			return containsRules ? ignore : null;
-		}
-
-		/// <summary>
-		/// Creates an <see cref="Ignore.Ignore"/> object from the specified file.
-		/// </summary>
-		/// <param name="path">The path to the file containing ignore rules.</param>
-		/// <returns>
-		/// An <see cref="Ignore.Ignore"/> object containing the parsed rules, or <c>null</c> if the file does not exist or contains no valid rules.
-		/// </returns>
-		public Ignore.Ignore GetIgnoreFromFile(string path)
-		{
-			var fi = new FileInfo(path);
-			if (!fi.Exists)
-				return null;
-			var text = System.IO.File.ReadAllText(path);
-			return GetIgnoreFromText(text);
-		}
-
-		/// <summary>
-		/// Cache for <see cref="Ignore.Ignore"/> objects to improve performance.
-		/// </summary>
-		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
-		private ConcurrentDictionary<string, Ignore.Ignore> IgnoreCache { get; } = new ConcurrentDictionary<string, Ignore.Ignore>();
-
-		/// <summary>
-		/// Retrieves an <see cref="Ignore.Ignore"/> object from the specified folder, optionally using a cache.
-		/// </summary>
-		/// <param name="path">The folder path to retrieve the ignore object from.</param>
-		/// <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
-		/// <returns>
-		/// An <see cref="Ignore.Ignore"/> object retrieved from the folder.
-		/// </returns>
-		private Ignore.Ignore GetIgnoreFromFolder(string path, bool cache = true)
-		{
-			var ignore = cache
-				? IgnoreCache.GetOrAdd(path, x => _GetIgnoreFromFolder(path))
-				: _GetIgnoreFromFolder(path);
-			return ignore;
-		}
-
-		private Ignore.Ignore _GetIgnoreFromFolder(string path)
-		{
-			var ignoreFullName = Path.Combine(path, ".gitignore");
-			var ignore = GetIgnoreFromFile(ignoreFullName);
-			return ignore;
-		}
-
-		/// <summary>
-		/// Retrieves <see cref="Ignore.Ignore"/> objects by searching for <c>.gitignore</c> files in the specified folder and optionally its parent directories.
-		/// </summary>
-		/// <param name="path">The folder path to start the search.</param>
-		/// <param name="searchParentDirectories">
-		/// If <c>true</c>, searches all parent directories for <c>.gitignore</c> files; otherwise, only searches the specified folder.
-		/// </param>
-		/// <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
-		/// <returns>
-		/// A list of <see cref="Ignore.Ignore"/> objects found in the folder and optionally its parent directories.
-		/// </returns>
-		public Dictionary<string, Ignore.Ignore> GetIgnoresFromDirectory(string path, bool searchParentDirectories = false, bool cache = true)
-		{
-			var list = new Dictionary<string, Ignore.Ignore>();
-			var di = new DirectoryInfo(path);
-			while (di != null && di.Exists)
-			{
-				var ignore = GetIgnoreFromFolder(di.FullName, cache);
-				if (ignore != null)
-					list.Add(di.FullName, ignore);
-				if (!searchParentDirectories)
-					break;
-				di = di.Parent;
-			}
-			return list;
-		}
-
-		/// <summary>
-		/// Returns true if file is ignored.
-		/// </summary>
-		/// <param name="filePath">Full path to the file.</param>
-		/// <param name="searchParentDirectories">If `true`, searches all parent directories for `.gitignore` files; otherwise, only searches the file folder.</param>
-		/// <param name="cache">If `true`, the cache will be used to retrieve the ignore object.</param>
-		public bool IsIgnored(string filePath, bool searchParentDirectories = false, bool cache = true)
-		{
-			var directoryPath = System.IO.Path.GetDirectoryName(filePath);
-			var ignoreKvs = GetIgnoresFromDirectory(directoryPath, searchParentDirectories, cache);
-			foreach (var ignoreKv in ignoreKvs)
-			{
-				var ignorePath = ignoreKv.Key;
-				var relativeFilePath = GetRelativePathToIgnore(ignorePath, filePath);
-				if (IsIgnored(relativeFilePath, ignoreKv.Value))
-					return true;
-			}
-			return false;
-		}
-
-
-		/// <summary>
-		/// Returns true if file is ignored.
-		/// </summary>
-		/// <param name="relativeFilePath">relative path to the file.</param>
-		/// <param name="ignore">Ignore object.</param>
-		public bool IsIgnored(string relativeFilePath, Ignore.Ignore ignore)
-		{
-			var currentPath = relativeFilePath;
-			while (!string.IsNullOrEmpty(currentPath))
-			{
-				// Check if the current path or any of its parent directories are ignored.
-				// Note: Must use `Contains`, because it won't ignore exact path.
-				var ignored = ignore.OriginalRules.Contains(currentPath) || ignore.IsIgnored(currentPath);
-				if (ignored)
-					return true;
-				// Move up to the parent directory.
-				var parentPath = Path.GetDirectoryName(currentPath)?.Replace("\\", "/");
-				// If we've reached the root directory, exit the loop.
-				if (string.IsNullOrEmpty(parentPath) || parentPath == currentPath)
-					break;
-				currentPath = parentPath;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Get path relative to ignore,
-		/// </summary>
-		/// <param name="ignorePath"></param>
-		/// <param name="filePath"></param>
-		public string GetRelativePathToIgnore(string ignorePath, string filePath)
-		{
-			// Make sure relative to path have folder separator to indicate that it is folder.
-			if (!ignorePath.EndsWith("\\"))
-				ignorePath = ignorePath + "\\";
-			var relativePath = PathHelper.GetRelativePath(ignorePath, filePath, false)
-			// Ignore file use `/` folder separaror.
-			.Replace("\\", "/");
-			// Add slash to indicate that path is root to gitignore.
-			if (!relativePath.StartsWith("/"))
-				relativePath = $"/{relativePath}";
-			return relativePath;
-		}
-
-
-		#endregion
 
 	}
 }

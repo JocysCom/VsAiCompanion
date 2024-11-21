@@ -463,75 +463,6 @@
              Find files.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromText(System.String)">
-            <summary>
-            Creates an <see cref="T:Ignore.Ignore"/> object from the given text.
-            </summary>
-            <param name="text">The text content to parse into ignore rules.</param>
-            <returns>
-            An <see cref="T:Ignore.Ignore"/> object containing the parsed rules, or <c>null</c> if no valid rules were found.
-            </returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromFile(System.String)">
-            <summary>
-            Creates an <see cref="T:Ignore.Ignore"/> object from the specified file.
-            </summary>
-            <param name="path">The path to the file containing ignore rules.</param>
-            <returns>
-            An <see cref="T:Ignore.Ignore"/> object containing the parsed rules, or <c>null</c> if the file does not exist or contains no valid rules.
-            </returns>
-        </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.IgnoreCache">
-            <summary>
-            Cache for <see cref="T:Ignore.Ignore"/> objects to improve performance.
-            </summary>
-            <remarks>Cache allows for this class to work 20 times faster.</remarks>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromFolder(System.String,System.Boolean)">
-            <summary>
-            Retrieves an <see cref="T:Ignore.Ignore"/> object from the specified folder, optionally using a cache.
-            </summary>
-            <param name="path">The folder path to retrieve the ignore object from.</param>
-            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
-            <returns>
-            An <see cref="T:Ignore.Ignore"/> object retrieved from the folder.
-            </returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoresFromDirectory(System.String,System.Boolean,System.Boolean)">
-            <summary>
-            Retrieves <see cref="T:Ignore.Ignore"/> objects by searching for <c>.gitignore</c> files in the specified folder and optionally its parent directories.
-            </summary>
-            <param name="path">The folder path to start the search.</param>
-            <param name="searchParentDirectories">
-            If <c>true</c>, searches all parent directories for <c>.gitignore</c> files; otherwise, only searches the specified folder.
-            </param>
-            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
-            <returns>
-            A list of <see cref="T:Ignore.Ignore"/> objects found in the folder and optionally its parent directories.
-            </returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.IsIgnored(System.String,System.Boolean,System.Boolean)">
-            <summary>
-            Returns true if file is ignored.
-            </summary>
-            <param name="filePath">Full path to the file.</param>
-            <param name="searchParentDirectories">If `true`, searches all parent directories for `.gitignore` files; otherwise, only searches the file folder.</param>
-            <param name="cache">If `true`, the cache will be used to retrieve the ignore object.</param>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.IsIgnored(System.String,Ignore.Ignore)">
-            <summary>
-            Returns true if file is ignored.
-            </summary>
-            <param name="relativeFilePath">relative path to the file.</param>
-            <param name="ignore">Ignore object.</param>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetRelativePathToIgnore(System.String,System.String)">
-            <summary>
-            Get path relative to ignore,
-            </summary>
-            <param name="ignorePath"></param>
-            <param name="filePath"></param>
-        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.ReadFileAsPlainText(System.String)">
             <summary>
             Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, .pdf, .htm, .html and .pdf.
@@ -562,6 +493,97 @@
             <summary>
             Get parameter info
             </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns">
+            <summary>
+            Glob patterns helper. Patterns used by `.gitignore` files.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            Glob patterns. Used by `.gitignore` files.
+            </summary>
+            <param name="excludePatterns">Exclude patterns. Applies if not null.</param>
+            <param name="includePatterns">Include patterns. Applies if not null.</param>
+            <param name="useGitIgnoreFiles">Use git ignore files.</param>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.ExcludePatterns">
+            <summary>Exclude patterns</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IncludePatterns">
+            <summary>Include patterns</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GitExcludePatterns">
+            <summary>GIT Exclude patterns</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.UseGitIgnoreFiles">
+            <summary>Use `.gitignore` files.</summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetIgnoreFromText(System.String)">
+            <summary>
+            Creates an <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object from the given text.
+            </summary>
+            <param name="text">The text content to parse into ignore rules.</param>
+            <returns>
+            An <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object containing the parsed rules, or <c>null</c> if no valid rules were found.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetIgnoreFromFile(System.String)">
+            <summary>
+            Creates an <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object from the specified file.
+            </summary>
+            <param name="path">The path to the file containing ignore rules.</param>
+            <returns>
+            An <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object containing the parsed rules, or <c>null</c> if the file does not exist or contains no valid rules.
+            </returns>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IgnoreCache">
+            <summary>
+            Cache for <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> objects to improve performance.
+            </summary>
+            <remarks>Cache allows for this class to work 20 times faster.</remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetIgnoreFromDirectory(System.String,System.Boolean)">
+            <summary>
+            Retrieves an <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object from the specified folder, optionally using a cache.
+            </summary>
+            <param name="path">The folder path to retrieve the ignore object from.</param>
+            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
+            <returns>
+            An <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object retrieved from the folder.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetGitIgnoresByDirectoryPath(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Retrieves <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> objects by searching for <c>.gitignore</c> files in the specified folder and optionally its parent directories.
+            </summary>
+            <param name="path">The folder path to start the search.</param>
+            <param name="searchParentDirectories">
+            If <c>true</c>, searches all parent directories for <c>.gitignore</c> files; otherwise, only searches the specified folder.
+            </param>
+            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
+            <returns>
+            A list of <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> objects found in the folder and optionally its parent directories.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IsIgnored(System.String,System.String)">
+            <summary>
+            Return true if file is ignored.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IsGitIgnored(System.String,System.Boolean)">
+            <summary>
+            Returns true if file is ignored.
+            </summary>
+            <param name="filePath">Full path to the file.</param>
+            <param name="searchParentDirectories">If `true`, searches all parent directories for `.gitignore` files; otherwise, only searches the file folder.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetRelativePath(System.String,System.String)">
+            <summary>
+            Get relative path to `.gitignore`.
+            </summary>
+            <param name="relativeTo"></param>
+            <param name="path"></param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.GpsLocation">
             <summary>

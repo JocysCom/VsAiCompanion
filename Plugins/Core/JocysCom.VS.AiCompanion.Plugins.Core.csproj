@@ -61,7 +61,7 @@
 		<PackageReference Include="BouncyCastle.Cryptography" />
 		<PackageReference Include="DocumentFormat.OpenXml" />
 		<PackageReference Include="HtmlAgilityPack" />
-		<PackageReference Include="Ignore" />
+		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
 		<PackageReference Include="LiteDB" />
 		<PackageReference Include="NPOI" />
 		<PackageReference Include="PdfPig" />

@@ -8,6 +8,7 @@ using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.DataClient.Common;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using LiteDB;
 using System;
 using System.Collections.ObjectModel;
@@ -299,8 +300,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		DateTime ScanStarted;
 		object AddAndUpdateLock = new object();
-		Ignore.Ignore ExcludePatterns;
-		Ignore.Ignore IncludePatterns;
 
 		async void ScanTask(object state)
 		{
@@ -324,12 +323,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? SqlInitHelper.PathToConnectionString(target)
 				: target;
 			_FileHelper = new Plugins.Core.FileHelper();
+			var globPatterns = new GlobPatterns(item.ExcludePatterns, item.IncludePatterns, item.UseGitIgnore);
 			_Scanner = new FileProcessor();
 			_Scanner.ProcessItem = _Scanner_ProcessItem;
-			_Scanner.FileFinder.IsIgnored = _Scanner_FileFinder_IsIgnored;
+			_Scanner.FileFinder.IsIgnored = (string parentPath, string filePath, long fileLength) =>
+			{
+				return globPatterns.IsIgnored(parentPath, filePath);
+			};
 			_Scanner.Progress += _Scanner_Progress;
-			ExcludePatterns = _FileHelper.GetIgnoreFromText(item.ExcludePatterns);
-			IncludePatterns = _FileHelper.GetIgnoreFromText(item.IncludePatterns);
 			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				MainTabControl.SelectedItem = LogTabPage;
@@ -372,18 +373,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private bool _Scanner_FileFinder_IsIgnored(string parentPath, string filePath, long fileLength)
-		{
-			var relativePath = _FileHelper.GetRelativePathToIgnore(parentPath, filePath);
-			if (IncludePatterns != null && _FileHelper.IsIgnored(relativePath, IncludePatterns) == false)
-				return true;
-			if (ExcludePatterns != null && _FileHelper.IsIgnored(relativePath, ExcludePatterns) == true)
-				return true;
-			if (_FileHelper.IsIgnored(filePath, true, true))
-				return true;
-			return false;
-		}
-
 		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)
 		{
 			//await Task.Delay(50);
@@ -422,14 +411,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Global.MainControl.InfoPanel.RemoveTask(TaskName.Scan);
 					ScanStartButton.IsEnabled = true;
 					ScanStopButton.IsEnabled = false;
-					var states =
-					_Scanner.ProcessItemStates
-						.Where(x => x.Value > 0)
-						.Select(x => $"{x.Key}: {x.Value}")
-						.ToList();
-					var totalCount = _Scanner.ProcessItemStates.Sum(x => x.Value);
-					states.Add($"TOTAL: {totalCount}");
-					var logMessage = string.Join("\r\n", states);
+					var logMessage = _Scanner.GetProcessCompletedMessage();
 					LogPanel.Add($"\r\nProcess Completed\r\n{logMessage}\r\n");
 				}
 			}));
