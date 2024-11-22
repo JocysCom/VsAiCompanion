@@ -446,14 +446,15 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var ii = JSON.parse(a.Data);
+						var imageFullPath = LocationPath + ii.Path;
 						var link = document.createElement("a");
-						link.href = "file://" + ii.FullPath;
+						link.href = "file://" + imageFullPath;
 						link.target = "_blank";
 						var img = document.createElement('img');
 						img.alt = ii.Prompt;
 						img.style.width = Math.round(ii.Width / 2) + "px";
 						img.style.height = Math.round(ii.Height / 2) + "px";
-						img.src = ii.FullPath;
+						img.src = imageFullPath;
 						link.appendChild(img);
 						aData = link.outerHTML;
 					}
@@ -709,8 +710,15 @@
 				: targetDate.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
 		}
 
-		function SetTitle(name) {
-			document.title = name;
+		function SetTitle(item) {
+			document.title = item.Value;
+		}
+
+		var LocationPath = null;
+
+		// Set location path path.
+		function SetLocation(item) {
+			LocationPath = item.Value;
 		}
 
 		function SetSettings(settings) {
@@ -948,7 +956,7 @@
 			</button>
 		</div>
 		<div id="expandableBoxImageButtonTemplate">
-			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'EditAttachment')" title="Edit" aria-label="Edit">✎</button>
+			<button class="chat-button item-{Automated}" style="display: none;" onclick="MessageAction(this, '{Id}', 'EditAttachment')" title="Edit" aria-label="Edit">✎</button>
 		</div>
 		<div id="expandableBoxPanelTemplate">
 			<div class="expandable-box {PanelClass}" id="{Id}_panel" style="display: inline-block;">

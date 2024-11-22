@@ -170,7 +170,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
 			var ids = (e[0] ?? "").Split('_');
 			var messageId = ids[0];
-			var message = ChatPanel.MessagesPanel.Messages.FirstOrDefault(x => x.Id == messageId);
+			var message = ChatPanel.MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == messageId);
 			if (message == null)
 				return;
 			if (action == MessageAction.Use)
@@ -362,16 +362,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void UpdateListNames()
 		{
+			var name = Item?.Name;
+			if (string.IsNullOrEmpty(name))
+				UpdateListNames(new string[] { });
+			else
+				UpdateListNames(new string[] { name });
+		}
+
+		private void UpdateListNames(string[] extraPaths)
+		{
 			// Update ContextListNames
-			var names = AppHelper.GetListNames(Item?.Name, "Context", "Company", "Department");
+			var names = AppHelper.GetListNames(extraPaths, "Context", "Company", "Department");
 			CollectionsHelper.Synchronize(names, ContextListNames);
 			OnPropertyChanged(nameof(ContextListNames));
 			// Update ProfileListNames
-			names = AppHelper.GetListNames(Item?.Name, "Profile", "Persona");
+			names = AppHelper.GetListNames(extraPaths, "Profile", "Persona");
 			CollectionsHelper.Synchronize(names, ProfileListNames);
 			OnPropertyChanged(nameof(ProfileListNames));
 			// Update RoleListNames
-			names = AppHelper.GetListNames(Item?.Name, "Role");
+			names = AppHelper.GetListNames(extraPaths, "Role");
 			CollectionsHelper.Synchronize(names, RoleListNames);
 			OnPropertyChanged(nameof(RoleListNames));
 		}
@@ -421,6 +430,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.MonitorTextBoxSelections(false);
 				// Make sure that custom AiModel old and new item is available to select.
 				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
+				UpdateListNames(new string[] { value?.Name, oldItem?.Name });
 				// Set new item.
 				_Item = value ?? AppHelper.GetNewTemplateItem(true);
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
@@ -434,13 +444,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(CreativityName));
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
+				UpdateListNames(new string[] { _Item?.Name, });
 				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
 				CanvasPanel.Item = _Item;
 				PromptsPanel.BindData(_Item);
 				ListsPromptsPanel.BindData(_Item);
-				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
+				ChatPanel.MessagesPanel.SetDataItems(_Item);
 				ChatPanel.IsBusy = _Item.IsBusy;
 				ChatPanel.UpdateMessageEdit();
 				System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
@@ -661,7 +672,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != MessageBoxResult.Yes)
 				return;
 			_Item.Messages.Clear();
-			ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
+			ChatPanel.MessagesPanel.SetDataItems(_Item);
 			ChatPanel.UpdateMessageEdit();
 			RestoreTabSelection();
 		}

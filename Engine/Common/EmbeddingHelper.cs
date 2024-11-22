@@ -393,10 +393,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var isPortable = SqlInitHelper.IsPortable(item.Target);
 				if (!isPortable)
 				{
-					var connection = SqlInitHelper.NewConnection(connectionString);
-					await connection.OpenAsync();
-					useClr = !SqlInitHelper.IsAzureSQL(connection);
-					connection.Close();
+					using (var connection = SqlInitHelper.NewConnection(connectionString))
+					{
+						await connection.OpenAsync();
+						useClr = !SqlInitHelper.IsAzureSQL(connection);
+					}
 				}
 				if (useClr)
 				{
@@ -548,13 +549,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var connectionString = SqlInitHelper.IsPortable(target)
 					? SqlInitHelper.PathToConnectionString(target)
 					: target;
-				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
-				var connection = db.GetConnection();
-				connection.Open();
-				var containsTable = SqlInitHelper.ContainsTable(nameof(Embeddings.Embedding.File), connection);
-				if (containsTable)
-					items = db.Files.Select(x => x.GroupName).Distinct().ToList();
-				connection.Close();
+				using (var db = SqlInitHelper.NewEmbeddingsContext(connectionString))
+				{
+					using (var connection = db.GetConnection())
+					{
+						connection.Open();
+						var containsTable = SqlInitHelper.ContainsTable(nameof(Embeddings.Embedding.File), connection);
+						if (containsTable)
+							items = db.Files.Select(x => x.GroupName).Distinct().ToList();
+					} // connection is disposed here
+				} // db context is disposed here
 			}
 			catch (Exception ex)
 			{

@@ -138,6 +138,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			var fullFileName = System.IO.Path.Combine(path, _DatabaseName + databaseFileExtension);
 			var builder = new SqliteConnectionStringBuilder();
 			builder.DataSource = fullFileName;
+			// Ensure file is not locked.
+			builder.Pooling = false;
 			return builder.ToString();
 		}
 
@@ -268,81 +270,88 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 				var isPortable = SqlHelper.IsPortable(connectionString);
 
-				var connection = isPortable
+				using (var connection = isPortable
 					? (DbConnection)new SqliteConnection(connectionString)
-					: (DbConnection)new SqlConnection(connectionString);
-				await connection.OpenAsync();
-
-				var containsTable = SqlHelper.ContainsTable(tableName, connection);
-				var sqliteSchema =
-					$"[{id}] INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" +
-					$"[{fullName}] TEXT,\r\n" +
-					$"[{name}] TEXT,\r\n" +
-					$"[{length}] INTEGER,\r\n" +
-					$"[{creationTimeUtc}] TEXT,\r\n" +
-					$"[{lastWriteTimeUtc}] TEXT,\r\n" +
-					$"[{status}] TEXT\r\n";
-				var sqlSchema =
-					$"[{id}] INT IDENTITY(1,1) PRIMARY KEY,\r\n" +
-					$"[{fullName}] NVARCHAR(MAX),\r\n" +
-					$"[{name}] NVARCHAR(MAX),\r\n" +
-					$"[{length}] BIGINT,\r\n" +
-					$"[{creationTimeUtc}] DATETIME,\r\n" +
-					$"[{lastWriteTimeUtc}] DATETIME,\r\n" +
-					$"[{status}] NVARCHAR(MAX)\r\n";
-				var schema = isPortable ? sqliteSchema : sqlSchema;
-				if (!containsTable)
+					: (DbConnection)new SqlConnection(connectionString))
 				{
-					// Table does not exist; create it with a unique Id column.
-					var createTableQuery = $"CREATE TABLE {tableName} (\r\n{schema});";
-					var createCmd = isPortable
-						? (DbCommand)new SqliteCommand(createTableQuery)
-						: (DbCommand)new SqlCommand(createTableQuery);
-					createCmd.Connection = connection;
-					createCmd.ExecuteNonQuery();
+
+					await connection.OpenAsync();
+
+					var containsTable = SqlHelper.ContainsTable(tableName, connection);
+					var sqliteSchema =
+						$"[{id}] INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" +
+						$"[{fullName}] TEXT,\r\n" +
+						$"[{name}] TEXT,\r\n" +
+						$"[{length}] INTEGER,\r\n" +
+						$"[{creationTimeUtc}] TEXT,\r\n" +
+						$"[{lastWriteTimeUtc}] TEXT,\r\n" +
+						$"[{status}] TEXT\r\n";
+					var sqlSchema =
+						$"[{id}] INT IDENTITY(1,1) PRIMARY KEY,\r\n" +
+						$"[{fullName}] NVARCHAR(MAX),\r\n" +
+						$"[{name}] NVARCHAR(MAX),\r\n" +
+						$"[{length}] BIGINT,\r\n" +
+						$"[{creationTimeUtc}] DATETIME,\r\n" +
+						$"[{lastWriteTimeUtc}] DATETIME,\r\n" +
+						$"[{status}] NVARCHAR(MAX)\r\n";
+					var schema = isPortable ? sqliteSchema : sqlSchema;
+					if (!containsTable)
+					{
+						// Table does not exist; create it with a unique Id column.
+						var createTableQuery = $"CREATE TABLE {tableName} (\r\n{schema});";
+						using (var createCmd = isPortable
+							? (DbCommand)new SqliteCommand(createTableQuery)
+							: (DbCommand)new SqlCommand(createTableQuery))
+						{
+							createCmd.Connection = connection;
+							createCmd.ExecuteNonQuery();
+						}
+					}
+
+					// Prepare the insert command.
+					var insertQuery = $@"
+						INSERT INTO {tableName} ({fullName}, {name}, {length}, {creationTimeUtc}, {lastWriteTimeUtc}, {status})
+						VALUES (@{fullName}, @{name}, @{length}, @{creationTimeUtc}, @{lastWriteTimeUtc}, @{status});";
+
+					int insertCount = 0;
+
+					using (var insertCmd = isPortable
+						? (DbCommand)new SqliteCommand(insertQuery)
+						: (DbCommand)new SqlCommand(insertQuery))
+					{
+						insertCmd.Connection = connection;
+
+						// Add parameters.
+						SqlHelper.AddParameter(insertCmd, $"@{fullName}", "");
+						SqlHelper.AddParameter(insertCmd, $"@{name}", "");
+						SqlHelper.AddParameter(insertCmd, $"@{length}", 0);
+						SqlHelper.AddParameter(insertCmd, $"@{creationTimeUtc}", "");
+						SqlHelper.AddParameter(insertCmd, $"@{lastWriteTimeUtc}", "");
+						SqlHelper.AddParameter(insertCmd, $"@{status}", "");
+
+						// For each file, set parameter values and execute insert.
+						foreach (var file in files)
+						{
+							if (cancellationToken.IsCancellationRequested)
+								return new OperationResult<int>(new Exception("User cancelled the action."));
+
+							insertCmd.Parameters[$"@{fullName}"].Value = file.FullName;
+							insertCmd.Parameters[$"@{name}"].Value = file.Name;
+							insertCmd.Parameters[$"@{length}"].Value = file.Length;
+							insertCmd.Parameters[$"@{creationTimeUtc}"].Value = file.CreationTimeUtc.ToString("o"); // ISO 8601 format
+							insertCmd.Parameters[$"@{lastWriteTimeUtc}"].Value = file.LastWriteTimeUtc.ToString("o");
+							insertCmd.Parameters[$"@{status}"].Value = "";
+
+							insertCount += insertCmd.ExecuteNonQuery();
+						}
+					}
+					var databaseSyntax = isPortable ? " on SQLite database" : "";
+
+					// Prepare table schema description for the status message.
+					var statusText = $@"Table '{tableName}' created{databaseSyntax} with schema:\r\n {schema}";
+					// Return the number of files inserted along with the table schema description.
+					return new OperationResult<int>(insertCount, 0, statusText);
 				}
-
-				// Prepare the insert command.
-				var insertQuery = $@"
-            INSERT INTO {tableName} ({fullName}, {name}, {length}, {creationTimeUtc}, {lastWriteTimeUtc}, {status})
-            VALUES (@{fullName}, @{name}, @{length}, @{creationTimeUtc}, @{lastWriteTimeUtc}, @{status});";
-
-				var insertCmd = isPortable
-					? (DbCommand)new SqliteCommand(insertQuery)
-					: (DbCommand)new SqlCommand(insertQuery);
-				insertCmd.Connection = connection;
-
-				// Add parameters.
-				SqlHelper.AddParameter(insertCmd, $"@{fullName}", "");
-				SqlHelper.AddParameter(insertCmd, $"@{name}", "");
-				SqlHelper.AddParameter(insertCmd, $"@{length}", 0);
-				SqlHelper.AddParameter(insertCmd, $"@{creationTimeUtc}", "");
-				SqlHelper.AddParameter(insertCmd, $"@{lastWriteTimeUtc}", "");
-				SqlHelper.AddParameter(insertCmd, $"@{status}", "");
-
-				int insertCount = 0;
-
-				// For each file, set parameter values and execute insert.
-				foreach (var file in files)
-				{
-					if (cancellationToken.IsCancellationRequested)
-						return new OperationResult<int>(new Exception("User cancelled the action."));
-
-					insertCmd.Parameters[$"@{fullName}"].Value = file.FullName;
-					insertCmd.Parameters[$"@{name}"].Value = file.Name;
-					insertCmd.Parameters[$"@{length}"].Value = file.Length;
-					insertCmd.Parameters[$"@{creationTimeUtc}"].Value = file.CreationTimeUtc.ToString("o"); // ISO 8601 format
-					insertCmd.Parameters[$"@{lastWriteTimeUtc}"].Value = file.LastWriteTimeUtc.ToString("o");
-					insertCmd.Parameters[$"@{status}"].Value = "";
-
-					insertCount += insertCmd.ExecuteNonQuery();
-				}
-				var databaseSyntax = isPortable ? " on SQLite database" : "";
-
-				// Prepare table schema description for the status message.
-				var statusText = $@"Table '{tableName}' created{databaseSyntax} with schema:\r\n {schema}";
-				// Return the number of files inserted along with the table schema description.
-				return new OperationResult<int>(insertCount, 0, statusText);
 			}
 			catch (Exception ex)
 			{

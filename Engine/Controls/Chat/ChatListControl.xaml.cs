@@ -28,34 +28,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			ScriptingHandler.OnMessageAction += _ScriptingHandler_OnMessageAction;
 		}
 
-		public void SetDataItems(BindingList<MessageItem> messages, ChatSettings settings)
+		public void SetDataItems(TemplateItem item)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			if (Messages != null)
-				Messages.ListChanged -= DataItems_ListChanged;
-			Settings = settings;
-			Messages = messages;
-			Messages.ListChanged += DataItems_ListChanged;
+			Item = item;
+			if (Item.Messages != null)
+				Item.Messages.ListChanged -= DataItems_ListChanged;
+			Item.Messages.ListChanged += DataItems_ListChanged;
 			IsResetMessgesPending = !ScriptHandlerInitialized;
 			if (ScriptHandlerInitialized)
 				ControlsHelper.AppBeginInvoke(ResetWebMessages);
 		}
 
-		private ChatSettings Settings;
 		private bool IsResetMessgesPending;
 
 		private void ResetWebMessages()
 		{
 			InvokeScript($"DeleteMessages();");
-			foreach (var message in Messages)
+			var path = Global.GetPath(Item);
+			SetLocation(path + "\\");
+			foreach (var message in Item.Messages)
 			{
 				// Set message id in case data is bad and it is missing.
 				if (string.IsNullOrEmpty(message.Id))
 					message.Id = Guid.NewGuid().ToString("N");
 				InsertWebMessage(message, false);
 			}
-			SetWebSettings(Settings);
+			SetWebSettings(Item.Settings);
 		}
 
 		private void Tasks_ListChanged(object sender, ListChangedEventArgs e)
@@ -69,7 +69,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void SetTitle(string name)
 		{
-			InvokeScript($"SetTitle({name});");
+			var json = JsonSerializer.Serialize(new { Value = name });
+			InvokeScript($"SetTitle({json});");
+		}
+
+		public void SetLocation(string path)
+		{
+			var json = JsonSerializer.Serialize(new { Value = path });
+			InvokeScript($"SetLocation({json});");
 		}
 
 		public ChatSettings GetWebSettings()
@@ -98,7 +105,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void RemoveMessage(MessageItem message)
 		{
-			Messages.Remove(message);
+			Item.Messages.Remove(message);
 			InvokeScript($"DeleteMessage('{message.Id}');");
 		}
 
@@ -121,18 +128,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		private void DataItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.ListChangedType == ListChangedType.ItemAdded)
-				InsertWebMessage(Messages[e.NewIndex], true);
+				InsertWebMessage(Item.Messages[e.NewIndex], true);
 			if (e.ListChangedType == ListChangedType.ItemChanged)
 			{
 				var allowUpdate =
 					e.PropertyDescriptor.Name == nameof(MessageItem.Type) ||
 					e.PropertyDescriptor.Name == nameof(MessageItem.Updated);
 				if (allowUpdate)
-					UpdateWebMessage(Messages[e.NewIndex], false);
+					UpdateWebMessage(Item.Messages[e.NewIndex], false);
 			}
 		}
 
-		public BindingList<MessageItem> Messages { get; set; }
+		public TemplateItem Item { get; set; }
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 			=> UpdateUpdateButton();
@@ -278,7 +285,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 			var ids = (e[0] ?? "").Split('_');
 			var messageId = ids[0];
-			var message = Messages.FirstOrDefault(x => x.Id == messageId);
+			var message = Item.Messages.FirstOrDefault(x => x.Id == messageId);
 			switch (action)
 			{
 				case MessageAction.Remove:

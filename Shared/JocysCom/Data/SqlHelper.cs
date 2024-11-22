@@ -326,6 +326,7 @@ namespace JocysCom.ClassLibrary.Data
 		public string GetSqlOptions(string connectionString)
 		{
 			var options = "";
+			// Dispose calls conn.Close() internally.
 			using (var conn = new SqlConnection(connectionString))
 			{
 				var s = "";
@@ -359,7 +360,6 @@ namespace JocysCom.ClassLibrary.Data
 				using (var sqlDataReader1 = optionsSqlCommand.ExecuteReader(CommandBehavior.SequentialAccess))
 					while (sqlDataReader1.Read())
 						options += $"{sqlDataReader1[0]}\r\n";
-				// Dispose calls conn.Close() internally.
 			}
 			return options;
 		}
@@ -401,66 +401,58 @@ namespace JocysCom.ClassLibrary.Data
 			}
 			var conn = CreateConnection(cmd, cb.ConnectionString);
 			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			int rv = cmd.ExecuteNonQuery();
-			cmd.Dispose();
-			// Dispose calls conn.Close() internally.
-			conn.Dispose();
-			return rv;
+			try
+			{
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				int rv = cmd.ExecuteNonQuery();
+				return rv;
+			}
+			finally
+			{
+				cmd.Dispose();
+				conn.Dispose();
+			}
 		}
-
-		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-		//public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null, int? timeout = null)
-		//{
-		//	var cmd = new SqlCommand(cmdText);
-		//	cmd.CommandType = CommandType.Text;
-		//	return ExecuteNonQuery(connectionString, cmd, comment, timeout);
-		//}
 
 		public object ExecuteScalar(string connectionString, DbCommand cmd, string comment = null)
 		{
-			//var sql = ToSqlCommandString(cmd);
 			var conn = CreateConnection(cmd, connectionString);
 			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			// Returns first column of the first row.
-			var returnValue = cmd.ExecuteScalar();
-			cmd.Dispose();
-			// Dispose calls conn.Close() internally.
-			conn.Dispose();
-			return returnValue;
-		}
-
-		public IDataReader ExecuteReader(string connectionString, DbCommand cmd, string comment = null)
-		{
-			var conn = CreateConnection(cmd, connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			return cmd.ExecuteReader();
-		}
-
-		public T ExecuteDataSet<T>(string connectionString, DbCommand cmd, string comment = null) where T : DataSet
-		{
-			var conn = CreateConnection(cmd, connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			var ds = Activator.CreateInstance<T>();
-			using (var reader = cmd.ExecuteReader())
+			try
 			{
-				do
-				{
-					var dataTable = new DataTable();
-					dataTable.Load(reader);
-					ds.Tables.Add(dataTable);
-				}
-				while (!reader.IsClosed && reader.NextResult());
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				// Returns first column of the first row.
+				var returnValue = cmd.ExecuteScalar();
+				return returnValue;
 			}
-			cmd.Dispose();
-			conn.Dispose();
+			finally
+			{
+				cmd.Dispose();
+				conn.Dispose(); // Dispose calls conn.Close() internally
+			}
+		}
+
+		public T ExecuteDataSet<T>(string connectionString, DbCommand cmd, string comment = null) where T : DataSet, new()
+		{
+			var ds = new T();
+			using (var conn = CreateConnection(cmd, connectionString))
+			{
+				cmd.Connection = conn;
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				using (var reader = cmd.ExecuteReader())
+				{
+					do
+					{
+						var dataTable = new DataTable();
+						dataTable.Load(reader);
+						ds.Tables.Add(dataTable);
+					}
+					while (!reader.IsClosed && reader.NextResult());
+				}
+			}
 			return ds;
 		}
 
@@ -499,21 +491,28 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			var list = new List<T>();
 			var props = typeof(T).GetProperties().ToDictionary(x => x.Name, x => x);
-			var reader = ExecuteReader(connectionString, cmd, comment);
-			while (reader.Read())
+			using (var conn = CreateConnection(cmd, connectionString))
 			{
-				var item = Activator.CreateInstance<T>();
-				for (int i = 0; i < reader.FieldCount; i++)
+				cmd.Connection = conn;
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				using (var reader = cmd.ExecuteReader())
 				{
-					var name = reader.GetName(i);
-					var value = reader.GetValue(i);
-					var property = props[name];
-					if (property != null)
-						property.SetValue(item, reader.IsDBNull(i) ? null : value, null);
+					while (reader.Read())
+					{
+						var item = Activator.CreateInstance<T>();
+						for (int i = 0; i < reader.FieldCount; i++)
+						{
+							var name = reader.GetName(i);
+							var value = reader.GetValue(i);
+							if (props.TryGetValue(name, out var property))
+								property.SetValue(item, reader.IsDBNull(i) ? null : value, null);
+						}
+						list.Add(item);
+					}
 				}
-				list.Add(item);
 			}
-			return null;
+			return list;
 		}
 
 		#endregion

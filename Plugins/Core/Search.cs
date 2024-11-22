@@ -267,47 +267,56 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			var results = new List<IndexedFileInfo>();
 			string connectionString = @"Provider=Search.CollatorDSO;Extended Properties='Application=Windows';";
-
 			using (var connection = new OleDbConnection(connectionString))
 			{
 				var queryString = GetSqlCommand(query, parameters);
-				var command = new OleDbCommand(queryString, connection);
-				//foreach (var parameter in parameters)
-				//{
-				//	command.Parameters.Add(parameter);
-				//}
-
-				try
+				using (var command = new OleDbCommand(queryString, connection))
 				{
-					connection.Open();
-					var reader = command.ExecuteReader();
+					// If parameters are being used, add them to the command
+					// command.Parameters.AddRange(parameters.ToArray());
 
-					while (reader.Read())
+					try
 					{
-						var fi = new IndexedFileInfo();
-						fi.ItemName = reader["System.ItemNameDisplay"] as string;
-						fi.ItemPathDisplay = reader["System.ItemPathDisplay"] as string;
-						fi.ItemTypeText = reader["System.ItemTypeText"] as string;
-						fi.FileExtension = reader["System.FileExtension"] as string;
-						var size = reader.IsDBNull(reader.GetOrdinal("System.Size"))
-							? null
-							: reader["System.Size"].ToString();
-						decimal decimalSize;
-						fi.Size = !decimal.TryParse(size, out decimalSize)
-							? 0
-							: (long)decimalSize;
-						fi.Author = reader["System.Author"] as string;
-						fi.Title = reader["System.Title"] as string;
-						fi.DateCreated = reader["System.DateCreated"] as DateTime?;
-						fi.DateModified = reader["System.DateModified"] as DateTime?;
-						fi.DateAccessed = reader["System.DateAccessed"] as DateTime?;
-						results.Add(fi);
+						connection.Open();
+						using (var reader = command.ExecuteReader())
+						{
+							while (reader.Read())
+							{
+								var fi = new IndexedFileInfo
+								{
+									ItemName = reader["System.ItemNameDisplay"] as string,
+									ItemPathDisplay = reader["System.ItemPathDisplay"] as string,
+									ItemTypeText = reader["System.ItemTypeText"] as string,
+									FileExtension = reader["System.FileExtension"] as string
+								};
+
+								var size = reader.IsDBNull(reader.GetOrdinal("System.Size"))
+									? null
+									: reader["System.Size"].ToString();
+
+								if (decimal.TryParse(size, out var decimalSize))
+								{
+									fi.Size = (long)decimalSize;
+								}
+								else
+								{
+									fi.Size = 0;
+								}
+
+								fi.Author = reader["System.Author"] as string;
+								fi.Title = reader["System.Title"] as string;
+								fi.DateCreated = reader["System.DateCreated"] as DateTime?;
+								fi.DateModified = reader["System.DateModified"] as DateTime?;
+								fi.DateAccessed = reader["System.DateAccessed"] as DateTime?;
+								results.Add(fi);
+							}
+						}
 					}
-					reader.Close();
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine($"An error occurred: {ex.Message}");
+					catch (Exception ex)
+					{
+						Console.WriteLine($"An error occurred: {ex.Message}");
+						// Optionally rethrow the exception or handle it as needed
+					}
 				}
 			}
 

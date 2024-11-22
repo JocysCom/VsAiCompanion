@@ -205,16 +205,32 @@ namespace JocysCom.VS.AiCompanion.Engine
 #if NETFRAMEWORK
 			var connection = db.Database.Connection;
 #else
-			var connection = db.Database.GetDbConnection();
+    var connection = db.Database.GetDbConnection();
 #endif
-			var command = connection.CreateCommand();
+			var shouldCloseConnection = false;
 			if (connection.State != ConnectionState.Open)
-				connection.Open();
-			command.CommandText = commandText;
-			foreach (var arg in args)
-				command.Parameters.Add(arg);
-			var rowsAffected = await command.ExecuteNonQueryAsync();
-			return rowsAffected;
+			{
+				await connection.OpenAsync();
+				shouldCloseConnection = true;
+			}
+			try
+			{
+				using (var command = connection.CreateCommand())
+				{
+					command.CommandText = commandText;
+					foreach (var arg in args)
+						command.Parameters.Add(arg);
+					var rowsAffected = await command.ExecuteNonQueryAsync();
+					return rowsAffected;
+				}
+			}
+			finally
+			{
+				if (shouldCloseConnection)
+				{
+					connection.Close();
+				}
+			}
 		}
 
 

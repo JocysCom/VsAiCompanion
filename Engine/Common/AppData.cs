@@ -7,6 +7,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows;
@@ -150,7 +151,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
-
 			var item = PanelSettingsList.FirstOrDefault(x => x.ItemType == type);
 			if (item == null)
 			{

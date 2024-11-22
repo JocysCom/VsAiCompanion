@@ -162,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				ChatMessageTabItem.IsSelected = true;
 			MessageOptionsTabItem.Visibility = isEdit && !isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MaskDrawingTabItem.Visibility = isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
-			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
+			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
 			SendButtonIcon.Content = isEdit
 				? Resources[Icons_Default.Icon_button_ok]
 				: Resources[Icons_Default.Icon_media_play];
@@ -179,7 +179,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				StopButton.Opacity = stopOp;
 			System.Diagnostics.Debug.WriteLine($"UpdateButtons: IsBusy={IsBusy}, isEdit={isEdit}, stopOp={stopOp}");
 			// Bind attachments.
-			var attachments = isEdit ? MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId)?.Attachments : null;
+			var attachments = isEdit ? MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId)?.Attachments : null;
 			if (AttachmentsPanel.CurrentItems != attachments)
 			{
 				AttachmentsPanel.CurrentItems = attachments;
@@ -205,7 +205,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
 			{
-				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
+				var message = MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId);
 				if (message != null)
 				{
 					message.Body = DataTextBox.PART_ContentTextBox.Text;
@@ -226,13 +226,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
 			{
-				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
+				var message = MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId);
 				if (message != null)
 				{
-					var messageIndex = MessagesPanel.Messages.IndexOf(message);
+					var messageIndex = MessagesPanel.Item.Messages.IndexOf(message);
 					if (messageIndex > -1)
 					{
-						var messagesToDelete = MessagesPanel.Messages.Skip(messageIndex).ToArray();
+						var messagesToDelete = MessagesPanel.Item.Messages.Skip(messageIndex).ToArray();
 						foreach (var messageToDelete in messagesToDelete)
 							MessagesPanel.RemoveMessage(messageToDelete);
 					}

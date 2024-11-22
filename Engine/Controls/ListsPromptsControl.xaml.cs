@@ -17,7 +17,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public ListsPromptsControl()
 		{
 			Global.Lists.Items.ListChanged += Global_Lists_Items_Items_ListChanged;
-			UpdateListNames();
 			InitializeComponent();
 		}
 
@@ -74,9 +73,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public ObservableCollection<ListInfo> PromptLists { get; set; } = new ObservableCollection<ListInfo>();
 
 		private void UpdateListNames()
+			=> UpdateListNames(new string[0]);
+
+		private void UpdateListNames(string[] extraPaths)
 		{
 			// Update ContextListNames
-			var names = AppHelper.GetListNames(Item?.Name, "Prompt");
+			var names = AppHelper.GetListNames(extraPaths, "Prompt");
 			CollectionsHelper.Synchronize(names, PromptLists);
 			OnPropertyChanged(nameof(PromptLists));
 		}
