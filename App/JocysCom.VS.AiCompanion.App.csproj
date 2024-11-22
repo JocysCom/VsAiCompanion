@@ -25,8 +25,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.14.49</AssemblyVersion>
-		<FileVersion>1.14.49</FileVersion>
+		<AssemblyVersion>1.15.6</AssemblyVersion>
+		<FileVersion>1.15.6</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
