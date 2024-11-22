@@ -5,11 +5,11 @@
 	/// </summary>
 	public class ImageInfo
 	{
-		/// <summary>Image relative path</summary>
-		public string Path { get; set; }
+		/// <summary>Image file name.</summary>
+		public string Name { get; set; }
 
-		/// <summary>Image full path</summary>
-		public string FullPath { get; set; }
+		/// <summary>Image full file name.</summary>
+		public string FullName { get; set; }
 		/// <summary>AI Prompt used to generate this image.</summary>
 
 		public string Prompt { get; set; }

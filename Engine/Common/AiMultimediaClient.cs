@@ -113,12 +113,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var jsonName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.json";
 			// Save image here.
 			var folderPath = Global.GetPath(Item);
-			var relativePath = Path.Combine(Item.Name, pngName);
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
 			var fullPath = Path.Combine(folderPath, pngName);
-			imageInfo.Path = relativePath;
-			imageInfo.FullPath = fullPath;
+			imageInfo.Name = pngName;
+			imageInfo.FullName = fullPath;
 			File.WriteAllBytes(fullPath, imageBytes);
 			// Get last messages from the chat list. It will be an assistant message.
 			var message = Item.Messages.Last();

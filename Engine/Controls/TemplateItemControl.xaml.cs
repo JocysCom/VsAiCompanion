@@ -545,9 +545,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var binding = new System.Windows.Data.Binding();
 				binding.Path = new PropertyPath(nameof(TemplateItemVisibility));
 				binding.Source = this;
+				ChatPanel.MessagesPanel.DataType = value;
 				ChatPanel.MessagePlaceholderTabItem.SetBinding(UIElement.VisibilityProperty, binding);
-
-
 				// Update the rest.
 				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
 				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);

@@ -32,13 +32,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			if (Item != null)
+			{
+				Item.PropertyChanged -= Item_PropertyChanged;
+				if (Item.Messages != null)
+					Item.Messages.ListChanged -= DataItems_ListChanged;
+			}
 			Item = item;
-			if (Item.Messages != null)
-				Item.Messages.ListChanged -= DataItems_ListChanged;
-			Item.Messages.ListChanged += DataItems_ListChanged;
+			if (Item != null)
+			{
+				Item.PropertyChanged += Item_PropertyChanged;
+				if (Item.Messages != null)
+					Item.Messages.ListChanged += DataItems_ListChanged;
+			}
 			IsResetMessgesPending = !ScriptHandlerInitialized;
 			if (ScriptHandlerInitialized)
 				ControlsHelper.AppBeginInvoke(ResetWebMessages);
+		}
+
+		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(TemplateItem.Name))
+			{
+				//ResetWebMessages();
+			}
 		}
 
 		private bool IsResetMessgesPending;
@@ -46,8 +63,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		private void ResetWebMessages()
 		{
 			InvokeScript($"DeleteMessages();");
-			var path = Global.GetPath(Item);
-			SetLocation(path + "\\");
+			var path = System.IO.Path.GetDirectoryName(Global.GetPath(Item));
+			SetItem(path, Item.Name);
 			foreach (var message in Item.Messages)
 			{
 				// Set message id in case data is bad and it is missing.
@@ -67,16 +84,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InvokeScript($"SetSettings({json});");
 		}
 
-		public void SetTitle(string name)
+		public void SetItem(string location, string name)
 		{
-			var json = JsonSerializer.Serialize(new { Value = name });
-			InvokeScript($"SetTitle({json});");
-		}
-
-		public void SetLocation(string path)
-		{
-			var json = JsonSerializer.Serialize(new { Value = path });
-			InvokeScript($"SetLocation({json});");
+			var json = JsonSerializer.Serialize(new
+			{
+				Location = location,
+				Name = name,
+			});
+			InvokeScript($"SetItem({json});");
 		}
 
 		public ChatSettings GetWebSettings()
@@ -139,7 +154,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
-		public TemplateItem Item { get; set; }
+		public TemplateItem Item
+		{
+			get => _Item;
+			set => _Item = value;
+		}
+		public TemplateItem _Item;
+
+		public ItemType DataType { get; set; }
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 			=> UpdateUpdateButton();

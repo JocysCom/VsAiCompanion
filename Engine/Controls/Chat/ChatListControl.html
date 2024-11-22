@@ -446,7 +446,7 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var ii = JSON.parse(a.Data);
-						var imageFullPath = LocationPath + ii.Path;
+						var imageFullPath = Item.Location + "\\" + Item.Name + "\\" + ii.Name;
 						var link = document.createElement("a");
 						link.href = "file://" + imageFullPath;
 						link.target = "_blank";
@@ -710,15 +710,12 @@
 				: targetDate.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
 		}
 
-		function SetTitle(item) {
-			document.title = item.Value;
-		}
+		var Item = {};
 
-		var LocationPath = null;
-
-		// Set location path path.
-		function SetLocation(item) {
-			LocationPath = item.Value;
+		// Set Item
+		function SetItem(item) {
+			Item = item;
+			document.title = item.Name;
 		}
 
 		function SetSettings(settings) {

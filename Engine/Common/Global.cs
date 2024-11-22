@@ -280,10 +280,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				iPath = FineTuningPath;
 			if (item is TemplateItem temp)
 			{
-				if (Tasks.Items.Contains(item))
-					iPath = TasksName;
-				if (Templates.Items.Contains(item))
-					iPath = TemplatesName;
+				var itemType = Templates.Items.Contains(item)
+					? iPath = TemplatesName
+					: iPath = TasksName;
 			}
 			if (iPath == null)
 				throw new NotImplementedException("Item not implemented");

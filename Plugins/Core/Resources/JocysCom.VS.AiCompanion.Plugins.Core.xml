@@ -1950,11 +1950,11 @@
             Image data.
             </summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Path">
-            <summary>Image relative path</summary>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Name">
+            <summary>Image file name.</summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.FullPath">
-            <summary>Image full path</summary>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.FullName">
+            <summary>Image full file name.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Prompt">
             <summary>AI Prompt used to generate this image.</summary>

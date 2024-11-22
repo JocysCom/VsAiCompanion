@@ -60,14 +60,18 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static string ReplaceWithEnvironmentVariables(string input)
 		{
-			var envVars = Environment.GetEnvironmentVariables()
+			var invalidPathChars = Path.GetInvalidPathChars();
+			var kvs = Environment.GetEnvironmentVariables()
 				.Cast<DictionaryEntry>()
-				.Where(env => Path.IsPathRooted(env.Value.ToString()))
-				.OrderByDescending(env => env.Value.ToString().Length)
+				.ToDictionary(x => x.Key, x => $"{x.Value}")
+				.Where(kv => !string.IsNullOrWhiteSpace(kv.Value))
+				.Where(kv => kv.Value.IndexOfAny(invalidPathChars) == -1)
+				.Where(kv => Path.IsPathRooted(kv.Value))
+				.OrderByDescending(kv => kv.Value.Length)
 				.ToList();
-			foreach (var envVar in envVars)
-				if (input.Contains(envVar.Value.ToString()))
-					input = input.Replace(envVar.Value.ToString(), $"%{envVar.Key}%");
+			foreach (var kv in kvs)
+				if (input.Contains(kv.Value))
+					input = input.Replace(kv.Value, $"%{kv.Key}%");
 			return input;
 		}
 
