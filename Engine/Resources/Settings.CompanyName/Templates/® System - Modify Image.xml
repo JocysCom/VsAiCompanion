@@ -1,5 +1,5 @@
 ﻿<TemplateItem>
-  <Name>® System - Generate Image</Name>
+  <Name>® System - Modify Image</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACpVW247aSBB9z1e0nJdEcoO7fY9gHjZaZfOwibRRPoBpGvDG2Mh4Bma+fs+pNojJ&#xD;
 RpEGCdxdXbdzqqrx4vi4VY9+ODZ9t4zMzERvFD7nfdsdl9FuHA8f5vPT6TQ7pbN+2M5tkiRz2Nyo&#xD;
@@ -29,7 +29,7 @@ OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD
   <Created>2024-02-25T21:17:42.836114+00:00</Created>
   <Modified>2024-02-25T21:17:42.836114+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-  <AiModel>dall-e-3</AiModel>
+  <AiModel>dall-e-2</AiModel>
   <Attachments />
   <Settings />
   <Messages>

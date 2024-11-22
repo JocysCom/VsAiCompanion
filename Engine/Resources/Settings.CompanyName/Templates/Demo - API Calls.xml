@@ -17,7 +17,7 @@ YF47AEUDGL7sXgqnShegVqnplD5s3XaTVMOA1OjMntGP5I2WRYz3mQCl7cGXgRrcfOS+p3YcJdBB&#xD
 GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <Created>2024-03-15T18:57:47.5123919+00:00</Created>
   <Modified>2024-03-15T19:01:23.5728186+00:00</Modified>
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <IsSystemInstructions>true</IsSystemInstructions>
@@ -47,7 +47,8 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>d72dab61488e49fbac8105714641dcea</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -72,7 +73,8 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>883eca92d2ed4abdba9b16a421c8e5bf</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_J2YR5nrgDRBWdYgtt4izoJDD)</Title>
@@ -215,7 +217,8 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>4a20b5c4ea8842fca035211465b19e74</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -240,7 +243,8 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>53363171a2f1463c819e28ae41e9ed29</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_okqaZN4rQSajc2qb5nU8qtwF)</Title>

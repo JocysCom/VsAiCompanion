@@ -125,7 +125,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		private List<string> _SkippedVersions;
 
 		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
-		public bool ShouldSerializeSkippedVersions() => !SkippedVersions.Any();
+		public bool ShouldSerializeSkippedVersions() => SkippedVersions.Any();
 
 		#region Helper Methods
 

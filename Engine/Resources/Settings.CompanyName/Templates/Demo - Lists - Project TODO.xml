@@ -17,10 +17,9 @@ YF47AEUDGL7sXgqnShegVqnplD5s3XaTVMOA1OjMntGP5I2WRYz3mQCl7cGXgRrcfOS+p3YcJdBB&#xD
 GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <Created>2024-03-15T18:57:47.5241104+00:00</Created>
   <Modified>2024-03-15T19:01:23.5758168+00:00</Modified>
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
@@ -39,6 +38,8 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
 Provide the list under the heading `TODO - Website Project`.</Body>
       <Attachments>
         <MessageAttachments>
+          <Id>cd09e3b57ef94b6db89845644a9ce5e7</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Profile - Project Manager</Title>
@@ -46,6 +47,8 @@ Provide the list under the heading `TODO - Website Project`.</Body>
           <Data>{"Description":"","Instructions":"Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.","Items":[{"Key":"Leadership skills","Value":"Ability to lead, motivate, and manage project teams.","Comment":""},{"Key":"Excellent communication","Value":"Strong verbal and written communication skills.","Comment":""},{"Key":"Problem-solving","Value":"Strong analytical and problem-solving abilities.","Comment":""},{"Key":"Organizational skills","Value":"High level of organizational and multitasking abilities.","Comment":""},{"Key":"Technical expertise","Value":"Understanding of software development processes and methodologies.","Comment":""},{"Key":"Budget management","Value":"Experience in budget planning and financial management.","Comment":""},{"Key":"Risk management","Value":"Ability to identify and mitigate project risks.","Comment":""},{"Key":"Decision-making","Value":"Capability to make informed decisions quickly and effectively.","Comment":""},{"Key":"Adaptability","Value":"Flexibility to adapt to new challenges and changes within projects.","Comment":""}],"Name":"Profile - Project Manager","IsEnabled":true}</Data>
         </MessageAttachments>
         <MessageAttachments>
+          <Id>64927077997c4504821386d9ae2c0dd4</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Role - Project Manager</Title>
@@ -144,6 +147,8 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
 3.  Insert missing subtasks.</Body>
       <Attachments>
         <MessageAttachments>
+          <Id>f4a70ac0f9fb4108b0967cd062942991</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Profile - Project Manager</Title>
@@ -151,6 +156,8 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
           <Data>{"Description":"","Instructions":"Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.","Items":[{"Key":"Leadership skills","Value":"Ability to lead, motivate, and manage project teams.","Comment":""},{"Key":"Excellent communication","Value":"Strong verbal and written communication skills.","Comment":""},{"Key":"Problem-solving","Value":"Strong analytical and problem-solving abilities.","Comment":""},{"Key":"Organizational skills","Value":"High level of organizational and multitasking abilities.","Comment":""},{"Key":"Technical expertise","Value":"Understanding of software development processes and methodologies.","Comment":""},{"Key":"Budget management","Value":"Experience in budget planning and financial management.","Comment":""},{"Key":"Risk management","Value":"Ability to identify and mitigate project risks.","Comment":""},{"Key":"Decision-making","Value":"Capability to make informed decisions quickly and effectively.","Comment":""},{"Key":"Adaptability","Value":"Flexibility to adapt to new challenges and changes within projects.","Comment":""}],"Name":"Profile - Project Manager","IsEnabled":true}</Data>
         </MessageAttachments>
         <MessageAttachments>
+          <Id>0425f8e1c2ba41e7b59be0e7682ef29c</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Role - Project Manager</Title>
@@ -168,7 +175,8 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>f873ac6226834caea9ae2f6df48c762c</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -198,7 +206,8 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>bbb24b7d95a24739a069ed30cbcc00c5</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_WvpekNEbxQ4ljPSvvQwPYvnK)</Title>
@@ -207,7 +216,8 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>b8ab05b3a968448b974bf5c28be6c2ba</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_NVt6Qm6h9anLfTPG8NRubqBw)</Title>

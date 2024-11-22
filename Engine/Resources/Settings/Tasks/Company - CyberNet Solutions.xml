@@ -39,6 +39,7 @@ rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD
       <Body>What is the slogan of the company?</Body>
       <Attachments>
         <MessageAttachments>
+          <Id>a192a556fa87407d9ccc06e4dc7ec28f</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
@@ -47,6 +48,7 @@ rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD
           <Data>{"Description":"","Instructions":"Utilize this list to align responses with the context of CyberNet Solutions GmbH's operations.","Items":[{"Key":"Name","Value":"CyberNet Solutions GmbH","Comment":""},{"Key":"Services","Value":"Cybersecurity risk assessments, IT security audits, and Cybersecurity training seminars","Comment":""},{"Key":"Location","Value":"Amselstraße 45, 10245 Berlin, Germany","Comment":""},{"Key":"Industry Sectors","Value":"Healthcare, Finance, IT, Education, and Manufacturing","Comment":""},{"Key":"Consultation Booking","Value":"Through email at sicherheit@securenet-tech.de or phone at +49 30 123456","Comment":""},{"Key":"Business Hours","Value":"Monday to Friday, 8:30am to 5pm CET","Comment":""},{"Key":"Custom Solutions","Value":"Yes, tailored to your specific business needs","Comment":""},{"Key":"Certifications","Value":"ISO/IEC 27001, GIAC, and TÜV","Comment":""},{"Key":"Data Security","Value":"Strict compliance with EU's GDPR, Encryption, Two-factor authentication, and Secure servers on-premises","Comment":""}],"Name":"Context - CyberNet Solutions","IsEnabled":true}</Data>
         </MessageAttachments>
         <MessageAttachments>
+          <Id>9a9be62ec1eb415688d1d96d4d385d32</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
@@ -55,6 +57,7 @@ rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD
           <Data>{"Description":"","Instructions":"This list captures key information about assistant , including preferences and interests. Apply this knowledge to personalize interactions, ensuring a more engaging and relevant experience.","IsReadOnly":true,"Items":[{"Key":"First Name","Value":"John","Comment":""},{"Key":"Last Name","Value":"Smith","Comment":""},{"Key":"Favorite Genres","Value":"Sci-Fi","Comment":"Especially enjoys Sci-Fi movies and books."},{"Key":"Hobby Interests","Value":"programming and gaming","Comment":""},{"Key":"Gender Identity","Value":"Male","Comment":""},{"Key":"Date of Birth","Value":"August 10, 1985","Comment":""},{"Key":"Music","Value":"Epic Movie music without vocals","Comment":"Finds instrumental scores from movies inspiring."},{"Key":"Hobbies","Value":"Programming, gaming","Comment":"Enjoys coding and playing video games in free time."},{"Key":"Learning Style","Value":"Hands-on and visual learning","Comment":"Prefers practical exercises and visual aids."},{"Key":"Communication","Value":"Prefers concise and clear information","Comment":""},{"Key":"Introvert/Extrovert","Value":"Introvert","Comment":""},{"Key":"Decision Style","Value":"Logic-based decision making","Comment":""},{"Key":"Stress Management","Value":"Engages in hobbies and listens to music","Comment":""},{"Key":"Optimist/Pessimist","Value":"Optimist","Comment":""},{"Key":"Languages","Value":"English (native)","Comment":""},{"Key":"Profession","Value":".NET Software Developer","Comment":""},{"Key":"Education","Value":"Bachelor's Degree in Computer Science","Comment":""},{"Key":"Goals","Value":"To become a senior software developer and contribute to significant projects","Comment":""},{"Key":"Important Events","Value":"Developer conference in December","Comment":""},{"Key":"Favorite Season/Holiday","Value":"Fall / Halloween","Comment":""},{"Key":"Favorite signature starting line","Value":"Kind regards"}],"Name":"Persona - John Smith","IsEnabled":true}</Data>
         </MessageAttachments>
         <MessageAttachments>
+          <Id>91b058ab2de143629ceb4b977f6602f5</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>

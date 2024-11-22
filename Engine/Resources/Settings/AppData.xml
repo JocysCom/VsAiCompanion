@@ -6,13 +6,31 @@
         <Message>Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</Message>
         <VoiceName>Andrew Multilingual</VoiceName>
         <VoiceLocale>en-US</VoiceLocale>
-        <Instructions>Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</Instructions>
+        <Instructions>1. Always answer with voice.&#xD;
+2. Define the language code (e.g., en-US) to ensure accurate pronunciation.&#xD;
+3. Analyse AI Function Call example below.&#xD;
+&#xD;
+```&#xD;
+"id": "call_POwvwaWv9O2v8M3wlFlQyfkO",&#xD;
+"name": "AISpeak",&#xD;
+"parameters": ("text": "&lt;speak&gt;&lt;prosody pitch="0%"&gt;The capital of England is London.&lt;/prosody&gt;&lt;/speak&gt;", "gender: "Male", "language": "en-US", "isSsml": true)&#xD;
+```&#xD;
+&#xD;
+4. Analyse AI Function Call Result report example below. This will indicate if call were successful:&#xD;
+&#xD;
+```&#xD;
+"RequestId":"1672d7e18c154f6c9209d8565604c53f",&#xD;
+"Success":true&#xD;
+```&#xD;
+&#xD;
+5. Generate and make call or calls in correct order. &#xD;
+6. Check AI Function Results at the end and in case some AI Function Calls were unsuccessful, try to make unsuccessful-remaining AI Functions Calls one additional time.&#xD;
+7. Include text version of your response.</Instructions>
       </AiAvatar>
       <UpdateSettings>
         <GitHubCompany>JocysCom</GitHubCompany>
         <GitHubProduct>VsAiCompanion</GitHubProduct>
         <CheckVersion>false</CheckVersion>
-        <IncludePrerelease>false</IncludePrerelease>
         <MinVersion>1.7.20.0</MinVersion>
         <GitHubAssetName>JocysCom.VS.AiCompanion.App.zip</GitHubAssetName>
         <FileNameInsideZip>JocysCom.VS.AiCompanion.App.exe</FileNameInsideZip>
@@ -22,7 +40,6 @@
         <GitHubCompany>jgm</GitHubCompany>
         <GitHubProduct>pandoc</GitHubProduct>
         <CheckVersion>false</CheckVersion>
-        <IncludePrerelease>false</IncludePrerelease>
         <MinVersion>3.1</MinVersion>
         <GitHubAssetName>windows-x86_64.zip</GitHubAssetName>
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
@@ -895,7 +912,14 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.SetDescription</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.SearchAndSaveFilesToTable</Id>
+        </PluginItem>
+        <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchAndSaveFilesToCsv</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -920,6 +944,14 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ModifyImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

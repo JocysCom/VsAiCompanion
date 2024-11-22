@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.UpdateControl;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -15,6 +16,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			var debugVisibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			UpdateTimePanel.Visibility = debugVisibility;
 		}
 
 		public void InitMain()

@@ -7,7 +7,6 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows;

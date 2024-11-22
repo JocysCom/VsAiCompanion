@@ -18,10 +18,9 @@ YF47AEUDGL7sXgqnShegVqnplD5s3XaTVMOA1OjMntGP5I2WRYz3mQCl7cGXgRrcfOS+p3YcJdBB&#xD
 GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <Created>2024-03-15T18:57:47.532254+00:00</Created>
   <Modified>2024-03-15T19:01:23.5783146+00:00</Modified>
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
@@ -45,7 +44,8 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>3d11f6565f7a421ab77fa98adb3e9f79</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -86,7 +86,8 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>4d901a1a842f48f98951d0f1b61dccda</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>
@@ -95,7 +96,8 @@ true&#xD;
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>be37a8a141f647be9d46106ef678ad18</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_2CDbH8X0MfEa0sfJtk6DTMt9)</Title>
@@ -104,7 +106,8 @@ true&#xD;
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>ebbe08db30924602a833d98fbe89164d</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_wyKFkoyJYe23VBCnRcieidtK)</Title>
@@ -113,7 +116,8 @@ true&#xD;
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>eef926cad23d468e853cbc4a28fab398</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_v6NkVKYaJ03bBwvcy6RR9Ftp)</Title>

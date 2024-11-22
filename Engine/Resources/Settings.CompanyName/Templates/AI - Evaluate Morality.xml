@@ -17,7 +17,7 @@ R14gzGCxkGJgzBaR4JiAe7bAOhG4PIQ+0AGmY7J3Q2ywQkGIQShAAAZ8pEmxxevaufRCNTEN4KUp&#xD
 OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
   <Created>2024-02-25T22:52:23.8085269+00:00</Created>
   <Modified>2024-09-16T21:18:02.9788614+01:00</Modified>
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Evaluate Morality</TemplateName>
   <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity (Note: If an action affects a large number of entities, evaluate individually and then sum to reflect the total impact). Use the "Universal Moral Quotient Formula" (UMQF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a Universal Moral Quotient (UMQ) or action moral value score for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `UMQ` calculations as shown in the example.&#xD;

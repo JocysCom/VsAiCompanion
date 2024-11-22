@@ -67,10 +67,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Mails dropdown.
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
 			UpdateMailAccounts();
+			// Show debug features.
 			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			// Show debug features.
 			MonitorInboxCheckBox.Visibility = debugVisibility;
 			UseTextToAudioCheckBox.Visibility = debugVisibility;
 			UseTextToVideoCheckBox.Visibility = debugVisibility;
