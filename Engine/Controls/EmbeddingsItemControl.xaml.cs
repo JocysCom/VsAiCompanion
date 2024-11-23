@@ -9,7 +9,6 @@ using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-using LiteDB;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

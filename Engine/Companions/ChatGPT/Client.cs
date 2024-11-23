@@ -474,17 +474,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var client = await GetAiClient();
 						var chatClient = client.GetChatClient(modelName);
 						var toolCalls = new List<ChatToolCall>();
+#if NETFRAMEWORK
+						bool allowStreaming = false;
+#else
+						bool allowStreaming = true;
+#endif
 						// If streaming  mode is enabled and AI model supports streaming then...
-						if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
+						if (allowStreaming && service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 						{
-							var result = chatClient.CompleteChatStreamingAsync(
-							messages, completionsOptions, cancellationTokenSource.Token);
-							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
-
 							var toolCallIdsByIndex = new Dictionary<int, string>();
 							var functionNamesByIndex = new Dictionary<int, string>();
 							var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
-
+							var result = chatClient.CompleteChatStreamingAsync(
+							messages, completionsOptions, cancellationTokenSource.Token);
+							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
+							// OpenAI libraries have issue with loading correct libraries in visual studio e.
 							while (await choicesEnumerator.MoveNextAsync())
 							{
 								var choice = choicesEnumerator.Current;

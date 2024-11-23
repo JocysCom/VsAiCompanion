@@ -7,7 +7,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LiteDB;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using Embeddings.Embedding;

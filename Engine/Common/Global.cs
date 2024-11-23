@@ -649,7 +649,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				catch (Exception ex)
 				{
-					MainControl.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
+					MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
 					return;
 				}
 			}

@@ -188,7 +188,7 @@
 						<Label Content="Errors" />
 					</StackPanel>
 				</TabItem.Header>
-				<JcControls:LogControl x:Name="ErrorsLogPanel" />
+				<controls:ErrorsControl x:Name="ErrorsPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

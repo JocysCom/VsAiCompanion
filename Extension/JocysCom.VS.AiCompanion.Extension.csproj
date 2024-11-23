@@ -3,8 +3,6 @@
   <PropertyGroup>
     <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <TargetFrameworkProfile />
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -17,7 +15,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JocysCom.VS.AiCompanion.Extension</RootNamespace>
     <AssemblyName>JocysCom.VS.AiCompanion.Extension</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
@@ -28,6 +27,9 @@
     <StartAction>Program</StartAction>
     <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/rootsuffix Exp</StartArguments>
+    <PlatformTarget>x64</PlatformTarget>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -88,20 +90,36 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <VSIXSourceItem Include="$(OutputPath)\Microsoft.Bcl.AsyncInterfaces.dll" />
-    <VSIXSourceItem Include="$(OutputPath)\System.Linq.Async.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\e_sqlite3.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\Microsoft.Bcl.AsyncInterfaces.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\Microsoft.Data.ConnectionUI.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\Microsoft.Data.SqlClient.SNI.x64.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\Microsoft.Win32.Registry.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\Newtonsoft.Json.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.batteries_v2.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.core.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Buffers.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Collections.Immutable.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Diagnostics.DiagnosticSource.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Memory.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Numerics.Vectors.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Reflection.Metadata.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Runtime.CompilerServices.Unsafe.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Security.AccessControl.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Security.Principal.Windows.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Dataflow.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Extensions.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.ValueTuple.dll" />
+	 <!-- Include all locally copied assemblies in the VSIX package -->
+	<VSIXSourceItem Include="@(ReferenceCopyLocalPaths)" />
   </ItemGroup>
   <ItemGroup>
+	<PackageReference Include="SQLitePCLRaw.core" />
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
-    <PackageReference Include="Microsoft.Build" />
-    <PackageReference Include="Microsoft.VisualStudio.SDK" ExcludeAssets="runtime">
-      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+	<PackageReference Include="Microsoft.Build" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" />
     <PackageReference Include="System.Linq.Async" />
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.Threading.Tasks.Extensions" />
@@ -117,6 +135,12 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj">
+      <Project>{FF25816B-107F-4816-8C36-34804F25DD0D}</Project>
+      <Name>JocysCom.VS.AiCompanion.DataClient</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
     <ProjectReference Include="..\Engine\JocysCom.VS.AiCompanion.Engine.csproj">
       <Project>{a3e5e666-890b-422b-908d-5bda2576fb92}</Project>
       <Name>JocysCom.VS.AiCompanion.Engine</Name>

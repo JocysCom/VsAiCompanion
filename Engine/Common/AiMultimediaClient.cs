@@ -111,18 +111,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var now = DateTime.Now;
 			var pngName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.png";
 			var jsonName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.json";
-			// Save image here.
+			// Gel locations and update image info.
 			var folderPath = Global.GetPath(Item);
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
-			var fullPath = Path.Combine(folderPath, pngName);
+			var pngFullPath = Path.Combine(folderPath, pngName);
+			var jsonFullPath = Path.Combine(folderPath, jsonName);
 			imageInfo.Name = pngName;
-			imageInfo.FullName = fullPath;
-			File.WriteAllBytes(fullPath, imageBytes);
+			imageInfo.FullName = pngFullPath;
+			// Write image as PNG.
+			File.WriteAllBytes(pngFullPath, imageBytes);
+			// Write image info as JSON.
+			var jsonContents = Client.Serialize(imageInfo);
+			File.WriteAllText(jsonFullPath, jsonContents);
 			// Get last messages from the chat list. It will be an assistant message.
 			var message = Item.Messages.Last();
-			var jsonContents = Client.Serialize(imageInfo);
-			File.WriteAllText(jsonName, jsonContents);
 			message.Attachments.Add(new MessageAttachments
 			{
 				Title = pngName,
@@ -132,7 +135,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			});
 			// Set date which will trigger update of the message on the chat web page.
 			message.Updated = DateTime.Now;
-			return fullPath;
+			return pngFullPath;
 		}
 
 		private void AddTaskToUI(Guid id, CancellationTokenSource cancellationTokenSource)

@@ -337,6 +337,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Delete => FindResource(nameof(main_Delete));
         public static string main_Description => FindResource(nameof(main_Description));
         public static string main_Edit => FindResource(nameof(main_Edit));
+        public static string main_Errors => FindResource(nameof(main_Errors));
+        public static string main_Assemblies => FindResource(nameof(main_Assemblies));
         public static string main_Enabled => FindResource(nameof(main_Enabled));
         public static string main_Help => FindResource(nameof(main_Help));
         public static string main_Id => FindResource(nameof(main_Id));

@@ -45,6 +45,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				// Set caption.
 				Caption = product;
 				_SplashScreenPanel = new SplashScreenControl();
+				_SplashScreenPanel.LogTextBox.Visibility = Visibility.Collapsed;
 				_SplashScreenPanel.Loaded += Splash_Loaded;
 				Content = _SplashScreenPanel;
 			}
@@ -52,7 +53,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				var message = ExceptionToText(ex);
 				_SplashScreenPanel.LoadingPanel.Visibility = System.Windows.Visibility.Collapsed;
-				_SplashScreenPanel.ErrorsTextBox.Text = message;
+				_SplashScreenPanel.LogTextBox.Text = message;
+				_SplashScreenPanel.LogTextBox.Visibility = Visibility.Visible;
 			}
 		}
 
@@ -73,7 +75,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 				catch (Exception ex)
 				{
 					var message = ExceptionToText(ex);
-					_SplashScreenPanel.ErrorsTextBox.Text = message;
+					_SplashScreenPanel.LogTextBox.Text = message;
+					_SplashScreenPanel.LogTextBox.Visibility = Visibility.Visible;
 				}
 				_SplashScreenPanel.LoadingPanel.Visibility = System.Windows.Visibility.Collapsed;
 			});

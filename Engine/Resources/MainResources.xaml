@@ -361,6 +361,8 @@
 	<sys:String x:Key="main_Delete">Delete</sys:String>
 	<sys:String x:Key="main_Description">Description</sys:String>
 	<sys:String x:Key="main_Edit">Edit</sys:String>
+	<sys:String x:Key="main_Errors">Errors</sys:String>
+	<sys:String x:Key="main_Assemblies">Assemblies</sys:String>
 	<sys:String x:Key="main_Enabled">Enabled</sys:String>
 	<sys:String x:Key="main_Help">Help</sys:String>
 	<sys:String x:Key="main_Id">Id</sys:String>

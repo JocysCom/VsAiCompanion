@@ -62,7 +62,6 @@
 		<PackageReference Include="DocumentFormat.OpenXml" />
 		<PackageReference Include="HtmlAgilityPack" />
 		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
-		<PackageReference Include="LiteDB" />
 		<PackageReference Include="NPOI" />
 		<PackageReference Include="PdfPig" />
 		<PackageReference Include="PDFtoImage" />
