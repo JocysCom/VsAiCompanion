@@ -293,15 +293,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:VS AI Companion"
-        "ProductCode" = "8:{D1BCDFC5-784B-4380-AAF7-9D9AA076F859}"
-        "PackageCode" = "8:{7AECF88F-BEA7-4BFB-9429-BC2DC3EDDDF3}"
+        "ProductCode" = "8:{4BD7643B-FDA3-45BA-B658-1A180E10327A}"
+        "PackageCode" = "8:{1810C9F2-4044-4679-97C1-199A844232C5}"
         "UpgradeCode" = "8:{8EAC34EB-107A-44B2-B4AF-067C6A4DBF80}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.14.38"
+        "ProductVersion" = "8:1.15.6"
         "Manufacturer" = "8:Jocys.com"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -843,7 +843,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_90818EF0549C45AAB30BB74A87941486"
             {
-            "SourcePath" = "8:..\\CustomActions\\obj\\Release\\net472\\JocysCom.VS.AiCompanion.Setup.CustomActions.dll"
+            "SourcePath" = "8:..\\CustomActions\\obj\\Debug\\net472\\JocysCom.VS.AiCompanion.Setup.CustomActions.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_112CB7875A044A408E77302D84754286"

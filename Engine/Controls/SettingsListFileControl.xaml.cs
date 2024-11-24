@@ -498,6 +498,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var items = ClipboardHelper.GetXmlSerializable<ISettingsListFileItem>(itemType);
 				foreach (var item in items)
 				{
+					// If items must be unique.
+					if (item is IHasGuid guidItem)
+					{
+						var hasItem = SourceItems.Cast<IHasGuid>().Any(x => x.Id == guidItem.Id);
+						if (hasItem)
+							guidItem.Id = Guid.NewGuid();
+					}
 					AppHelper.FixName(item, SourceItems);
 					InsertItem(item);
 				}
@@ -635,7 +642,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (DataType == ItemType.Task || DataType == ItemType.Template)
 				{
 					var ti = (TemplateItem)item;
-					var task = ClientHelper.GenerateResult(ti, SettingsSourceManager.TemplateGenerateTitleTaskName);
+					var template = string.IsNullOrEmpty(ti.GenerateTitleTemplate)
+						? SettingsSourceManager.TemplateGenerateTitleTaskName
+						: ti.GenerateTitleTemplate;
+					var task = ClientHelper.GenerateResult(ti, template);
 					// Assign task to property to make sure it is not garbage collected.
 					ti.GenerateTitleTask = task;
 				}

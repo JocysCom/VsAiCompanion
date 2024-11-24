@@ -10,7 +10,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Extension
@@ -45,6 +44,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				// Set caption.
 				Caption = product;
 				_SplashScreenPanel = new SplashScreenControl();
+				_SplashScreenPanel.LogTextBox.Visibility = Visibility.Collapsed;
 				_SplashScreenPanel.Loaded += Splash_Loaded;
 				Content = _SplashScreenPanel;
 			}
@@ -52,7 +52,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				var message = ExceptionToText(ex);
 				_SplashScreenPanel.LoadingPanel.Visibility = System.Windows.Visibility.Collapsed;
-				_SplashScreenPanel.ErrorsTextBox.Text = message;
+				_SplashScreenPanel.LogTextBox.Text = message;
+				_SplashScreenPanel.LogTextBox.Visibility = Visibility.Visible;
 			}
 		}
 
@@ -73,13 +74,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 				catch (Exception ex)
 				{
 					var message = ExceptionToText(ex);
-					_SplashScreenPanel.ErrorsTextBox.Text = message;
+					_SplashScreenPanel.LogTextBox.Text = message;
+					_SplashScreenPanel.LogTextBox.Visibility = Visibility.Visible;
 				}
 				_SplashScreenPanel.LoadingPanel.Visibility = System.Windows.Visibility.Collapsed;
 			});
 		}
 
-		public async Task LoadMainControlAsync()
+		public async System.Threading.Tasks.Task LoadMainControlAsync()
 		{
 			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 			// Subscribe to the AssemblyResolve event. This event is triggered when .NET runtime fails to find an assembly,

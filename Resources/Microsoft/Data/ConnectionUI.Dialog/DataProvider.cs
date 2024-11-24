@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data.Odbc;
 using System.Data.OleDb;
 using System.Data.OracleClient;
-using System.Data.SqlClient;
 
 namespace Microsoft.Data.ConnectionUI
 {

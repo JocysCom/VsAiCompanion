@@ -100,6 +100,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ExcludePatterns { get => _ExcludePatterns; set => SetProperty(ref _ExcludePatterns, string.IsNullOrWhiteSpace(value) ? "" : value); }
 		string _ExcludePatterns;
 
+		[DefaultValue(5)]
+		public int ProcessMaxErrors { get => _ProcessMaxErrors; set => SetProperty(ref _ProcessMaxErrors, value); }
+		int _ProcessMaxErrors;
+
 		#region ■ IAiServiceModel
 
 		[DefaultValue(null)]

@@ -64,14 +64,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (_Item != null)
 				{
 					_Item.PropertyChanged -= _Item_PropertyChanged;
-					UpdateTimePanel.Item = null;
+					UpdateTimePanel.Settings = null;
 				}
 				_Item = value;
 				if (_Item != null)
 				{
 					_Item.PropertyChanged += _Item_PropertyChanged;
 					ValuePasswordBox.Password = value.Value;
-					UpdateTimePanel.Item = value.UpdateTimeSettings;
+					UpdateTimePanel.Settings = value.UpdateTimeSettings;
 				}
 				OnPropertyChanged(nameof(Item));
 			}

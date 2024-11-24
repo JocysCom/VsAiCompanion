@@ -219,6 +219,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					search.SearchEmbeddingsCallback = null;
 				});
 			}
+			else if (classInstance is Database database)
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					var path = Global.GetPath(item);
+					// Map Text, Audio and Video converter methods.
+					database.GetDatabasesFolderPath = () => { return path; };
+					methodResult = await InvokeMethod(methodInfo, database, invokeParams, true, cancellationTokenSource.Token);
+					database.GetDatabasesFolderPath = null;
+				});
+			}
+
 			else if (classInstance is Multimedia mm)
 			{
 				await Global.MainControl.Dispatcher.Invoke(async () =>
@@ -228,12 +240,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 					// Map Text, Audio and Video converter methods.
 					mm.VideoToText = ai.VideoToText;
 					mm.GetTempFolderPath = AppHelper.GetTempFolderPath;
+					mm.GenerateImageCallback = ai.GenerateImageAsync;
+					mm.ModifyImageCallback = ai.ModifyImageAsync;
 					mm.GetStructuredImageAnalysisInstructions = () => Global.AppSettings.StructuredImageAnalysisInstructions;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
 					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, true, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
 					mm.VideoToText = null;
+					mm.ModifyImageCallback = null;
+					mm.GenerateImageCallback = null;
 					mm.GetTempFolderPath = null;
 					mm.AISpeakCallback = null;
 					ai.Item = null;
@@ -297,7 +313,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			var result = (methodResult is string s)
 				? ("text", s)
-				: ("text", Client.Serialize(methodResult));
+				: ("json", Client.Serialize(methodResult, true));
 			return result;
 		}
 

@@ -8,9 +8,8 @@ using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.DataClient.Common;
-using LiteDB;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -270,6 +269,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		FileProcessor _Scanner;
+		Plugins.Core.FileHelper _FileHelper;
 		Embeddings.EmbeddingsContext db;
 
 		private void ScanStartButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -299,8 +299,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		DateTime ScanStarted;
 		object AddAndUpdateLock = new object();
-		Ignore.Ignore ExcludePatterns;
-		Ignore.Ignore IncludePatterns;
 
 		async void ScanTask(object state)
 		{
@@ -323,13 +321,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var connectionString = SqlInitHelper.IsPortable(target)
 				? SqlInitHelper.PathToConnectionString(target)
 				: target;
-			Ignores.Clear();
+			_FileHelper = new Plugins.Core.FileHelper();
+			var globPatterns = new GlobPatterns(item.ExcludePatterns, item.IncludePatterns, item.UseGitIgnore);
 			_Scanner = new FileProcessor();
 			_Scanner.ProcessItem = _Scanner_ProcessItem;
-			_Scanner.FileFinder.IsIgnored = _Scanner_FileFinder_IsIgnored;
+			_Scanner.FileFinder.IsIgnored = (string parentPath, string filePath, long fileLength) =>
+			{
+				return globPatterns.IsIgnored(parentPath, filePath);
+			};
 			_Scanner.Progress += _Scanner_Progress;
-			ExcludePatterns = GetIgnoreFromText(item.ExcludePatterns);
-			IncludePatterns = GetIgnoreFromText(item.IncludePatterns);
 			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				MainTabControl.SelectedItem = LogTabPage;
@@ -372,63 +372,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		ConcurrentDictionary<string, Ignore.Ignore> Ignores = new ConcurrentDictionary<string, Ignore.Ignore>();
-
-		private bool _Scanner_FileFinder_IsIgnored(string parentPath, string filePath, long fileLength)
-		{
-			var relativePath = PathHelper.GetRelativePath(parentPath + "\\", filePath, false)
-				.Replace("\\", "/");
-			if (IncludePatterns?.IsIgnored(relativePath) == false)
-				return true;
-			if (ExcludePatterns?.IsIgnored(relativePath) == true)
-				return true;
-			var ignore = Ignores.GetOrAdd(parentPath, x => GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
-			if (ignore?.IsIgnored(relativePath) == true)
-				return true;
-			if (fileLength > 0)
-			{
-				// If can't read file then....
-				var fh = new Plugins.Core.FileHelper();
-				var result = fh.ReadFileAsPlainText(filePath);
-				var content = result?.Data;
-				if (string.IsNullOrWhiteSpace(content))
-					return true;
-			}
-			return false;
-		}
-
-		private Ignore.Ignore GetIgnoreFromText(string text)
-		{
-			var ignore = new Ignore.Ignore();
-			var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
-			var containsRules = false;
-			foreach (var line in lines)
-			{
-				if (string.IsNullOrWhiteSpace(line))
-					continue;
-				if (line.TrimStart().StartsWith("#"))
-					continue;
-				ignore.Add(line);
-				containsRules = true;
-			}
-			return containsRules ? ignore : null;
-		}
-
-		private Ignore.Ignore GetIgnoreFromFile(string path)
-		{
-			var fi = new FileInfo(path);
-			if (!fi.Exists)
-				return null;
-			var text = System.IO.File.ReadAllText(path);
-			return GetIgnoreFromText(text);
-		}
-
 		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)
 		{
 			//await Task.Delay(50);
+			var fi = (FileInfo)e.SubData;
 			try
 			{
-				var fi = (FileInfo)e.SubData;
+				// Skip empty files.
+				// Empty files will be deleted from the database.
+				if (fi.Length == 0)
+					return ProgressStatus.Skipped;
 				var processingState = await EmbeddingHelper.UpdateEmbedding(
 					Item,
 					db, fi.FullName,
@@ -438,9 +391,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
+				LogPanel.Add($"\r\nFile: {fi.FullName}\r\nError: {ex.Message}\r\n");
 				e.Exception = ex;
 				// Stop if too many exceptions.
-				if (fp.ProcessItemStates[ClassLibrary.ProgressStatus.Exception] > 5)
+				if (fp.ProcessItemStates[ClassLibrary.ProgressStatus.Exception] > Item.ProcessMaxErrors)
 					fp.IsStopping = true;
 				return ClassLibrary.ProgressStatus.Exception;
 			}
@@ -456,6 +410,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Global.MainControl.InfoPanel.RemoveTask(TaskName.Scan);
 					ScanStartButton.IsEnabled = true;
 					ScanStopButton.IsEnabled = false;
+					var logMessage = _Scanner.GetProcessCompletedMessage();
+					LogPanel.Add($"\r\nProcess Completed\r\n{logMessage}\r\n");
 				}
 			}));
 		}

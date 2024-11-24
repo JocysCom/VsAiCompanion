@@ -1,8 +1,8 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using LiteDB;
+using JocysCom.ClassLibrary.Files;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
@@ -22,82 +22,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Database path. Set by external program.
 		/// </summary>
 		public static string _databasePath;
-
-		/// <summary>
-		/// LiteDB file extension.
-		/// </summary>
-		public const string LitedbExt = ".litedb";
-
-		//public static Dictionary<string, string> GetIndexList() => new Dictionary<string, string>();
-
-		/// <summary>
-		/// Index a specific folder. Returns true if successful.
-		/// </summary>
-		/// <param name="indexName">Index name.</param>
-		/// <param name="folderPath">Folder path.</param>
-#if DEBUG
-		[RiskLevel(RiskLevel.Low)]
-#endif
-		public static bool IndexFolder(string indexName, string folderPath)
-		{
-			var di = new DirectoryInfo(_databasePath);
-			if (!di.Exists)
-				di.Create();
-
-			var connectionString = Path.Combine(_databasePath, indexName + LitedbExt);
-			using (var db = new LiteDatabase(connectionString))
-			{
-				var filesCollection = db.GetCollection<DocItem>(indexName);
-
-				// Ensure we have an index on the Path and Content fields
-				filesCollection.EnsureIndex(x => x.FullName);
-				filesCollection.EnsureIndex(x => x.ContentData);
-
-				foreach (var filePath in Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories))
-				{
-					var fileInfo = new FileInfo(filePath);
-					// Insert or update the file document in the LiteDB collection
-					var doc = new DocItem()
-					{
-						FullName = fileInfo.FullName,
-					};
-					doc.LoadFileInfo();
-					doc.LoadData();
-					filesCollection.Upsert(doc);
-				}
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Search an index and return search results.
-		/// </summary>
-		/// <param name="indexName">Index name.</param>
-		/// <param name="searchString">Search string.</param>
-#if DEBUG
-		[RiskLevel(RiskLevel.Low)]
-#endif
-		public static List<string> SearchIndex(string indexName, string searchString)
-		{
-			var di = new DirectoryInfo(_databasePath);
-			if (!di.Exists)
-				di.Create();
-			var connectionString = Path.Combine(_databasePath, indexName + LitedbExt);
-			using (var db = new LiteDatabase(connectionString))
-			{
-				var filesCollection = db.GetCollection<DocItem>(indexName);
-				// Perform the search within the file contents, as well as the file name
-				var results = filesCollection.Find(x =>
-					x.FullName.Contains(searchString) ||
-					x.ContentData.Contains(searchString));
-				// Print out the results
-				foreach (var file in results)
-				{
-					Console.WriteLine($"Found: {file.FullName}");
-				}
-				return new List<string>(results.Select(x => x.FullName));
-			}
-		}
 
 		/// <summary>
 		/// Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.
@@ -265,47 +189,56 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			var results = new List<IndexedFileInfo>();
 			string connectionString = @"Provider=Search.CollatorDSO;Extended Properties='Application=Windows';";
-
 			using (var connection = new OleDbConnection(connectionString))
 			{
 				var queryString = GetSqlCommand(query, parameters);
-				var command = new OleDbCommand(queryString, connection);
-				//foreach (var parameter in parameters)
-				//{
-				//	command.Parameters.Add(parameter);
-				//}
-
-				try
+				using (var command = new OleDbCommand(queryString, connection))
 				{
-					connection.Open();
-					var reader = command.ExecuteReader();
+					// If parameters are being used, add them to the command
+					// command.Parameters.AddRange(parameters.ToArray());
 
-					while (reader.Read())
+					try
 					{
-						var fi = new IndexedFileInfo();
-						fi.ItemName = reader["System.ItemNameDisplay"] as string;
-						fi.ItemPathDisplay = reader["System.ItemPathDisplay"] as string;
-						fi.ItemTypeText = reader["System.ItemTypeText"] as string;
-						fi.FileExtension = reader["System.FileExtension"] as string;
-						var size = reader.IsDBNull(reader.GetOrdinal("System.Size"))
-							? null
-							: reader["System.Size"].ToString();
-						decimal decimalSize;
-						fi.Size = !decimal.TryParse(size, out decimalSize)
-							? 0
-							: (long)decimalSize;
-						fi.Author = reader["System.Author"] as string;
-						fi.Title = reader["System.Title"] as string;
-						fi.DateCreated = reader["System.DateCreated"] as DateTime?;
-						fi.DateModified = reader["System.DateModified"] as DateTime?;
-						fi.DateAccessed = reader["System.DateAccessed"] as DateTime?;
-						results.Add(fi);
+						connection.Open();
+						using (var reader = command.ExecuteReader())
+						{
+							while (reader.Read())
+							{
+								var fi = new IndexedFileInfo
+								{
+									ItemName = reader["System.ItemNameDisplay"] as string,
+									ItemPathDisplay = reader["System.ItemPathDisplay"] as string,
+									ItemTypeText = reader["System.ItemTypeText"] as string,
+									FileExtension = reader["System.FileExtension"] as string
+								};
+
+								var size = reader.IsDBNull(reader.GetOrdinal("System.Size"))
+									? null
+									: reader["System.Size"].ToString();
+
+								if (decimal.TryParse(size, out var decimalSize))
+								{
+									fi.Size = (long)decimalSize;
+								}
+								else
+								{
+									fi.Size = 0;
+								}
+
+								fi.Author = reader["System.Author"] as string;
+								fi.Title = reader["System.Title"] as string;
+								fi.DateCreated = reader["System.DateCreated"] as DateTime?;
+								fi.DateModified = reader["System.DateModified"] as DateTime?;
+								fi.DateAccessed = reader["System.DateAccessed"] as DateTime?;
+								results.Add(fi);
+							}
+						}
 					}
-					reader.Close();
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine($"An error occurred: {ex.Message}");
+					catch (Exception ex)
+					{
+						Console.WriteLine($"An error occurred: {ex.Message}");
+						// Optionally rethrow the exception or handle it as needed
+					}
 				}
 			}
 
@@ -335,6 +268,69 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				query = query.Replace(parameter.ParameterName, parameterValue);
 			}
 			return query;
+		}
+
+		#endregion
+
+		#region Search Files
+
+		/// <summary>
+		/// Searches for files  and write search results as csv file.
+		/// </summary>
+		/// <param name="path">The file to write to.</param>
+		/// <param name="searchPath">Directory path to search for files.</param>
+		/// <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
+		/// <param name="allDirectories">Whether to search all subdirectories.</param>
+		/// <param name="includePatterns">Patterns to include.</param>
+		/// <param name="excludePatterns">Patterns to exclude.</param>
+		/// <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+		/// <returns>Number of files inserted.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public async Task<OperationResult<int>> SearchAndSaveFilesToCsv(
+			string path,
+			string searchPath,
+			string searchPattern,
+			bool allDirectories = false,
+			string includePatterns = null,
+			string excludePatterns = null,
+			bool useGitIgnore = false
+		)
+		{
+			var fullName = nameof(FileInfo.FullName);
+			var name = nameof(FileInfo.Name);
+			var length = nameof(FileInfo.Length);
+			var creationTime = nameof(FileInfo.CreationTime);
+			var lastWriteTime = nameof(FileInfo.LastWriteTime);
+			var fileHelper = new FileHelper();
+			// Find the files.
+			List<FileInfo> files;
+			try
+			{
+				await Task.Delay(0);
+				files = fileHelper.FindFiles(
+					searchPath,
+					searchPattern,
+					allDirectories,
+					includePatterns,
+					excludePatterns,
+					useGitIgnore
+				).OrderBy(x => x.FullName).ToList();
+				var table = new DataTable();
+				table.Columns.Add(fullName, typeof(string));
+				table.Columns.Add(name, typeof(string));
+				table.Columns.Add(length, typeof(long));
+				table.Columns.Add(creationTime, typeof(DateTime));
+				table.Columns.Add(lastWriteTime, typeof(DateTime));
+				foreach (var file in files)
+					table.Rows.Add(file.FullName, file.Name, file.Length, file.CreationTimeUtc, file.LastWriteTime);
+				var csvContents = CsvHelper.Write(table);
+				System.IO.File.WriteAllText(path, csvContents);
+				return new OperationResult<int>(files.Count());
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<int>(ex);
+			}
 		}
 
 		#endregion

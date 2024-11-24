@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Odbc;
 using System.Data.OleDb;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.Versioning;

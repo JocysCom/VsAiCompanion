@@ -29,6 +29,20 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
+		<TextBox
+			Name="LogTextBox"
+			Margin="0"
+			Padding="6"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			VerticalContentAlignment="Top"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+			BorderThickness="0"
+			FontFamily="Consolas"
+			IsReadOnly="false"
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			TextWrapping="Wrap" />
 		<StackPanel
 			x:Name="LoadingPanel"
 			Width="256"
@@ -62,11 +76,6 @@
 						Text="..." />
 				</StackPanel>
 			</Grid>
-			<TextBlock
-				x:Name="ErrorsTextBox"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				x:FieldModifier="public" />
 		</StackPanel>
 		<Border x:Name="MainBorder" x:FieldModifier="public" />
 	</Grid>

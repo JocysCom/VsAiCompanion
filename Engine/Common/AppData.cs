@@ -151,7 +151,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
-
 			var item = PanelSettingsList.FirstOrDefault(x => x.ItemType == type);
 			if (item == null)
 			{

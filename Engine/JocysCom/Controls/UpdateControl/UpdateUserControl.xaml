@@ -29,7 +29,6 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<local:UpdateTimeUserControl x:Name="UpdateTimePanel" Grid.Row="1" x:FieldModifier="public" />
 		<StackPanel
 			Grid.Row="2"
 			Grid.Column="0"
@@ -68,6 +67,11 @@
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
 					<Label Content="Install" />
+				</StackPanel>
+			</Button>
+			<Button Name="SkipVersionButton" MinWidth="75" Click="SkipVersionButton_Click">
+				<StackPanel>
+					<Label Content="Skip Version" />
 				</StackPanel>
 			</Button>
 			<StackPanel x:Name="ExtraButtonsPanel" Orientation="Horizontal">

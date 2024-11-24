@@ -244,59 +244,69 @@
 										Content="Automation" />
 								</StackPanel>
 							</GroupBox.Header>
-							<StackPanel
-								Grid.Row="2"
-								Grid.Column="2"
-								Grid.ColumnSpan="2"
-								Orientation="Horizontal">
-								<StackPanel VerticalAlignment="Top">
-									<CheckBox
-										Name="AutoSendCheckBox"
-										AutomationProperties.HelpText="{StaticResource main_Send_Task_on_Create_Help}"
-										AutomationProperties.Name="{StaticResource main_Send_Task_on_Create_Name}"
-										Content="{StaticResource main_Send_Task_on_Create_Name}"
-										IsChecked="{Binding AutoSend}" />
+							<StackPanel Orientation="Vertical">
+								<StackPanel Orientation="Horizontal">
+									<StackPanel>
+										<CheckBox
+											Name="AutoSendCheckBox"
+											AutomationProperties.HelpText="{StaticResource main_Send_Task_on_Create_Help}"
+											AutomationProperties.Name="{StaticResource main_Send_Task_on_Create_Name}"
+											Content="{StaticResource main_Send_Task_on_Create_Name}"
+											IsChecked="{Binding AutoSend}" />
+										<CheckBox
+											Name="AutoFormatMessageCheckBox"
+											Margin="0"
+											AutomationProperties.HelpText="{StaticResource main_Auto_Format_Message_Help}"
+											AutomationProperties.Name="{StaticResource main_Auto_Format_Message_Name}"
+											IsChecked="{Binding AutoFormatMessage}">
+											<TextBlock VerticalAlignment="Center">
+												<Run Text="Auto" />
+												<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
+											</TextBlock>
+										</CheckBox>
+									</StackPanel>
+									<StackPanel>
+										<CheckBox
+											Name="AutoRemoveCheckBox"
+											Margin="0,0,0,3"
+											VerticalAlignment="Bottom"
+											AutomationProperties.HelpText="{StaticResource main_Remove_Task_on_Complete_Help}"
+											AutomationProperties.Name="{StaticResource main_Remove_Task_on_Complete_Name}"
+											Content="{StaticResource main_Remove_Task_on_Complete_Name}"
+											IsChecked="{Binding AutoRemove}" />
+										<ComboBox
+											Name="MessageBoxOperationComboBox"
+											Width="138"
+											Margin="3,0,0,0"
+											VerticalAlignment="Top"
+											AutomationProperties.HelpText="{StaticResource main_Send_Message_Action_Help}"
+											AutomationProperties.Name="{StaticResource main_Send_Message_Action_Name}"
+											DisplayMemberPath="Value"
+											ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
+											SelectedValue="{Binding MessageBoxOperation}"
+											SelectedValuePath="Key" />
+									</StackPanel>
+								</StackPanel>
+
+								<StackPanel Orientation="Horizontal">
 									<CheckBox
 										Name="AutoGenerateTitleCheckBox"
 										AutomationProperties.HelpText="{StaticResource main_Auto_Generate_Title_Help}"
 										AutomationProperties.Name="{StaticResource main_Auto_Generate_Title_Name}"
 										Content="{StaticResource main_Auto_Generate_Title_Name}"
 										IsChecked="{Binding AutoGenerateTitle}" />
-									<CheckBox
-										Name="AutoFormatMessageCheckBox"
-										Margin="0"
-										AutomationProperties.HelpText="{StaticResource main_Auto_Format_Message_Help}"
-										AutomationProperties.Name="{StaticResource main_Auto_Format_Message_Name}"
-										IsChecked="{Binding AutoFormatMessage}">
-										<TextBlock VerticalAlignment="Center">
-											<Run Text="Auto" />
-											<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
-										</TextBlock>
-									</CheckBox>
-								</StackPanel>
-								<StackPanel>
-									<CheckBox
-										Name="AutoRemoveCheckBox"
-										Margin="0,0,0,3"
-										VerticalAlignment="Bottom"
-										AutomationProperties.HelpText="{StaticResource main_Remove_Task_on_Complete_Help}"
-										AutomationProperties.Name="{StaticResource main_Remove_Task_on_Complete_Name}"
-										Content="{StaticResource main_Remove_Task_on_Complete_Name}"
-										IsChecked="{Binding AutoRemove}" />
+									<Label Margin="0,3,3,3" Content="·" />
+									<Label Content="Teplate" />
 									<ComboBox
-										Name="MessageBoxOperationComboBox"
-										Width="138"
-										Margin="3,0,0,0"
-										VerticalAlignment="Top"
-										AutomationProperties.HelpText="{StaticResource main_Send_Message_Action_Help}"
-										AutomationProperties.Name="{StaticResource main_Send_Message_Action_Name}"
+										Name="GenerateTitleTemplateComboBox"
 										DisplayMemberPath="Value"
-										ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
-										SelectedValue="{Binding MessageBoxOperation}"
+										ItemsSource="{Binding GenerateTitleTemplates, ElementName=This}"
+										SelectedValue="{Binding GenerateTitleTemplate}"
 										SelectedValuePath="Key" />
 								</StackPanel>
 
 							</StackPanel>
+
 						</GroupBox>
 						<GroupBox
 							x:Name="InstructionsGroupBox"

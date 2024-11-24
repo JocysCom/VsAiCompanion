@@ -23,7 +23,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using YamlDotNet.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -61,7 +60,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			client.DefaultRequestHeaders.Accept.Clear();
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			var apiOrganizationId = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiOrganizationIdVaultItemId, Service.ApiOrganizationId);
-			client.DefaultRequestHeaders.Add("OpenAI-Organization", apiOrganizationId);
+			if (!string.IsNullOrEmpty(apiOrganizationId))
+				client.DefaultRequestHeaders.Add("OpenAI-Organization", apiOrganizationId);
 			return client;
 		}
 
@@ -97,8 +97,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public async Task<file> UploadFileAsync(string filePath, string purpose, CancellationToken cancellationToken = default)
 		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
+			//var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			//var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{filesPath}";
 			var client = await GetClient();
 			//client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			using (var content = new MultipartFormDataContent())
@@ -123,8 +124,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public async Task<T> DeleteAsync<T>(string path, string id, CancellationToken cancellationToken = default)
 		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
+			//var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			//var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{path}/{id}";
 			var client = await GetClient();
 			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
 			{
@@ -145,8 +147,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			string operationPath, object o = null, HttpMethod overrideHttpMethod = null, bool stream = false, CancellationToken cancellationToken = default
 		)
 		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
+			//var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			//var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{operationPath}";
 			var client = await GetClient();
 			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			HttpResponseMessage response;
@@ -280,7 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public event EventHandler MessageDone;
 
-		public async Task<OpenAIClient> GetAiClient(CancellationToken cancellationToken = default)
+		public async Task<OpenAIClient> GetAiClient(bool useLogger = true, CancellationToken cancellationToken = default)
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
@@ -296,21 +299,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			else
 			{
 				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
-				// Create HttpClient with HttpClientLogger handler
-				var logger = new HttpClientLogger(new HttpClientHandler());
-				// Create the HttpClient to use HttpClientLogger
-				var httpClient = new HttpClient(logger)
-				{
-					BaseAddress = endpoint,
-					Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
-				};
-				// Register the handler in the HttpPipeline (hypothetical approach)
-				var transport = new HttpClientPipelineTransport(httpClient);
 				//var pipeline = new HttpPipeline(transport);
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-				options.Transport = transport;
 				options.Endpoint = endpoint;
+				if (useLogger)
+				{
+					// Create HttpClient with HttpClientLogger handler
+					var logger = new HttpClientLogger(new HttpClientHandler());
+					// Create the HttpClient to use HttpClientLogger
+					var httpClient = new HttpClient(logger)
+					{
+						BaseAddress = endpoint,
+						Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
+					};
+					// Register the handler in the HttpPipeline (hypothetical approach)
+					var transport = new HttpClientPipelineTransport(httpClient);
+					options.Transport = transport;
+				}
 				client = new OpenAIClient(credential, options);
 				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				//prop.SetValue(client, false);
@@ -412,9 +418,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
 						temperature = (float)creativity,
 						stream = service.ResponseStreaming,
-						max_tokens = maxInputTokens,
+
 
 					};
+					if (service.ServiceType == ApiServiceType.OpenAI)
+						request.max_tokens = maxInputTokens;
 					var data = await GetAsync<text_completion_response>(completionsPath, request, null, service.ResponseStreaming, cancellationTokenSource.Token);
 					foreach (var dataItem in data)
 						foreach (var chatChoice in dataItem.choices)
@@ -466,17 +474,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var client = await GetAiClient();
 						var chatClient = client.GetChatClient(modelName);
 						var toolCalls = new List<ChatToolCall>();
+#if NETFRAMEWORK
+						bool allowStreaming = false;
+#else
+						bool allowStreaming = true;
+#endif
 						// If streaming  mode is enabled and AI model supports streaming then...
-						if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
+						if (allowStreaming && service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 						{
-							var result = chatClient.CompleteChatStreamingAsync(
-							messages, completionsOptions, cancellationTokenSource.Token);
-							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
-
 							var toolCallIdsByIndex = new Dictionary<int, string>();
 							var functionNamesByIndex = new Dictionary<int, string>();
 							var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
-
+							var result = chatClient.CompleteChatStreamingAsync(
+							messages, completionsOptions, cancellationTokenSource.Token);
+							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
+							// OpenAI libraries have issue with loading correct libraries in visual studio e.
 							while (await choicesEnumerator.MoveNextAsync())
 							{
 								var choice = choicesEnumerator.Current;
@@ -574,8 +586,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							model = modelName,
 							temperature = (float)creativity,
 							stream = service.ResponseStreaming,
-							max_tokens = maxInputTokens,
+
 						};
+						if (service.ServiceType == ApiServiceType.OpenAI)
+							request.max_tokens = maxInputTokens;
 						request.messages = new List<chat_completion_message>();
 						request.messages.AddRange(messagesToSend);
 						ControlsHelper.AppInvoke(() =>
@@ -705,28 +719,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			if (functions?.Any() != true)
 				return;
-			// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
-			// Otherwise, it starts outputting JSON instead of calling functions.
-			var serializer = new SerializerBuilder().Build();
-			var yaml = serializer.Serialize(functions.Select(f => new
+			var functionsList = functions.Select(f => new
 			{
 				f.id,
 				f.name,
 				parameters = PluginsManager.ConvertFromToolItem(PluginsManager.GetPluginFunctions().FirstOrDefault(x => x.Name == f.name)?.Mi, f)
-			}));
+			});
+
+			// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
+			// Otherwise, it starts outputting JSON instead of calling functions.
+			//var yaml = new SerializerBuilder().Build().Serialize(functionsList);
+			var json = Serialize(functionsList, true);
 			// Create message attachment first.
-			var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
-			fnCallAttachment.Title = "AI Functions Call";
+			//var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
+			var fnCallAttachment = new MessageAttachments(ContextType.None, "JSON", json);
+			fnCallAttachment.Title = "Function Calls";
 			// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
 			fnCallAttachment.SendType = AttachmentSendType.User;
 			assistantMessageItem.Attachments.Add(fnCallAttachment);
 			assistantMessageItem.IsAutomated = true;
 			messageItems.Add(assistantMessageItem);
+			// Note: Maybe ask AI asistant to record call in its reply.
 			// Add call to user message so that AI will see what functions it called.
-			var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
-			fnCallAttachmentUser.Title = "AI Functions Call";
-			fnCallAttachmentUser.SendType = AttachmentSendType.User;
-			functionResults.Add(fnCallAttachmentUser);
+			//var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
+			//var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "JSON", json);
+			//fnCallAttachmentUser.Title = "Functions Call";
+			//fnCallAttachmentUser.SendType = AttachmentSendType.User;
+			//functionResults.Add(fnCallAttachmentUser);
 			ControlsHelper.AppInvoke(() =>
 			{
 				item.Messages.Add(assistantMessageItem);
@@ -739,7 +758,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					var content = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
 					var fnResultAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
-					fnResultAttachment.Title = "AI Function Results (Id:" + function.id + ")";
+					fnResultAttachment.Title = "Function Results (Id:" + function.id + ")";
 					fnResultAttachment.SendType = AttachmentSendType.None;
 					functionResults.Add(fnResultAttachment);
 				}
@@ -772,6 +791,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (modelName.Contains("-128k") ||
 				modelName.StartsWith("o1") ||
 				modelName.Contains("gpt-4o") ||
+				modelName.Contains("grok") ||
 				(modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1000;
 			if (modelName.Contains("-64k"))
@@ -794,7 +814,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 2049; // Default for ada, babbage, curie, davinci
 			if (modelName.Contains("code-cushman-001"))
 				return 2048;
-			return 2049; // Default for other models
+			return 2048; // Default for other models
 		}
 
 		public static void SetModelFeatures(AiModel item)

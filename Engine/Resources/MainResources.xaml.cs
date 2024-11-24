@@ -182,6 +182,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_OverrideGroupName_Help => FindResource(nameof(main_OverrideGroupName_Help));
         public static string main_OverrideGroupFlag_Name => FindResource(nameof(main_OverrideGroupFlag_Name));
         public static string main_OverrideGroupFlag_Help => FindResource(nameof(main_OverrideGroupFlag_Help));
+        public static string main_ProcessMaxErrors_Name => FindResource(nameof(main_ProcessMaxErrors_Name));
+        public static string main_ProcessMaxErrors_Help => FindResource(nameof(main_ProcessMaxErrors_Help));
         public static string main_Comment => FindResource(nameof(main_Comment));
         public static string main_Key => FindResource(nameof(main_Key));
         public static string main_List_Description => FindResource(nameof(main_List_Description));
@@ -281,6 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_StructuredImageAnalysisInstructions => FindResource(nameof(main_StructuredImageAnalysisInstructions));
         public static string main_ContextFunctionRequestInstructionsText => FindResource(nameof(main_ContextFunctionRequestInstructionsText));
         public static string main_ContextFunctionResponseInstructionsText => FindResource(nameof(main_ContextFunctionResponseInstructionsText));
+        public static string main_AI_Speech => FindResource(nameof(main_AI_Speech));
         public static string main_AI_Avatar => FindResource(nameof(main_AI_Avatar));
         public static string main_Always_on_Top => FindResource(nameof(main_Always_on_Top));
         public static string main_AvatarItem_Instructions => FindResource(nameof(main_AvatarItem_Instructions));
@@ -334,6 +337,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Delete => FindResource(nameof(main_Delete));
         public static string main_Description => FindResource(nameof(main_Description));
         public static string main_Edit => FindResource(nameof(main_Edit));
+        public static string main_Errors => FindResource(nameof(main_Errors));
+        public static string main_Assemblies => FindResource(nameof(main_Assemblies));
         public static string main_Enabled => FindResource(nameof(main_Enabled));
         public static string main_Help => FindResource(nameof(main_Help));
         public static string main_Id => FindResource(nameof(main_Id));
@@ -359,6 +364,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Title_for_Attached_Context => FindResource(nameof(main_Title_for_Attached_Context));
         public static string main_Icon_for_Attached_Context => FindResource(nameof(main_Icon_for_Attached_Context));
         public static string main_Value => FindResource(nameof(main_Value));
+        public static string main_Image => FindResource(nameof(main_Image));
+        public static string main_Mask => FindResource(nameof(main_Mask));
         public static string main_Role => FindResource(nameof(main_Role));
         public static string main_Steps => FindResource(nameof(main_Steps));
         public static string main_EndGoal => FindResource(nameof(main_EndGoal));

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -250,6 +251,31 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		#endregion
+
+		#region File Finder
+
+		/// <summary>
+		///  Find files.
+		/// </summary>
+		public List<FileInfo> FindFiles(
+			string path, string searchPattern, bool allDirectories = false,
+			string includePatterns = null, string excludePatterns = null,
+			bool useGitIgnore = false)
+		{
+			// Setup file finder.
+			var fileFinder = new FileFinder();
+			var globPatterns = new GlobPatterns(excludePatterns, includePatterns, useGitIgnore);
+			fileFinder.IsIgnored = (string parentPath, string filePath, long fileLength) =>
+			{
+				return globPatterns.IsIgnored(parentPath, filePath);
+			};
+			// Do search.
+			var files = fileFinder.GetFiles(searchPattern, allDirectories, new[] { path });
+			return files;
+		}
+
+		#endregion
+
 
 	}
 }

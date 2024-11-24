@@ -15,7 +15,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -27,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// <summary>
 		/// Switch to Visual Studio Thread.
 		/// </summary>
-		public async Task SwitchToMainThreadAsync(CancellationToken cancellationToken)
+		public async System.Threading.Tasks.Task SwitchToMainThreadAsync(CancellationToken cancellationToken)
 		{
 			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 		}
@@ -1037,6 +1036,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		private static DocItem Convert(Solution2 o, bool includeContents)
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var solutionFilePath = o.FullName;
 			var docItem = new DocItem
 			{

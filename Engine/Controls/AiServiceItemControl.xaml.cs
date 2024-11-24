@@ -86,7 +86,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateControlVilibility()
 		{
-			var visibility = _Item?.ServiceType == ApiServiceType.None || _Item?.ServiceType == ApiServiceType.OpenAI
+			var visibility = _Item?.ServiceType == ApiServiceType.None
+				|| _Item?.ServiceType == ApiServiceType.OpenAI
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			ModelLabel.Visibility = visibility;

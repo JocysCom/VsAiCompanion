@@ -78,11 +78,13 @@ namespace JocysCom.ClassLibrary.IO
 							return;
 						// Do tasks.
 						var fullName = files[i].FullName;
-						if (IsIgnored?.Invoke(rootPath, fullName, files[i].Length) == true)
-							continue;
 						if (!fileList.Any(x => x.FullName == fullName))
 						{
-							fileList.Add(files[i]);
+							var isIgnored = IsIgnored?.Invoke(rootPath, fullName, files[i].Length) == true;
+							if (!isIgnored)
+							{
+								fileList.Add(files[i]);
+							}
 							var ev = FileFound;
 							if (ev is null)
 								continue;
@@ -94,7 +96,7 @@ namespace JocysCom.ClassLibrary.IO
 							e.SubIndex = fileList.Count - 1;
 							e.SubCount = 0;
 							e.SubData = fileList;
-							e.State = ProgressStatus.Updated;
+							e.State = isIgnored ? ProgressStatus.Ignored : ProgressStatus.Updated;
 							e.TopMessage = $"Scan Folder: {_Directories[(int)e.TopIndex].FullName}";
 							var file = fileList[(int)e.SubIndex];
 							var name = file.FullName;

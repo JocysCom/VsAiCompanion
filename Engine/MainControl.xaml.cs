@@ -3,9 +3,7 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,12 +37,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			Application.Current.MainWindow.Closing += MainWindow_Closing;
-			if (InitHelper.IsDebug)
-			{
-				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
-				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-			}
 			// Subscribe to the application-wide Activated and Deactivated events
 			Application.Current.Deactivated += Current_Deactivated;
 			UpdateMicrosoftControls();
@@ -161,62 +153,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			Global.RaiseOnTabControlSelectionChanged(sender, e);
 		}
-
-		#region Exceptions
-
-		List<(DateTime, Exception)> ExceptionsToDisplay = new List<(DateTime, Exception)>();
-
-
-
-		public void WriteException(Exception ex)
-		{
-			if (Dispatcher.HasShutdownStarted)
-				return;
-			// Use `BeginInvoke, becase `Invoke` would freeze here.
-			ControlsHelper.BeginInvoke(() =>
-			{
-				lock (ExceptionsToDisplay)
-				{
-					while (ExceptionsToDisplay.Count > 6)
-						ExceptionsToDisplay.RemoveAt(ExceptionsToDisplay.Count - 1);
-					var te = (DateTime.Now, ex);
-					ExceptionsToDisplay.Insert(0, te);
-					var strings = ExceptionsToDisplay
-						.Select(x => $"---- {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {new string('-', 64)}\r\n{ex}\r\b")
-						.ToList();
-					ErrorsLogPanel.Clear();
-					ErrorsLogPanel.Add(string.Join("\r\n", strings));
-				};
-			});
-		}
-
-		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
-			if (e is null)
-				return;
-			WriteException((Exception)e.ExceptionObject);
-		}
-
-		public void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-		{
-			if (e is null)
-				return;
-			WriteException(e.Exception);
-		}
-
-		/// <summary>
-		/// This is a "first chance exception", which means the debugger is simply notifying you
-		/// that an exception was thrown, rather than that one was not handled.
-		/// </summary>
-		public void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
-		{
-			if (e is null || e.Exception is null)
-				return;
-			WriteException(e.Exception);
-		}
-
-
-		#endregion
 
 		private void InfoPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{

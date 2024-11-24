@@ -7,5 +7,6 @@
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 </Project>

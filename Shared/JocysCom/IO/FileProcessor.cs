@@ -113,5 +113,19 @@ namespace JocysCom.ClassLibrary.IO
 			Report(e);
 		}
 
+		public string GetProcessCompletedMessage()
+		{
+			var states =
+				ProcessItemStates
+					.Where(x => x.Value > 0)
+					.Select(x => $"{x.Key}: {x.Value}")
+					.ToList();
+			var totalCount = ProcessItemStates.Sum(x => x.Value);
+			states.Add($"TOTAL: {totalCount}");
+			var logMessage = string.Join("\r\n", states);
+			var message = $"\r\nProcess Completed\r\n{logMessage}\r\n";
+			return message;
+		}
+
 	}
 }

@@ -193,6 +193,7 @@
 		.display-none {
 			display: none !important;
 		}
+
 	</style>
 	<style>
 
@@ -314,7 +315,7 @@
 			User: 2,
 		}
 
-		const AttachmentType = {
+		const ContextType = {
 			None: 0,
 			Clipboard: 1,
 			Selection: 2,
@@ -329,6 +330,7 @@
 			ErrorDocument: 1024,
 			Exception: 2048,
 			ExceptionDocuments: 4096,
+			Image: 8192,
 		}
 
 		function enumToString(value, enumObject) {
@@ -426,7 +428,7 @@
 				// Make sure characters like `<` or `>` are not treated as HTML element characters.
 				instructions = ConvertForDisplayAsHtml(instructions);
 				instructions = parseMarkdown(instructions);
-				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "");
+				var box = AddAttachmentBox(idPrefix + message.Id + "_instructions", "Instructions", instructions, "", false);
 				buttons += box.buttonHTML;
 				messageInstructionsHTML = box.panelHTML;
 			}
@@ -436,9 +438,27 @@
 				for (var i = 0; i < attachments.length; i++) {
 					var a = attachments[i];
 					var aData = "";
+					var displayPanelContent = false;
 					// If data use markdown then...
 					// Example: ```{Language}\r\n{Data}\r\n```
-					if (a.IsMarkdown) {
+					console.log("a.ContextType: "  + a.Type);
+					if (a.Type === ContextType.Image) {
+						displayPanelContent = true;
+						console.log(a.Data);
+						var ii = JSON.parse(a.Data);
+						var imageFullPath = Item.Location + "\\" + Item.Name + "\\" + ii.Name;
+						var link = document.createElement("a");
+						link.href = "file://" + imageFullPath;
+						link.target = "_blank";
+						var img = document.createElement('img');
+						img.alt = ii.Prompt;
+						img.style.width = Math.round(ii.Width / 2) + "px";
+						img.style.height = Math.round(ii.Height / 2) + "px";
+						img.src = imageFullPath;
+						link.appendChild(img);
+						aData = link.outerHTML;
+					}
+					else if (a.IsMarkdown) {
 						aData = (a.Data) ? a.Data : "";
 						aData = ConvertForDisplayAsHtml(aData);
 						aData = parseMarkdown(aData);
@@ -462,7 +482,7 @@
 					if (a.SendType === AttachmentSendType.User) {
 						aTitle += " ᵁ";
 					}
-					var box = AddAttachmentBox(message.Id + "_" + i, aTitle, aInstructions, aData);
+					var box = AddAttachmentBox(idPrefix + message.Id + "_" + a.Id, aTitle, aInstructions, aData, displayPanelContent, a.Type);
 					buttons += box.buttonHTML;
 					data += "\r\n\r\n" + box.panelHTML;
 				}
@@ -509,43 +529,57 @@
 			}
 		}
 
-		function AddAttachmentBox(attachmentId, title, instructions, data) {
+		/*
+			id = "{messageId}_{attachmentId}".
+		*/
+		function AddAttachmentBox(id, title, instructions, data, displayPanelContent, contextType) {
 			var showInstructions = (instructions) && instructions.trim().length > 0;
 			var showData = (data) && data.trim().length > 0;
 			// Return if nothing to show.
 			if (!showInstructions && !showData)
 				return { buttonHTML: "", panelHTML: "" };
-			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
-			panelHTML = panelHTML
-				.replace(/{Id}/g, attachmentId)
+			// Show hide attachment buttons.
+			var buttonHTML = document.getElementById("expandableBoxShowHideDataButtonTemplate").innerHTML
+				.replace(/{Id}/g, id)
+				.replace(/{Title}/g, title);
+
+			var titleButtonsHTML = "";
+			if (contextType === ContextType.Image) {
+				titleButtonsHTML = document.getElementById("expandableBoxImageButtonTemplate").innerHTML
+					.replace(/{Id}/g, id);
+			}
+			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML
+				.replace(/{Id}/g, id)
 				.replace(/{Title}/g, title)
+				.replace(/{PanelClass}/g, displayPanelContent ? "" : "display-none")
 				.replace(/{Instructions}/g, instructions)
 				.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
 				.replace(/{Data}/g, data)
-				.replace(/{DataClass}/g, showData ? "" : "display-none;")
-				.replace(/{TitleButtons}/g, "");
-			var buttonHTML = document.getElementById("expandableBoxButtonTemplate").innerHTML;
-			buttonHTML = buttonHTML
-				.replace(/{Id}/g, attachmentId)
-				.replace(/{Title}/g, title)
+				.replace(/{DataClass}/g, showData ? "" : "display-none")
+				.replace(/{TitleButtons}/g, titleButtonsHTML);
 			return { buttonHTML: buttonHTML, panelHTML: panelHTML };
 		}
 
-		// attachmentId = "{messageId}_{attachmentIndex}".
-		function AttachmentButton_Click(sender, attachmentId) {
-			sender.classList.add('clicked');
-			setTimeout(function () {
-				sender.classList.remove('clicked');
-			}, 500);
-			var element = document.getElementById(attachmentId + "_panel");
-			var button = document.getElementById(attachmentId + "_button");
+		/*
+			id = "{messageId}_{attachmentId}".
+		*/
+		function AttachmentButton_Click(sender, id) {
+			if (sender !== null) {
+				sender.classList.add('clicked');
+				setTimeout(function () {
+					sender.classList.remove('clicked');
+				}, 500);
+			}
+			var button = document.getElementById(id + "_button");
+			var panel = document.getElementById(id + "_panel");
 			// Toggle visibility
-			if (element.style.display === "none") {
-				element.style.display = "inline-block";
-				button.classList.add('expandable-button-visible');
+			var isPanelHidden = panel.classList.contains("display-none");
+			if (isPanelHidden) {
+				panel.classList.remove("display-none");
+				button.classList.add("expandable-button-visible");
 			} else {
-				element.style.display = "none";
-				button.classList.remove('expandable-button-visible');
+				panel.classList.add("display-none");
+				button.classList.remove("expandable-button-visible");
 			}
 		}
 
@@ -664,15 +698,6 @@
 			return document.activeElement && document.activeElement !== document.body;
 		}
 
-		function MessageAction(button, messageId, action) {
-			button.classList.add('clicked');
-			setTimeout(function () {
-				button.classList.remove('clicked');
-			}, 500);
-			var id = messageId.substr(idPrefix.length);
-			window.external.MessageAction(id, action, "");
-		}
-
 		function FormatDateTime(datetime) {
 			var currentDate = new Date();
 			var targetDate = new Date(datetime);
@@ -683,6 +708,14 @@
 			return isToday
 				? targetDate.toLocaleTimeString([], { timeStyle: 'short' })
 				: targetDate.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+		}
+
+		var Item = {};
+
+		// Set Item
+		function SetItem(item) {
+			Item = item;
+			document.title = item.Name;
 		}
 
 		function SetSettings(settings) {
@@ -774,13 +807,20 @@
 			}).replace(/-/g, "");
 		}
 
-		function CodeActionButton_Click(button, codeId, action) {
+		function MessageAction(button, id, action) {
 			button.classList.add('clicked');
 			setTimeout(function () {
 				button.classList.remove('clicked');
 			}, 500);
-			var panel = document.getElementById(codeId + "_data");
-			window.external.MessageAction("", action, panel.innerText);
+			if (action == 'DataCopy' || action == 'DataApply') {
+				// id = "{idPrefix}_{randomGuid}"
+				var panel = document.getElementById(id + "_data");
+				window.external.MessageAction("", action, panel.innerText);
+			} else {
+				// id = "{idPrefix}_{messageId}[_{attachmentId}]"
+				var messageId = id.substr(idPrefix.length);
+				window.external.MessageAction(messageId, action, "");
+			}
 		}
 
 		function parseMarkdown(body, boxedCode) {
@@ -799,14 +839,14 @@
 				spacesRx = new RegExp("\\s+</code>", "g")
 				html = html.replace(spacesRx, "</code>");
 				if (boxedCode) {
-					var id = generateGUID();
+					var id = "rnd_" + generateGUID();
 					var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
 					buttonHTML = buttonHTML
-						.replace(/{Id}/g, idPrefix + id);
+						.replace(/{Id}/g, id);
 					var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
 					panelHTML = panelHTML
 						.replace("display: none;", "")
-						.replace(/{Id}/g, idPrefix + id)
+						.replace(/{Id}/g, id)
 						.replace(/{Title}/g, lang)
 						.replace(/{Instructions}/g, "aaa")
 						.replace(/{InstructionsClass}/g, "display-none")
@@ -875,16 +915,22 @@
 					Date: new Date().setMinutes(i),
 					Body: messageType[i % 6] + "(" + i + ")" + " messsage. ` test <> test ` \r\n" + codeText,
 					BodyInstructions: "Instructions included at the start of every message.",
-					DataType: AttachmentType.Selection,
 					Data: codeText,
 					Attachments: [
 						{
 							Title: "Data to Process",
 							Instructions: "aaa",
-							Type: AttachmentType.Selection,
+							Type: ContextType.Selection,
 							Data: "```csharp\r\nvar x = 1 + y;\r\n```",
 							IsMarkdown: true,
-						}
+						},
+						{
+							Title: "Image",
+							Instructions: "",
+							Type: ContextType.Image,
+							Data: "{ \"Path\": \"image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 1024, \"Height\": 1024}",
+							IsMarkdown: false,
+						},
 					]
 				}
 				InsertMessage(message);
@@ -895,48 +941,53 @@
 	</script>
 </head>
 <body>
-	<!-- Buttons that will be displayed in the title above the Markdown code block. -->
-	<div style="display: none" id="expandableBoxCopyButtonTemplate">
-		<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataCopy')">Copy</button>
-		<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
-	</div>
-	<div style="display: none" id="expandableBoxButtonTemplate">
-		<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
-			<span>{Title}</span>
-		</button>
-	</div>
-	<div id="expandableBoxPanelTemplate">
-		<div class="expandable-box" id="{Id}_panel" style="display: none;">
-			<div class="expandable-head">
-				<span class="expandable-head-text">{Title}</span>
-				<span class="expandable-head-indicator" style="display: none;">…</span>
-				<span class="expandable-head-buttons">{TitleButtons}</span>
-			</div>
-			<div class="expandable-body">
-				<div class="expandable-instructions {InstructionsClass}" id="{Id}_instructions">
-					{Instructions}
+	<div style="display: none">
+		<!-- Buttons that will be displayed in the title above the Markdown code block. -->
+		<div id="expandableBoxCopyButtonTemplate">
+			<button class="chat-button" onclick="MessageAction(this, '{Id}', 'DataCopy')">Copy</button>
+			<button class="chat-button" onclick="MessageAction(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
+		</div>
+		<div id="expandableBoxShowHideDataButtonTemplate">
+			<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
+				<span>{Title}</span>
+			</button>
+		</div>
+		<div id="expandableBoxImageButtonTemplate">
+			<button class="chat-button item-{Automated}" style="display: none;" onclick="MessageAction(this, '{Id}', 'EditAttachment')" title="Edit" aria-label="Edit">✎</button>
+		</div>
+		<div id="expandableBoxPanelTemplate">
+			<div class="expandable-box {PanelClass}" id="{Id}_panel" style="display: inline-block;">
+				<div class="expandable-head">
+					<span class="expandable-head-text">{Title}</span>
+					<!--<span class="expandable-head-indicator" style="display: none;">…</span>-->
+					<span class="expandable-head-buttons">{TitleButtons}</span>
 				</div>
-				<div class="expandable-data {DataClass}" id="{Id}_data">
-					{Data}
+				<div class="expandable-body">
+					<div class="expandable-instructions {InstructionsClass}" id="{Id}_instructions">
+						{Instructions}
+					</div>
+					<div class="expandable-data {DataClass}" id="{Id}_data">
+						{Data}
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div style="display: none" id="messageTemplate">
-		<div class="chat-container color-{Type}" id="{Id}">
-			<div class="chat-user icon-{Type} item-{Automated}"></div>
-			<div class="chat-message color-{Type}">
-				<div class="chat-message-head">
-					<span class="chat-date">{Date}</span>
-					<button class="chat-button chat-button-red" onclick="MessageAction(this, '{Id}', 'Remove')" title="Remove" aria-label="Remove">❌</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')" title="Use" aria-label="Use">📥</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')" title="Edit" aria-label="Edit">✎</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')" title="Copy" aria-label="Copy">📄</button>
-					<button class="chat-button item-{Automated} chat-button-green regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;" title="Regenerate" aria-label="Regenerate">🔃</button>
-					{Buttons}
+		<div id="messageTemplate">
+			<div class="chat-container color-{Type}" id="{Id}">
+				<div class="chat-user icon-{Type} item-{Automated}"></div>
+				<div class="chat-message color-{Type}">
+					<div class="chat-message-head">
+						<span class="chat-date">{Date}</span>
+						<button class="chat-button chat-button-red" onclick="MessageAction(this, '{Id}', 'Remove')" title="Remove" aria-label="Remove">❌</button>
+						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')" title="Use" aria-label="Use">📥</button>
+						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')" title="Edit" aria-label="Edit">✎</button>
+						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')" title="Copy" aria-label="Copy">📄</button>
+						<button class="chat-button item-{Automated} chat-button-green regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;" title="Regenerate" aria-label="Regenerate">🔃</button>
+						{Buttons}
+					</div>
+					<div class="chat-message-body {BodyHide}">{Body}</div>
+					<div class="chat-message-data {DataHide}">{Data}</div>
 				</div>
-				<div class="chat-message-body {BodyHide}">{Body}</div>
-				<div class="chat-message-data {DataHide}">{Data}</div>
 			</div>
 		</div>
 	</div>

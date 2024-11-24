@@ -28,7 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			//SqlInitHelper.AddDbProviderFactory(System.Data.Odbc.OdbcFactory.Instance);
 			//SqlInitHelper.AddDbProviderFactory(System.Data.OleDb.OleDbFactory.Instance);
 			//SqlInitHelper.AddDbProviderFactory(System.Data.OracleClient.OracleClientFactory.Instance);
-			SqlInitHelper.AddDbProviderFactory(System.Data.SqlClient.SqlClientFactory.Instance);
+			SqlInitHelper.AddDbProviderFactory(Microsoft.Data.SqlClient.SqlClientFactory.Instance);
 			dcd.DataSources.Add(DataSource.SqlDataSource);
 			dcd.SelectedDataSource = DataSource.SqlDataSource;
 			dcd.SelectedDataProvider = DataProvider.SqlDataProvider;

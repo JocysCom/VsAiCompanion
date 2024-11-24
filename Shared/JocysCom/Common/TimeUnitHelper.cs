@@ -56,6 +56,30 @@ namespace JocysCom.ClassLibrary
 			}
 		}
 
+		/// <summary>GetTime Span.</summary>
+		public static TimeSpan GetInterval(int count, TimeUnitType unit = TimeUnitType.Day)
+		{
+			switch (unit)
+			{
+				case TimeUnitType.Millisecond:
+					return new TimeSpan(0, 0, 0, 0, count);
+				case TimeUnitType.Second:
+					return new TimeSpan(0, 0, 0, count, 0);
+				case TimeUnitType.Minute:
+					return new TimeSpan(0, 0, count, 0, 0);
+				case TimeUnitType.Hour:
+					return new TimeSpan(0, count, 0, 0, 0);
+				case TimeUnitType.Day:
+					return new TimeSpan(count, 0, 0, 0);
+				case TimeUnitType.Week:
+					return new TimeSpan(count * 7, 0, 0, 0);
+				case TimeUnitType.Fortnight:
+					return new TimeSpan(count * 14, 0, 0, 0);
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
 		/// <summary>
 		/// Add months.
 		/// </summary>

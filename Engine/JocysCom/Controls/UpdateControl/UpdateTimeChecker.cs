@@ -1,6 +1,6 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +9,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 	/// <summary>
 	/// Class responsible for managing update checks based on timing settings.
 	/// </summary>
-	public class UpdateTimeChecker : INotifyPropertyChanged
+	public class UpdateTimeChecker : NotifyPropertyChanged
 	{
 		public UpdateTimeChecker()
 		{
@@ -36,18 +36,39 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 					_Settings.PropertyChanged += Settings_PropertyChanged;
 				}
 				OnPropertyChanged();
-				RestartUpdateCheckTimer();
+				Start();
 			}
 		}
 
 		private Timer _updateCheckTimer;
+		private readonly object _timerLock = new object();
+
+		[DefaultValue(null)]
+		public string LastError { get => _LastError; set => SetProperty(ref _LastError, value); }
+		private string _LastError;
+
 
 		/// <summary>
 		/// Starts the timer that periodically checks if it's time to check for updates.
 		/// </summary>
 		public void Start()
 		{
-			StartUpdateCheckTimer();
+			Stop();
+			var settings = Settings;
+			if (settings == null || !settings.IsEnabled)
+				return;
+			// Calculate interval until the next update
+			var interval = settings.GetNextUpdate().Subtract(DateTime.Now);
+			if (interval <= TimeSpan.Zero)
+			{
+				// If the interval is negative or zero, check immediately
+				interval = TimeSpan.Zero;
+			}
+			lock (_timerLock)
+			{
+				// Initialize the timer to trigger once after the calculated interval
+				_updateCheckTimer = new Timer(UpdateCheckTimer_Tick, null, interval, Timeout.InfiniteTimeSpan);
+			}
 		}
 
 		/// <summary>
@@ -55,43 +76,39 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		/// </summary>
 		public void Stop()
 		{
-			StopUpdateCheckTimer();
-		}
-
-		private void StartUpdateCheckTimer()
-		{
-			StopUpdateCheckTimer();
-			if (Settings != null && Settings.IsEnabled)
+			lock (_timerLock)
 			{
-				var interval = GetTimerInterval();
-				_updateCheckTimer = new Timer(UpdateCheckTimer_Tick, null, TimeSpan.Zero, interval);
-			}
-		}
-
-		private void RestartUpdateCheckTimer()
-		{
-			StartUpdateCheckTimer();
-		}
-
-		private void StopUpdateCheckTimer()
-		{
-			if (_updateCheckTimer != null)
-			{
-				_updateCheckTimer.Dispose();
+				_updateCheckTimer?.Dispose();
 				_updateCheckTimer = null;
 			}
 		}
 
-		private TimeSpan GetTimerInterval()
-		{
-			// Calculate interval based on settings
-			// For this example, check every hour. Adjust as needed.
-			return TimeSpan.FromHours(1);
-		}
-
 		private void UpdateCheckTimer_Tick(object state)
 		{
-			CheckForUpdatesAsync();
+			lock (_timerLock)
+			{
+				if (_updateCheckTimer == null)
+					return;
+				CheckForUpdatesAsync();
+				// After checking for updates, reschedule the timer for the next update
+				ScheduleNextCheck();
+			}
+		}
+
+		private void ScheduleNextCheck()
+		{
+			if (_updateCheckTimer == null || Settings == null || !Settings.IsEnabled)
+				return;
+
+			// Calculate the interval until the next update
+			var interval = Settings.GetNextUpdate().Subtract(DateTime.Now);
+			if (interval <= TimeSpan.Zero)
+			{
+				// Prevent immediate rescheduling by setting a minimum interval.
+				interval = TimeSpan.FromSeconds(1);
+			}
+			// Reschedule the timer to trigger once after the new interval
+			_updateCheckTimer.Change(interval, Timeout.InfiniteTimeSpan);
 		}
 
 		/// <summary>
@@ -102,29 +119,30 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			await Task.Delay(0); // If you have any asynchronous operations
 			if (Settings?.IsEnabled == true && Settings.ShouldCheckForUpdates())
 			{
-				// Raise an event to notify listeners that it's time to update.
-				UpdateRequired?.Invoke(this, EventArgs.Empty);
-
-				// Update the LastUpdate time.
-				Settings.LastUpdate = DateTime.UtcNow;
+				try
+				{
+					// Raise an event to notify listeners that it's time to update.
+					UpdateRequired?.Invoke(this, EventArgs.Empty);
+					LastError = null;
+				}
+				catch (Exception ex)
+				{
+					LastError = ex.Message;
+				}
 			}
+			// Update the LastUpdate time.
+			Settings.LastUpdate = DateTime.UtcNow;
 		}
 
 		private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			// If the settings change, restart the timer to reflect new intervals.
-			RestartUpdateCheckTimer();
+			Start();
 		}
 
 		/// <summary>
 		/// Event raised when it's time to check for updates.
 		/// </summary>
 		public event EventHandler UpdateRequired;
-
-		#region INotifyPropertyChanged
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		#endregion
 	}
 }

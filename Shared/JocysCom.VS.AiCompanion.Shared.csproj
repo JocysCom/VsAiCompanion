@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
@@ -7,17 +6,17 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Title>Jocys.com AI Companion Shared Classes</Title>
-		<Description>Shared Classes for AI Companion.</Description>
 		<Copyright>Jocys.com</Copyright>
-		<Product>AI Companion Shared Classes</Product>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
+		<AssemblyVersion>1.15.6</AssemblyVersion>
+		<FileVersion>1.15.6</FileVersion>
+		<Title>Jocys.com AI Companion Shared Classes</Title>
+		<Description>Shared Classes for AI Companion.</Description>
+		<Product>AI Companion Shared Classes</Product>
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.14.38</AssemblyVersion>
-		<FileVersion>1.14.38</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -25,38 +24,30 @@
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
-
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="8.0.5" />
+		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Microsoft.Data.SqlClient" />
 	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
 	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.4" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<Reference Include="System.Net.Http" />
 		<Reference Include="System.Security" />
 		<Reference Include="System.Data.Entity" />
@@ -65,25 +56,19 @@
 		<Reference Include="System.configuration" />
 		<Reference Include="System.Web" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<None Include="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <Folder Include="JocysCom\Diagnostics\" />
+		<Folder Include="JocysCom\Diagnostics\" />
 	</ItemGroup>
-
 	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
 		<!-- Execute once for multiple builds -->
 	</Target>
-
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
 	</Target>
-
 </Project>

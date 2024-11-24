@@ -31,7 +31,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[Description("Custom AI Plugin")]
 		AiPlugin,
 
+
 		/*
+
+		/// <summary>
+		/// Google's Vertex AI service.
+		/// </summary>
+		[Description("Google Gemini (OpenAI)")]
+		GoogleGeminiOpenAI,
 
 		/// <summary>
 		/// Anthropic's Claude AI service.

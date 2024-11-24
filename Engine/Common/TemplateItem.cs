@@ -154,6 +154,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public Task GenerateIconTask;
 
+		[DefaultValue(SettingsSourceManager.TemplateGenerateTitleTaskName)]
+		public string GenerateTitleTemplate { get => _GenerateTitleTemplate; set => SetProperty(ref _GenerateTitleTemplate, value); }
+		string _GenerateTitleTemplate;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeGenerateTitleTemplate() =>
+			!string.IsNullOrEmpty(GenerateTitleTemplate) &&
+			GenerateTitleTemplate != SettingsSourceManager.TemplateGenerateTitleTaskName;
+
 		[DefaultValue(false)]
 		public bool AutoGenerateTitle { get => _AutoGenerateTitle; set => SetProperty(ref _AutoGenerateTitle, value); }
 		bool _AutoGenerateTitle;
@@ -520,6 +529,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_VideoToText)]
 		public string TemplateVideoToText { get => _TemplateVideoToText; set => SetProperty(ref _TemplateVideoToText, value); }
 		string _TemplateVideoToText;
+
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_GenerateImage)]
+		public string TemplateGenerateImage { get => _TemplateGenerateImage; set => SetProperty(ref _TemplateGenerateImage, value); }
+		string _TemplateGenerateImage;
+
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_ModifyImage)]
+		public string TemplateModifyImage { get => _TemplateModifyImage; set => SetProperty(ref _TemplateModifyImage, value); }
+		string _TemplateModifyImage;
+
 
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToVideo)]
 		public string TemplateTextToVideo { get => _TemplateTextToVideo; set => SetProperty(ref _TemplateTextToVideo, value); }

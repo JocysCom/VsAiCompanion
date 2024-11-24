@@ -67,10 +67,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Mails dropdown.
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
 			UpdateMailAccounts();
+			// Show debug features.
 			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			// Show debug features.
 			MonitorInboxCheckBox.Visibility = debugVisibility;
 			UseTextToAudioCheckBox.Visibility = debugVisibility;
 			UseTextToVideoCheckBox.Visibility = debugVisibility;
@@ -79,6 +79,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
+			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
+		}
+
+		private void Global_Templates_Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			AppHelper.CollectionChanged(e, () =>
+			{
+				OnPropertyChanged(nameof(GenerateTitleTemplates));
+				OnPropertyChanged(nameof(PluginTemplates));
+			});
 		}
 
 		private void ChatPanel_MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -158,21 +168,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (string.IsNullOrEmpty(actionString))
 				return;
 			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
-			if (action != MessageAction.Use && action != MessageAction.Edit && action != MessageAction.Regenerate)
-				return;
-			var id = e[0];
-			var message = ChatPanel.MessagesPanel.Messages.FirstOrDefault(x => x.Id == id);
+			var ids = (e[0] ?? "").Split('_');
+			var messageId = ids[0];
+			var message = ChatPanel.MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == messageId);
 			if (message == null)
 				return;
 			if (action == MessageAction.Use)
 			{
 				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
 				ChatPanel.EditMessageId = null;
+				ChatPanel.EditAttachmentId = null;
 				ChatPanel.FocusChatInputTextBox();
 			}
-			if (action == MessageAction.Regenerate)
+			else if (action == MessageAction.Regenerate)
 			{
-				ChatPanel.EditMessageId = id;
+				ChatPanel.EditMessageId = messageId;
 				ChatPanel.FocusChatInputTextBox();
 				var voiceInstructions = GetVoiceInstructions();
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, message.Body, extraInstructions: voiceInstructions);
@@ -180,8 +190,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			else if (action == MessageAction.Edit)
 			{
 				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
-				ChatPanel.EditMessageId = id;
+				ChatPanel.EditMessageId = messageId;
 				ChatPanel.FocusChatInputTextBox();
+			}
+			else if (action == MessageAction.EditAttachment)
+			{
+				var attachmentId = ids[1];
+				ChatPanel.EditMessageId = messageId;
+				ChatPanel.EditAttachmentId = attachmentId;
+				ChatPanel.MaskDrawingTabItem.Visibility = Visibility.Visible;
 			}
 		}
 
@@ -326,22 +343,44 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
+		public Dictionary<string, string> GenerateTitleTemplates
+		{
+			get
+			{
+				var kv = Global.Templates.Items
+					.Where(x => x.Name.StartsWith(SettingsSourceManager.TemplateGenerateTitleTaskName))
+					.ToDictionary(x => x.Name, x => x.Name);
+				//kv.Add(null, "Default");
+				return kv;
+			}
+			set { }
+		}
+
 		public ObservableCollection<ListInfo> ContextListNames { get; set; } = new ObservableCollection<ListInfo>();
 		public ObservableCollection<ListInfo> ProfileListNames { get; set; } = new ObservableCollection<ListInfo>();
 		public ObservableCollection<ListInfo> RoleListNames { get; set; } = new ObservableCollection<ListInfo>();
 
 		private void UpdateListNames()
 		{
+			var name = Item?.Name;
+			if (string.IsNullOrEmpty(name))
+				UpdateListNames(new string[] { });
+			else
+				UpdateListNames(new string[] { name });
+		}
+
+		private void UpdateListNames(string[] extraPaths)
+		{
 			// Update ContextListNames
-			var names = AppHelper.GetListNames(Item?.Name, "Context", "Company", "Department");
+			var names = AppHelper.GetListNames(extraPaths, "Context", "Company", "Department");
 			CollectionsHelper.Synchronize(names, ContextListNames);
 			OnPropertyChanged(nameof(ContextListNames));
 			// Update ProfileListNames
-			names = AppHelper.GetListNames(Item?.Name, "Profile", "Persona");
+			names = AppHelper.GetListNames(extraPaths, "Profile", "Persona");
 			CollectionsHelper.Synchronize(names, ProfileListNames);
 			OnPropertyChanged(nameof(ProfileListNames));
 			// Update RoleListNames
-			names = AppHelper.GetListNames(Item?.Name, "Role");
+			names = AppHelper.GetListNames(extraPaths, "Role");
 			CollectionsHelper.Synchronize(names, RoleListNames);
 			OnPropertyChanged(nameof(RoleListNames));
 		}
@@ -391,6 +430,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.MonitorTextBoxSelections(false);
 				// Make sure that custom AiModel old and new item is available to select.
 				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
+				UpdateListNames(new string[] { value?.Name, oldItem?.Name });
 				// Set new item.
 				_Item = value ?? AppHelper.GetNewTemplateItem(true);
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
@@ -404,13 +444,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(CreativityName));
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
+				UpdateListNames(new string[] { _Item?.Name, });
 				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
 				CanvasPanel.Item = _Item;
 				PromptsPanel.BindData(_Item);
 				ListsPromptsPanel.BindData(_Item);
-				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
+				ChatPanel.MessagesPanel.SetDataItems(_Item);
 				ChatPanel.IsBusy = _Item.IsBusy;
 				ChatPanel.UpdateMessageEdit();
 				System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
@@ -504,9 +545,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var binding = new System.Windows.Data.Binding();
 				binding.Path = new PropertyPath(nameof(TemplateItemVisibility));
 				binding.Source = this;
+				ChatPanel.MessagesPanel.DataType = value;
 				ChatPanel.MessagePlaceholderTabItem.SetBinding(UIElement.VisibilityProperty, binding);
-
-
 				// Update the rest.
 				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
 				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
@@ -631,7 +671,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != MessageBoxResult.Yes)
 				return;
 			_Item.Messages.Clear();
-			ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
+			ChatPanel.MessagesPanel.SetDataItems(_Item);
 			ChatPanel.UpdateMessageEdit();
 			RestoreTabSelection();
 		}

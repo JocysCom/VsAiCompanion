@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <OutputType>Exe</OutputType>
-    <Platforms>AnyCPU</Platforms>
-  </PropertyGroup>
-
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<OutputType>Exe</OutputType>
+		<Platforms>AnyCPU</Platforms>
+		<EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
 </Project>

@@ -458,6 +458,11 @@
             Detect file encoding and new line type.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.FindFiles(System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <summary>
+             Find files.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.ReadFileAsPlainText(System.String)">
             <summary>
             Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, .pdf, .htm, .html and .pdf.
@@ -488,6 +493,97 @@
             <summary>
             Get parameter info
             </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns">
+            <summary>
+            Glob patterns helper. Patterns used by `.gitignore` files.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            Glob patterns. Used by `.gitignore` files.
+            </summary>
+            <param name="excludePatterns">Exclude patterns. Applies if not null.</param>
+            <param name="includePatterns">Include patterns. Applies if not null.</param>
+            <param name="useGitIgnoreFiles">Use git ignore files.</param>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.ExcludePatterns">
+            <summary>Exclude patterns</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IncludePatterns">
+            <summary>Include patterns</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GitExcludePatterns">
+            <summary>GIT Exclude patterns</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.UseGitIgnoreFiles">
+            <summary>Use `.gitignore` files.</summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetIgnoreFromText(System.String)">
+            <summary>
+            Creates an <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object from the given text.
+            </summary>
+            <param name="text">The text content to parse into ignore rules.</param>
+            <returns>
+            An <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object containing the parsed rules, or <c>null</c> if no valid rules were found.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetIgnoreFromFile(System.String)">
+            <summary>
+            Creates an <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object from the specified file.
+            </summary>
+            <param name="path">The path to the file containing ignore rules.</param>
+            <returns>
+            An <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object containing the parsed rules, or <c>null</c> if the file does not exist or contains no valid rules.
+            </returns>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IgnoreCache">
+            <summary>
+            Cache for <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> objects to improve performance.
+            </summary>
+            <remarks>Cache allows for this class to work 20 times faster.</remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetIgnoreFromDirectory(System.String,System.Boolean)">
+            <summary>
+            Retrieves an <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object from the specified folder, optionally using a cache.
+            </summary>
+            <param name="path">The folder path to retrieve the ignore object from.</param>
+            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
+            <returns>
+            An <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> object retrieved from the folder.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetGitIgnoresByDirectoryPath(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Retrieves <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> objects by searching for <c>.gitignore</c> files in the specified folder and optionally its parent directories.
+            </summary>
+            <param name="path">The folder path to start the search.</param>
+            <param name="searchParentDirectories">
+            If <c>true</c>, searches all parent directories for <c>.gitignore</c> files; otherwise, only searches the specified folder.
+            </param>
+            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
+            <returns>
+            A list of <see cref="T:Microsoft.Extensions.FileSystemGlobbing.Matcher"/> objects found in the folder and optionally its parent directories.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IsIgnored(System.String,System.String)">
+            <summary>
+            Return true if file is ignored.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.IsGitIgnored(System.String,System.Boolean)">
+            <summary>
+            Returns true if file is ignored.
+            </summary>
+            <param name="filePath">Full path to the file.</param>
+            <param name="searchParentDirectories">If `true`, searches all parent directories for `.gitignore` files; otherwise, only searches the file folder.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GlobPatterns.GetRelativePath(System.String,System.String)">
+            <summary>
+            Get relative path to `.gitignore`.
+            </summary>
+            <param name="relativeTo"></param>
+            <param name="path"></param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.GpsLocation">
             <summary>
@@ -563,6 +659,56 @@
             <param name="line">Line number to start reading from. Value is 1-based. Default: 1.</param>
             <param name="count">The number of lines to read. Defaults to the remaining length of the lines if not specified.</param>
             <returns>Null if the operation was not successful.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.image_quality">
+            <summary>
+            Image quality.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_quality.standard">
+            <summary>
+            Standard quality.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_quality.hd">
+            <summary>
+            High definition quality.
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.image_size">
+            <summary>
+            Image size
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_size.size_1024x1024">
+            <summary>
+            1024x1024
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_size.size_1792x1024">
+            <summary>
+            1792x1024
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_size.size_1024x1792">
+            <summary>
+            1024x1792
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.image_style">
+            <summary>
+            Image style.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_style.vivid">
+            <summary>
+            Vivid style.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.image_style.natural">
+            <summary>
+            Natural style.
+            </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo">
             <summary>
@@ -854,41 +1000,37 @@
             <param name="format"></param>
             <returns></returns>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.SqlHelper">
-            <summary>
-            SQL Data Helper.
-            </summary>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.SqlHelper.SetProperty(System.String,System.String,System.String,System.String,System.String,System.String)">
-            <returns>0 (success) or 1 (failure).</returns>
-        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
             <summary>
             Allows AI to execute queries or stored procedures on a database. For example, it can retrieve a database schema and construct complex results. Use database permissions to restrict AI's access.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery(System.String,System.String,System.String)">
-            <summary>
-            Execute non query command on database. Return number of rows affected.
-            </summary>
-            <param name="connectionString">Databse connection string.</param>
+            <summary>Execute non query command on database. Return number of rows affected.</summary>
             <param name="cmdText">SQL Command Text.</param>
             <param name="cmdType">SQL Command Type.
             "Text" = An SQL text command.
             "StoredProcedure" - The name of a stored procedure.
             "TableDirect" - The name of a table.
             </param>
+            <param name="connectionString">
+            The database connection string.
+            If the connection string is not provided, the default SQLite database is used.
+            The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+            </param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable(System.String,System.String,System.String)">
-            <summary>
-            SQL query command on database. Returns resutls as CSV.
-            </summary>
-            <param name="connectionString">Databse connection string.</param>
+            <summary>SQL query command on database. Returns resutls as CSV.</summary>
             <param name="cmdText">SQL Command Text.</param>
             <param name="cmdType">SQL Command Type.
             "Text" = An SQL text command.
             "StoredProcedure" - The name of a stored procedure.
             "TableDirect" - The name of a table.
+            </param>
+            <param name="connectionString">
+            The database connection string.
+            If the connection string is not provided, the default SQLite database is used.
+            The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
             </param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDescription(System.String,System.String,System.String,System.String)">
@@ -915,6 +1057,51 @@
             <param name="column">Column name.</param>
             <param name="description">Description text.</param>
             <returns>0 (success) or 1 (failure).</returns>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDatabasesFolderPath">
+            <summary>
+            Get path to databases folder.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDatabaseNames(System.String)">
+            <summary>
+            Get SQLite database names filtered by an optional regular expression pattern.
+            </summary>
+            <param name="pattern">The regex pattern to filter database names. If null, all names are returned.</param>
+            <returns>A List of filtered database names.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.CreateDatabase(System.String)">
+            <summary>
+            Creates a new SQLite database.
+            </summary>
+            <param name="databaseName">Name of the database</param>
+            <returns>0 operation successfull, -3 database already exists.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.DeleteDatabase(System.String)">
+            <summary>
+            Deletes an existing SQLite database.
+            </summary>
+            <param name="databaseName">Name of the database</param>
+            <returns>0 operation successfull, -1 database not found, -2 database is readonly.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.SearchAndSaveFilesToTable(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Searches for files and inserts them into a database table with a unique Id column.
+            </summary>
+            <param name="connectionString">
+            The database connection string.
+            If the connection string is not provided, the default SQLite database is used.
+            The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+            </param>
+            <param name="tableName">Name of the table to insert files into.</param>
+            <param name="searchPath">Directory path to search for files.</param>
+            <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
+            <param name="allDirectories">Whether to search all subdirectories.</param>
+            <param name="includePatterns">Patterns to include.</param>
+            <param name="excludePatterns">Patterns to exclude.</param>
+            <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+            <param name="cancellationToken">Token to monitor for cancellation requests.</param>
+            <returns>Number of files inserted.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
             <summary>
@@ -1174,6 +1361,36 @@
             <returns>Operation result containing the path to the captured image.</returns>
             <exception cref="T:System.ArgumentException">Thrown if invalid parameters are supplied.</exception>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImage(System.String,JocysCom.VS.AiCompanion.Plugins.Core.image_size,JocysCom.VS.AiCompanion.Plugins.Core.image_style,JocysCom.VS.AiCompanion.Plugins.Core.image_quality)">
+            <summary>
+            Generates an image using the specified prompt.
+            </summary>
+            <param name="prompt">A textual description of the desired image.</param>
+            <param name="imageSize">The width of the generated image in pixels (default is `size_1024x1024`).</param>
+            <param name="imageStyle">The style to apply to the generated image. Default is `vivid`.</param>
+            <param name="imageQuality">The quality level of the generated image. Default is `standard`</param>
+            <returns>Operation result containing the path to the generated image.</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImageCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ModifyImage(System.String,System.String,System.String,JocysCom.VS.AiCompanion.Plugins.Core.image_size)">
+            <summary>
+            Modify an image using the specified prompt.
+            </summary>
+            <param name="originalImagePath">Full file path to the original image.</param>
+            <param name="prompt">A textual description of the desired image. Prompt should describe the full new image, not just the erased area of the mask.</param>
+            <param name="imageSize">The width of the generated new image in pixels (default is `size_1024x1024`).</param>
+            <param name="maskImagePath">Path to the mask.  The transparent areas of the mask indicate where the image should be edited.</param>
+            <returns>Operation result containing the path to the generated image.</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ModifyImageCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertToPDF(System.String,System.String)">
             <summary>
             Convert file to PDF.
@@ -1221,25 +1438,6 @@
             Database path. Set by external program.
             </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Search.LitedbExt">
-            <summary>
-            LiteDB file extension.
-            </summary>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
-            <summary>
-            Index a specific folder. Returns true if successful.
-            </summary>
-            <param name="indexName">Index name.</param>
-            <param name="folderPath">Folder path.</param>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex(System.String,System.String)">
-            <summary>
-            Search an index and return search results.
-            </summary>
-            <param name="indexName">Index name.</param>
-            <param name="searchString">Search string.</param>
-        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex(System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int64},System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>
             Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.
@@ -1265,6 +1463,19 @@
             This method leverages the Windows Search Index, offering a powerful search functionality across various file properties.
             For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
             </remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchAndSaveFilesToCsv(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <summary>
+            Searches for files  and write search results as csv file.
+            </summary>
+            <param name="path">The file to write to.</param>
+            <param name="searchPath">Directory path to search for files.</param>
+            <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
+            <param name="allDirectories">Whether to search all subdirectories.</param>
+            <param name="includePatterns">Patterns to include.</param>
+            <param name="excludePatterns">Patterns to exclude.</param>
+            <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+            <returns>Number of files inserted.</returns>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchEmbeddingsCallback">
             <summary>
@@ -1523,6 +1734,9 @@
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ExceptionDocuments">
             <summary>Documents related to exception</summary>
         </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Image">
+            <summary>Documents related to exception</summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem">
             <summary>
             Visual Studio Document Item.
@@ -1711,6 +1925,26 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ExceptionInfo.ToString">
             <summary>Exception to string.</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo">
+            <summary>
+            Image data.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Name">
+            <summary>Image file name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.FullName">
+            <summary>Image full file name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Prompt">
+            <summary>AI Prompt used to generate this image.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Width">
+            <summary>Image width.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Height">
+            <summary>Image height.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper">
             <summary>

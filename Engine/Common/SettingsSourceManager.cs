@@ -18,6 +18,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public const string TemplateAiWindowTaskName = "® System - AI Window";
 		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
+		public const string TemplateGenerateTitlexAiTaskName = "® System - Generate Title - xAI";
 		public const string TemplateGenerateIconTaskName = "® System - Generate Icon";
 		public const string TemplateFormatMessageTaskName = "® System - Format Message";
 		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
@@ -25,6 +26,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
 		public const string TemplateAIComputerUse = "AI - Computer Use";
 
+		public const string TemplatePlugin_Model_GenerateImage = "® System - Generate Image";
+		public const string TemplatePlugin_Model_ModifyImage = "® System - Modify Image";
 		public const string TemplatePlugin_Model_TextToAudio = "® System - Text-To-Audio";
 		public const string TemplatePlugin_Model_AudioToText = "® System - Audio-To-Text";
 		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";
@@ -35,12 +38,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return new string[] {
 				TemplateAiWindowTaskName,
 				TemplateGenerateTitleTaskName,
+				TemplateGenerateTitlexAiTaskName,
 				TemplateGenerateIconTaskName,
 				TemplateFormatMessageTaskName,
 				TemplatePluginApprovalTaskName,
 				TempalteListsUpdateUserProfile,
 				TemplateAIChatPersonalized,
 				TemplateAIComputerUse,
+				TemplatePlugin_Model_GenerateImage,
+				TemplatePlugin_Model_ModifyImage,
 				TemplatePlugin_Model_TextToAudio,
 				TemplatePlugin_Model_AudioToText,
 				TemplatePlugin_Model_VideoToText,

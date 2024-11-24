@@ -270,17 +270,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string PluginsPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, "Plugins");
 
-		public static string GetPath(AssistantItem item, params string[] args)
-		{
-			var itemPath = new string[] { AssistantsPath, item.Name };
-			var paths = itemPath.Concat(args).ToArray();
-			var path = System.IO.Path.Combine(paths);
-			return path;
-		}
 
-		public static string GetPath(FineTuningItem item, params string[] args)
+		public static string GetPath(ISettingsListFileItem item, params string[] args)
 		{
-			var itemPath = new string[] { FineTuningPath, item.Name };
+			string iPath = null;
+			if (item is AssistantItem)
+				iPath = AssistantsPath;
+			if (item is FineTuningItem)
+				iPath = FineTuningPath;
+			if (item is TemplateItem temp)
+			{
+				var itemType = Templates.Items.Contains(item)
+					? iPath = TemplatesName
+					: iPath = TasksName;
+			}
+			if (iPath == null)
+				throw new NotImplementedException("Item not implemented");
+			var itemPath = new string[] { AppData.XmlFile.Directory.FullName, iPath, item.Name };
 			var paths = itemPath.Concat(args).ToArray();
 			var path = System.IO.Path.Combine(paths);
 			return path;
@@ -495,6 +501,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void LoadSettings()
 		{
+			SqlInitHelper.SqlBatteriesInit();
+
 			// Make sure DbContext supports SQL Server and SQLite
 			SqlInitHelper.AddDbProviderFactories();
 			// Set a converter to convert SVG to images for the user interface.
@@ -595,9 +603,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Enable logging.
 			AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			LogHelper.LogHttp = AppSettings.LogHttp;
+			LoadGlobal();
 			// Mark settings as loaded.
 			IsSettignsLoaded = true;
-			LoadGlobal();
 		}
 
 		private static void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -641,7 +649,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				catch (Exception ex)
 				{
-					MainControl.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
+					MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
 					return;
 				}
 			}

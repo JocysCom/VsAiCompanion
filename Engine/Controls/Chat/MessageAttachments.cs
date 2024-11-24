@@ -10,17 +10,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 	{
 		public MessageAttachments()
 		{
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			InitDefault();
 			SendType = AttachmentSendType.Temp;
 		}
 
 		public MessageAttachments(ContextType attachmentType, string language, string data)
 		{
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			InitDefault();
+			SendType = AttachmentSendType.Temp;
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
-			SendType = AttachmentSendType.Temp;
 			SetData(data, language);
+		}
+
+		public MessageAttachments(ContextType attachmentType, object dataToJson)
+		{
+			InitDefault();
+			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
+			Type = attachmentType;
+			var options = new JsonSerializerOptions();
+			options.WriteIndented = true;
+			var data = JsonSerializer.Serialize(dataToJson, options);
+			SetData(data, "json");
+		}
+
+		private void InitDefault()
+		{
+			_Id = System.Guid.NewGuid().ToString("N");
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
 		public void SetData(string contents, string language)
@@ -29,16 +46,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			IsMarkdown = true;
 		}
 
-		public MessageAttachments(ContextType attachmentType, object dataToJson)
-		{
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
-			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
-			Type = attachmentType;
-			var options = new JsonSerializerOptions();
-			options.WriteIndented = true;
-			var data = JsonSerializer.Serialize(dataToJson, options);
-			SetData(data, "json");
-		}
+		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
+		string _Id;
 
 		/// <summary>
 		/// If true, the attachment will always be included as part of the body.

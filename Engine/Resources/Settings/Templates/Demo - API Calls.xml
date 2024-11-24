@@ -47,6 +47,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
+          <Id>76b07a2063da4f7e93662fbea92edf8b</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
@@ -72,6 +73,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
+          <Id>7ebcfd0e952443589c838a4d57e3dfe3</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
@@ -215,6 +217,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
+          <Id>ddbd91223f834e27afce3ccfffbb9e82</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
@@ -240,6 +243,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
+          <Id>9b5d8eecf64745f78c51bfe1cf988bfb</Id>
           <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>

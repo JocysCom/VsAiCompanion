@@ -762,10 +762,10 @@ EndFragment:{3:00000000}";
 
 		#region Get Data
 
-		public static List<ListInfo> GetListNames(string path, params string[] prefix)
+		public static List<ListInfo> GetListNames(string[] paths, params string[] prefix)
 		{
 			var items = Global.Lists.Items
-				.Where(x => string.IsNullOrWhiteSpace(x.Path) || x.Path == path)
+				.Where(x => string.IsNullOrWhiteSpace(x.Path) || paths.Contains(x.Path))
 				.OrderBy(x => $"{x.Path}")
 				// Items with prefix on top.
 				.ThenBy(x => prefix.Any(p => x.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)) ? 0 : 1)

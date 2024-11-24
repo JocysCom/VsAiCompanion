@@ -6,6 +6,7 @@
 		Use,
 		Remove,
 		Edit,
+		EditAttachment,
 		Copy,
 		Loaded,
 		DataCopy,

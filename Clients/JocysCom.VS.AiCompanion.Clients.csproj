@@ -1,20 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<Platforms>AnyCPU</Platforms>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<Folder Include="OpenAI\Models\" />
 		<Folder Include="OpenAI\Enums\" />
 	</ItemGroup>
-
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="8.0.5" />
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
-
 </Project>

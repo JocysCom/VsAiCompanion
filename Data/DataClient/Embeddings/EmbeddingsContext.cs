@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Embeddings
 {
+
 	/// <summary>Embeddings Context</summary>
 	[GeneratedCode("MainModel", "2023.1.19")]
 #if NETFRAMEWORK
@@ -22,8 +23,6 @@ namespace Embeddings
 #endif
 	public partial class EmbeddingsContext : DbContext
 	{
-
-
 		/// <summary>Initialize model</summary>
 		public EmbeddingsContext()
 			: base()

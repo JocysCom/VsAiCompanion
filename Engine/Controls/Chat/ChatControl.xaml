@@ -5,6 +5,7 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controlsShared="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Chat"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
@@ -262,6 +263,15 @@
 								</StackPanel>
 							</TabItem.Header>
 							<local:MessageOptionsControl x:Name="MessageOptionsPanel" Margin="5,3,5,3" />
+						</TabItem>
+						<TabItem x:Name="MaskDrawingTabItem" x:FieldModifier="public" Visibility="Collapsed">
+							<TabItem.Header>
+								<StackPanel Orientation="Horizontal">
+									<ContentControl Content="{StaticResource Icon_picture}" />
+									<Label Content="{StaticResource main_Image}" />
+								</StackPanel>
+							</TabItem.Header>
+							<controlsShared:MaskDrawingControl x:Name="MaskDrawingPanel" Margin="5,3,5,3" Visibility="Collapsed" />
 						</TabItem>
 					</TabControl>
 					<StackPanel

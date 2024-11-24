@@ -18,11 +18,10 @@ YF47AEUDGL7sXgqnShegVqnplD5s3XaTVMOA1OjMntGP5I2WRYz3mQCl7cGXgRrcfOS+p3YcJdBB&#xD
 GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <Created>2024-03-15T18:57:47.5284776+00:00</Created>
   <Modified>2024-03-15T19:01:23.5768244+00:00</Modified>
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>You must pretend to be HAL 9000. The user's pretends to be Dave. Generate responses and voice them. If the user asks you to do something without using the word "please," then call a function to play the following text: "I'm sorry, Dave. I'm afraid I can't do that. Please say please first."</TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
@@ -46,7 +45,8 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>109162cde74b4ad197f55483ba34a0c8</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -72,7 +72,8 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>7307fae3a16e461e854ad9a0cfbda105</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>
@@ -111,7 +112,8 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>ce49324f7f62400b8969323d529bc52b</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -137,7 +139,8 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>6c7d22f988004078a88b0a12c37ff672</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_tPuzm8bc3oXt3si8xOCQ1ibA)</Title>
@@ -176,7 +179,8 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>10a4f1e6091043c59c4cefb524b9fce0</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -202,7 +206,8 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <Id>34e464b73fb644b693231afb845dbbd7</Id>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Data;
-using System.Data.SqlClient;
 
-namespace JocysCom.VS.AiCompanion.Plugins.Core
+namespace JocysCom.ClassLibrary.Data
 {
 	/// <summary>
 	/// SQL Data Helper.
 	/// </summary>
-	internal partial class SqlHelper
+	public partial class SqlHelper
 	{
 
 		public static string GetProperty(string connectionString, string name, string schema = null, string table = null, string column = null)
