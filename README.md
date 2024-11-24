@@ -15,7 +15,7 @@
 
 ### DOWNLOAD -  v1.15.6 (2024-11-24)  
 
-[JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.14.37/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
+[JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.15.6/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
 
 [AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion) - install via Visual Studio Extension Manager.
 
