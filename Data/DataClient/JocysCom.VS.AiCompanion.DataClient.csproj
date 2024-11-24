@@ -56,7 +56,6 @@
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<PackageReference Include="Microsoft.SqlServer.Types" />
 		<PackageReference Include="EntityFramework" />
 		<PackageReference Include="Microsoft.EntityFramework.SqlServer" />
 		<PackageReference Include="System.Data.SQLite" />

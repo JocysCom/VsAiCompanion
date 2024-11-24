@@ -3,7 +3,7 @@
 		<TargetFrameworks>net48;net8.0</TargetFrameworks>
 		<!--<DisablePackageUpgrade>true</DisablePackageUpgrade>-->
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-		<!--<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>-->
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 		<NoWarn>$(NoWarn);NU1507</NoWarn>
 		<!-- Prevent NuGet package [Updates] page from offering versions above the maximum .NET, Visual Studio versions (exclusive) -->
 		<!-- https://learn.microsoft.com/en-us/nuget/concepts/package-versioning?tabs=semver20sort#version-ranges -->
@@ -53,7 +53,6 @@
 		<PackageVersion Include="Microsoft.ML" Version="3.0.1" />
 		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
 		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
-		<PackageVersion Include="Microsoft.SqlServer.Types" Version="14.0.1016.290" />
 		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="[17.9.37000,$(MaxVsVersion))" />
 		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.12.2069" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="[8.0.11,$(MaxDnVersion))" />
@@ -96,5 +95,12 @@
 		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 		<PackageVersion Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
 		<PackageVersion Include="YamlDotNet" Version="16.2.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Security Workaround: Transitive Packages -->
+		<PackageVersion Include="MessagePack" Version="2.5.187" />
+		<PackageVersion Include="System.Private.Uri" Version="4.3.2" />
+		<PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" />
+		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 </Project>
