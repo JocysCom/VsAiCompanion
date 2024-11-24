@@ -94,12 +94,13 @@
   <ItemGroup>
     <VSIXSourceItem Include="$(OutputPath)\e_sqlite3.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.batteries_v2.dll" />
+    <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.core.dll" />
+	<!--
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Data.ConnectionUI.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Data.SqlClient.SNI.x64.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Win32.Registry.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Newtonsoft.Json.dll" />
-    <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.batteries_v2.dll" />
-    <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.core.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Buffers.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Collections.Immutable.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Diagnostics.DiagnosticSource.dll" />
@@ -112,6 +113,7 @@
     <VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Dataflow.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Extensions.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.ValueTuple.dll" />
+	-->
     <!-- Include all locally copied assemblies in the VSIX package -->
     <VSIXSourceItem Include="@(ReferenceCopyLocalPaths)" />
   </ItemGroup>

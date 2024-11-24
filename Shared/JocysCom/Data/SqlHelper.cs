@@ -1,13 +1,7 @@
-﻿#if MSSQLCLIENT
-// Requires "Microsoft.Data.SqlClient" NuGet Package on .NET Core/Standard
-// Add to `*.csproj` or `Directory.Build.props`:
-// <PropertyGroup>
-//	<DefineConstants>$(DefineConstants);MSSQLCLIENT</DefineConstants>
-// </PropertyGroup>
-using Microsoft.Data.SqlClient;
-#else
-// Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
+﻿#if NETFRAMEWORK
 using System.Data.SqlClient;
+#else
+using Microsoft.Data.SqlClient;
 #endif
 using System;
 using System.Collections;

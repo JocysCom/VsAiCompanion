@@ -7,10 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 
 #if NETFRAMEWORK
+using System.Data.SqlClient;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 #else
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 #endif
 
 namespace Embeddings
@@ -35,15 +37,15 @@ namespace Embeddings
 			await Task.Delay(0);
 			// Convert embedding to the format expected by SQL Server.
 			var vectorsValue = VectorToBinary(vectors);
-			var parameters = new System.Data.SqlClient.SqlParameter[]
-			{
-				new System.Data.SqlClient.SqlParameter("@groupName", groupName),
-				new System.Data.SqlClient.SqlParameter("@groupFlag", groupFlag),
-				new System.Data.SqlClient.SqlParameter("@vectors", vectorsValue),
-				new System.Data.SqlClient.SqlParameter("@skip", skip),
-				new System.Data.SqlClient.SqlParameter("@take", take),
-			};
 			var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileParts] @groupName, @groupFlag, @vectors, @skip, @take";
+			var parameters = new SqlParameter[]
+			{
+				new SqlParameter("@groupName", groupName),
+				new SqlParameter("@groupFlag", groupFlag),
+				new SqlParameter("@vectors", vectorsValue),
+				new SqlParameter("@skip", skip),
+				new SqlParameter("@take", take),
+			};
 #if NETFRAMEWORK
 			var items = FileParts.SqlQuery(sqlCommand, parameters).ToList();
 #else
