@@ -4,6 +4,6 @@
 		<OutputType>Exe</OutputType>
 		<Platforms>AnyCPU</Platforms>
 		<EnableDefaultCompileItems>true</EnableDefaultCompileItems>
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 </Project>
