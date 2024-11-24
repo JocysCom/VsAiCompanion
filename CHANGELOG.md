@@ -1,4 +1,4 @@
-2024-11-22 v1.15.6
+2024-11-24 v1.15.6
 
 - Fix: Resetting UI presets will deselect the currently selected UI preset.
 - Fix: Error message after applying edit changes.
