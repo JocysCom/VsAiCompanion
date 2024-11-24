@@ -11,12 +11,29 @@
 		<MaxVsVersion>17.10</MaxVsVersion>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<PackageVersion Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
+		<PackageVersion Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
+		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageVersion Include="System.Dynamic.Runtime" Version="4.3.0" />
+		<PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+		<PackageVersion Include="System.Diagnostics.EventLog" Version="8.0.1" />
+		<PackageVersion Include="System.Drawing.Common" Version="8.0.10" />
+		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.4" />
+		<PackageVersion Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.4" />
+		<PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+		<PackageVersion Include="System.Data.OleDb" Version="8.0.1" />
+		<PackageVersion Include="System.Data.Odbc" Version="8.0.1" />
+		<PackageVersion Include="System.Data.OracleClient" Version="1.0.8" />
+		<PackageVersion Include="System.Data.Common" Version="4.3.0" />
+		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 	</ItemGroup>
-	<ItemGroup>
+	<ItemGroup Condition="'$(TargetFrameworkVersion)' == 'v4.8'">
 		<PackageVersion Include="Azure.Identity" Version="1.12.1" />
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Build" Version="17.9.5" />
@@ -25,5 +42,35 @@
 		<PackageVersion Include="System.Linq.Async" Version="6.0.1" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageVersion Include="Azure.AI.OpenAI" Version="2.0.0" />
+		<PackageVersion Include="Azure.Identity" Version="1.12.1" />
+		<PackageVersion Include="Azure.ResourceManager" Version="1.13.0" />
+		<PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
+		<PackageVersion Include="BouncyCastle.Cryptography" Version="2.4.0" />
+		<PackageVersion Include="CsvHelper" Version="33.0.1" />
+		<PackageVersion Include="DiffPlex.Wpf" Version="1.4.0" />
+		<PackageVersion Include="DnsClient" Version="1.8.0" />
+		<PackageVersion Include="DocumentFormat.OpenXml" Version="3.1.1" />
+		<PackageVersion Include="HtmlAgilityPack" Version="1.11.70" />
+		<PackageVersion Include="Ignore" Version="0.2.1" />
+		<PackageVersion Include="MailKit" Version="4.8.0" />
+		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
+		<PackageVersion Include="Microsoft.Graph" Version="5.61.0" />
+		<PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.1.2" />
+		<PackageVersion Include="Microsoft.ML" Version="3.0.1" />
+		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
+		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
+		<PackageVersion Include="NAudio" Version="2.2.1" />
+		<PackageVersion Include="NJsonSchema" Version="11.0.2" />
+		<PackageVersion Include="RtfPipe" Version="2.0.7677.4303" />
+		<PackageVersion Include="SharpVectors" Version="1.8.4.2" />
+		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
+		<PackageVersion Include="System.Composition" Version="8.0.0" />
+		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
+		<PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
+		<PackageVersion Include="YamlDotNet" Version="16.1.3" />
 	</ItemGroup>
 </Project>
