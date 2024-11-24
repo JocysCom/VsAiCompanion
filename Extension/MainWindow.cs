@@ -10,7 +10,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Extension
@@ -82,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			});
 		}
 
-		public async Task LoadMainControlAsync()
+		public async System.Threading.Tasks.Task LoadMainControlAsync()
 		{
 			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 			// Subscribe to the AssemblyResolve event. This event is triggered when .NET runtime fails to find an assembly,

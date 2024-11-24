@@ -27,6 +27,7 @@
 		<Authors>Jocys.com Team</Authors>
 		<AssemblyVersion>1.15.6</AssemblyVersion>
 		<FileVersion>1.15.6</FileVersion>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">

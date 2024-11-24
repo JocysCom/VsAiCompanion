@@ -33,6 +33,7 @@
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
 		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
@@ -254,7 +255,7 @@
 		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Remove="Controls\AiServiceListControl.xaml" />
+		<Page Remove="Controls\AiServiceListControl.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
@@ -266,7 +267,7 @@
 		<None Include="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Reference Include="System.Speech" />
+		<Reference Include="System.Speech" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="AiCompanion.svg" />
@@ -290,13 +291,13 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Controls\EnumItemsControl.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Controls\EnumComboBox.xaml.cs">
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Controls\Options\ResetSettingsControl.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Resources\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
@@ -331,9 +332,9 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Resources\DataTemplates.xaml">
-	    <Generator>
-		</Generator>
-	  </Page>
+		<Page Update="Resources\DataTemplates.xaml">
+			<Generator>
+			</Generator>
+		</Page>
 	</ItemGroup>
 </Project>

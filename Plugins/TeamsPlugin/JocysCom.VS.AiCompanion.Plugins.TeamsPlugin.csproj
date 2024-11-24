@@ -18,6 +18,7 @@
 		<Description>Teams Plugin for AI Companion.</Description>
 		<Product>AI Companion Teams Plugin</Product>
 		<Platforms>AnyCPU</Platforms>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />

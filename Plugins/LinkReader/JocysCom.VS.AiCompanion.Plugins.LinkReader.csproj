@@ -14,6 +14,7 @@
 		<AssemblyVersion>1.14.49</AssemblyVersion>
 		<FileVersion>1.14.49</FileVersion>
 		<Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />

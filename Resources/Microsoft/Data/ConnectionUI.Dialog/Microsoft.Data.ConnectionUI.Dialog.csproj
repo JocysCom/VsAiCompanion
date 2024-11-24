@@ -12,6 +12,7 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
