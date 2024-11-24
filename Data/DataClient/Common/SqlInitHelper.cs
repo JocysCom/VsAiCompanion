@@ -665,6 +665,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			// Setting EF6 configuration OPTION 3.
 			DbConfiguration.Loaded += (sender, args) =>
 			{
+				// Use System.Data.SqlClient and SqlLite client with EF6 in VS2022
+				// There are too many problems using `Microsoft.Data.SqlClient` with EF6 inside Visual Studio 2022.
 				args.AddDependencyResolver(new SystemSqlEF6Resolver(), overrideConfigFile: true);
 				//args.AddDependencyResolver(new MicrosoftSqEF6Resolver(), overrideConfigFile: true);
 				args.AddDependencyResolver(new SqlLiteEF6Resolver(), overrideConfigFile: true);
