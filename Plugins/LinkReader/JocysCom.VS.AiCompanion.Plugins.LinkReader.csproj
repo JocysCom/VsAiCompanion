@@ -14,7 +14,7 @@
 		<AssemblyVersion>1.14.49</AssemblyVersion>
 		<FileVersion>1.14.49</FileVersion>
 		<Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />
@@ -29,6 +29,6 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" />
 	</ItemGroup>
 </Project>

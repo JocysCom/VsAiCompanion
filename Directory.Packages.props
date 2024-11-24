@@ -16,7 +16,12 @@
 		<PackageVersion Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.4" />
 		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageVersion Include="Microsoft.Identity.Client" />
+		<PackageVersion Include="Microsoft.Identity.Web" />
+		<PackageVersion Include="Microsoft.Identity.Web.UI" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.4" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" />
 		<PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
 		<PackageVersion Include="System.Data.Common" Version="4.3.0" />
 		<PackageVersion Include="System.Data.Odbc" Version="8.0.1" />
@@ -34,22 +39,17 @@
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFrameworkVersion)' == 'v4.8'">
 		<PackageVersion Include="EntityFramework" Version="6.5.1" />
+		<PackageVersion Include="Microsoft.Build" Version="17.9.5" />
 		<PackageVersion Include="Microsoft.EntityFramework.SqlServer" Version="6.5.1" />
+		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.9.37000" />
+		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.9.3184" />
 		<PackageVersion Include="System.Data.SQLite" Version="1.0.119" />
 		<PackageVersion Include="System.Data.SQLite.EF6" Version="1.0.119" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFrameworkVersion)' == 'v4.8'">
-		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
 		<PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.9.3184" />
-		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.9.37000" />
-		<PackageVersion Include="Microsoft.Build" Version="17.9.5" />
-		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-		<PackageVersion Include="Azure.Identity" Version="1.12.1" />
+		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="Azure.AI.OpenAI" Version="2.0.0" />
@@ -79,10 +79,12 @@
 		<PackageVersion Include="SharpVectors" Version="1.8.4.2" />
 		<PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
 		<PackageVersion Include="SQLitePCLRaw.core" Version="2.1.10" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
 		<PackageVersion Include="System.Composition" Version="8.0.0" />
 		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
 		<PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
+		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
 		<PackageVersion Include="YamlDotNet" Version="16.1.3" />
 	</ItemGroup>
 </Project>
