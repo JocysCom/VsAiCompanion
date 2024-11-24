@@ -11,18 +11,16 @@ using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using System.Threading;
 using SQLitePCL;
-
+using Microsoft.Data.Sqlite;
+using Microsoft.Data.SqlClient;
 
 
 
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.SQLite;
-using Microsoft.Data.SqlClient;
 using System.Data.Entity.SqlServer;
 #else
-using Microsoft.Data.SqlClient;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 #endif
 
@@ -111,8 +109,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 						//success &= CreateFunction("CosineSimilarity", connection);
 					}
 				}
-				success &= CreateTable(nameof(File), connection);
-				success &= CreateTable(nameof(FilePart), connection);
+				success &= CreateTable(nameof(Embeddings.Embedding.File), connection);
+				success &= CreateTable(nameof(Embeddings.Embedding.FilePart), connection);
 				success &= CreateTable(nameof(Embeddings.Embedding.Group), connection);
 				success &= RunScript("Update_1", connection, isPortable);
 				if (!isPortable)
@@ -134,6 +132,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		/// <returns></returns>
 		public static bool IsAzureSQL(DbConnection connection)
 		{
+			if (connection is null)
+				return false;
 			// 1 = Desktop, 2 = Standard, 3 = Enterprise, 4 = Express, 5 = SQL Azure
 			var commandText = $"SELECT SERVERPROPERTY('EngineEdition')";
 			var command = NewCommand(commandText, connection);
@@ -241,21 +241,17 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			// Disable check for code first. ` __MigrationHistory` table.
 			Database.SetInitializer<EmbeddingsContext>(null);
 			EmbeddingsContext db;
+			DbConnection connection;
 			if (isPortable)
 			{
-				var connection = System.Data.SQLite.EF6.SQLiteProviderFactory.Instance.CreateConnection();
-				connection.ConnectionString = connectionString;
-				db = new EmbeddingsContext(connection, true);
+				connection = new System.Data.SQLite.SQLiteConnection(connectionString);
 			}
 			else
 			{
-				var connection = NewConnection(connectionString);
-				//var connection = new Microsoft.Data.SqlClient.SqlConnection();
-				//connection.ConnectionString = connectionString;
-				db = new EmbeddingsContext(connection, true);
-				//db = new EmbeddingsContext();
-				//db.Database.Connection.ConnectionString = connectionString;
+				connection = new System.Data.SqlClient.SqlConnection(connectionString);
+				//connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
 			}
+			db = new EmbeddingsContext(connection, true);
 #else
 			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
 			if (isPortable)
@@ -272,47 +268,35 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		public static string PathToConnectionString(string path)
 		{
-#if NETFRAMEWORK
-			var connectionString = new SQLiteConnectionStringBuilder { DataSource = path };
-#else
-			var connectionString = new SqliteConnectionStringBuilder { DataSource = path };
-#endif
+			var conn = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder() { DataSource = path };
 			// Ensure file is not locked.
-			connectionString.Pooling = false;
-			return connectionString.ToString();
+			conn.Pooling = false;
+			return conn.ToString();
 		}
 
 		public static string ConnectionStringToPath(string connectionString)
 		{
-#if NETFRAMEWORK
-			var connection = new SQLiteConnectionStringBuilder(connectionString);
-#else
-			var connection = new SqliteConnectionStringBuilder(connectionString);
-#endif
-			return connection.DataSource;
+			var conn = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(connectionString);
+			return conn.DataSource;
 		}
 
 		public static DbConnection NewConnection(string connectionString)
 		{
 			var isPortable = IsPortable(connectionString);
-			if (isPortable)
+			var conn = isPortable
+				? (DbConnection)new Microsoft.Data.Sqlite.SqliteConnection(connectionString)
+				: (DbConnection)new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+#if !NETFRAMEWORK
+			if (!isPortable)
 			{
-#if NETFRAMEWORK
-				var connection = new SQLiteConnection(connectionString);
-#else
-				var connection = new SqliteConnection(connectionString);
-#endif
-				return connection;
-			}
-			else
-			{
-				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
 				var isMicrosoftCloud = connectionString.IndexOf("database.windows.net", StringComparison.OrdinalIgnoreCase) > -1;
 				var activeDirectory = connectionString.IndexOf("Active Directory Default", StringComparison.OrdinalIgnoreCase) > -1;
 				if (isMicrosoftCloud && !activeDirectory)
-					connection.AccessTokenCallback = GetAccessTokenAsync;
-				return connection;
+					// Not supported in visual studio extension.
+					((SqlConnection)conn).AccessTokenCallback = GetAccessTokenAsync;
 			}
+#endif
+			return conn;
 		}
 
 		public static Func<CancellationToken, Task<Azure.Core.AccessToken>> GetAzureSqlAccessToken;
@@ -326,27 +310,19 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static DbConnectionStringBuilder NewConnectionStringBuilder(string connectionString)
 		{
 			var isPortable = IsPortable(connectionString);
-#if NETFRAMEWORK
-			if (!isPortable)
-				return new SqlConnectionStringBuilder(connectionString);
-			return new SQLiteConnectionStringBuilder(connectionString);
-#else
-			if (!isPortable)
-				return new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
-			return new SqliteConnectionStringBuilder(connectionString);
-#endif
+			var cb = isPortable
+				? (DbConnectionStringBuilder)new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(connectionString)
+				: (DbConnectionStringBuilder)new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+			return cb;
 		}
 
 		public static DbCommand NewCommand(string commandText = null, DbConnection connection = null)
 		{
-			var isPortable = IsPortable(connection.ConnectionString);
-			if (!isPortable)
-				return new SqlCommand(commandText, (SqlConnection)connection);
-#if NETFRAMEWORK
-			return new SQLiteCommand(commandText, (SQLiteConnection)connection);
-#else
-			return new SqliteCommand(commandText, (SqliteConnection)connection);
-#endif
+			var cmd = IsPortable(connection.ConnectionString)
+				? (DbCommand)new SqliteCommand(commandText)
+				: (DbCommand)new SqlCommand(commandText);
+			cmd.Connection = connection;
+			return cmd;
 		}
 
 		#endregion
@@ -361,7 +337,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 #if NETFRAMEWORK
 			var connection = db.Database.Connection;
 #else
-    var connection = db.Database.GetDbConnection();
+			var connection = db.Database.GetDbConnection();
 #endif
 			if (connection.State != ConnectionState.Open)
 				connection.Open();
@@ -374,9 +350,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 					var isPortable = IsPortable(connection.ConnectionString);
 					var schema = isPortable ? "" : "[Embedding].";
-					var filePartTable = $"{schema}[{nameof(FilePart)}]";
-					var fileTable = $"{schema}[{nameof(File)}]";
-					var groupTable = $"{schema}[{nameof(Group)}]";
+					var filePartTable = $"{schema}[{nameof(Embeddings.Embedding.FilePart)}]";
+					var fileTable = $"{schema}[{nameof(Embeddings.Embedding.File)}]";
+					var groupTable = $"{schema}[{nameof(Embeddings.Embedding.Group)}]";
 
 					command.CommandText = $@"
                 UPDATE {filePartTable}
@@ -412,7 +388,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 #if NETFRAMEWORK
 			var connection = db.Database.Connection;
 #else
-    var connection = db.Database.GetDbConnection();
+			var connection = db.Database.GetDbConnection();
 #endif
 			var isConnectionOpenedHere = false;
 			if (connection.State != ConnectionState.Open)
@@ -428,9 +404,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 					AddParameters(command, groupName, groupFlag, state);
 					var isPortable = IsPortable(connection.ConnectionString);
 					var schema = isPortable ? "" : "[Embedding].";
-					var filePartTable = $"{schema}[{nameof(FilePart)}]";
-					var fileTable = $"{schema}[{nameof(File)}]";
-					var groupTable = $"{schema}[{nameof(Group)}]";
+					var filePartTable = $"{schema}[{nameof(Embeddings.Embedding.FilePart)}]";
+					var fileTable = $"{schema}[{nameof(Embeddings.Embedding.File)}]";
+					var groupTable = $"{schema}[{nameof(Embeddings.Embedding.Group)}]";
 					string commandText;
 					// Delete file parts.
 					commandText = $"DELETE FROM {filePartTable}\r\n";
@@ -499,9 +475,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		float[] promptVectors, int take)
 		{
 			var schema = isPortable ? "" : "[Embedding].";
-			var filePartTable = $"{schema}[{nameof(FilePart)}]";
-			var fileTable = $"{schema}[{nameof(File)}]";
-			var groupTable = $"{schema}[{nameof(Group)}]";
+			var filePartTable = $"{schema}[{nameof(Embeddings.Embedding.FilePart)}]";
+			var fileTable = $"{schema}[{nameof(Embeddings.Embedding.File)}]";
+			var groupTable = $"{schema}[{nameof(Embeddings.Embedding.Group)}]";
 
 			var commandText =
 				$@"
@@ -556,9 +532,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		string connectionString)
 		{
 			var schema = isPortable ? "" : "[Embedding].";
-			var filePartTable = $"{schema}[{nameof(FilePart)}]";
-			var fileTable = $"{schema}[{nameof(File)}]";
-			var groupTable = $"{schema}[{nameof(Group)}]";
+			var filePartTable = $"{schema}[{nameof(Embeddings.Embedding.FilePart)}]";
+			var fileTable = $"{schema}[{nameof(Embeddings.Embedding.File)}]";
+			var groupTable = $"{schema}[{nameof(Embeddings.Embedding.Group)}]";
 
 			var commandText =
 				$@"
@@ -664,7 +640,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var invariantName = type.Namespace;
 			if (!DbProviderFactories.GetProviderInvariantNames().Contains(invariantName))
 				DbProviderFactories.RegisterFactory(invariantName, instance);
-	}
+		}
 
 #endif
 
@@ -689,8 +665,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			// Setting EF6 configuration OPTION 3.
 			DbConfiguration.Loaded += (sender, args) =>
 			{
-				//args.AddDependencyResolver(new SystemSqlEF6Resolver(), overrideConfigFile: true);
-				args.AddDependencyResolver(new MicrosoftSqEF6Resolver(), overrideConfigFile: true);
+				args.AddDependencyResolver(new SystemSqlEF6Resolver(), overrideConfigFile: true);
+				//args.AddDependencyResolver(new MicrosoftSqEF6Resolver(), overrideConfigFile: true);
 				args.AddDependencyResolver(new SqlLiteEF6Resolver(), overrideConfigFile: true);
 			};
 
@@ -758,20 +734,20 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		}
 
-		public class MicrosoftSqEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
+		public class SystemSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
 		{
 			private readonly System.Data.Common.DbProviderFactory _providerFactory;
 			private readonly System.Data.Entity.Core.Common.DbProviderServices _providerServices;
 			private readonly System.Data.Entity.Infrastructure.IProviderInvariantName _providerInvariantName;
 
-			public MicrosoftSqEF6Resolver()
+			public SystemSqlEF6Resolver()
 			{
-				// "Microsoft.Data.SqlClient"
-				string invariantName = Microsoft.Data.SqlClient.SqlClientFactory.Instance.GetType().Namespace;
+				// Set the provider invariant name for System.Data.SqlClient
+				string invariantName = "System.Data.SqlClient";
 				// Initialize the provider factory and services
-				_providerFactory = Microsoft.Data.SqlClient.SqlClientFactory.Instance;
-				// Requires: <PackageReference Include="Microsoft.EntityFramework.SqlServer" Version="6.5.1" />
-				_providerServices = MicrosoftSqlProviderServices.Instance;
+				_providerFactory = System.Data.SqlClient.SqlClientFactory.Instance;
+				// Use the provider services for System.Data.SqlClient
+				_providerServices = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
 				_providerInvariantName = new ProviderInvariantName(invariantName);
 			}
 
@@ -796,15 +772,14 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				else if (type == typeof(System.Data.Entity.Infrastructure.IDbExecutionStrategy))
 				{
 					if (string.Equals(key as string, _providerInvariantName.Name, StringComparison.OrdinalIgnoreCase))
-						return new MicrosoftSqlAzureExecutionStrategy();
+						return new SqlAzureExecutionStrategy();
 				}
 				return null;
 			}
 
 			/// <inheritdoc />
 			public IEnumerable<object> GetServices(Type type, object key)
-				=> new object[] { GetService(type, key) }.Where(o => o != null);
-
+				=> new[] { GetService(type, key) }.Where(o => o != null);
 		}
 
 		class ProviderInvariantName : System.Data.Entity.Infrastructure.IProviderInvariantName

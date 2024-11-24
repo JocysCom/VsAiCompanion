@@ -42,26 +42,32 @@
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="Microsoft.Data.SqlClient" />
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" />
 		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
 		<PackageReference Include="SQLitePCLRaw.core" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<PackageReference Include="Microsoft.EntityFrameworkCore"  />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"  />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"  />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<PackageReference Include="EntityFramework"  />
-		<PackageReference Include="Microsoft.EntityFramework.SqlServer"  />
-		<PackageReference Include="System.Data.SQLite"  />
-		<PackageReference Include="System.Data.SQLite.EF6"  />
+		<PackageReference Include="Microsoft.SqlServer.Types" />
+		<PackageReference Include="EntityFramework" />
+		<PackageReference Include="Microsoft.EntityFramework.SqlServer" />
+		<PackageReference Include="System.Data.SQLite" />
+		<PackageReference Include="System.Data.SQLite.EF6" />
+		<Reference Include="System.configuration" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Data.DataSetExtensions" />
 		<Reference Include="System.Data.Entity" />
 		<Reference Include="System.Data.Linq" />
+		<Reference Include="System.Web" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="MainModel.cs" />
@@ -84,6 +90,9 @@
 		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
 		<None Include="MainModel.cs" />
 		<None Include="MainModel.tt.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />

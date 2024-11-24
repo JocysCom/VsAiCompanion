@@ -26,6 +26,9 @@
 	<ItemGroup>
 		<Content Include=".well-known\ai-plugin.json" />
 	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Text.Json" />
+	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
 		<PackageReference Include="Microsoft.Identity.Client" />
 		<PackageReference Include="Microsoft.Identity.Web" />

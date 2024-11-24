@@ -65,7 +65,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					matcher.AddInclude(patternLine);
 				}
 			}
-			return matcher;
+			return count == 0 ? null : matcher;
 		}
 
 		/// <summary>
