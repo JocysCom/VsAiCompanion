@@ -10,50 +10,6 @@
 		<MaxDnVersion>9.0</MaxDnVersion>
 		<MaxVsVersion>17.10</MaxVsVersion>
 	</PropertyGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-		<PackageVersion Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
-		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-		<PackageVersion Include="System.Dynamic.Runtime" Version="4.3.0" />
-		<PackageVersion Include="System.Drawing.Common" Version="8.0.10" />
-		<PackageVersion Include="System.Diagnostics.EventLog" Version="8.0.1" />
-		<PackageVersion Include="System.Data.SqlClient" Version="4.8.6" />
-		<PackageVersion Include="System.Data.OracleClient" Version="1.0.8" />
-		<PackageVersion Include="System.Data.OleDb" Version="8.0.1" />
-		<PackageVersion Include="System.Data.Odbc" Version="8.0.1" />
-		<PackageVersion Include="System.Data.Common" Version="4.3.0" />
-		<PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
-		<PackageVersion Include="Swashbuckle.AspNetCore" />
-		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.4" />
-		<PackageVersion Include="Microsoft.Identity.Web.UI" />
-		<PackageVersion Include="Microsoft.Identity.Web" />
-		<PackageVersion Include="Microsoft.Identity.Client" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
-		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageVersion Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.4" />
-		<PackageVersion Include="HtmlRenderer.PdfSharp.NetStandard2" Version="1.5.1.3" />
-		<PackageVersion Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFrameworkVersion)' == 'v4.8'">
-		<PackageVersion Include="EntityFramework" Version="6.5.1" />
-		<PackageVersion Include="HtmlRenderer.PdfSharp" Version="1.5.0.6" />
-		<PackageVersion Include="Microsoft.Build" Version="17.9.5" />
-		<PackageVersion Include="Microsoft.EntityFramework.SqlServer" Version="6.5.1" />
-		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.9.37000" />
-		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.9.3184" />
-		<PackageVersion Include="System.Data.SQLite" Version="1.0.119" />
-		<PackageVersion Include="System.Data.SQLite.EF6" Version="1.0.119" />
-		<PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
-	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="Azure.AI.OpenAI" Version="2.0.0" />
 		<PackageVersion Include="Azure.Identity" Version="1.12.1" />
@@ -68,19 +24,38 @@
 		<PackageVersion Include="DiffPlex.Wpf" Version="1.4.0" />
 		<PackageVersion Include="DnsClient" Version="1.8.0" />
 		<PackageVersion Include="DocumentFormat.OpenXml" Version="3.1.1" />
+		<PackageVersion Include="EntityFramework" Version="6.5.1" />
+		<PackageVersion Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
 		<PackageVersion Include="HtmlAgilityPack" Version="1.11.70" />
+		<PackageVersion Include="HtmlRenderer.PdfSharp" Version="1.5.0.6" />
+		<PackageVersion Include="HtmlRenderer.PdfSharp.NetStandard2" Version="1.5.1.3" />
 		<PackageVersion Include="Ignore" Version="0.2.1" />
 		<PackageVersion Include="MailKit" Version="4.8.0" />
+		<PackageVersion Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.4" />
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Build" Version="17.9.5" />
 		<PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
+		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageVersion Include="Microsoft.Data.SqlClient" Version="5.2.2" />
 		<PackageVersion Include="Microsoft.Data.Sqlite.Core" Version="8.0.4" />
+		<PackageVersion Include="Microsoft.EntityFramework.SqlServer" Version="6.5.1" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
 		<PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
 		<PackageVersion Include="Microsoft.Graph" Version="5.61.0" />
+		<PackageVersion Include="Microsoft.Identity.Client" />
+		<PackageVersion Include="Microsoft.Identity.Web" />
+		<PackageVersion Include="Microsoft.Identity.Web.UI" />
 		<PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.1.2" />
 		<PackageVersion Include="Microsoft.ML" Version="3.0.1" />
 		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
 		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
+		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.9.37000" />
+		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.9.3184" />
+		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.4" />
 		<PackageVersion Include="NAudio" Version="2.2.1" />
 		<PackageVersion Include="NJsonSchema" Version="11.0.2" />
 		<PackageVersion Include="NPOI" Version="2.7.1" />
@@ -97,13 +72,29 @@
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
 		<PackageVersion Include="System.Composition" Version="8.0.0" />
+		<PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
+		<PackageVersion Include="System.Data.Common" Version="4.3.0" />
+		<PackageVersion Include="System.Data.Odbc" Version="8.0.1" />
 		<PackageVersion Include="System.Data.OleDb" Version="8.0.1" />
+		<PackageVersion Include="System.Data.OracleClient" Version="1.0.8" />
+		<PackageVersion Include="System.Data.SqlClient" Version="4.8.6" />
+		<PackageVersion Include="System.Data.SQLite" Version="1.0.119" />
+		<PackageVersion Include="System.Data.SQLite.EF6" Version="1.0.119" />
+		<PackageVersion Include="System.Diagnostics.EventLog" Version="8.0.1" />
+		<PackageVersion Include="System.Drawing.Common" Version="8.0.10" />
+		<PackageVersion Include="System.Dynamic.Runtime" Version="4.3.0" />
 		<PackageVersion Include="System.Formats.Asn1" Version="8.0.1" />
+		<PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+		<PackageVersion Include="System.Linq.Async" Version="6.0.1" />
 		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
 		<PackageVersion Include="System.Resources.Extensions" Version="8.0.0" />
 		<PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
+		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
+		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageVersion Include="Tiktoken" Version="2.0.3" />
+		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
+		<PackageVersion Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
 		<PackageVersion Include="YamlDotNet" Version="16.1.3" />
 	</ItemGroup>
 </Project>
