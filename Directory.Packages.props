@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net472;net8.0</TargetFrameworks>
 		<DisablePackageUpgrade>true</DisablePackageUpgrade>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 		<NoWarn>$(NoWarn);NU1507</NoWarn>
 		<!-- Prevent NuGet package [Updates] page from offering versions above the maximum .NET, Visual Studio versions (exclusive) -->

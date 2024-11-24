@@ -7,9 +7,9 @@
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" />
-    <PackageReference Include="YamlDotNet" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
+    <PackageReference Include="YamlDotNet" Version="16.1.3" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\" />

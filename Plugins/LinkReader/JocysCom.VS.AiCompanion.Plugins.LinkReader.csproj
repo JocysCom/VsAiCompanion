@@ -19,15 +19,15 @@
 		<EmbeddedResource Include="Resources\*.xml" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="..\Core\Common\RiskLevel.cs" Link="Resources\RiskLevel.cs" />
-		<Compile Include="..\Core\Common\RiskLevelAttribute.cs" Link="Resources\RiskLevelAttribute.cs" />
+	  <Compile Include="..\Core\Common\RiskLevel.cs" Link="Resources\RiskLevel.cs" />
+	  <Compile Include="..\Core\Common\RiskLevelAttribute.cs" Link="Resources\RiskLevelAttribute.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include=".well-known\ai-plugin.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 	</ItemGroup>
 </Project>
