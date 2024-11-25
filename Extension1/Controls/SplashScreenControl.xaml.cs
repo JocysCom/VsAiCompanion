@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Microsoft.VisualStudio.RpcContracts.RemoteUI;
+using System.Windows;
 using System.Windows.Media.Animation;
 
 namespace JocysCom.VS.AiCompanion.Extension.Controls
@@ -6,7 +7,7 @@ namespace JocysCom.VS.AiCompanion.Extension.Controls
 	/// <summary>
 	/// Interaction logic for SplashScreenControl.xaml
 	/// </summary>
-	public partial class SplashScreenControl : System.Windows.Controls.UserControl
+	public partial class SplashScreenControl : System.Windows.Controls.UserControl, IRemoteUserControl
 	{
 		public SplashScreenControl()
 		{
@@ -22,6 +23,10 @@ namespace JocysCom.VS.AiCompanion.Extension.Controls
 			};
 			// Begin the animation on the LoadingTextBlock
 			//LoadingDotsTextBlock.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
+		}
+
+		public void Dispose()
+		{
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-windows</TargetFrameworks>
 		<Nullable>disable</Nullable>
@@ -12,8 +12,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.14.49</AssemblyVersion>
-		<FileVersion>1.14.49</FileVersion>
+		<AssemblyVersion>1.15.7</AssemblyVersion>
+		<FileVersion>1.15.7</FileVersion>
 		<Title>Jocys.com AI Companion Teams Plugin</Title>
 		<Description>Teams Plugin for AI Companion.</Description>
 		<Product>AI Companion Teams Plugin</Product>

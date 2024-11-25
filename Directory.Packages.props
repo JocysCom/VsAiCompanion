@@ -95,8 +95,11 @@
 		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 		<PackageVersion Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
 		<PackageVersion Include="YamlDotNet" Version="16.2.0" />
-		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.9.2092" />
-		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.9.2092" />
+		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.12.40390" />
+		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.12.40390" />
+
+		<!-- 17.12.40392 17.9.2092-->
+
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Security Workaround: Transitive Packages -->

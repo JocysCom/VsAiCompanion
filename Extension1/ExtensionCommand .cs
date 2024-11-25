@@ -1,8 +1,8 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using JocysCom.VS.AiCompanion.Extension;
 using Microsoft.VisualStudio.Extensibility;
 using Microsoft.VisualStudio.Extensibility.Commands;
-using Microsoft.VisualStudio.Extensibility.Shell;
 using Microsoft.VisualStudio.Extensibility.VSSdkCompatibility;
 using Microsoft.VisualStudio.Text.Tagging;
 using System.Diagnostics;
@@ -10,9 +10,9 @@ using System.Diagnostics;
 [VisualStudioContribution]
 public class ExtensionCommand : Microsoft.VisualStudio.Extensibility.Commands.Command
 {
-	private TraceSource traceSource;
-	private AsyncServiceProviderInjection<DTE, DTE2> dte;
-	private MefInjection<IBufferTagAggregatorFactoryService> bufferTagAggregatorFactoryService;
+	private readonly TraceSource _TraceSource;
+	private readonly AsyncServiceProviderInjection<DTE, DTE2> _DTE;
+	private readonly MefInjection<IBufferTagAggregatorFactoryService> _BufferTagAggregatorFactoryService;
 
 	public ExtensionCommand(
 		VisualStudioExtensibility extensibility,
@@ -21,8 +21,9 @@ public class ExtensionCommand : Microsoft.VisualStudio.Extensibility.Commands.Co
 		MefInjection<IBufferTagAggregatorFactoryService> bufferTagAggregatorFactoryService)
 		: base(extensibility)
 	{
-		this.dte = dte;
-		this.bufferTagAggregatorFactoryService = bufferTagAggregatorFactoryService;
+		_TraceSource = traceSource;
+		_DTE = dte;
+		_BufferTagAggregatorFactoryService = bufferTagAggregatorFactoryService;
 	}
 
 #pragma warning disable CEE0027 // String not localized
@@ -35,6 +36,8 @@ public class ExtensionCommand : Microsoft.VisualStudio.Extensibility.Commands.Co
 
 	public override async Task ExecuteCommandAsync(IClientContext context, CancellationToken cancellationToken)
 	{
-		await Extensibility.Shell().ShowPromptAsync("Hello from an extension!", PromptOptions.OK, cancellationToken);
+		_TraceSource.TraceInformation("Executing Open AI Companion command.");
+		await Extensibility.Shell().ShowToolWindowAsync<MainWindow>(true, cancellationToken);
+		_TraceSource.TraceInformation("AI Companion window opened.");
 	}
 }

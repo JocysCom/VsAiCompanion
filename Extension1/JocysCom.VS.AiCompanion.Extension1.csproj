@@ -12,7 +12,6 @@
 	<PropertyGroup>
 		<RootNamespace>JocysCom.VS.AiCompanion.Extension</RootNamespace>
 		<AssemblyName>JocysCom.VS.AiCompanion.Extension</AssemblyName>
-
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
@@ -26,7 +25,6 @@
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
-
 	<PropertyGroup>
 		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
@@ -35,7 +33,6 @@
 		<PlatformTarget>x64</PlatformTarget>
 		<ApplicationIcon>App.ico</ApplicationIcon>
 	</PropertyGroup>
-
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
 	  <DebugType>embedded</DebugType>

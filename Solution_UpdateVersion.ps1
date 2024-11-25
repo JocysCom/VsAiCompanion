@@ -238,19 +238,31 @@ function ShowMainMenu {
 # ----------------------------------------------------------------------------
 function GetConfigurationFiles
 {
-	# First record will be used to identify current version.
 	[Config[]]$items = @()
+	# First record will be used to identify current version.
+	# Update Projects.
 	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
+	$items += (GetConfig "ClientGenerator\JocysCom.VS.AiCompanion.ClientGenerator.csproj")
+	$items += (GetConfig "Clients\JocysCom.VS.AiCompanion.Clients.csproj")
 	$items += (GetConfig "Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj")
-	$items += (GetConfig "Data\DataFunctions\Properties\AssemblyInfo.cs")
+	$items += (GetConfig "Demo\JocysCom.VS.AiCompanion.Demo.csproj")
 	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
+	$items += (GetConfig "Extension\JocysCom.VS.AiCompanion.Extension.csproj")
+	$items += (GetConfig "Extension1\JocysCom.VS.AiCompanion.Extension1.csproj")
+	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
+	$items += (GetConfig "Plugins\LinkReader\JocysCom.VS.AiCompanion.Plugins.LinkReader.csproj")
+	$items += (GetConfig "Plugins\TeamsPlugin\JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.csproj")
+	$items += (GetConfig "Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.Data.ConnectionUI.Dialog.csproj")
+	$items += (GetConfig "Resources\Microsoft\Data\ConnectionUI\Microsoft.Data.ConnectionUI.csproj")
+	$items += (GetConfig "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj")
+	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
+	# Update other files.
+	$items += (GetConfig "Data\DataFunctions\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Extension\source.extension.vsixmanifest")
-	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
-	$items += (GetConfig "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj")
+	$items += (GetConfig "Extension1\source.extension.vsixmanifest")
 	$items += (GetConfig "Setup\CustomActions\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
-	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
 	return $items
 }
 # ----------------------------------------------------------------------------
