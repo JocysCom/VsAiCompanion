@@ -93,6 +93,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Workflows", "GitHub 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Setup.CustomActions", "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj", "{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JocysCom.VS.AiCompanion.Extension1", "Extension1\JocysCom.VS.AiCompanion.Extension1.csproj", "{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -299,6 +301,18 @@ Global
 		{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}.Release|arm64.Build.0 = Release|Any CPU
 		{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}.Release|x64.ActiveCfg = Release|Any CPU
 		{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}.Release|x64.Build.0 = Release|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Debug|arm64.Build.0 = Debug|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Debug|x64.Build.0 = Debug|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|arm64.ActiveCfg = Release|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|arm64.Build.0 = Release|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|x64.ActiveCfg = Release|Any CPU
+		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

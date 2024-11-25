@@ -18,22 +18,25 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.15.6</AssemblyVersion>
-		<FileVersion>1.15.6</FileVersion>
+		<AssemblyVersion>1.15.7</AssemblyVersion>
+		<FileVersion>1.15.7</FileVersion>
 		<Title>Jocys.com VS AI Companion</Title>
 		<Description>AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
 		<Product>VS AI Companion</Product>
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<PlatformTarget>x64</PlatformTarget>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<NeutralLanguage>en</NeutralLanguage>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
 		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
@@ -311,18 +314,6 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
-	<Target Name="PreOuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
-		<Message Text="Running PreOuterPreBuild target" Importance="high" />
-		<!-- Execute once for multiple builds -->
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CreateBuildDateFile.ps1&quot; &quot;$(ProjectDir)Resources\BuildDate.txt&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
-	</Target>
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	</Target>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<None Include="$(ProjectDir)Resources\Microsoft.CognitiveServices.Speech\*.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -337,4 +328,26 @@
 			</Generator>
 		</Page>
 	</ItemGroup>
+	<Target Name="PreOuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+		<Message Text="Running PreOuterPreBuild target" Importance="high" />
+		<!-- Execute once for multiple builds -->
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CreateBuildDateFile.ps1&quot; &quot;$(ProjectDir)Resources\BuildDate.txt&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+	</Target>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	</Target>
+	<Target Name="RemoveFolders" AfterTargets="Build">
+		<!-- List of unwanted files or directories -->
+		<Message Text="Removing unwanted runtime directories..." Importance="high" />
+		<RemoveDir Directories="$(TargetDir)arm" />
+		<RemoveDir Directories="$(TargetDir)arm64" />
+		<RemoveDir Directories="$(TargetDir)musl-arm64" />
+		<RemoveDir Directories="$(TargetDir)musl-x64" />
+		<RemoveDir Directories="$(TargetDir)musl-x86" />
+		<RemoveDir Directories="$(TargetDir)x86" />
+	</Target>
 </Project>

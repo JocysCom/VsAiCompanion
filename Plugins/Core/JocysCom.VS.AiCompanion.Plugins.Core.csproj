@@ -15,8 +15,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.15.6</AssemblyVersion>
-		<FileVersion>1.15.6</FileVersion>
+		<AssemblyVersion>1.15.7</AssemblyVersion>
+		<FileVersion>1.15.7</FileVersion>
 		<Title>Jocys.com AI Companion Core Plugins</Title>
 		<Description>Core Plugins for AI Companion.</Description>
 		<Product>AI Companion Core Plugins</Product>
@@ -27,12 +27,16 @@
 		<DelaySign>False</DelaySign>
 		<AssemblyOriginatorKeyFile>
 		</AssemblyOriginatorKeyFile>
-		<PlatformTarget>x64</PlatformTarget>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<NeutralLanguage>en</NeutralLanguage>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
 		<DebugType>embedded</DebugType>

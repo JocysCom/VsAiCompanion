@@ -19,6 +19,11 @@
 		<Product>AI Companion Teams Plugin</Product>
 		<Platforms>AnyCPU</Platforms>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<NeutralLanguage>en</NeutralLanguage>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />

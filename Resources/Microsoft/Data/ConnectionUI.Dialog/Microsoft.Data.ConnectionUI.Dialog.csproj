@@ -13,6 +13,11 @@
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<NeutralLanguage>en</NeutralLanguage>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="System.Resources.Extensions" />

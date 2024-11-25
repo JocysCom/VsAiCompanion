@@ -28,10 +28,13 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
-    <PlatformTarget>x64</PlatformTarget>
 	<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<!-- Include only English language resources; exclude all other language folders from the bin directory -->
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+	<NeutralLanguage>en</NeutralLanguage>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -176,15 +179,21 @@
     <PostBuildEvent>::PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Resources\AddFilesToZip.ps1" -sourceFolder $(TargetDir) -targetZipFile $(TargetDir)$(TargetName).vsix -ConfigurationName $(ConfigurationName)
 </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="RemoveFolders" AfterTargets="Build">
-    <!-- List of unwanted files or directories -->
-    <Message Text="Removing unwanted runtime folders..." Importance="high" />
+	<ItemGroup>
+		<FluentValidationExcludedCultures Include="be;cs;cs-CZ;da;de;es;fa;fi;fr;ja;it;ko;mk;nl;pl;pt;pt-BR;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT;zh-Hans;zh-Hant">
+			<InProject>false</InProject>
+		</FluentValidationExcludedCultures> 
+	</ItemGroup>
+  <Target Name="RemoveFolders" BeforeTargets="Build">
+    <Message Text="Removing unwanted runtime directories..." Importance="high" />
     <RemoveDir Directories="$(TargetDir)arm" />
     <RemoveDir Directories="$(TargetDir)arm64" />
     <RemoveDir Directories="$(TargetDir)musl-arm64" />
     <RemoveDir Directories="$(TargetDir)musl-x64" />
     <RemoveDir Directories="$(TargetDir)musl-x86" />
     <RemoveDir Directories="$(TargetDir)x86" />
+	<Message Text="Removing unwanted culture directories..." Importance="high" />
+	<RemoveDir Directories="@(FluentValidationExcludedCultures->'$(OutputPath)%(Filename)')" />    
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
