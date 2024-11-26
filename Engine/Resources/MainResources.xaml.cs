@@ -97,6 +97,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ToolChoiceRequired_Help => FindResource(nameof(main_ToolChoiceRequired_Help));
         public static string main_ToolChoiceRequiredNames_Name => FindResource(nameof(main_ToolChoiceRequiredNames_Name));
         public static string main_ToolChoiceRequiredNames_Help => FindResource(nameof(main_ToolChoiceRequiredNames_Help));
+        public static string main_Multimedia => FindResource(nameof(main_Multimedia));
+        public static string main_Create_Image => FindResource(nameof(main_Create_Image));
+        public static string main_Modify_Image => FindResource(nameof(main_Modify_Image));
+        public static string main_Use_Text_To_Audio => FindResource(nameof(main_Use_Text_To_Audio));
+        public static string main_Use_Audio_To_Text => FindResource(nameof(main_Use_Audio_To_Text));
+        public static string main_Use_Video_To_Text => FindResource(nameof(main_Use_Video_To_Text));
+        public static string main_Use_Text_To_Video => FindResource(nameof(main_Use_Text_To_Video));
         public static string main_CanvasPanelEnabled_Name => FindResource(nameof(main_CanvasPanelEnabled_Name));
         public static string main_CanvasPanelEnabled_Help => FindResource(nameof(main_CanvasPanelEnabled_Help));
         public static string main_CanvasEditorElementPath_Name => FindResource(nameof(main_CanvasEditorElementPath_Name));
@@ -348,7 +355,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Message => FindResource(nameof(main_Message));
         public static string main_Message_CAPS => FindResource(nameof(main_Message_CAPS));
         public static string main_ModelRefreshButton_ToolTip => FindResource(nameof(main_ModelRefreshButton_ToolTip));
-        public static string main_Multimedia => FindResource(nameof(main_Multimedia));
         public static string main_Name => FindResource(nameof(main_Name));
         public static string main_Object => FindResource(nameof(main_Object));
         public static string main_Open => FindResource(nameof(main_Open));
