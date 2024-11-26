@@ -7,8 +7,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.15.7</AssemblyVersion>
-		<FileVersion>1.15.7</FileVersion>
+		<AssemblyVersion>1.15.12</AssemblyVersion>
+		<FileVersion>1.15.12</FileVersion>
 		<Title>Jocys.com VS AI Companion Data Client</Title>
 		<Description>AI Companion data client for embeddings database.</Description>
 		<Product>VS AI Companion Data Client</Product>

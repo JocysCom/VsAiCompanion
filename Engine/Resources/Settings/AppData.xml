@@ -46,8 +46,8 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>392</Left>
-        <Top>122</Top>
+        <Left>97</Left>
+        <Top>171</Top>
         <Width>1033</Width>
         <Height>816</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -67,7 +67,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.21847070506454816</GridSplitterPosition>
+          <GridSplitterPosition>0.21831683168316832</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
@@ -76,7 +76,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.22542204568023833</GridSplitterPosition>
+          <GridSplitterPosition>0.22524752475247525</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -108,9 +108,9 @@
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Open AI</string>
+            <string>Speech Service</string>
           </ListSelection>
-          <ListSelectedIndex>5</ListSelectedIndex>
+          <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -132,7 +132,7 @@
           <ListSelection>
             <string>o1-mini</string>
           </ListSelection>
-          <ListSelectedIndex>38</ListSelectedIndex>
+          <ListSelectedIndex>33</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>

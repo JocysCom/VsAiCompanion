@@ -53,6 +53,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					{
 						_Item.PropertyChanged -= _Item_PropertyChanged;
 					}
+					if (value != null)
+					{
+						var assembly = this.GetType().Assembly;
+						var bytes = ClassLibrary.Helper.FindResource<byte[]>($"AI Service - {value.Name}.rtf", assembly);
+						//var bytes = AppHelper.ExtractFile("Documents.zip", "Feature - AI Avatar.rtf");
+						if (bytes == null)
+						{
+							MainTabControl.Visibility = Visibility.Collapsed;
+						}
+						else
+						{
+							ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+							MainTabControl.Visibility = Visibility.Visible;
+						}
+					}
 					_Item = value ?? new AiService();
 					// Make sure that even custom AiModel old and new item is available to select.
 					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel, oldItem?.DefaultAiModel);

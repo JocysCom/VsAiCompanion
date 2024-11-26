@@ -51,6 +51,11 @@
 	<sys:String x:Key="main_Require_To_Sign_In_Message">Please sign in to your Microsoft account.</sys:String>
 	<sys:String x:Key="main_Plugins_require_chat_history">Plugins/functions require chat history. Uncheck the use of plugins/functions first.</sys:String>
 
+	<!--  Tasks / Templates → MessageItem Options  -->
+
+	<sys:String x:Key="main_Message_IsTemp">Is Temporary</sys:String>
+	<sys:String x:Key="main_Message_IsTemp_Help">The message item won't be copied when creating a task from the template.</sys:String>
+
 	<!--  Tasks / Templates → Tools  -->
 
 	<sys:String x:Key="main_ToolChoiceRequired_Name">Tool Choice Required</sys:String>

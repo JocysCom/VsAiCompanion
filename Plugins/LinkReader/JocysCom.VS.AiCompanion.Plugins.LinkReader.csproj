@@ -11,8 +11,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.15.7</AssemblyVersion>
-		<FileVersion>1.15.7</FileVersion>
+		<AssemblyVersion>1.15.12</AssemblyVersion>
+		<FileVersion>1.15.12</FileVersion>
 		<Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!-- Include only English language resources; exclude all other language folders from the bin directory -->

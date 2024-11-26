@@ -312,13 +312,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public object Tag;
 
-		public TemplateItem Copy(bool newId)
+		public TemplateItem Copy(bool newId, bool copyTempMessages = false)
 		{
 			var copy = new TemplateItem();
 			AppHelper.CopyProperties(this, copy);
 			copy.TemplateName = Name; // Will be used to find original template.
 			copy.Messages = new BindingList<MessageItem>();
-			var messages = Messages.Select(x => x.Copy(newId)).ToList();
+			var messages = Messages
+				.Where(x => copyTempMessages || !x.IsTemp)
+				.Select(x => x.Copy(newId))
+				.ToList();
 			foreach (var message in messages)
 				copy.Messages.Add(message);
 			return copy;

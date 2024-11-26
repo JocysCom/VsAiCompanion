@@ -7,6 +7,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	d:Height="350"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -30,6 +31,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -123,6 +125,23 @@
 				Value="{Binding ResponseTimeout}" />
 			<Label Content="{StaticResource main_Response_Timeout}" />
 		</StackPanel>
+		<TabControl
+			x:Name="MainTabControl"
+			Grid.Row="9"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Margin="4"
+			x:FieldModifier="public">
+			<TabItem Name="HelpTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Question}" />
+						<Label Content="{StaticResource main_Help}" />
+					</StackPanel>
+				</TabItem.Header>
+				<RichTextBox x:Name="HelpRichTextBox" />
+			</TabItem>
 
+		</TabControl>
 	</Grid>
 </UserControl>

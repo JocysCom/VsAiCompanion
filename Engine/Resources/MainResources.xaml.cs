@@ -93,6 +93,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Require_To_Sign_In => FindResource(nameof(main_Require_To_Sign_In));
         public static string main_Require_To_Sign_In_Message => FindResource(nameof(main_Require_To_Sign_In_Message));
         public static string main_Plugins_require_chat_history => FindResource(nameof(main_Plugins_require_chat_history));
+        public static string main_Message_IsTemp => FindResource(nameof(main_Message_IsTemp));
+        public static string main_Message_IsTemp_Help => FindResource(nameof(main_Message_IsTemp_Help));
         public static string main_ToolChoiceRequired_Name => FindResource(nameof(main_ToolChoiceRequired_Name));
         public static string main_ToolChoiceRequired_Help => FindResource(nameof(main_ToolChoiceRequired_Help));
         public static string main_ToolChoiceRequiredNames_Name => FindResource(nameof(main_ToolChoiceRequiredNames_Name));

@@ -28,6 +28,12 @@
 				MinWidth="75"
 				HorizontalAlignment="Left"
 				SelectedValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<CheckBox
+				Name="IsTempCheckBox"
+				AutomationProperties.HelpText="{StaticResource main_Message_IsTemp_Help}"
+				AutomationProperties.Name="{StaticResource main_Message_IsTemp}"
+				Content="{StaticResource main_Message_IsTemp}"
+				IsChecked="{Binding IsTemp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		</StackPanel>
 		<!--<TabControl>
 			<TabItem Header="{StaticResource main_Attachments}">

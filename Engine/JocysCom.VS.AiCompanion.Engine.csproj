@@ -18,8 +18,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.15.7</AssemblyVersion>
-		<FileVersion>1.15.7</FileVersion>
+		<AssemblyVersion>1.15.12</AssemblyVersion>
+		<FileVersion>1.15.12</FileVersion>
 		<Title>Jocys.com VS AI Companion</Title>
 		<Description>AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
 		<Product>VS AI Companion</Product>
@@ -63,25 +63,25 @@
 		<PackageReference Include="CsvHelper" />
 		<PackageReference Include="DiffPlex.Wpf" />
 		<PackageReference Include="DnsClient" />
-		<PackageReference Include="DocumentFormat.OpenXml"  />
-		<PackageReference Include="HtmlAgilityPack"  />
-		<PackageReference Include="Ignore"  />
-		<PackageReference Include="MailKit"  />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces"  />
-		<PackageReference Include="Microsoft.CognitiveServices.Speech"  />
-		<PackageReference Include="Microsoft.Graph"  />
-		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens"  />
-		<PackageReference Include="Microsoft.ML"  />
-		<PackageReference Include="Microsoft.OpenApi"  />
-		<PackageReference Include="Microsoft.OpenApi.Readers"  />
+		<PackageReference Include="DocumentFormat.OpenXml" />
+		<PackageReference Include="HtmlAgilityPack" />
+		<PackageReference Include="Ignore" />
+		<PackageReference Include="MailKit" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+		<PackageReference Include="Microsoft.CognitiveServices.Speech" />
+		<PackageReference Include="Microsoft.Graph" />
+		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
+		<PackageReference Include="Microsoft.ML" />
+		<PackageReference Include="Microsoft.OpenApi" />
+		<PackageReference Include="Microsoft.OpenApi.Readers" />
 		<PackageReference Include="NAudio" />
-		<PackageReference Include="NJsonSchema"  />
-		<PackageReference Include="RtfPipe"  />
-		<PackageReference Include="SharpVectors"  />
-		<PackageReference Include="System.Collections.Immutable"  />
-		<PackageReference Include="System.Composition"  />
-		<PackageReference Include="System.Net.Http"  />
-		<PackageReference Include="System.Runtime.Loader"  />
+		<PackageReference Include="NJsonSchema" />
+		<PackageReference Include="RtfPipe" />
+		<PackageReference Include="SharpVectors" />
+		<PackageReference Include="System.Collections.Immutable" />
+		<PackageReference Include="System.Composition" />
+		<PackageReference Include="System.Net.Http" />
+		<PackageReference Include="System.Runtime.Loader" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
@@ -96,22 +96,22 @@
 		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI\Microsoft.Data.ConnectionUI.csproj" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
-		<PackageReference Include="GeoCoordinate.NetCore"  />
-		<PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard"  />
+		<PackageReference Include="GeoCoordinate.NetCore" />
+		<PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard" />
 		<PackageReference Include="Microsoft.CSharp" />
 		<PackageReference Include="System.Dynamic.Runtime" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder"  />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
 		<PackageReference Include="System.Diagnostics.EventLog" />
-		<PackageReference Include="System.Drawing.Common"  />
+		<PackageReference Include="System.Drawing.Common" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions"  />
-		<PackageReference Include="System.IO.FileSystem.AccessControl"  />
-		<PackageReference Include="System.Data.OleDb"  />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" />
+		<PackageReference Include="System.IO.FileSystem.AccessControl" />
+		<PackageReference Include="System.Data.OleDb" />
 		<PackageReference Include="System.Data.Odbc" />
-		<PackageReference Include="System.Data.OracleClient"  />
-		<PackageReference Include="System.Data.Common"  />
-		<PackageReference Include="System.Text.RegularExpressions"  />
+		<PackageReference Include="System.Data.OracleClient" />
+		<PackageReference Include="System.Data.Common" />
+		<PackageReference Include="System.Text.RegularExpressions" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="Microsoft.CSharp" />
@@ -171,6 +171,10 @@
 		<EmbeddedResource Remove="Resources\Embeddings\**" />
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\Embeddings\**" />
+		<None Remove="Resources\AI Service - Google Gemini.rtf" />
+		<None Remove="Resources\AI Service - Open AI.rtf" />
+		<None Remove="Resources\AI Service - Speech Service.rtf" />
+		<None Remove="Resources\AI Service - xAi Grok.rtf" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
 		<None Remove="Resources\Documents.zip" />
 		<None Remove="Resources\IconExperience.License.txt" />
@@ -232,6 +236,10 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<EmbeddedResource Include="Resources\AI Service - Google Gemini.rtf" />
+		<EmbeddedResource Include="Resources\AI Service - Open AI.rtf" />
+		<EmbeddedResource Include="Resources\AI Service - Speech Service.rtf" />
+		<EmbeddedResource Include="Resources\AI Service - xAi Grok.rtf" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
