@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace JocysCom.VS.AiCompanion.Engine.Companions
+﻿namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
 	public static class AiClientFactory
 	{
@@ -19,7 +17,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				//case ApiServiceType.X:
 				//	return new Companions.X.Client(aiService);
 				default:
-					throw new NotSupportedException($"AI Provider '{aiService.ServiceType}' not supported");
+					Global.MainControl.InfoPanel.SetBodyError($"AI Provider '{aiService.ServiceType}' not supported");
+					return null;
 			}
 		}
 	}

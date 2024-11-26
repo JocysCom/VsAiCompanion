@@ -138,6 +138,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			// Fill with updated records.
 			var client = AiClientFactory.GetAiClient(service);
+			if (client is null)
+				return ProgressStatus.Exception;
 			Dictionary<int, float[]> results = null;
 			int maxRetries = 3;
 
@@ -366,6 +368,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				var input = new List<string> { message };
 				var client = AiClientFactory.GetAiClient(item.AiService);
+				if (client is null)
+					return;
 				// TRy to get embeddings.
 				Dictionary<int, float[]> results = null;
 				int maxRetries = 3;

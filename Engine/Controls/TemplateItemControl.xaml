@@ -815,11 +815,35 @@
 					<controlsTemplate:ToolsUserControl x:Name="ToolsPanel" />
 				</TabItem>
 
-				<TabItem x:Name="MultimediaTabItem" x:FieldModifier="public">
+				<TabItem x:Name="MailTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_mail}" />
+							<Label Content="{StaticResource main_Mail}" />
+						</StackPanel>
+					</TabItem.Header>
+					<WrapPanel Orientation="Horizontal">
+						<CheckBox Name="UseMailAccountCheckBox" Content="Use Mail Account" IsChecked="{Binding UseMailAccount}" />
+						<ComboBox
+							Name="MailAccountComboBox"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							VerticalAlignment="Top"
+							ItemsSource="{Binding MailAccounts, ElementName=This}"
+							SelectedValue="{Binding MailAccount}" />
+						<CheckBox
+							Name="MonitorInboxCheckBox"
+							Margin="3,0,0,0"
+							Content="Monitor Inbox"
+							IsChecked="{Binding MonitorInbox}" />
+					</WrapPanel>
+				</TabItem>
+
+				<TabItem x:Name="ExternalAiModelsTabItem" x:FieldModifier="public">
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_movie_comment}" />
-							<Label Content="{StaticResource main_Multimedia}" />
+							<Label Content="{StaticResource main_External_AI_Models}" />
 						</StackPanel>
 					</TabItem.Header>
 					<Grid>
@@ -900,7 +924,7 @@
 							Name="TemplateCreateImageCheckBox"
 							Grid.Row="4"
 							Content="{StaticResource main_Create_Image}"
-							IsChecked="{Binding TemplateCreateImage}" />
+							IsChecked="{Binding UseCreateImage}" />
 						<ComboBox
 							Name="TemplateCreateImageComboBox"
 							Grid.Row="4"
@@ -916,7 +940,7 @@
 							Name="TemplateModifyImageImageCheckBox"
 							Grid.Row="5"
 							Content="{StaticResource main_Modify_Image}"
-							IsChecked="{Binding TemplateModifyImage}" />
+							IsChecked="{Binding UseModifyImage}" />
 						<ComboBox
 							Name="TemplateModifyImageComboBox"
 							Grid.Row="5"
@@ -931,29 +955,6 @@
 					</Grid>
 				</TabItem>
 
-				<TabItem x:Name="MailTabItem" x:FieldModifier="public">
-					<TabItem.Header>
-						<StackPanel Orientation="Horizontal">
-							<ContentControl Content="{StaticResource Icon_mail}" />
-							<Label Content="{StaticResource main_Mail}" />
-						</StackPanel>
-					</TabItem.Header>
-					<WrapPanel Orientation="Horizontal">
-						<CheckBox Name="UseMailAccountCheckBox" Content="Use Mail Account" IsChecked="{Binding UseMailAccount}" />
-						<ComboBox
-							Name="MailAccountComboBox"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							VerticalAlignment="Top"
-							ItemsSource="{Binding MailAccounts, ElementName=This}"
-							SelectedValue="{Binding MailAccount}" />
-						<CheckBox
-							Name="MonitorInboxCheckBox"
-							Margin="3,0,0,0"
-							Content="Monitor Inbox"
-							IsChecked="{Binding MonitorInbox}" />
-					</WrapPanel>
-				</TabItem>
 			</TabControl>
 			<!--  Row 2  -->
 			<!--  Row 3  -->

@@ -394,6 +394,8 @@ EndFragment:{3:00000000}";
 				if (!await Global.IsGoodSettings(aiService, true))
 					return;
 				var client = AiClientFactory.GetAiClient(aiService);
+				if (client is null)
+					return;
 				var models = await client.GetModels();
 				modelCodes = models?.Select(x => x.id).ToArray();
 			}

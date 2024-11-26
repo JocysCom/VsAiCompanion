@@ -1,3 +1,12 @@
+2024-11-26 v1.15.12
+
+- Fix: Images won't show unless you reselect the chat after changing the title.
+- Fix: The app crashes if the AI service type is not selected.
+- New: Added xAI Grok vision templates to analyze images with `grok-vision-beta`.
+- New: The ability to specify more external AI model templates per chat.
+- New: Google Gemini AI service, models and templates.
+- Update: Renamed [Multimedia] tab to [External AI Models].
+
 2024-11-24 v1.15.6
 
 - Fix: Resetting UI presets will deselect the currently selected UI preset.
@@ -5,7 +14,7 @@
 - Fix: Unique Id for the AI model when pasting the service.
 - Fix: Fixed and improved `.gitignore` file filtering support when searching for files.
 - New: Option to enable or disable the global instructions.
-- New: xAI Grok service, model and templates.
+- New: xAI Grok AI service, models and templates.
 - New: `Utilize Lists` and `Authentic Language` template to `Prompts` list.
 - New: AI can use the default portable database for each chat, located at `[name]/Default.sqlite` for memory.
 - New: `SearchAndSaveFilesToCsv` function that allows AI to save files as CSV.

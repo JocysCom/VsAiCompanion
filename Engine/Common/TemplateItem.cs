@@ -500,7 +500,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		#region Multimedia
+		#region External AI Models
 
 		[DefaultValue(false)]
 		public bool UseTextToAudio { get => _UseTextToAudio; set => SetProperty(ref _UseTextToAudio, value); }
@@ -514,9 +514,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseVideoToText { get => _UseVideoToText; set => SetProperty(ref _UseVideoToText, value); }
 		bool _UseVideoToText;
 
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		public bool UseTextToVideo { get => _UseTextToVideo; set => SetProperty(ref _UseTextToVideo, value); }
 		bool _UseTextToVideo;
+
+		[DefaultValue(true)]
+		public bool UseCreateImage { get => _UseCreateImage; set => SetProperty(ref _UseCreateImage, value); }
+		bool _UseCreateImage;
+
+		[DefaultValue(true)]
+		public bool UseModifyImage { get => _UseModifyImage; set => SetProperty(ref _UseModifyImage, value); }
+		bool _UseModifyImage;
 
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToAudio)]
 		public string TemplateTextToAudio { get => _TemplateTextToAudio; set => SetProperty(ref _TemplateTextToAudio, value); }

@@ -1,0 +1,46 @@
+﻿<TemplateItem>
+  <Name>® System - Video-To-Text - Google</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACnWT207cMBCGr0HiHabmBqSN40OOCymCBSGkVq1E4RaFrHc3wjiR7eyhVd+9k5AK&#xD;
+Km0vYssz3z+eg3N+sX3VsFbW1Y0pCKeMgDJVM6/NsiCdXwQZufh8dHj+KQjgVhllS9/YKVzOm2cF&#xD;
+d1p3zg8mEAllVEzg/vEWbrZtYz18190yuDNAB+Pj2yVTQJDBVVfrObBTgCDo47v18mManEA9L8iX&#xD;
+cqfsEx4wS+MKsvK+nYbhZrOhG0kbuwwFYyxE8YhMt7o2L/tAnud5OHgRLQhrtwR2b/vR4QGsa7W5&#xD;
+anoHMIi56D8Czu+0Kogy5bNWwXNZvSxt05n51KgNfCDPhuunri0rxFurnLJrRYbC+hDgdy06vNr6&#xD;
+sHKudxxQ59mvRa31tLP65BhbdHf9xJ9Oz36jKhxkvd6W87rUt/2mjB+68hclUGHCQcoYzUQS4REL&#xD;
+SvOUylRg8naYZyIlgeUo/2FL4xaNfS3Ia+ltvT2JcG4pTwXwKKIizzLgPI5pLjMIZMQzKrmEIBEi&#xD;
+zgSNZBqDyETKODt9j/pgao/D6bDo+74D38yDG4o/wOqbFqBZLJzyBemvElHCVMDem9sjQdVofFbH&#xD;
+OU+yGSPhHi2jEnPdq4qTLLrm/1ElqcD3s0fFry75jRxU5+G/Xe5NbelXUOnSYWU4KQLY+K9Rxici&#xD;
+Tmg0kwkmNBGJpOm4jpbeO0FuFTCaz0SEHRxdPObv8Bhn3VOY9mx0DvjbOlpwGAniK+QqnOyEC4Zm&#xD;
+ziTNJ4L3FiEiRIb1cQj6cywKfwvc/wCqzpv14wMAAA==</IconData>
+  <Created>2024-02-25T22:52:23.8458776+00:00</Created>
+  <Modified>2024-02-25T22:52:23.8458776+00:00</Modified>
+  <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gemini-1.5-pro</AiModel>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <IsEnabled>false</IsEnabled>
+      <Id>7a7bea3cb6544a67bcfcd1aea0f66b57</Id>
+      <User>System</User>
+      <Body>Preview Mode - Sending messages to AI is suppressed.</Body>
+      <Attachments />
+      <Date>2024-02-06T15:41:02.1512993+00:00</Date>
+      <Type>Information</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>None</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>true</IsPreview>
+  <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
+  <AttachmentsSelection />
+  <UseVideoToText>false</UseVideoToText>
+  <UseTextToVideo>false</UseTextToVideo>
+  <UseCreateImage>false</UseCreateImage>
+  <UseModifyImage>false</UseModifyImage>
+</TemplateItem>

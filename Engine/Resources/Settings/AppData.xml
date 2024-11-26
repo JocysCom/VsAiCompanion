@@ -49,7 +49,7 @@
         <Left>392</Left>
         <Top>122</Top>
         <Width>1033</Width>
-        <Height>815.5</Height>
+        <Height>816</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -67,7 +67,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.2188118811881188</GridSplitterPosition>
+          <GridSplitterPosition>0.21847070506454816</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
@@ -76,7 +76,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.22574257425742575</GridSplitterPosition>
+          <GridSplitterPosition>0.22542204568023833</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -110,7 +110,7 @@
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>4</ListSelectedIndex>
+          <ListSelectedIndex>5</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -132,7 +132,7 @@
           <ListSelection>
             <string>o1-mini</string>
           </ListSelection>
-          <ListSelectedIndex>31</ListSelectedIndex>
+          <ListSelectedIndex>38</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
@@ -160,6 +160,18 @@ Maintain uniform terminology and capitalization for all extracted values.&#xD;
 Provide detailed and clear structures without ambiguity.&#xD;
 Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
+        <AiService>
+          <Path>OpenAI</Path>
+          <Name>Google Gemini</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <ServiceType>OpenAI</ServiceType>
+          <Id>8b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
+          <ApiSecretKey />
+          <DefaultAiModel>gemini-1.5-flash</DefaultAiModel>
+          <BaseUrl>https://generativelanguage.googleapis.com/v1beta/openai/</BaseUrl>
+          <ModelFilter />
+        </AiService>
         <AiService>
           <Path>OpenAI</Path>
           <Name>xAi Grok</Name>
@@ -696,6 +708,30 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Google Gemini</Path>
+          <Name>gemini-1.5-flash</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>052a059f-9838-0ac5-c27e-a833b63f6938</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Google Gemini</Path>
+          <Name>gemini-1.5-pro</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cb4376d9-9751-a5b4-a222-c093ac45eb32</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
         </AiModel>
       </AiModels>
       <MailAccounts />

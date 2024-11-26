@@ -98,6 +98,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ToolChoiceRequiredNames_Name => FindResource(nameof(main_ToolChoiceRequiredNames_Name));
         public static string main_ToolChoiceRequiredNames_Help => FindResource(nameof(main_ToolChoiceRequiredNames_Help));
         public static string main_Multimedia => FindResource(nameof(main_Multimedia));
+        public static string main_External_AI_Models => FindResource(nameof(main_External_AI_Models));
         public static string main_Create_Image => FindResource(nameof(main_Create_Image));
         public static string main_Modify_Image => FindResource(nameof(main_Modify_Image));
         public static string main_Use_Text_To_Audio => FindResource(nameof(main_Use_Text_To_Audio));
