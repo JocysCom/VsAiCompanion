@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public async Task<OperationResult<string>> VideoToText(string prompt, string[] pathsOrUrls)
 		{
 			if (!Item.UseVideoToText)
-				return new OperationResult<string>(new Exception($"Access denied. User must enable '{nameof(VideoToText)}' in Multimedia."));
+				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Video_To_Text}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateVideoToText);
 			if (rItem == null)
@@ -83,9 +83,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return new OperationResult<string>(ex);
 			}
 		}
-
-
-		#region Generate and Modify Images
 
 		#region Helper Methods
 
@@ -176,15 +173,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		#region Generate and Modify Images
+		#region Create and Modify Images
 
-		public async Task<OperationResult<string>> GenerateImageAsync(
+		public async Task<OperationResult<string>> CreateImageAsync(
 			string prompt,
 			Plugins.Core.image_size imageSize = Plugins.Core.image_size.size_1024x1024,
 			Plugins.Core.image_style imageStyle = Plugins.Core.image_style.vivid,
 			Plugins.Core.image_quality imageQuality = Plugins.Core.image_quality.standard
 		)
 		{
+			if (!Item.UseCreateImage)
+				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Create_Image}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateCreateImage);
 			if (rItem == null)
@@ -286,6 +285,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Plugins.Core.image_size imageSize = Plugins.Core.image_size.size_1024x1024
 		)
 		{
+			if (!Item.UseModifyImage)
+				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Modify_Image}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateModifyImage);
 			if (rItem == null)
@@ -374,8 +375,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 					maskStream.Dispose();
 			}
 		}
-
-		#endregion
 
 		#endregion
 

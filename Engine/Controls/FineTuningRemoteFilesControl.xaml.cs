@@ -205,6 +205,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			SaveSelection();
 			var client = AiClientFactory.GetAiClient(Data.AiService);
+			if (client is null)
+				return;
 			var files = await client.GetFilesAsync();
 			var fileList = files?.FirstOrDefault()?.data ?? new List<file>();
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
@@ -249,6 +251,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			async Task DeleteItemAsync(file item)
 			{
 				var client = AiClientFactory.GetAiClient(Data.AiService);
+				if (client is null)
+					return;
 				var response = await client.DeleteFileAsync(item.id);
 				if (!string.IsNullOrEmpty(client.LastError))
 					errors.Add(client.LastError);
@@ -270,6 +274,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ControlsHelper.BeginInvoke(async () =>
 				{
 					var client = AiClientFactory.GetAiClient(Data.AiService);
+					if (client is null)
+						return;
 					var request = new fine_tune_request()
 					{
 						training_file = item.id,

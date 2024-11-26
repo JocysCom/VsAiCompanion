@@ -283,6 +283,47 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public event EventHandler MessageDone;
 
+		public class AddHeadersPolicy : PipelinePolicy
+		{
+			private readonly IDictionary<string, string> _headers;
+
+			public AddHeadersPolicy(IDictionary<string, string> headers)
+			{
+				_headers = headers;
+			}
+			public override void Process(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int currentIndex)
+			{
+				// Add the headers to the request
+				foreach (var header in _headers)
+				{
+					message.Request.Headers.Set(header.Key, header.Value);
+				}
+				// Continue processing the next policy in the pipeline
+				ProcessNext(message, pipeline, currentIndex + 1);
+			}
+
+			public override async ValueTask ProcessAsync(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int currentIndex)
+			{
+				//var ms = new MemoryStream();
+				//message.Request.Content.WriteTo(ms);
+				//ms.Position = 0;
+				// Convert binary data to string
+				//string jsonString = Encoding.UTF8.GetString(ms.ToArray());
+				//var stringContent = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
+				//var o = Client.Deserialize<OpenAI.Chat.ChatCompletionOptions>(jsonString);
+				//// Create BinaryContent from the stream
+				//var binaryContent = System.ClientModel.BinaryContent.Create(ms);
+				//message.Request.Content = binaryContent;
+				// Add the headers to the request
+				//foreach (var header in _headers)
+				//{
+				//	message.Request.Headers.Set(header.Key, header.Value);
+				//}
+				// Continue processing the next policy in the pipeline asynchronously
+				await ProcessNextAsync(message, pipeline, currentIndex + 1).ConfigureAwait(false);
+			}
+		}
+
 		public async Task<OpenAIClient> GetAiClient(bool useLogger = true, CancellationToken cancellationToken = default)
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
@@ -303,6 +344,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				options.Endpoint = endpoint;
+				var headers = new Dictionary<string, string>
+				{
+					{ "Content-Type", "application/json" },
+				};
+				options.AddPolicy(new AddHeadersPolicy(headers), PipelinePosition.PerCall);
 				if (useLogger)
 				{
 					// Create HttpClient with HttpClientLogger handler
@@ -792,6 +838,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				modelName.StartsWith("o1") ||
 				modelName.Contains("gpt-4o") ||
 				modelName.Contains("grok") ||
+				modelName.Contains("gemini") ||
 				(modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1000;
 			if (modelName.Contains("-64k"))
@@ -819,7 +866,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public static void SetModelFeatures(AiModel item)
 		{
-			if (item.Name.StartsWith("o1"))
+			if (item.Name.StartsWith("o1") || item.Name.Contains("gemini"))
 			{
 				item.Features = AiModelFeatures.ChatSupport;
 				item.IsFeaturesKnown = true;

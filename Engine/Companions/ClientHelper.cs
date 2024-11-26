@@ -461,6 +461,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (allowSend)
 					{
 						var client = AiClientFactory.GetAiClient(item.AiService);
+						if (client is null)
+							return;
 						// Send body and context data. Make sure it runs on NON-UI thread.
 						var messageItems = await Task.Run(async () => await client.QueryAI(
 							item,
@@ -539,6 +541,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Supply data for processing.
 				messages.Add(new chat_completion_message(message_role.user, text));
 				var client = AiClientFactory.GetAiClient(rItem.AiService);
+				if (client is null)
+					return text;
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var messageItem = await Task.Run(async () => await client.QueryAI(
 					rItem,
@@ -587,6 +591,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var role = rItem.UseSystemInstructions ? message_role.system : message_role.user;
 				messages.Add(new chat_completion_message(role, rItem.TextInstructions));
 				var client = AiClientFactory.GetAiClient(rItem.AiService);
+				if (client is null)
+					return;
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var response = await Task.Run(async () => await client.QueryAI(
 					rItem,
@@ -655,6 +661,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Add instructions to generate title to existing messages.
 				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				var client = AiClientFactory.GetAiClient(item.AiService);
+				if (client is null)
+					return null;
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var response = await Task.Run(async () => await client.QueryAI(
 					rItem,

@@ -1,14 +1,21 @@
 ﻿<TemplateItem>
-  <Name>® System - Generate Title - xAI</Name>
+  <Name>® System - Generate Title - Google</Name>
   <IconType>.svg</IconType>
-  <IconData>H4sIAAAAAAAACm2QSw7CMAwFr2LlAI4dJ2lAwIK7oFIJmgqqBm6PSz/qortYHk+efXoPNXyej/Z9&#xD;
-Nve+747WllKwCOZXbR0RWSUMDM2tXPPnbAgIfIxIHgJHPIi5nLr8+Na5hS43ba8iQnbAyWHF4MQj&#xD;
-z6wDkYQclopJe7KQmyljd6TbKUprFTRLAu8dxmrqeZCYULwmnaA93bwDKct4iPoYv9a86ktxih00&#xD;
-LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
+  <IconData>H4sIAAAAAAAACnWT207cMBCGr0HiHabmBqSN40OOCymCBSGkVq1E4RaFrHc3wjiR7eyhVd+9k5AK&#xD;
+Km0vYssz3z+eg3N+sX3VsFbW1Y0pCKeMgDJVM6/NsiCdXwQZufh8dHj+KQjgVhllS9/YKVzOm2cF&#xD;
+d1p3zg8mEAllVEzg/vEWbrZtYz18190yuDNAB+Pj2yVTQJDBVVfrObBTgCDo47v18mManEA9L8iX&#xD;
+cqfsEx4wS+MKsvK+nYbhZrOhG0kbuwwFYyxE8YhMt7o2L/tAnud5OHgRLQhrtwR2b/vR4QGsa7W5&#xD;
+anoHMIi56D8Czu+0Kogy5bNWwXNZvSxt05n51KgNfCDPhuunri0rxFurnLJrRYbC+hDgdy06vNr6&#xD;
+sHKudxxQ59mvRa31tLP65BhbdHf9xJ9Oz36jKhxkvd6W87rUt/2mjB+68hclUGHCQcoYzUQS4REL&#xD;
+SvOUylRg8naYZyIlgeUo/2FL4xaNfS3Ia+ltvT2JcG4pTwXwKKIizzLgPI5pLjMIZMQzKrmEIBEi&#xD;
+zgSNZBqDyETKODt9j/pgao/D6bDo+74D38yDG4o/wOqbFqBZLJzyBemvElHCVMDem9sjQdVofFbH&#xD;
+OU+yGSPhHi2jEnPdq4qTLLrm/1ElqcD3s0fFry75jRxU5+G/Xe5NbelXUOnSYWU4KQLY+K9Rxici&#xD;
+Tmg0kwkmNBGJpOm4jpbeO0FuFTCaz0SEHRxdPObv8Bhn3VOY9mx0DvjbOlpwGAniK+QqnOyEC4Zm&#xD;
+ziTNJ4L3FiEiRIb1cQj6cywKfwvc/wCqzpv14wMAAA==</IconData>
   <Created>2024-02-25T21:17:42.836114+00:00</Created>
   <Modified>2024-02-25T21:17:42.836114+00:00</Modified>
-  <AiServiceId>1555d15f-664d-446d-af43-81efa86454bb</AiServiceId>
-  <AiModel>grok-beta</AiModel>
+  <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gemini-1.5-flash</AiModel>
   <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
@@ -29,6 +36,7 @@ LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
+  <GenerateTitleTemplate>® System - Generate Title - Google</GenerateTitleTemplate>
   <IsPreview>true</IsPreview>
   <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>

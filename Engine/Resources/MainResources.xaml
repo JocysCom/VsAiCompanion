@@ -61,6 +61,7 @@
 	<!--  Tasks / Templates → Options → Multimedia  -->
 
 	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
+	<sys:String x:Key="main_External_AI_Models">External AI Models</sys:String>
 	<sys:String x:Key="main_Create_Image">Create Image</sys:String>
 	<sys:String x:Key="main_Modify_Image">Modify Image</sys:String>
 	<sys:String x:Key="main_Use_Text_To_Audio">Use Text-To-Audio</sys:String>

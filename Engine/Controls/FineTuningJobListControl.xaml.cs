@@ -188,6 +188,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			SaveSelection();
 			var client = AiClientFactory.GetAiClient(Data.AiService);
+			if (client is null)
+				return;
 			var request = new fine_tuning_jobs_request();
 			request.limit = 1000;
 			var response = await client.GetFineTuningJobsAsync(request);
@@ -218,6 +220,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (items == null)
 				return;
 			var client = AiClientFactory.GetAiClient(Data.AiService);
+			if (client is null)
+				return;
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
@@ -242,6 +246,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				foreach (var item in items)
 				{
 					var client = AiClientFactory.GetAiClient(Data.AiService);
+					if (client is null)
+						return;
 					var response = await client.CancelFineTuningJobAsync(item.id);
 					if (!string.IsNullOrEmpty(client.LastError))
 						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

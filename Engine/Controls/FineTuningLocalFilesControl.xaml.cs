@@ -398,6 +398,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					var sourcePath = Global.GetPath(Data, FolderType.ToString(), item.filename);
 					var client = AiClientFactory.GetAiClient(Data.AiService);
+					if (client is null)
+						return;
 					var ext = Path.GetExtension(item.filename).ToLower();
 					var purpose = ext == ".jsonl"
 						? Client.FineTuningPurpose

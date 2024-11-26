@@ -1,26 +1,25 @@
 ﻿<TemplateItem>
-  <Name>® System - Generate Title - xAI</Name>
+  <Name>® System - Video-To-Text - xAI</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACm2QSw7CMAwFr2LlAI4dJ2lAwIK7oFIJmgqqBm6PSz/qortYHk+efXoPNXyej/Z9&#xD;
 Nve+747WllKwCOZXbR0RWSUMDM2tXPPnbAgIfIxIHgJHPIi5nLr8+Na5hS43ba8iQnbAyWHF4MQj&#xD;
 z6wDkYQclopJe7KQmyljd6TbKUprFTRLAu8dxmrqeZCYULwmnaA93bwDKct4iPoYv9a86ktxih00&#xD;
 LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
-  <Created>2024-02-25T21:17:42.836114+00:00</Created>
-  <Modified>2024-02-25T21:17:42.836114+00:00</Modified>
+  <Created>2024-02-25T22:52:23.8458776+00:00</Created>
+  <Modified>2024-02-25T22:52:23.8458776+00:00</Modified>
   <AiServiceId>1555d15f-664d-446d-af43-81efa86454bb</AiServiceId>
-  <AiModel>grok-beta</AiModel>
-  <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
+  <AiModel>grok-vision-beta</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>
-      <Id>ab880acfad604a25860525836f3ee6ae</Id>
+      <Id>7a7bea3cb6544a67bcfcd1aea0f66b57</Id>
       <User>System</User>
-      <Body>This reserved task use AI to automatically generate chat title.</Body>
+      <Body>Preview Mode - Sending messages to AI is suppressed.</Body>
       <Attachments />
-      <Date>2023-07-16T08:55:56.1042695+01:00</Date>
+      <Date>2024-02-06T15:41:02.1512993+00:00</Date>
       <Type>Information</Type>
     </MessageItem>
   </Messages>

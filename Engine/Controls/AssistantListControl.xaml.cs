@@ -166,6 +166,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			SaveSelection();
 			var client = AiClientFactory.GetAiClient(Data.AiService);
+			if (client is null)
+				return;
 			var models = await client.GetModels();
 			CollectionsHelper.Synchronize(models, CurrentItems);
 			MustRefresh = false;
@@ -190,6 +192,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (items == null)
 				return;
 			var client = AiClientFactory.GetAiClient(Data.AiService);
+			if (client is null)
+				return;
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{

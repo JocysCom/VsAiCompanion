@@ -47,20 +47,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 			IsResetMessgesPending = !ScriptHandlerInitialized;
 			if (ScriptHandlerInitialized)
-				ControlsHelper.AppBeginInvoke(ResetWebMessages);
+				_ = Helper.Debounce(ResetWebMessages);
 		}
 
 		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(TemplateItem.Name))
 			{
-				//ResetWebMessages();
+				// Usually when title is regenerated.
+				_ = Helper.Debounce(ResetWebMessages);
 			}
 		}
 
 		private bool IsResetMessgesPending;
 
+
 		private void ResetWebMessages()
+		{
+			ControlsHelper.AppBeginInvoke(ResetWebMessagesDebounced);
+		}
+
+		private void ResetWebMessagesDebounced()
 		{
 			InvokeScript($"DeleteMessages();");
 			var path = System.IO.Path.GetDirectoryName(Global.GetPath(Item));
@@ -279,7 +286,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				ScriptHandlerInitialized = true;
 				// If messages set but messages are not loaded yet.
 				if (IsResetMessgesPending)
-					ControlsHelper.AppBeginInvoke(ResetWebMessages);
+					_ = Helper.Debounce(ResetWebMessages);
 				if (Global.IsVsExtension)
 				{
 					Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
