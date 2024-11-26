@@ -828,13 +828,15 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 
-						<CheckBox Name="UseTextToAudioCheckBox" Content="Use Text-to-Audio" IsChecked="{Binding UseTextToAudio}" />
+						<CheckBox Name="UseTextToAudioCheckBox" Content="{StaticResource main_Use_Text_To_Audio}" IsChecked="{Binding UseTextToAudio}" />
 						<ComboBox
 							Name="TemplateTextToAudioComboBox"
 							Grid.Column="1"
@@ -848,7 +850,7 @@
 						<CheckBox
 							Name="UseAudioToTextCheckBox"
 							Grid.Row="1"
-							Content="Use Audio-To-Text"
+							Content="{StaticResource main_Use_Audio_To_Text}"
 							IsChecked="{Binding UseAudioToText}" />
 						<ComboBox
 							Name="TemplateAudioToTextComboBox"
@@ -864,7 +866,7 @@
 						<CheckBox
 							Name="UseTextToVideoCheckBox"
 							Grid.Row="2"
-							Content="Use Text-to-Video"
+							Content="{StaticResource main_Use_Text_To_Video}"
 							IsChecked="{Binding UseTextToVideo}" />
 						<ComboBox
 							Name="TemplateTextToVideoComboBox"
@@ -880,7 +882,7 @@
 						<CheckBox
 							Name="UseVideoToTextCheckBox"
 							Grid.Row="3"
-							Content="Use Video-To-Text"
+							Content="{StaticResource main_Use_Video_To_Text}"
 							IsChecked="{Binding UseVideoToText}" />
 						<ComboBox
 							Name="TemplateVideoToTextComboBox"
@@ -892,6 +894,40 @@
 							ItemsSource="{Binding PluginTemplates, ElementName=This}"
 							SelectedValue="{Binding TemplateVideoToText}"
 							SelectedValuePath="Key" />
+
+
+						<CheckBox
+							Name="TemplateCreateImageCheckBox"
+							Grid.Row="4"
+							Content="{StaticResource main_Create_Image}"
+							IsChecked="{Binding TemplateCreateImage}" />
+						<ComboBox
+							Name="TemplateCreateImageComboBox"
+							Grid.Row="4"
+							Grid.Column="1"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding TemplateCreateImage}"
+							SelectedValuePath="Key" />
+
+						<CheckBox
+							Name="TemplateModifyImageImageCheckBox"
+							Grid.Row="5"
+							Content="{StaticResource main_Modify_Image}"
+							IsChecked="{Binding TemplateModifyImage}" />
+						<ComboBox
+							Name="TemplateModifyImageComboBox"
+							Grid.Row="5"
+							Grid.Column="1"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding TemplateModifyImage}"
+							SelectedValuePath="Key" />
+
 					</Grid>
 				</TabItem>
 

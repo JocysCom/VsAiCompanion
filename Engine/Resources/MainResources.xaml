@@ -58,6 +58,16 @@
 	<sys:String x:Key="main_ToolChoiceRequiredNames_Name">Tool Choice Required Name</sys:String>
 	<sys:String x:Key="main_ToolChoiceRequiredNames_Help">Specifies the name of the required tool function the AI model must call.</sys:String>
 
+	<!--  Tasks / Templates → Options → Multimedia  -->
+
+	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
+	<sys:String x:Key="main_Create_Image">Create Image</sys:String>
+	<sys:String x:Key="main_Modify_Image">Modify Image</sys:String>
+	<sys:String x:Key="main_Use_Text_To_Audio">Use Text-To-Audio</sys:String>
+	<sys:String x:Key="main_Use_Audio_To_Text">Use Audio-To-Text</sys:String>
+	<sys:String x:Key="main_Use_Video_To_Text">Use Video-To-Text</sys:String>
+	<sys:String x:Key="main_Use_Text_To_Video">Use Text-To-Video</sys:String>
+
 	<!--  Tasks / Templates → Canvas  -->
 
 	<sys:String x:Key="main_CanvasPanelEnabled_Name">Use Canvas Panel</sys:String>
@@ -372,7 +382,6 @@
 	<sys:String x:Key="main_Message">Message</sys:String>
 	<sys:String x:Key="main_Message_CAPS">MESSAGE</sys:String>
 	<sys:String x:Key="main_ModelRefreshButton_ToolTip">Click to refresh models. Use CTRL+Click to set manually.</sys:String>
-	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
 	<sys:String x:Key="main_Name">Name</sys:String>
 	<sys:String x:Key="main_Object">Object</sys:String>
 	<sys:String x:Key="main_Open">Open...</sys:String>

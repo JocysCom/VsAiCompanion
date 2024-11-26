@@ -186,9 +186,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		)
 		{
 			// Try to get reserved template item.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateGenerateImage);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateCreateImage);
 			if (rItem == null)
-				return new OperationResult<string>(new Exception($"Can't find '{Item.TemplateGenerateImage}'"));
+				return new OperationResult<string>(new Exception($"Can't find '{Item.TemplateCreateImage}'"));
 			if (string.IsNullOrWhiteSpace(prompt))
 				return new OperationResult<string>(new Exception($"Prompt can't be empty!"));
 

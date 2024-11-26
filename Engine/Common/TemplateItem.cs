@@ -14,7 +14,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : AiFileListItem
+	public class TemplateItem : AiFileListItem, ITemplateItemNames
 	{
 		public TemplateItem()
 		{
@@ -531,8 +531,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _TemplateVideoToText;
 
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_GenerateImage)]
-		public string TemplateGenerateImage { get => _TemplateGenerateImage; set => SetProperty(ref _TemplateGenerateImage, value); }
-		string _TemplateGenerateImage;
+		public string TemplateCreateImage { get => _TemplateCreateImage; set => SetProperty(ref _TemplateCreateImage, value); }
+		string _TemplateCreateImage;
 
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_ModifyImage)]
 		public string TemplateModifyImage { get => _TemplateModifyImage; set => SetProperty(ref _TemplateModifyImage, value); }
