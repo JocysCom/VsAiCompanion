@@ -36,11 +36,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void UpdateSelectedValue()
 		{
 			var data = (ObservableCollection<CheckBoxViewModel>)ItemsSource;
+			if (data == null || data.Count == 0)
+				return;
+
 			var top = data[0];
 			var value = data
 				.Where(x => x.IsChecked)
 				.Aggregate(0L, (current, item) => Convert.ToInt64(current) | Convert.ToInt64(item.Value));
 			var newValue = (Enum)Enum.ToObject(top.Value.GetType(), value);
+
+			// Assign the computed value to SelectedValue to trigger binding
+			SelectedValue = newValue;
 		}
 
 		public static ObservableCollection<CheckBoxViewModel> GetItemSource<T>() where T : Enum
@@ -80,9 +86,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Binding
 
-		private static readonly DependencyProperty SelectedValueProperty =
-			DependencyProperty.Register("SelectedValue", typeof(object), typeof(EnumItemsControl),
-		new FrameworkPropertyMetadata(default(object), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
+		public static readonly DependencyProperty SelectedValueProperty =
+			DependencyProperty.Register(
+				"SelectedValue",
+				typeof(object),
+				typeof(EnumItemsControl),
+				new FrameworkPropertyMetadata(
+					default(object),
+					FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+					OnSelectedValueChanged));
 
 		public object SelectedValue
 		{

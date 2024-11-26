@@ -7,7 +7,7 @@ z6wDkYQclopJe7KQmyljd6TbKUprFTRLAu8dxmrqeZCYULwmnaA93bwDKct4iPoYv9a86ktxih00&#xD
 LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
   <Created>2024-02-25T22:52:23.8458776+00:00</Created>
   <Modified>2024-02-25T22:52:23.8458776+00:00</Modified>
-  <AiServiceId>1555d15f-664d-446d-af43-81efa86454bb</AiServiceId>
+  <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
   <AiModel>grok-vision-beta</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
@@ -32,5 +32,4 @@ LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
   <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
-  <UseVideoToText>false</UseVideoToText>
 </TemplateItem>

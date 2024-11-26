@@ -31,7 +31,7 @@
 				Width="170"
 				VerticalAlignment="Center"
 				ItemsSource="{Binding FeaturesItemsSource, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-				SelectedValue="{Binding Features}" />
+				SelectedValue="{Binding Features, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		</GroupBox>
 
 		<GroupBox x:Name="ProgramGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Context_Options}">

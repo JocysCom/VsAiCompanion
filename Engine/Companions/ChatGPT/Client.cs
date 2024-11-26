@@ -304,16 +304,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 			public override async ValueTask ProcessAsync(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int currentIndex)
 			{
-				//var ms = new MemoryStream();
-				//message.Request.Content.WriteTo(ms);
-				//ms.Position = 0;
-				// Convert binary data to string
-				//string jsonString = Encoding.UTF8.GetString(ms.ToArray());
-				//var stringContent = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
-				//var o = Client.Deserialize<OpenAI.Chat.ChatCompletionOptions>(jsonString);
-				//// Create BinaryContent from the stream
-				//var binaryContent = System.ClientModel.BinaryContent.Create(ms);
-				//message.Request.Content = binaryContent;
+				var ms = new MemoryStream();
+				if (message.Request.Content != null)
+				{
+					message.Request.Content?.WriteTo(ms);
+					ms.Position = 0;
+					// Convert binary data to string
+					var jsonString = Encoding.UTF8.GetString(ms.ToArray());
+					//var stringContent = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
+					//var o = Client.Deserialize<OpenAI.Chat.ChatCompletionOptions>(jsonString);
+					//// Create BinaryContent from the stream
+					//var binaryContent = System.ClientModel.BinaryContent.Create(ms);
+					//message.Request.Content = binaryContent;
+				}
 				// Add the headers to the request
 				//foreach (var header in _headers)
 				//{
@@ -520,13 +523,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var client = await GetAiClient();
 						var chatClient = client.GetChatClient(modelName);
 						var toolCalls = new List<ChatToolCall>();
-#if NETFRAMEWORK
-						bool allowStreaming = false;
-#else
-						bool allowStreaming = true;
-#endif
 						// If streaming  mode is enabled and AI model supports streaming then...
-						if (allowStreaming && service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
+						if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 						{
 							var toolCallIdsByIndex = new Dictionary<int, string>();
 							var functionNamesByIndex = new Dictionary<int, string>();
@@ -866,9 +864,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public static void SetModelFeatures(AiModel item)
 		{
-			if (item.Name.StartsWith("o1") || item.Name.Contains("gemini"))
+			if (item.Name.StartsWith("o1"))
 			{
 				item.Features = AiModelFeatures.ChatSupport;
+				item.IsFeaturesKnown = true;
+				return;
+			}
+			if (item.Name.Contains("gemini"))
+			{
+				item.Features = AiModelFeatures.ChatSupport | AiModelFeatures.SystemMessages;
 				item.IsFeaturesKnown = true;
 				return;
 			}

@@ -456,7 +456,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (item.AutoGenerateTitle)
 					{
 						item.AutoGenerateTitle = false;
-						_ = GenerateResult(item, SettingsSourceManager.TemplateGenerateTitleTaskName);
+						_ = GenerateResult(item, item.GenerateTitleTemplate);
 					}
 					if (allowSend)
 					{
@@ -602,7 +602,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var body = response.FirstOrDefault()?.Body;
 				if (!string.IsNullOrEmpty(body))
 				{
-					if (taskName == SettingsSourceManager.TemplateGenerateTitleTaskName)
+					if (taskName.StartsWith(SettingsSourceManager.TemplateGenerateTitleTaskName))
 					{
 						body = SettingsData<object>.RemoveInvalidFileNameChars(body);
 						if (body.Split().Length > 0)
@@ -613,7 +613,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 								Global.Tasks.RenameItem(item, title);
 						}
 					}
-					if (taskName == SettingsSourceManager.TemplateGenerateIconTaskName)
+					if (taskName.StartsWith(SettingsSourceManager.TemplateGenerateIconTaskName))
 					{
 						// If items is still there then...
 						if (Global.Tasks.Items.Contains(item))

@@ -46,8 +46,8 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>97</Left>
-        <Top>171</Top>
+        <Left>454</Left>
+        <Top>135</Top>
         <Width>1033</Width>
         <Height>816</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -76,11 +76,12 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.22524752475247525</GridSplitterPosition>
+          <GridSplitterPosition>0.21336633663366336</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
+          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
@@ -108,9 +109,9 @@
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Speech Service</string>
+            <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>5</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -130,9 +131,9 @@
         <TaskSettings>
           <ItemType>AiModel</ItemType>
           <ListSelection>
-            <string>o1-mini</string>
+            <string>gpt-4o</string>
           </ListSelection>
-          <ListSelectedIndex>33</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
@@ -167,8 +168,9 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>8b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
+          <ResponseStreaming>false</ResponseStreaming>
           <ApiSecretKey />
-          <DefaultAiModel>gemini-1.5-flash</DefaultAiModel>
+          <DefaultAiModel>gemini-1.5-pro</DefaultAiModel>
           <BaseUrl>https://generativelanguage.googleapis.com/v1beta/openai/</BaseUrl>
           <ModelFilter />
         </AiService>
@@ -189,7 +191,6 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
-          <IsDefault>true</IsDefault>
           <ApiSecretKey />
           <DefaultAiModel>gpt-4o</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
@@ -241,6 +242,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
+          <IsDefault>true</IsDefault>
           <ResponseStreaming>false</ResponseStreaming>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-4o</DefaultAiModel>
@@ -700,16 +702,6 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <MaxInputTokens>2049</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Path>xAi Grok</Path>
-          <Name>grok-beta</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>88e2561e-01e6-7704-d428-54126fb25e13</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
           <Path>Google Gemini</Path>
           <Name>gemini-1.5-flash</Name>
           <Created>0001-01-01T00:00:00</Created>
@@ -718,7 +710,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
-          <Features>ChatSupport</Features>
+          <Features>SystemMessages ChatSupport</Features>
           <IsFeaturesKnown>true</IsFeaturesKnown>
         </AiModel>
         <AiModel>
@@ -730,8 +722,28 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
-          <Features>ChatSupport</Features>
+          <Features>SystemMessages ChatSupport</Features>
           <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>xAi Grok</Path>
+          <Name>grok-beta</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>88e2561e-01e6-7704-d428-54126fb25e13</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>xAi Grok</Path>
+          <Name>grok-vision-beta</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>7ad00887-1455-bd44-d6fe-65169b09455d</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />
