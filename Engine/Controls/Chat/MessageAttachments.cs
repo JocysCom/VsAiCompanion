@@ -83,5 +83,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public message_role MessageRole { get => _MessageRole; set => SetProperty(ref _MessageRole, value); }
 		message_role _MessageRole;
 
+		[DefaultValue(0)]
+		public int Tokens { get => _Tokens; set => SetProperty(ref _Tokens, value); }
+		int _Tokens;
+
+		public int UpdateTokens()
+		{
+			var tokens = 0;
+			tokens += Companions.ClientHelper.CountTokens(Title, null);
+			tokens += Companions.ClientHelper.CountTokens(Instructions, null);
+			tokens += Companions.ClientHelper.CountTokens(Data, null);
+			Tokens = tokens;
+			return tokens;
+		}
+
 	}
 }

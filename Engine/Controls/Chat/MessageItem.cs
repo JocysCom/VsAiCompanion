@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -47,6 +48,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public bool IsTemp { get => _IsTemp; set => SetProperty(ref _IsTemp, value); }
 		bool _IsTemp;
 
+		[DefaultValue(0)]
+		public int Tokens { get => _Tokens; set => SetProperty(ref _Tokens, value); }
+		int _Tokens;
+
 		/// <summary>Optional context data: cliboard, selection or Files.</summary>
 		public BindingList<MessageAttachments> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
 		BindingList<MessageAttachments> _Attachments = new BindingList<MessageAttachments>();
@@ -82,6 +87,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (newId)
 				copy.Id = Guid.NewGuid().ToString("N");
 			return copy;
+		}
+
+		public int UpdateTokens()
+		{
+			var tokens = 0;
+			tokens += ClientHelper.CountTokens(Id, null);
+			tokens += ClientHelper.CountTokens(User, null);
+			tokens += ClientHelper.CountTokens(Body, null);
+			tokens += ClientHelper.CountTokens(BodyInstructions, null);
+			foreach (var attachment in Attachments)
+				tokens += attachment.UpdateTokens();
+			Tokens = tokens;
+			return tokens;
 		}
 
 		#region ■ ISettingsItem
