@@ -1,0 +1,49 @@
+<Project ToolsVersion="Current">
+
+  <ItemGroup>
+    <None Include="*.*" Exclude="*.sln*;UpgradeLog*.*" />
+    <None Include=".github/*.*" />
+    <None Include=".config/*.*" />
+	<None Include="Resources/*.*" />
+  </ItemGroup>
+
+  <!-- 
+
+Disable Building:
+
+The project will be added to the solution as `FAE04EC0-301F-11D3-BF4B-00C04F79EFBC` C# type.
+
+	```
+	Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Solution Items", "_Solution Items.csproj", "{PROJECT_GUID}"
+	EndProject
+	```
+
+To prevent it from building, remove all .Build.0 lines. For example:
+
+	```
+	{PROJECT_GUID}.Release|Any CPU.Build.0 = Release|Any CPU
+	{PROJECT_GUID}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	```
+
+Rename `Debug` and `Release` configuration names to any other name, for example `DisableBuild`:
+
+	```
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		...
+		{PROJECT_GUID}.Debug|Any CPU.ActiveCfg = DisableBuild|Any CPU
+		{PROJECT_GUID}.Release|Any CPU.ActiveCfg = DisableBuild|Any CPU
+	EndGlobalSection
+	```
+
+This will result in the builder skipping building the project:
+
+	```
+	Rebuild started at 12:20...
+	====== Skipped Rebuild All: Project: _Solution Items ======
+	========== Rebuild All: 0 succeeded, 0 failed, 1 skipped ==========
+	========== Rebuild completed at 12:20 and took 00.072 seconds ==========
+	```
+
+-->
+
+</Project>
