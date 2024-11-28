@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Will be used by plugins manager and called by AI.
 		/// </summary>
-		public Func<string, string[], Task<OperationResult<string>>> VideoToText { get; set; }
+		public Func<string, string[], Task<OperationResult<string>>> VideoToTextCallback { get; set; }
 
 		/// <summary>
 		/// Get path to temp folder.
@@ -46,7 +46,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			string[] pathsOrUrls
 			)
 		{
-			return await VideoToText(instructions, pathsOrUrls);
+			return await VideoToTextCallback(instructions, pathsOrUrls);
 		}
 
 		/// <summary>
@@ -376,5 +376,28 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		#endregion
 
+		#region Create Audio
+
+		/// <summary>
+		/// Generates an audio using the specified prompt by using OpenAI TTS (text-to-speech) voice models.
+		/// </summary>
+		/// <param name="text">The text to generate audio for.</param>
+		/// <param name="voice">Generated speech voice: "alloy", "echo", "fable", "onyx", "nova" or "shimmer"</param>
+		/// <returns>Operation result containing the path to the generated voice file.</returns>
+		[RiskLevel(RiskLevel.None)]
+		public async Task<OperationResult<string>> TextToAudio(
+			string text,
+			string voice)
+		{
+			return await TextToAudioCallback(text, voice);
+		}
+
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
+		public Func<string, string, Task<OperationResult<string>>> TextToAudioCallback;
+
+		#endregion
 	}
 }
+

@@ -72,10 +72,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			MonitorInboxCheckBox.Visibility = debugVisibility;
-			UseTextToAudioCheckBox.Visibility = debugVisibility;
 			UseAudioToTextCheckBox.Visibility = debugVisibility;
 			TemplateAudioToTextComboBox.Visibility = debugVisibility;
-			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
 			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
 		}

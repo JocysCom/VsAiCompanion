@@ -238,18 +238,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var ai = new AiMultimediaClient();
 					ai.Item = item;
 					// Map Text, Audio and Video converter methods.
-					mm.VideoToText = ai.VideoToText;
+					mm.VideoToTextCallback = ai.VideoToText;
 					mm.GetTempFolderPath = AppHelper.GetTempFolderPath;
 					mm.GenerateImageCallback = ai.CreateImageAsync;
+					mm.TextToAudioCallback = ai.TextToAudio;
 					mm.ModifyImageCallback = ai.ModifyImageAsync;
 					mm.GetStructuredImageAnalysisInstructions = () => Global.AppSettings.StructuredImageAnalysisInstructions;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
 					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, true, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
-					mm.VideoToText = null;
+					mm.VideoToTextCallback = null;
 					mm.ModifyImageCallback = null;
 					mm.GenerateImageCallback = null;
+					mm.TextToAudioCallback = null;
 					mm.GetTempFolderPath = null;
 					mm.AISpeakCallback = null;
 					ai.Item = null;

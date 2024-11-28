@@ -505,7 +505,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region External AI Models
 
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		public bool UseTextToAudio { get => _UseTextToAudio; set => SetProperty(ref _UseTextToAudio, value); }
 		bool _UseTextToAudio;
 

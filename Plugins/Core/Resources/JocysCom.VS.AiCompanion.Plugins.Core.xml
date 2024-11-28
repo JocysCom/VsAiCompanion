@@ -1313,7 +1313,7 @@
             </summary>
             <returns>True if the operation was successful.</returns>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.VideoToText">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.VideoToTextCallback">
             <summary>
             Will be used by plugins manager and called by AI.
             </summary>
@@ -1427,6 +1427,19 @@
             <param name="pdfFilePath">The path to the source PDF file.</param>
             <param name="pages">Optional. The zero-based index array of page numbers to convert. If null or empty, all pages are converted.</param>
             <returns>An OperationResult containing a list of structured JSON strings.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToAudio(System.String,System.String)">
+            <summary>
+            Generates an audio using the specified prompt by using OpenAI TTS (text-to-speech) voice models.
+            </summary>
+            <param name="text">The text to generate audio for.</param>
+            <param name="voice">Generated speech voice: "alloy", "echo", "fable", "onyx", "nova" or "shimmer"</param>
+            <returns>Operation result containing the path to the generated voice file.</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToAudioCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>
@@ -1687,6 +1700,32 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.part">
             <summary>Text to play.</summary>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.AudioInfo">
+            <summary>Audio info.</summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.AudioInfo.#ctor">
+            <summary>Audio info.</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo">
+            <summary>
+            Basic AI audio or image info.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.Name">
+            <summary>Image file name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.FullName">
+            <summary>Image full file name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.Prompt">
+            <summary>AI Prompt used to generate this image.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.Type">
+            <summary>Type of the object.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.FileSuffix">
+            <summary>Suffix to add to the file.</summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType">
             <summary>
             Context type.
@@ -1735,7 +1774,10 @@
             <summary>Documents related to exception</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Image">
-            <summary>Documents related to exception</summary>
+            <summary>Image</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Audio">
+            <summary>Audio</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem">
             <summary>
@@ -1927,18 +1969,10 @@
             <summary>Exception to string.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo">
-            <summary>
-            Image data.
-            </summary>
+            <summary>Image info.</summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Name">
-            <summary>Image file name.</summary>
-        </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.FullName">
-            <summary>Image full file name.</summary>
-        </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Prompt">
-            <summary>AI Prompt used to generate this image.</summary>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.#ctor">
+            <summary>Image info.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Width">
             <summary>Image width.</summary>

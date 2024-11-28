@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using OpenAI.Audio;
 using OpenAI.Images;
 using System;
 using System.ClientModel;
@@ -103,38 +104,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return (imageWidth, imageHeight);
 		}
 
-		private string SaveImageAndAddAttachment(Plugins.Core.VsFunctions.ImageInfo imageInfo, byte[] imageBytes)
-		{
-			var now = DateTime.Now;
-			var pngName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.png";
-			var jsonName = $"image_{now:yyyyMMdd_HHmmss}_{imageInfo.Width}x{imageInfo.Height}.json";
-			// Gel locations and update image info.
-			var folderPath = Global.GetPath(Item);
-			if (!Directory.Exists(folderPath))
-				Directory.CreateDirectory(folderPath);
-			var pngFullPath = Path.Combine(folderPath, pngName);
-			var jsonFullPath = Path.Combine(folderPath, jsonName);
-			imageInfo.Name = pngName;
-			imageInfo.FullName = pngFullPath;
-			// Write image as PNG.
-			File.WriteAllBytes(pngFullPath, imageBytes);
-			// Write image info as JSON.
-			var jsonContents = Client.Serialize(imageInfo);
-			File.WriteAllText(jsonFullPath, jsonContents);
-			// Get last messages from the chat list. It will be an assistant message.
-			var message = Item.Messages.Last();
-			message.Attachments.Add(new MessageAttachments
-			{
-				Title = pngName,
-				Data = jsonContents,
-				SendType = AttachmentSendType.None,
-				Type = Plugins.Core.VsFunctions.ContextType.Image,
-			});
-			// Set date which will trigger update of the message on the chat web page.
-			message.Updated = DateTime.Now;
-			return pngFullPath;
-		}
-
 		private void AddTaskToUI(Guid id, CancellationTokenSource cancellationTokenSource)
 		{
 			ControlsHelper.AppInvoke(() =>
@@ -164,16 +133,47 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return (id, cancellationTokenSource, cancellationToken);
 		}
 
-		private async Task<ImageClient> GetImageClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
+
+		private string SaveObjectAndAddAttachment(Plugins.Core.VsFunctions.BasicInfo info, byte[] bytes)
 		{
-			var client = new Client(rItem.AiService);
-			var aiClient = await client.GetAiClient(false, cancellationToken);
-			return aiClient.GetImageClient(rItem.AiModel);
+			var now = DateTime.Now;
+			var jsonName = $"{info.Name}.json";
+			// Gel locations and update info.
+			var folderPath = Global.GetPath(Item);
+			if (!Directory.Exists(folderPath))
+				Directory.CreateDirectory(folderPath);
+			var fileFullPath = Path.Combine(folderPath, info.Name);
+			var jsonFullPath = Path.Combine(folderPath, jsonName);
+			info.FullName = fileFullPath;
+			// Write object.
+			File.WriteAllBytes(fileFullPath, bytes);
+			// Write object info as JSON.
+			var jsonContents = Client.Serialize(info);
+			File.WriteAllText(jsonFullPath, jsonContents);
+			// Get last messages from the chat list. It will be an assistant message.
+			var message = Item.Messages.Last();
+			message.Attachments.Add(new MessageAttachments
+			{
+				Title = info.Name,
+				Data = jsonContents,
+				SendType = AttachmentSendType.None,
+				Type = info.Type,
+			});
+			// Set date which will trigger update of the message on the chat web page.
+			message.Updated = DateTime.Now;
+			return fileFullPath;
 		}
 
 		#endregion
 
 		#region Create and Modify Images
+
+		private async Task<ImageClient> GetImageClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
+		{
+			var client = new Client(rItem.AiService);
+			OpenAI.OpenAIClient aiClient = await client.GetAiClient(false, cancellationToken);
+			return aiClient.GetImageClient(rItem.AiModel);
+		}
 
 		public async Task<OperationResult<string>> CreateImageAsync(
 			string prompt,
@@ -215,15 +215,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Check if images are generated
 				if (bytes != null)
 				{
-					var imageInfo = new Plugins.Core.VsFunctions.ImageInfo()
+					var info = new Plugins.Core.VsFunctions.ImageInfo()
 					{
 						Prompt = prompt,
 						Width = imageWidth,
 						Height = imageHeight,
 					};
+					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{imageWidth}x{imageHeight}.png";
 					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var pngPath = SaveImageAndAddAttachment(imageInfo, imageBytes);
+					var pngPath = SaveObjectAndAddAttachment(info, imageBytes);
 					return new OperationResult<string>(pngPath);
 				}
 				else
@@ -345,15 +346,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Check if images are generated
 				if (bytes != null)
 				{
-					var imageInfo = new Plugins.Core.VsFunctions.ImageInfo()
+					var info = new Plugins.Core.VsFunctions.ImageInfo()
 					{
 						Prompt = prompt,
 						Width = imageWidth,
 						Height = imageHeight,
 					};
+					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{imageWidth}x{imageHeight}.png";
 					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var pngPath = SaveImageAndAddAttachment(imageInfo, imageBytes);
+					var pngPath = SaveObjectAndAddAttachment(info, imageBytes);
 					return new OperationResult<string>(pngPath);
 				}
 				else
@@ -378,5 +380,82 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Create Audio
+
+		private async Task<OpenAI.Audio.AudioClient> GetAudioClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
+		{
+			var client = new Client(rItem.AiService);
+			OpenAI.OpenAIClient aiClient = await client.GetAiClient(false, cancellationToken);
+			return aiClient.GetAudioClient(rItem.AiModel);
+		}
+
+		/// <summary>
+		/// Text to Speech
+		/// </summary>
+		/// <param name="text">The text to generate audio for</param>
+		public async Task<OperationResult<string>> TextToAudio(string text, string voice)
+		{
+
+			GeneratedSpeechVoice aiVoice = voice;
+
+			if (!Item.UseTextToAudio)
+				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Text_To_Audio}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
+			// Try to get reserved template item.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateTextToAudio);
+			if (rItem == null)
+				return new OperationResult<string>(new Exception($"Can't find '{Item.TemplateTextToAudio}'"));
+			if (string.IsNullOrWhiteSpace(text))
+				return new OperationResult<string>(new Exception($"Prompt can't be empty!"));
+
+			var (id, cancellationTokenSource, cancellationToken) = CreateOperationCancellationToken(rItem.AiService.ResponseTimeout);
+
+			try
+			{
+				AddTaskToUI(id, cancellationTokenSource);
+
+				var audioClient = await GetAudioClientAsync(rItem, cancellationToken);
+
+				// Create audio generation options
+				var audioGenerationOptions = new OpenAI.Audio.SpeechGenerationOptions()
+				{
+					ResponseFormat = GeneratedSpeechFormat.Mp3,
+
+				};
+
+				// Call the audio generation API
+				var response = await audioClient.GenerateSpeechAsync(text, aiVoice, audioGenerationOptions, cancellationToken);
+
+				var bytes = response?.Value?.ToArray();
+
+				// Check if audio was generated
+				if (bytes != null)
+				{
+					var info = new Plugins.Core.VsFunctions.AudioInfo()
+					{
+						Prompt = text,
+						// Set other properties as needed
+					};
+					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}.mp3"; // Assuming MP3 format
+					var audioBytes = bytes.ToArray();
+					var audioPath = SaveObjectAndAddAttachment(info, audioBytes);
+					return new OperationResult<string>(audioPath);
+				}
+				else
+				{
+					return new OperationResult<string>(new Exception("No audio was generated."));
+				}
+			}
+			catch (Exception ex)
+			{
+				// Return any exceptions encountered
+				return new OperationResult<string>(ex);
+			}
+			finally
+			{
+				RemoveTaskFromUI(id, cancellationTokenSource);
+			}
+		}
+
+		#endregion
 	}
 }
