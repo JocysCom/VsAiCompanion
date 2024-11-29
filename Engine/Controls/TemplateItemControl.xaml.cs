@@ -189,12 +189,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.EditMessageId = messageId;
 				ChatPanel.FocusChatInputTextBox();
 			}
-			else if (action == MessageAction.EditAttachment)
+			var attachmentActions = new MessageAction[] {
+				MessageAction.OpenFile,
+				MessageAction.EditFile,
+				MessageAction.ExploreFile
+			};
+			if (attachmentActions.Contains(action))
 			{
 				var attachmentId = ids[1];
-				ChatPanel.EditMessageId = messageId;
-				ChatPanel.EditAttachmentId = attachmentId;
-				ChatPanel.MaskDrawingTabItem.Visibility = Visibility.Visible;
+				var attachment = message.Attachments?.FirstOrDefault(x => x.Id == attachmentId);
+				if (attachment == null)
+					return;
+				if (action == MessageAction.EditAttachment)
+				{
+					ChatPanel.EditMessageId = messageId;
+					ChatPanel.EditAttachmentId = attachmentId;
+					ChatPanel.MaskDrawingTabItem.Visibility = Visibility.Visible;
+				}
+				else if (action == MessageAction.OpenFile)
+				{
+					//FileExplorerHelper.OpenFile()
+				}
+				else if (action == MessageAction.EditFile)
+				{
+					//FileExplorerHelper.EditFile()
+				}
+				else if (action == MessageAction.ExploreFile)
+				{
+					//FileExplorerHelper.OpenFileInExplorerAndSelect()
+				}
 			}
 		}
 

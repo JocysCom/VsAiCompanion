@@ -13,5 +13,9 @@
 		DataApply,
 		Navigate,
 		Regenerate,
+		// Files: Image, Audio
+		OpenFile,
+		EditFile,
+		ExploreFile,
 	}
 }

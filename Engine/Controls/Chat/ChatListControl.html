@@ -953,7 +953,9 @@
 			</button>
 		</div>
 		<div id="expandableBoxImageButtonTemplate">
-			<button class="chat-button item-{Automated}" style="display: none;" onclick="MessageAction(this, '{Id}', 'EditAttachment')" title="Edit" aria-label="Edit">✎</button>
+			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'OpenFile')" title="Open" aria-label="Open File">📄</button>
+			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'EditFile')" title="Edit" aria-label="Edit File">✎</button>
+			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'ExploreFile')" title="Explore" aria-label="Open file in Explorer">📂</button>
 		</div>
 		<div id="expandableBoxPanelTemplate">
 			<div class="expandable-box {PanelClass}" id="{Id}_panel" style="display: inline-block;">
