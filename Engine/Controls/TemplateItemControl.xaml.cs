@@ -200,6 +200,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var attachment = message.Attachments?.FirstOrDefault(x => x.Id == attachmentId);
 				if (attachment == null)
 					return;
+				BasicInfo info = null;
+				string fileFullPath = null;
+				if (attachment.Type == ContextType.Image || attachment.Type == ContextType.Audio)
+				{
+					info = Client.Deserialize<BasicInfo>(attachment.Data);
+					var folderPath = Global.GetPath(Item);
+					fileFullPath = Path.Combine(folderPath, info.Name);
+				}
 				if (action == MessageAction.EditAttachment)
 				{
 					ChatPanel.EditMessageId = messageId;
@@ -208,15 +216,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				else if (action == MessageAction.OpenFile)
 				{
-					//FileExplorerHelper.OpenFile()
+					FileExplorerHelper.OpenFile(fileFullPath);
 				}
 				else if (action == MessageAction.EditFile)
 				{
-					//FileExplorerHelper.EditFile()
+					FileExplorerHelper.EditFile(fileFullPath);
 				}
 				else if (action == MessageAction.ExploreFile)
 				{
-					//FileExplorerHelper.OpenFileInExplorerAndSelect()
+					FileExplorerHelper.OpenFileInExplorerAndSelect(fileFullPath);
 				}
 			}
 		}
@@ -987,6 +995,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				htmlDoc.Save(writer);
 				return writer.ToString();
 			}
+		}
+
+		private void ExploreButton_Click(object sender, RoutedEventArgs e)
+		{
+			var fileFullPath = Global.GetPath(Item) + ".xml";
+			FileExplorerHelper.OpenFileInExplorerAndSelect(fileFullPath);
 		}
 
 		private void CopyButton_Click(object sender, RoutedEventArgs e)

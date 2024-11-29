@@ -134,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		private string SaveObjectAndAddAttachment(Plugins.Core.VsFunctions.BasicInfo info, byte[] bytes)
+		private string SaveObjectAndAddAttachment(Plugins.Core.VsFunctions.BasicInfo info, byte[] bytes, bool addDataUri)
 		{
 			var now = DateTime.Now;
 			var jsonName = $"{info.Name}.json";
@@ -145,6 +145,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var fileFullPath = Path.Combine(folderPath, info.Name);
 			var jsonFullPath = Path.Combine(folderPath, jsonName);
 			info.FullName = fileFullPath;
+			if (addDataUri)
+			{
+				info.DataUri = JocysCom.ClassLibrary.Files.Mime.GetResourceDataUri(info.Name, bytes);
+			}
 			// Write object.
 			File.WriteAllBytes(fileFullPath, bytes);
 			// Write object info as JSON.
@@ -224,7 +228,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{imageWidth}x{imageHeight}.png";
 					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var pngPath = SaveObjectAndAddAttachment(info, imageBytes);
+					var pngPath = SaveObjectAndAddAttachment(info, imageBytes, false);
 					return new OperationResult<string>(pngPath);
 				}
 				else
@@ -355,7 +359,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{imageWidth}x{imageHeight}.png";
 					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var pngPath = SaveObjectAndAddAttachment(info, imageBytes);
+					var pngPath = SaveObjectAndAddAttachment(info, imageBytes, false);
 					return new OperationResult<string>(pngPath);
 				}
 				else
@@ -437,7 +441,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					};
 					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}.mp3"; // Assuming MP3 format
 					var audioBytes = bytes.ToArray();
-					var audioPath = SaveObjectAndAddAttachment(info, audioBytes);
+					var audioPath = SaveObjectAndAddAttachment(info, audioBytes, true);
 					return new OperationResult<string>(audioPath);
 				}
 				else

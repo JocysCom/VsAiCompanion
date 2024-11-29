@@ -301,7 +301,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.15.12"
+        "ProductVersion" = "8:1.15.16"
         "Manufacturer" = "8:Jocys.com"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

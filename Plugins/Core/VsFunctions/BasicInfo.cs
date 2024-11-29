@@ -20,6 +20,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>Type of the object.</summary>
 		public ContextType Type { get; set; }
 
+		/// <summary>Data inside URL.</summary>
+		public string DataUri { get; set; }
+
 		/// <summary>Suffix to add to the file.</summary>
 		[XmlIgnore, JsonIgnore]
 		public string FileSuffix => "";

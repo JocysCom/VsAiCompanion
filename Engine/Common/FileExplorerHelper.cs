@@ -5,18 +5,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public static class FileExplorerHelper
 	{
+		private static bool IsValidFIlePath(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+			{
+				Global.MainControl.InfoPanel.SetBodyError("File path cannot be null or empty.");
+				return false;
+			}
+			if (!System.IO.File.Exists(path))
+			{
+				Global.MainControl.InfoPanel.SetBodyError($"File '{path}' does not exist.");
+				return false;
+			}
+			return true;
+		}
+
 		/// <summary>
 		/// Opens Windows Explorer and selects the specific file.
 		/// </summary>
 		/// <param name="filePath">The full path to the file.</param>
 		public static void OpenFileInExplorerAndSelect(string filePath)
 		{
-			if (string.IsNullOrEmpty(filePath))
-				throw new ArgumentNullException(nameof(filePath), "File path cannot be null or empty.");
-
-			if (!System.IO.File.Exists(filePath))
-				throw new ArgumentException("File does not exist.", nameof(filePath));
-
+			if (!IsValidFIlePath(filePath))
+				return;
 			var args = $"/select,\"{filePath}\"";
 			Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = true });
 		}
@@ -27,12 +38,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <param name="filePath">The full path to the file.</param>
 		public static void OpenFile(string filePath)
 		{
-			if (string.IsNullOrEmpty(filePath))
-				throw new ArgumentNullException(nameof(filePath), "File path cannot be null or empty.");
-
-			if (!System.IO.File.Exists(filePath))
-				throw new ArgumentException("File does not exist.", nameof(filePath));
-
+			if (!IsValidFIlePath(filePath))
+				return;
 			Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
 		}
 
@@ -42,12 +49,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <param name="filePath">The full path to the file.</param>
 		public static void EditFile(string filePath)
 		{
-			if (string.IsNullOrEmpty(filePath))
-				throw new ArgumentNullException(nameof(filePath), "File path cannot be null or empty.");
-
-			if (!System.IO.File.Exists(filePath))
-				throw new ArgumentException("File does not exist.", nameof(filePath));
-
+			if (!IsValidFIlePath(filePath))
+				return;
 			var editVerb = "edit";
 			var processStartInfo = new ProcessStartInfo
 			{
@@ -62,7 +65,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			catch (Exception ex)
 			{
-				throw new InvalidOperationException("Failed to edit the file. Ensure an associated editor is available.", ex);
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
 			}
 		}
 	}

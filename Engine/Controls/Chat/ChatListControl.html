@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
@@ -193,7 +194,6 @@
 		.display-none {
 			display: none !important;
 		}
-
 	</style>
 	<style>
 
@@ -331,6 +331,7 @@
 			Exception: 2048,
 			ExceptionDocuments: 4096,
 			Image: 8192,
+			Audio: 16384,
 		}
 
 		function enumToString(value, enumObject) {
@@ -441,21 +442,39 @@
 					var displayPanelContent = false;
 					// If data use markdown then...
 					// Example: ```{Language}\r\n{Data}\r\n```
-					console.log("a.ContextType: "  + a.Type);
+					console.log("a.ContextType: " + a.Type);
 					if (a.Type === ContextType.Image) {
 						displayPanelContent = true;
 						console.log(a.Data);
-						var ii = JSON.parse(a.Data);
-						var imageFullPath = Item.Location + "\\" + Item.Name + "\\" + ii.Name;
+						var imageInfo = JSON.parse(a.Data);
+						var imageFullPath = Item.Location + "\\" + Item.Name + "\\" + imageInfo.Name;
 						var link = document.createElement("a");
 						link.href = "file://" + imageFullPath;
 						link.target = "_blank";
 						var img = document.createElement('img');
-						img.alt = ii.Prompt;
-						img.style.width = Math.round(ii.Width / 2) + "px";
-						img.style.height = Math.round(ii.Height / 2) + "px";
-						img.src = imageFullPath;
+						img.alt = imageInfo.Prompt;
+						img.style.width = Math.round(imageInfo.Width / 2) + "px";
+						img.style.height = Math.round(imageInfo.Height / 2) + "px";
+						img.src = (imageInfo.DataUri)
+							? imageInfo.DataUri
+							: imageFullPath;
 						link.appendChild(img);
+						aData = link.outerHTML;
+					}
+					else if (a.Type === ContextType.Audio) {
+						displayPanelContent = true;
+						console.log(a.Data);
+						var audioInfo = JSON.parse(a.Data);
+						var audioFullPath = Item.Location + "\\" + Item.Name + "\\" + audioInfo.Name;
+						var link = document.createElement("a");
+						link.href = "file://" + audioFullPath;
+						link.target = "_blank";
+						var audio = document.createElement('audio');
+						audio.controls = true;
+						audio.src = (audioInfo.DataUri)
+							? audioInfo.DataUri
+							: audioFullPath;
+						link.appendChild(audio);
 						aData = link.outerHTML;
 					}
 					else if (a.IsMarkdown) {
@@ -544,7 +563,7 @@
 				.replace(/{Title}/g, title);
 
 			var titleButtonsHTML = "";
-			if (contextType === ContextType.Image) {
+			if (contextType === ContextType.Image || contextType === ContextType.Audio) {
 				titleButtonsHTML = document.getElementById("expandableBoxImageButtonTemplate").innerHTML
 					.replace(/{Id}/g, id);
 			}
@@ -929,6 +948,13 @@
 							Instructions: "",
 							Type: ContextType.Image,
 							Data: "{ \"Path\": \"image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 1024, \"Height\": 1024}",
+							IsMarkdown: false,
+						},
+						{
+							Title: "Audio",
+							Instructions: "",
+							Type: ContextType.Audio,
+							Data: "{ \"Path\": \"audio.mp3\", \"Prompt\": \"AI Promtp\"}",
 							IsMarkdown: false,
 						},
 					]

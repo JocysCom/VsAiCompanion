@@ -1723,6 +1723,9 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.Type">
             <summary>Type of the object.</summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.DataUri">
+            <summary>Data inside URL.</summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.BasicInfo.FileSuffix">
             <summary>Suffix to add to the file.</summary>
         </member>

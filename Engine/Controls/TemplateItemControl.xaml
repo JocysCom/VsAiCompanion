@@ -128,6 +128,14 @@
 						HorizontalAlignment="Right"
 						Orientation="Horizontal">
 						<Button
+							Name="ExploreButton"
+							Margin="0,3,3,3"
+							AutomationProperties.HelpText="{StaticResource main_Open}"
+							AutomationProperties.Name="Open chat in Explorer"
+							Click="ExploreButton_Click">
+							<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+						</Button>
+						<Button
 							Name="CopyButton"
 							Margin="0,3,3,3"
 							AutomationProperties.HelpText="{StaticResource main_Copy_Chat}"

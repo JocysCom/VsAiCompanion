@@ -20,6 +20,5 @@
 			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 			Content="Loading. Please wait..."
 			Foreground="DarkGray" />
-
 	</Grid>
 </UserControl>

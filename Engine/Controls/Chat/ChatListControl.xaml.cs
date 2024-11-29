@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -143,7 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public bool UpdateWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);
-			var success = (bool)InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
+			var success = (bool?)InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});") == true;
 			return success;
 		}
 
@@ -200,9 +201,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			_WebBrowser.Name = "WebBrowser";
 			_WebBrowser.Visibility = Visibility.Collapsed;
 			_WebBrowser.Navigating += WebBrowser_Navigating;
+			_WebBrowser.Loaded += _WebBrowser_Loaded;
 			_WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
 			_WebBrowser.Navigate("about:blank");
 			MainGrid.Children.Add(_WebBrowser);
+		}
+
+		private void _WebBrowser_Loaded(object sender, RoutedEventArgs e)
+		{
+			// Access the underlying ActiveX control and set its Silent property to true
+			dynamic activeX = _WebBrowser.GetType().InvokeMember("ActiveXInstance",
+				BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+				null, _WebBrowser, new object[] { });
+			activeX.Silent = true;
 		}
 
 		public static string contentsFile = "ChatListControl.html";
@@ -350,12 +361,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (!ScriptHandlerInitialized)
 				return default;
+
 			try
 			{
-				return _WebBrowser.InvokeScript("eval", new object[] { script });
+				// Wrap the script in a try-catch block
+				string wrappedScript = $@"
+            (function() {{
+                try {{
+                    return (function() {{
+                        {script}
+                    }})();
+                }} catch (e) {{
+                    return 'Error:' + e.message + '\n' + e.stack;
+                }}
+            }})();
+        ";
+
+				var result = _WebBrowser.InvokeScript("eval", new object[] { wrappedScript });
+				// Check if the result indicates an error
+				if (result != null && result is string resultStr && resultStr.StartsWith("Error:"))
+				{
+					Global.MainControl.InfoPanel.SetBodyError(resultStr);
+					return default;
+				}
+				else
+				{
+					return result;
+				}
 			}
 			catch (Exception ex)
 			{
+				// Handle exceptions that occur during script invocation
 				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
 			}
 			return default;
