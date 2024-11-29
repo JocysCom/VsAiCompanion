@@ -2,22 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F0E1BECF-FB30-4986-96D3-77ECCD2C78F7}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.gitignore = .gitignore
-		CHANGELOG.md = CHANGELOG.md
-		Cleanup_Solution.ps1 = Cleanup_Solution.ps1
-		.github\workflows\codeql.yml = .github\workflows\codeql.yml
-		Directory.Build.props = Directory.Build.props
-		Directory.Packages.props = Directory.Packages.props
-		Resources\GenerateApiClients.ps1 = Resources\GenerateApiClients.ps1
-		LICENSE = LICENSE
-		README.md = README.md
-		Settings.XamlStyler = Settings.XamlStyler
-		TODO.md = TODO.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Engine", "Engine\JocysCom.VS.AiCompanion.Engine.csproj", "{A3E5E666-890B-422B-908D-5BDA2576FB92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JocysCom.VS.AiCompanion.Extension", "Extension\JocysCom.VS.AiCompanion.Extension.csproj", "{403400F8-39B7-69AF-806F-CABFAAAD6D7B}"
@@ -94,6 +78,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Setup.CustomActions", "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj", "{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JocysCom.VS.AiCompanion.Extension1", "Extension1\JocysCom.VS.AiCompanion.Extension1.csproj", "{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Solution Items", "_Solution Items.csproj", "{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -313,6 +299,12 @@ Global
 		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|arm64.Build.0 = Release|Any CPU
 		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|x64.ActiveCfg = Release|Any CPU
 		{64EF3E6C-9AEB-4D3E-A419-86D6E9866A4A}.Release|x64.Build.0 = Release|Any CPU
+		{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}.Debug|Any CPU.ActiveCfg = DisableBuild|Any CPU
+		{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}.Debug|arm64.ActiveCfg = DisableBuild|Any CPU
+		{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}.Debug|x64.ActiveCfg = DisableBuild|Any CPU
+		{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}.Release|Any CPU.ActiveCfg = DisableBuild|Any CPU
+		{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}.Release|arm64.ActiveCfg = DisableBuild|Any CPU
+		{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}.Release|x64.ActiveCfg = DisableBuild|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
