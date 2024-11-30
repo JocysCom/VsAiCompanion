@@ -303,16 +303,7 @@
 										AutomationProperties.Name="{StaticResource main_Auto_Generate_Title_Name}"
 										Content="{StaticResource main_Auto_Generate_Title_Name}"
 										IsChecked="{Binding AutoGenerateTitle}" />
-									<Label Margin="0,3,3,3" Content="·" />
-									<Label Content="Teplate" />
-									<ComboBox
-										Name="GenerateTitleTemplateComboBox"
-										DisplayMemberPath="Value"
-										ItemsSource="{Binding GenerateTitleTemplates, ElementName=This}"
-										SelectedValue="{Binding GenerateTitleTemplate}"
-										SelectedValuePath="Key" />
 								</StackPanel>
-
 							</StackPanel>
 
 						</GroupBox>
@@ -854,113 +845,7 @@
 							<Label Content="{StaticResource main_External_AI_Models}" />
 						</StackPanel>
 					</TabItem.Header>
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-
-						<CheckBox Name="UseTextToAudioCheckBox" Content="{StaticResource main_Use_Text_To_Audio}" IsChecked="{Binding UseTextToAudio}" />
-						<ComboBox
-							Name="TemplateTextToAudioComboBox"
-							Grid.Column="1"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginTemplates, ElementName=This}"
-							SelectedValue="{Binding TemplateTextToAudio}"
-							SelectedValuePath="Key" />
-
-						<CheckBox
-							Name="UseAudioToTextCheckBox"
-							Grid.Row="1"
-							Content="{StaticResource main_Use_Audio_To_Text}"
-							IsChecked="{Binding UseAudioToText}" />
-						<ComboBox
-							Name="TemplateAudioToTextComboBox"
-							Grid.Row="1"
-							Grid.Column="1"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginTemplates, ElementName=This}"
-							SelectedValue="{Binding TemplateAudioToText}"
-							SelectedValuePath="Key" />
-
-						<CheckBox
-							Name="UseTextToVideoCheckBox"
-							Grid.Row="2"
-							Content="{StaticResource main_Use_Text_To_Video}"
-							IsChecked="{Binding UseTextToVideo}" />
-						<ComboBox
-							Name="TemplateTextToVideoComboBox"
-							Grid.Row="2"
-							Grid.Column="1"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginTemplates, ElementName=This}"
-							SelectedValue="{Binding TemplateTextToVideo}"
-							SelectedValuePath="Key" />
-
-						<CheckBox
-							Name="UseVideoToTextCheckBox"
-							Grid.Row="3"
-							Content="{StaticResource main_Use_Video_To_Text}"
-							IsChecked="{Binding UseVideoToText}" />
-						<ComboBox
-							Name="TemplateVideoToTextComboBox"
-							Grid.Row="3"
-							Grid.Column="1"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginTemplates, ElementName=This}"
-							SelectedValue="{Binding TemplateVideoToText}"
-							SelectedValuePath="Key" />
-
-
-						<CheckBox
-							Name="TemplateCreateImageCheckBox"
-							Grid.Row="4"
-							Content="{StaticResource main_Create_Image}"
-							IsChecked="{Binding UseCreateImage}" />
-						<ComboBox
-							Name="TemplateCreateImageComboBox"
-							Grid.Row="4"
-							Grid.Column="1"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginTemplates, ElementName=This}"
-							SelectedValue="{Binding TemplateCreateImage}"
-							SelectedValuePath="Key" />
-
-						<CheckBox
-							Name="TemplateModifyImageImageCheckBox"
-							Grid.Row="5"
-							Content="{StaticResource main_Modify_Image}"
-							IsChecked="{Binding UseModifyImage}" />
-						<ComboBox
-							Name="TemplateModifyImageComboBox"
-							Grid.Row="5"
-							Grid.Column="1"
-							MinWidth="128"
-							Margin="0,3,0,3"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginTemplates, ElementName=This}"
-							SelectedValue="{Binding TemplateModifyImage}"
-							SelectedValuePath="Key" />
-
-					</Grid>
+					<controlsTemplate:ExternalModelsControl x:Name="ExternalModelsPanel" />
 				</TabItem>
 
 			</TabControl>

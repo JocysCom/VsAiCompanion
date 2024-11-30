@@ -72,17 +72,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			MonitorInboxCheckBox.Visibility = debugVisibility;
-			UseAudioToTextCheckBox.Visibility = debugVisibility;
-			TemplateAudioToTextComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
 			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
 		}
+
+		public Dictionary<string, string> PluginTemplates
+			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
 		private void Global_Templates_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			AppHelper.CollectionChanged(e, () =>
 			{
-				OnPropertyChanged(nameof(GenerateTitleTemplates));
 				OnPropertyChanged(nameof(PluginTemplates));
 			});
 		}
@@ -370,22 +370,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
 				((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new[] { RiskLevel.Unknown }).ToArray());
 
-		public Dictionary<string, string> PluginTemplates
-			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
-
-		public Dictionary<string, string> GenerateTitleTemplates
-		{
-			get
-			{
-				var kv = Global.Templates.Items
-					.Where(x => x.Name.StartsWith(SettingsSourceManager.TemplateGenerateTitleTaskName))
-					.ToDictionary(x => x.Name, x => x.Name);
-				//kv.Add(null, "Default");
-				return kv;
-			}
-			set { }
-		}
-
 		public ObservableCollection<ListInfo> ContextListNames { get; set; } = new ObservableCollection<ListInfo>();
 		public ObservableCollection<ListInfo> ProfileListNames { get; set; } = new ObservableCollection<ListInfo>();
 		public ObservableCollection<ListInfo> RoleListNames { get; set; } = new ObservableCollection<ListInfo>();
@@ -479,6 +463,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
 				CanvasPanel.Item = _Item;
+				ExternalModelsPanel.Item = _Item;
 				PromptsPanel.BindData(_Item);
 				ListsPromptsPanel.BindData(_Item);
 				ChatPanel.MessagesPanel.SetDataItems(_Item);

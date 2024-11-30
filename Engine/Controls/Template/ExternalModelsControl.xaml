@@ -1,0 +1,142 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Template.ExternalModelsControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid DataContext="{Binding Item, ElementName=This}">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<CheckBox Name="UseTextToAudioCheckBox" Content="{StaticResource main_Use_Text_To_Audio}" IsChecked="{Binding UseTextToAudio}" />
+		<ComboBox
+			Name="TemplateTextToAudioComboBox"
+			Grid.Column="1"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding PluginTemplates, ElementName=This}"
+			SelectedValue="{Binding TemplateTextToAudio}"
+			SelectedValuePath="Key" />
+
+		<CheckBox
+			Name="UseAudioToTextCheckBox"
+			Grid.Row="1"
+			Content="{StaticResource main_Use_Audio_To_Text}"
+			IsChecked="{Binding UseAudioToText}" />
+		<ComboBox
+			Name="TemplateAudioToTextComboBox"
+			Grid.Row="1"
+			Grid.Column="1"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding PluginTemplates, ElementName=This}"
+			SelectedValue="{Binding TemplateAudioToText}"
+			SelectedValuePath="Key" />
+
+		<CheckBox
+			Name="UseTextToVideoCheckBox"
+			Grid.Row="2"
+			Content="{StaticResource main_Use_Text_To_Video}"
+			IsChecked="{Binding UseTextToVideo}" />
+		<ComboBox
+			Name="TemplateTextToVideoComboBox"
+			Grid.Row="2"
+			Grid.Column="1"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding PluginTemplates, ElementName=This}"
+			SelectedValue="{Binding TemplateTextToVideo}"
+			SelectedValuePath="Key" />
+
+		<CheckBox
+			Name="UseVideoToTextCheckBox"
+			Grid.Row="3"
+			Content="{StaticResource main_Use_Video_To_Text}"
+			IsChecked="{Binding UseVideoToText}" />
+		<ComboBox
+			Name="TemplateVideoToTextComboBox"
+			Grid.Row="3"
+			Grid.Column="1"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding PluginTemplates, ElementName=This}"
+			SelectedValue="{Binding TemplateVideoToText}"
+			SelectedValuePath="Key" />
+
+
+		<CheckBox
+			Name="TemplateCreateImageCheckBox"
+			Grid.Row="4"
+			Content="{StaticResource main_Create_Image}"
+			IsChecked="{Binding UseCreateImage}" />
+		<ComboBox
+			Name="TemplateCreateImageComboBox"
+			Grid.Row="4"
+			Grid.Column="1"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding PluginTemplates, ElementName=This}"
+			SelectedValue="{Binding TemplateCreateImage}"
+			SelectedValuePath="Key" />
+
+		<CheckBox
+			Name="TemplateModifyImageImageCheckBox"
+			Grid.Row="5"
+			Content="{StaticResource main_Modify_Image}"
+			IsChecked="{Binding UseModifyImage}" />
+		<ComboBox
+			Name="TemplateModifyImageComboBox"
+			Grid.Row="5"
+			Grid.Column="1"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding PluginTemplates, ElementName=This}"
+			SelectedValue="{Binding TemplateModifyImage}"
+			SelectedValuePath="Key" />
+
+		<Label
+			Grid.Row="0"
+			Grid.Column="2"
+			Margin="3,3,3,3"
+			Content="{StaticResource main_Auto_Generate_Title}" />
+		<ComboBox
+			Name="GenerateTitleTemplateComboBox"
+			Grid.Row="0"
+			Grid.Column="3"
+			MinWidth="128"
+			Margin="0,3,0,3"
+			DisplayMemberPath="Value"
+			ItemsSource="{Binding GenerateTitleTemplates, ElementName=This}"
+			SelectedValue="{Binding GenerateTitleTemplate}"
+			SelectedValuePath="Key" />
+	</Grid>
+</UserControl>
