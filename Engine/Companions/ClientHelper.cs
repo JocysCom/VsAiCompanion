@@ -138,7 +138,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
-			await executeBeforeAddMessage?.Invoke();
+			if (executeBeforeAddMessage != null)
+				await executeBeforeAddMessage.Invoke();
 			MessageItem m;
 			string embeddingText = null;
 			if (overrideMessage == null)

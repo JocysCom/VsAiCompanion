@@ -440,7 +440,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					};
 					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{info.Voice}.mp3"; // Assuming MP3 format
 					var audioBytes = bytes.ToArray();
-					var audioPath = SaveObjectAndAddAttachment(info, audioBytes, true);
+					var audioPath = SaveObjectAndAddAttachment(info, audioBytes, false);
 					return new OperationResult<string>(audioPath);
 				}
 				else

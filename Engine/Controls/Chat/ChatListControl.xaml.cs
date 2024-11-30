@@ -96,7 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			var json = JsonSerializer.Serialize(new
 			{
-				Location = location,
+				Location = ".",
 				Name = name,
 			});
 			await InvokeScriptAsync($"SetItem({json});");
@@ -141,11 +141,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>
 		/// Update web message from C# message.
 		/// </summary>
-		public async Task<bool> UpdateWebMessage(MessageItem item, bool autoScroll)
+		public async Task UpdateWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);
-			var success = (bool?)await InvokeScriptAsync($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});") == true;
-			return success;
+			await InvokeScriptAsync($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
 		}
 
 		private async void DataItems_ListChanged(object sender, ListChangedEventArgs e)
@@ -215,17 +214,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var uri = new Uri(e.Request.Uri);
 			if (uri.Host == "appassets.example")
 			{
-				var name = uri.Segments.Last();
-				if (name == "favicon.ico")
-					name = "App.ico";
-				var bytes = GetChatResource(name);
-				if (bytes == null || bytes.Length == 0)
+				var name = Uri.UnescapeDataString(uri.Segments.Last());
+				MemoryStream stream = null;
+				// If task or template item content then...
+				if (uri.Segments.Length > 2 && Uri.UnescapeDataString(uri.Segments[1]) == Item.Name + "/")
 				{
-					Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add($"Error: Can't find '{name}' resource!");
+					var folderPath = Global.GetPath(Item);
+					var fileFullPath = Path.Combine(folderPath, name);
+					if (File.Exists(fileFullPath))
+					{
+						var bytes = System.IO.File.ReadAllBytes(fileFullPath);
+						stream = new MemoryStream(bytes);
+					}
 				}
 				else
 				{
-					var stream = new MemoryStream(bytes);
+					if (name == "favicon.ico")
+						name = "App.ico";
+					var bytes = GetChatResource(name);
+					if (bytes == null || bytes.Length == 0)
+					{
+						Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add($"Error: Can't find '{name}' resource!");
+						return;
+					}
+					stream = new MemoryStream(bytes);
+				}
+				if (stream != null)
+				{
 					var ext = System.IO.Path.GetExtension(name);
 					var contentType = Mime.GetMimeContentType(ext);
 					var response = _WebView2.CoreWebView2.Environment.CreateWebResourceResponse(
@@ -233,11 +248,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					e.Response = response;
 				}
 			}
-			else
-			{
-
-			}
-
 		}
 
 		private void WebView2_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)

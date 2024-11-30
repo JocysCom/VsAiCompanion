@@ -456,9 +456,9 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var imageInfo = JSON.parse(a.Data);
-						var imageFullPath = Item.Location + "\\" + Item.Name + "\\" + imageInfo.Name;
+						var imageFullPath = GetItemPath(imageInfo.Name);
 						var link = document.createElement("a");
-						link.href = "file://" + imageFullPath;
+						link.href = imageFullPath;
 						link.target = "_blank";
 						var img = document.createElement('img');
 						img.alt = imageInfo.Prompt;
@@ -474,40 +474,18 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var audioInfo = JSON.parse(a.Data);
-						var audioFullPath = Item.Location + "\\" + Item.Name + "\\" + audioInfo.Name;
+						var audioFullPath = GetItemPath(audioInfo.Name);
 						var audioDiv = document.createElement("div");
 						var audioSrc = (audioInfo.DataUri)
 							? audioInfo.DataUri
 							: audioFullPath;
 						try {
-							
-
-							//var audio = document.createElement('audio');
-							//audio.controls = true;
-							//audio.src = (audioInfo.DataUri)
-							//	? audioInfo.DataUri
-							//	: audioFullPath;
-							//audioDiv.appendChild(audio);
-							// ---------------------------------
-							// Initialize the Howl object from howler.js
-							var sound = new Howl({
-								src: audioSrc,
-								html5: false // Enable HTML5 Audio for larger files and formats
-							});
-							// Create play and pause buttons
-							var playButton = document.createElement('button');
-							playButton.innerText = 'Play';
-							playButton.onclick = function () {
-								sound.play();
-							};
-							var pauseButton = document.createElement('button');
-							pauseButton.innerText = 'Pause';
-							pauseButton.onclick = function () {
-								sound.pause();
-							};
-							// Append buttons to a container
-							audioDiv.appendChild(playButton);
-							audioDiv.appendChild(pauseButton);
+							var audio = document.createElement('audio');
+							audio.controls = true;
+							audio.src = (audioInfo.DataUri)
+								? audioInfo.DataUri
+								: audioFullPath;
+							audioDiv.appendChild(audio);
 						} catch (e) {
 							audioDiv.innerText = 'Error:' + e.message + '\r\n' + e.stack;
 						}
@@ -771,6 +749,15 @@
 		function SetItem(item) {
 			Item = item;
 			document.title = item.Name;
+		}
+		
+		function GetItemPath(name)
+		{
+			var path = Item.Location + "\\" + Item.Name + "\\" + name
+			path = isInsideApp
+				? path.replace("\\", "/")
+				: "file://" + path;
+			return path;
 		}
 
 		function SetSettings(settings) {
