@@ -11,16 +11,14 @@ using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using System.Threading;
 using SQLitePCL;
-using Microsoft.Data.Sqlite;
 using Microsoft.Data.SqlClient;
-
-
 
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.SQLite;
 using System.Data.Entity.SqlServer;
 #else
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 #endif
 
@@ -307,19 +305,16 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return new SqlAuthenticationToken(token.Token, token.ExpiresOn);
 		}
 
-		public static DbConnectionStringBuilder NewConnectionStringBuilder(string connectionString)
-		{
-			var isPortable = IsPortable(connectionString);
-			var cb = isPortable
-				? (DbConnectionStringBuilder)new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(connectionString)
-				: (DbConnectionStringBuilder)new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
-			return cb;
-		}
+
 
 		public static DbCommand NewCommand(string commandText = null, DbConnection connection = null)
 		{
 			var cmd = IsPortable(connection.ConnectionString)
+#if NETFRAMEWORK
+				? (DbCommand)new SQLiteCommand(commandText)
+#else
 				? (DbCommand)new SqliteCommand(commandText)
+#endif
 				: (DbCommand)new SqlCommand(commandText);
 			cmd.Connection = connection;
 			return cmd;

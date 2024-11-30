@@ -398,6 +398,29 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFileLines(System.String,System.Int64,System.Int64)">
             <inheritdoc/>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.audio_timestamp_granularities">
+            <summary>
+            Specifies the timestamp granularities to populate for a transcription.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_timestamp_granularities.default">
+            <summary>
+            The default value that, when equivalent to a request's flags, specifies no specific audio timestamp granularity
+            and defers to the default timestamp behavior.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_timestamp_granularities.word">
+            <summary>
+            The value that, when present in the request's flags, specifies that audio information should include word-level
+            timestamp information.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_timestamp_granularities.segment">
+            <summary>
+            The value that, when present in the request's flags, specifies that audio information should include
+            segment-level timestamp information.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper">
             <summary>
             File Helper
@@ -1000,6 +1023,36 @@
             <param name="format"></param>
             <returns></returns>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.transcription">
+            <summary>Transcription text.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.transcription.text">
+            <summary>Transcription text.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.transcription.language">
+            <summary>Language</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.transcription.duration">
+            <summary>Duration</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format">
+            <summary> The format of the transcription. </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Text">
+            <summary> Plain text only. </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Json">
+            <summary> Plain text only. </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.VerboseJson">
+            <summary> Plain text provided with additional metadata, such as duration and timestamps. </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Srt">
+            <summary> Text formatted as SubRip (.srt) file. </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Vtt">
+            <summary> Text formatted as a Web Video Text Tracks, a.k.a. WebVTT, (.vtt) file. </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
             <summary>
             Allows AI to execute queries or stored procedures on a database. For example, it can retrieve a database schema and construct complex results. Use database permissions to restrict AI's access.
@@ -1313,6 +1366,36 @@
             </summary>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToSpeech(System.String,System.String)">
+            <summary>
+            Generates an audio using the specified prompt by using OpenAI TTS (text-to-speech) voice models.
+            </summary>
+            <param name="text">The text to generate audio for.</param>
+            <param name="voice">Generated speech voice: "alloy", "echo", "fable", "onyx", "nova" or "shimmer"</param>
+            <returns>Operation result containing the path to the generated voice file.</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToSpeechCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TranscribeAudio(System.String,System.String[],System.String,JocysCom.VS.AiCompanion.Plugins.Core.audio_timestamp_granularities,JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format)">
+            <summary>
+            Transcribes the provided audio files to text using the OpenAI transcription service.
+            </summary>
+            <param name="prompt">An optional text to guide the style or content of the transcription. The prompt should be in the specified language.</param>
+            <param name="language">The language of the audio files. If not specified, the language will be detected automatically.</param>
+            <param name="timestampGranularities">The desired timestamp intervals in the transcription.</param>
+            <param name="responseFormat">The format of the transcription response.</param>
+            <param name="pathsOrUrls">
+            An array of file paths or URLs pointing to the audio files to be transcribed. The files must be in one of the supported formats (mp3, mp4, mpeg, mpga, m4a, wav, or webm), and each must not exceed 25 MB in size.
+            </param>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TranscribeAudioCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.VideoToTextCallback">
             <summary>
             Will be used by plugins manager and called by AI.
@@ -1427,19 +1510,6 @@
             <param name="pdfFilePath">The path to the source PDF file.</param>
             <param name="pages">Optional. The zero-based index array of page numbers to convert. If null or empty, all pages are converted.</param>
             <returns>An OperationResult containing a list of structured JSON strings.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToAudio(System.String,System.String)">
-            <summary>
-            Generates an audio using the specified prompt by using OpenAI TTS (text-to-speech) voice models.
-            </summary>
-            <param name="text">The text to generate audio for.</param>
-            <param name="voice">Generated speech voice: "alloy", "echo", "fable", "onyx", "nova" or "shimmer"</param>
-            <returns>Operation result containing the path to the generated voice file.</returns>
-        </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToAudioCallback">
-            <summary>
-            Will be used by plugins manager and called by AI.
-            </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>

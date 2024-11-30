@@ -52,12 +52,15 @@
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
 		<PackageReference Include="HtmlRenderer.PdfSharp.NetStandard2" />
+		<PackageReference Include="Microsoft.Data.Sqlite.Core" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<PackageReference Include="System.Text.Json"  />
 		<PackageReference Include="HtmlRenderer.PdfSharp" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<PackageReference Include="System.Data.SQLite" />
+		<PackageReference Include="System.Data.SQLite.EF6" />
 		<Reference Include="System.Device" />
 		<Reference Include="System.Net.Http" />
 	</ItemGroup>
@@ -69,7 +72,6 @@
 		<PackageReference Include="ColorCode.HTML"  />
 		<PackageReference Include="DocumentFormat.OpenXml"  />
 		<PackageReference Include="HtmlAgilityPack"  />
-		<PackageReference Include="Microsoft.Data.Sqlite.Core" />
 		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing"  />
 		<PackageReference Include="NPOI"  />
 		<PackageReference Include="PdfPig"  />

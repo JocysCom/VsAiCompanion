@@ -3,6 +3,8 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI.Audio;
 using OpenAI.Images;
 using System;
@@ -384,7 +386,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		#region Create Audio
+		#region Text to Speech
 
 		private async Task<OpenAI.Audio.AudioClient> GetAudioClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
 		{
@@ -397,11 +399,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Text to Speech
 		/// </summary>
 		/// <param name="text">The text to generate audio for</param>
-		public async Task<OperationResult<string>> TextToAudio(string text, string voice)
+		public async Task<OperationResult<string>> TextToSpeech(string text, string voice)
 		{
-
-			GeneratedSpeechVoice aiVoice = voice;
-
 			if (!Item.UseTextToAudio)
 				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Text_To_Audio}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
@@ -416,9 +415,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			try
 			{
 				AddTaskToUI(id, cancellationTokenSource);
-
 				var audioClient = await GetAudioClientAsync(rItem, cancellationToken);
-
+				GeneratedSpeechVoice aiVoice = voice;
 				// Create audio generation options
 				var audioGenerationOptions = new OpenAI.Audio.SpeechGenerationOptions()
 				{
@@ -454,6 +452,100 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				// Return any exceptions encountered
 				return new OperationResult<string>(ex);
+			}
+			finally
+			{
+				RemoveTaskFromUI(id, cancellationTokenSource);
+			}
+		}
+
+		/// <summary>
+		/// Transcribes the provided audio files to text using the OpenAI transcription service.
+		/// </summary>
+		/// <param name="prompt">An optional text to guide the style or content of the transcription. The prompt should be in the specified language.</param>
+		/// <param name="language">The language of the audio files. If not specified, the language will be detected automatically.</param>
+		/// <param name="timestampGranularities">The desired timestamp intervals in the transcription.</param>
+		/// <param name="responseFormat">The format of the transcription response.</param>
+		/// <param name="pathsOrUrls">
+		/// An array of file paths or URLs pointing to the audio files to be transcribed. The files must be in one of the supported formats (mp3, mp4, mpeg, mpga, m4a, wav, or webm), and each must not exceed 25 MB in size.
+		/// </param>
+		public async Task<OperationResult<DocItem[]>> TranscribeAudio(
+			string prompt,
+			string[] pathsOrUrls,
+			string language,
+			audio_timestamp_granularities timestampGranularities,
+			audio_transcription_format responseFormat
+		)
+		{
+			if (!Item.UseAudioToText)
+				return new OperationResult<DocItem[]>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Text_To_Audio}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
+
+			// Try to get reserved template item.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateTextToAudio);
+			if (rItem == null)
+				return new OperationResult<DocItem[]>(new Exception($"Can't find '{Item.TemplateTextToAudio}'"));
+
+			// Optional parameters
+			if (string.IsNullOrWhiteSpace(prompt))
+				prompt = null; // API will handle null prompt
+			if (string.IsNullOrWhiteSpace(language))
+				language = null; // API will auto-detect language
+
+			var (id, cancellationTokenSource, cancellationToken) = CreateOperationCancellationToken(rItem.AiService.ResponseTimeout);
+
+			try
+			{
+				AddTaskToUI(id, cancellationTokenSource);
+				var audioClient = await GetAudioClientAsync(rItem, cancellationToken);
+				var options = new AudioTranscriptionOptions
+				{
+					Language = language,
+					ResponseFormat = responseFormat.ToString(),
+					TimestampGranularities = (AudioTimestampGranularities)timestampGranularities,
+					Prompt = prompt,
+					// Uncomment and adjust if Temperature is supported and within valid range (0 to 1)
+					// Temperature = (float)rItem.Creativity
+				};
+
+				var errors = new List<Exception>();
+				var transcriptions = new List<DocItem>();
+				foreach (var audioFilePath in pathsOrUrls)
+				{
+
+					try
+					{
+						if (!File.Exists(audioFilePath))
+						{
+							throw new FileNotFoundException("Audio file not found.", audioFilePath);
+						}
+						// Ensure the file size is within the limit (25 MB)
+						var fileInfo = new FileInfo(audioFilePath);
+						if (fileInfo.Length > 25 * 1024 * 1024)
+						{
+							throw new Exception($"File '{audioFilePath}' exceeds the 25 MB size limit.");
+						}
+						using (var stream = System.IO.File.OpenRead(audioFilePath))
+						{
+							var result = await audioClient.TranscribeAudioAsync(stream, audioFilePath, options, cancellationToken);
+							var data = Client.Serialize(result.Value);
+							var di = new DocItem();
+							di.ContentData = data;
+							transcriptions.Add(di);
+						}
+					}
+					catch (Exception ex)
+					{
+						var di = new DocItem();
+						di.ContentData = $"Error processing file '{audioFilePath}': {ex.Message}";
+						transcriptions.Add(di);
+					}
+				}
+				return new OperationResult<DocItem[]>(transcriptions.ToArray());
+			}
+			catch (Exception ex)
+			{
+				// Return any exceptions encountered
+				return new OperationResult<DocItem[]>(ex);
 			}
 			finally
 			{

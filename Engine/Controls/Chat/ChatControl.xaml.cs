@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -200,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public event EventHandler OnSend;
 		public event EventHandler OnStop;
 
-		public void ApplyMessageEdit()
+		public async Task ApplyMessageEditAsync()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
@@ -211,7 +212,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					message.Body = DataTextBox.PART_ContentTextBox.Text;
 					message.BodyInstructions = DataInstructionsTextBox.PART_ContentTextBox.Text;
 					DataTextBox.PART_ContentTextBox.Text = "";
-					MessagesPanel.UpdateWebMessage(message, true);
+					await MessagesPanel.UpdateWebMessage(message, true);
 				}
 			}
 			EditMessageId = null;
@@ -221,7 +222,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>
 		/// If the chat form is in message edit mode, remove relevant messages before adding a new message.
 		/// </summary>
-		public void ApplyMessageEditWithRemovingMessages()
+		public async Task ApplyMessageEditWithRemovingMessages()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
@@ -234,7 +235,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					{
 						var messagesToDelete = MessagesPanel.Item.Messages.Skip(messageIndex).ToArray();
 						foreach (var messageToDelete in messagesToDelete)
-							MessagesPanel.RemoveMessage(messageToDelete);
+							await MessagesPanel.RemoveMessageAsync(messageToDelete);
 					}
 				}
 			}

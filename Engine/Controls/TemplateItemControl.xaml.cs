@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -39,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += ChatPanel_MessagesPanel_WebBrowserDataLoaded;
-			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
+			ChatPanel.MessagesPanel.WebScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
 			ChatPanel.SelectionSaved += ChatPanel_SelectionSaved;
 			ChatPanel.PropertyChanged += ChatPanel_PropertyChanged;
 			ChatPanel.MainTabControl.SelectionChanged += ChatPanel_MainTabControl_SelectionChanged;
@@ -282,12 +283,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void Global_OnSaveSettings(object sender, EventArgs e)
+		private async void Global_OnSaveSettings(object sender, EventArgs e)
 		{
 			// Update from previous settings.
 			if (_Item != null)
 			{
-				var settings = ChatPanel.MessagesPanel.GetWebSettings();
+				var settings = await ChatPanel.MessagesPanel.GetWebSettingsAsync();
 				if (settings != null)
 					_Item.Settings = settings;
 			}
@@ -316,7 +317,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isEdit = !string.IsNullOrEmpty(ChatPanel.EditMessageId);
 			if (isEdit)
 			{
-				ChatPanel.ApplyMessageEdit();
+				await ChatPanel.ApplyMessageEditAsync();
 			}
 			else
 			{
@@ -439,7 +440,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (_Item != null)
 				{
 					_Item.PropertyChanged -= _item_PropertyChanged;
-					_Item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
+					ChatSettings settings = null;
+					Helper.RunSynchronously(async () => settings = await ChatPanel.MessagesPanel.GetWebSettingsAsync());
+					_Item.Settings = settings;
 				}
 				ChatPanel.MonitorTextBoxSelections(false);
 				// Make sure that custom AiModel old and new item is available to select.
@@ -691,9 +694,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			RestoreTabSelection();
 		}
 
-		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
+		private async void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
 		{
-			ChatPanel.MessagesPanel.InvokeScript("ScrollToBottom()");
+			await ChatPanel.MessagesPanel.InvokeScriptAsync("ScrollToBottom()");
 			RestoreTabSelection();
 		}
 
@@ -920,7 +923,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		System.Windows.Forms.SaveFileDialog ExportSaveFileDialog { get; } = new System.Windows.Forms.SaveFileDialog();
 
-		private void SaveAsButton_Click(object sender, RoutedEventArgs e)
+		private async void SaveAsButton_Click(object sender, RoutedEventArgs e)
 		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.html";
@@ -936,7 +939,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
 			// Cast the document to an HTMLDocument
-			var html = GetPageHtml();
+			var html = await GetPageHtmlAsync();
 			if (string.IsNullOrEmpty(html))
 				return;
 			var ext = System.IO.Path.GetExtension(dialog.FileName).ToLower();
@@ -953,10 +956,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		public string GetPageHtml()
+		public async Task<string> GetPageHtmlAsync()
 		{
 			// Cast the document to an HTMLDocument
-			var html = (string)ChatPanel.MessagesPanel.InvokeScript("document.documentElement.outerHTML;");
+			var html = (string)await ChatPanel.MessagesPanel.InvokeScriptAsync("document.documentElement.outerHTML;");
 			if (!string.IsNullOrEmpty(html))
 				html = CleanupHtml(html);
 			return html;
@@ -991,9 +994,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			FileExplorerHelper.OpenFileInExplorerAndSelect(fileFullPath);
 		}
 
-		private void CopyButton_Click(object sender, RoutedEventArgs e)
+		private async void CopyButton_Click(object sender, RoutedEventArgs e)
 		{
-			var html = GetPageHtml();
+			var html = await GetPageHtmlAsync();
 			AppHelper.SetClipboardHtml(html);
 		}
 

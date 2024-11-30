@@ -97,9 +97,7 @@
 		<PackageVersion Include="YamlDotNet" Version="16.2.0" />
 		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.12.40390" />
 		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.12.40390" />
-
-		<!-- 17.12.40392 17.9.2092-->
-
+		<PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Security Workaround: Transitive Packages -->

@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Files;
 using Microsoft.Data.SqlClient;
-using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +12,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if NETFRAMEWORK
+using System.Data.SQLite;
+#else
+using Microsoft.Data.Sqlite;
+#endif
+
+
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
@@ -21,6 +27,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public partial class Database
 	{
+
+		private static DbCommand NewSqliteCommand(string cmdText)
+#if NETFRAMEWORK
+					=> (DbCommand)new SQLiteCommand(cmdText);
+#else
+					=> (DbCommand)new SqliteCommand(cmdText);
+#endif
+
 		/// <summary>Execute non query command on database. Return number of rows affected.</summary>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <param name="cmdType">SQL Command Type.
@@ -39,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			try
 			{
 				var cmd = string.IsNullOrEmpty(connectionString)
-					? (DbCommand)new SqliteCommand(cmdText)
+					? NewSqliteCommand(cmdText)
 					: (DbCommand)new SqlCommand(cmdText);
 				if (string.IsNullOrEmpty(connectionString))
 					connectionString = GetSqliteConnectionSring();
@@ -52,7 +66,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				return new OperationResult<int>(ex);
 			}
-
 		}
 
 		/// <summary>SQL query command on database. Returns resutls as CSV.</summary>
@@ -73,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			try
 			{
 				var cmd = string.IsNullOrEmpty(connectionString)
-					? (DbCommand)new SqliteCommand(cmdText)
+					? NewSqliteCommand(cmdText)
 					: (DbCommand)new SqlCommand(cmdText);
 				if (string.IsNullOrEmpty(connectionString))
 					connectionString = GetSqliteConnectionSring();
@@ -135,7 +148,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			var path = GetDatabasesFolderPath();
 			var fullFileName = System.IO.Path.Combine(path, _DatabaseName + databaseFileExtension);
+#if NETFRAMEWORK
+			var builder = new SQLiteConnectionStringBuilder();
+#else
 			var builder = new SqliteConnectionStringBuilder();
+#endif
 			builder.DataSource = fullFileName;
 			// Ensure file is not locked.
 			builder.Pooling = false;
@@ -270,7 +287,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				var isPortable = SqlHelper.IsPortable(connectionString);
 
 				using (var connection = isPortable
+#if NETFRAMEWORK
+					? (DbConnection)new SQLiteConnection(connectionString)
+#else
 					? (DbConnection)new SqliteConnection(connectionString)
+#endif
 					: (DbConnection)new SqlConnection(connectionString))
 				{
 
@@ -299,7 +320,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 						// Table does not exist; create it with a unique Id column.
 						var createTableQuery = $"CREATE TABLE {tableName} (\r\n{schema});";
 						using (var createCmd = isPortable
-							? (DbCommand)new SqliteCommand(createTableQuery)
+							? NewSqliteCommand(createTableQuery)
 							: (DbCommand)new SqlCommand(createTableQuery))
 						{
 							createCmd.Connection = connection;
@@ -315,7 +336,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					int insertCount = 0;
 
 					using (var insertCmd = isPortable
-						? (DbCommand)new SqliteCommand(insertQuery)
+						? NewSqliteCommand(insertQuery)
 						: (DbCommand)new SqlCommand(insertQuery))
 					{
 						insertCmd.Connection = connection;

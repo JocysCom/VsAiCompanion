@@ -1,17 +1,19 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Files;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -25,8 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			ScriptingHandler = new ScriptingHandler();
-			ScriptingHandler.OnMessageAction += _ScriptingHandler_OnMessageAction;
+			WebScriptingHandler = new ScriptingHandler();
 		}
 
 		public void SetDataItems(TemplateItem item)
@@ -62,51 +63,50 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private bool IsResetMessgesPending;
 
-
 		private void ResetWebMessages()
 		{
-			ControlsHelper.AppBeginInvoke(ResetWebMessagesDebounced);
+			ControlsHelper.AppBeginInvoke(() => _ = ResetWebMessagesDebounced());
 		}
 
-		private void ResetWebMessagesDebounced()
+		private async Task ResetWebMessagesDebounced()
 		{
-			InvokeScript($"DeleteMessages();");
+			await InvokeScriptAsync($"DeleteMessages();");
 			var path = System.IO.Path.GetDirectoryName(Global.GetPath(Item));
-			SetItem(path, Item.Name);
+			await SetItemAsync(path, Item.Name);
 			foreach (var message in Item.Messages)
 			{
 				// Set message id in case data is bad and it is missing.
 				if (string.IsNullOrEmpty(message.Id))
 					message.Id = Guid.NewGuid().ToString("N");
-				InsertWebMessage(message, false);
+				await InsertWebMessage(message, false);
 			}
-			SetWebSettings(Item.Settings);
+			await SetWebSettingsAsync(Item.Settings);
 		}
 
 		private void Tasks_ListChanged(object sender, ListChangedEventArgs e)
 			=> UpdateUpdateButton();
 
-		public void SetWebSettings(ChatSettings settings)
+		public async Task SetWebSettingsAsync(ChatSettings settings)
 		{
 			var json = JsonSerializer.Serialize(settings);
-			InvokeScript($"SetSettings({json});");
+			await InvokeScriptAsync($"SetSettings({json});");
 		}
 
-		public void SetItem(string location, string name)
+		public async Task SetItemAsync(string location, string name)
 		{
 			var json = JsonSerializer.Serialize(new
 			{
 				Location = location,
 				Name = name,
 			});
-			InvokeScript($"SetItem({json});");
+			await InvokeScriptAsync($"SetItem({json});");
 		}
 
-		public ChatSettings GetWebSettings()
+		public async Task<ChatSettings> GetWebSettingsAsync()
 		{
 			if (!ScriptHandlerInitialized)
 				return null;
-			var json = (string)InvokeScript($"GetSettings();");
+			var json = (string)await InvokeScriptAsync($"GetSettings();");
 			if (string.IsNullOrEmpty(json))
 				return null;
 			try
@@ -123,42 +123,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void SetZoom(int zoom)
 		{
-			InvokeScript($"SetZoom({zoom});");
+			_ = InvokeScriptAsync($"SetZoom({zoom});");
 		}
 
-		public void RemoveMessage(MessageItem message)
+		public async Task RemoveMessageAsync(MessageItem message)
 		{
 			Item.Messages.Remove(message);
-			InvokeScript($"DeleteMessage('{message.Id}');");
+			await InvokeScriptAsync($"DeleteMessage('{message.Id}');");
 		}
 
-		void InsertWebMessage(MessageItem item, bool autoScroll)
+		async Task InsertWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);
-			InvokeScript($"InsertMessage({json}, {autoScroll.ToString().ToLower()});");
+			await InvokeScriptAsync($"InsertMessage({json}, {autoScroll.ToString().ToLower()});");
 		}
 
 		/// <summary>
 		/// Update web message from C# message.
 		/// </summary>
-		public bool UpdateWebMessage(MessageItem item, bool autoScroll)
+		public async Task<bool> UpdateWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);
-			var success = (bool?)InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});") == true;
+			var success = (bool?)await InvokeScriptAsync($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});") == true;
 			return success;
 		}
 
-		private void DataItems_ListChanged(object sender, ListChangedEventArgs e)
+		private async void DataItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.ListChangedType == ListChangedType.ItemAdded)
-				InsertWebMessage(Item.Messages[e.NewIndex], true);
+				await InsertWebMessage(Item.Messages[e.NewIndex], true);
 			if (e.ListChangedType == ListChangedType.ItemChanged)
 			{
 				var allowUpdate =
 					e.PropertyDescriptor.Name == nameof(MessageItem.Type) ||
 					e.PropertyDescriptor.Name == nameof(MessageItem.Updated);
 				if (allowUpdate)
-					UpdateWebMessage(Item.Messages[e.NewIndex], false);
+					await UpdateWebMessage(Item.Messages[e.NewIndex], false);
 			}
 		}
 
@@ -178,8 +178,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 		}
 
-		public WebBrowser _WebBrowser;
-
 		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -191,43 +189,93 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				UiPresetsManager.InitControl(this, true);
 				// Remove control frm the UI presets list.
 				UiPresetsManager.RemoveControls(LoadingLabel);
-				await Helper.Debounce(InitWebBrowser);
+				await InitWebView2();
 			}
 		}
 
-		void InitWebBrowser()
+		public WebView2 _WebView2;
+
+		async Task InitWebView2()
 		{
-			_WebBrowser = new WebBrowser();
-			_WebBrowser.Name = "WebBrowser";
-			_WebBrowser.Visibility = Visibility.Collapsed;
-			_WebBrowser.Navigating += WebBrowser_Navigating;
-			_WebBrowser.Loaded += _WebBrowser_Loaded;
-			_WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
-			_WebBrowser.Navigate("about:blank");
-			MainGrid.Children.Add(_WebBrowser);
+			_WebView2 = new WebView2();
+			_WebView2.Name = "WebView2";
+			//_WebView2.Visibility = Visibility.Collapsed;
+			LoadingLabel.Visibility = Visibility.Collapsed;
+			_WebView2.NavigationStarting += WebView2_NavigationStarting;
+			_WebView2.NavigationCompleted += WebView2_NavigationCompleted;
+			MainGrid.Children.Add(_WebView2);
+			if (_WebView2.CoreWebView2 == null)
+			{
+				_WebView2.CoreWebView2InitializationCompleted += _WebView2_CoreWebView2InitializationCompleted;
+				await _WebView2.EnsureCoreWebView2Async();
+			}
 		}
 
-		private void _WebBrowser_Loaded(object sender, RoutedEventArgs e)
+		private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
 		{
-			// Access the underlying ActiveX control and set its Silent property to true
-			dynamic activeX = _WebBrowser.GetType().InvokeMember("ActiveXInstance",
-				BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-				null, _WebBrowser, new object[] { });
-			activeX.Silent = true;
+			var uri = new Uri(e.Request.Uri);
+			if (uri.Host == "appassets.example")
+			{
+				var name = uri.Segments.Last();
+				if (name == "favicon.ico")
+					name = "App.ico";
+				var bytes = GetChatResource(name);
+				if (bytes == null || bytes.Length == 0)
+				{
+					Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add($"Error: Can't find '{name}' resource!");
+				}
+				else
+				{
+					var stream = new MemoryStream(bytes);
+					var ext = System.IO.Path.GetExtension(name);
+					var contentType = Mime.GetMimeContentType(ext);
+					var response = _WebView2.CoreWebView2.Environment.CreateWebResourceResponse(
+						stream, 200, "OK", $"Content-Type: {contentType}");
+					e.Response = response;
+				}
+			}
+			else
+			{
+
+			}
+
 		}
 
-		public static string contentsFile = "ChatListControl.html";
-		public static object contentsLock = new object();
-		public static string contents;
-
-		private void WebBrowser_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+		private void WebView2_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
 		{
 			if (e.Uri == null)
 				return;
-			var fileName = e.Uri?.AbsolutePath;
+			var uri = e.Uri;
 			// Check if it's trying to navigate to one of our files.
-			if (fileName == "blank")
+			if (uri.StartsWith("http://appassets.example/"))
+				return;
+			if (!string.IsNullOrEmpty(e.Uri))
+				ControlsHelper.OpenUrl(e.Uri);
+			// Suppress all other navigation.
+			e.Cancel = true;
+		}
+
+		private async void _WebView2_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
+		{
+			if (!e.IsSuccess)
 			{
+				Global.MainControl.InfoPanel.SetBodyError("WebView2 initialization failed: " + e.InitializationException.Message);
+				Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(e.InitializationException.ToString());
+				return;
+			}
+			try
+			{
+				await Task.Delay(0);
+				_WebView2.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
+				// Map window.external to window.chrome.webview.hostObjects.external for compatibility
+				await _WebView2.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(
+					"window.external = window.chrome.webview.hostObjects.external;"
+				);
+
+				// Expose the WebScriptingHandler to JavaScript
+				WebScriptingHandler.OnMessageAction += _ScriptingHandler_OnMessageAction;
+				_WebView2.CoreWebView2.AddHostObjectToScript("external", WebScriptingHandler);
+
 				// process contents only once.
 				lock (contentsLock)
 				{
@@ -244,16 +292,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 						LoadResource(ref contents, "marked.min.js");
 						LoadResource(ref contents, "prism.css");
 						LoadResource(ref contents, "prism.js");
+						LoadResource(ref contents, "howler.min.js");
 					}
 				}
-				_WebBrowser.NavigateToString(contents);
-				return;
+
+				// Add a filter to override resources.
+				//_WebView2.CoreWebView2.AddWebResourceRequestedFilter("http://appassets.example/*", CoreWebView2WebResourceContext.All);
+				_WebView2.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+				_WebView2.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+
+				var tempFolderPath = AppHelper.GetTempFolderPath();
+
+				//public void SetVirtualHostNameToFolderMapping (string hostName, string folderPath, Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind accessKind);
+				//_WebView2.CoreWebView2.SetVirtualHostNameToFolderMapping(
+				//	"appassets.example", tempFolderPath, CoreWebView2HostResourceAccessKind.DenyCors);
+				//contents =
+				//"<head></head><body><p><a href=\"http://appassets.example/winrt_test.txt\"> Click me</a></p></body>";
+				// Set initial source after initialization
+				_WebView2.Source = new Uri("http://appassets.example/ChatListControl.html");
+				//_WebView2.CoreWebView2.NavigateToString(contents);
 			}
-			if (!string.IsNullOrEmpty(e.Uri?.OriginalString))
-				ControlsHelper.OpenUrl(e.Uri.OriginalString);
-			// Supress all other navigation.
-			e.Cancel = true;
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetBodyError("WebView2 initialization failed: " + ex.Message);
+				Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString());
+			}
 		}
+
+		private void CoreWebView2_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
+		{
+
+		}
+
+		public static string contentsFile = "ChatListControl.html";
+		public static object contentsLock = new object();
+		public static string contents;
 
 		// Don't work correctly.
 		public static string MinifyJavaScript(string input)
@@ -266,15 +339,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			return s;
 		}
 
-		/// <summary>
-		/// Replace the paths to with the actual file contents.
-		/// </summary>
-		void LoadResource(ref string contents, string name)
+
+		byte[] GetChatResource(string name)
 		{
 			byte[] data;
 			if (name == "prism.js")
 			{
-				// Fix compatibility for WebBrowser control (Internete Explorer).
+				// Fix compatibility for WebView2 control (Edge Chromium).
 				var s = Helper.FindResource<string>(name, GetType().Assembly)
 					.Replace(@"var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;", @"var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/ig;")
 					.Replace(@"element.className = element.className.replace(RegExp(lang, 'gi'), '');", @"element.className = element.className.replace(lang, '');");
@@ -285,24 +356,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				data = Helper.FindResource<byte[]>(name, GetType().Assembly);
 			}
+			return data;
+		}
+
+		/// <summary>
+		/// Replace the paths to with the actual file contents.
+		/// </summary>
+		void LoadResource(ref string contents, string name)
+		{
+			var data = GetChatResource(name);
 			contents = contents.Replace("ChatListControl/" + name, ClassLibrary.Files.Mime.GetResourceDataUri(name, data));
 		}
 
-		private void WebBrowser_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+		private void WebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
 		{
-			_WebBrowser.ObjectForScripting = ScriptingHandler;
-			// Add BeginInvoke to allow the JavaScript syntax highlighter to initialize after loading.
-			ControlsHelper.AppBeginInvoke(() =>
-			{
-				ScriptHandlerInitialized = true;
-				// If messages set but messages are not loaded yet.
-				if (IsResetMessgesPending)
-					_ = Helper.Debounce(ResetWebMessages);
-				if (Global.IsVsExtension)
-				{
-					Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
-				}
-			});
+
+
+			// Handle navigation completed if needed
 		}
 
 		public event EventHandler WebBrowserDataLoaded;
@@ -319,8 +389,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (action == MessageAction.Loaded)
 			{
 				LoadingLabel.Visibility = Visibility.Collapsed;
-				_WebBrowser.Visibility = Visibility.Visible;
+				_WebView2.Visibility = Visibility.Visible;
 				WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
+				ScriptHandlerInitialized = true;
+				// If messages set but messages are not loaded yet.
+				if (IsResetMessgesPending)
+					_ = Helper.Debounce(ResetWebMessages);
+				if (Global.IsVsExtension)
+					Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
 				return;
 			}
 			var ids = (e[0] ?? "").Split('_');
@@ -330,7 +406,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				case MessageAction.Remove:
 					if (message != null)
-						RemoveMessage(message);
+						_ = RemoveMessageAsync(message);
 					break;
 				case MessageAction.Copy:
 					if (message != null)
@@ -351,13 +427,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		bool ScriptHandlerInitialized;
 
-		public ScriptingHandler ScriptingHandler;
+		public ScriptingHandler WebScriptingHandler;
 
 		#endregion
 
 		#region HTML
 
-		public object InvokeScript(string script)
+		public async Task<object> InvokeScriptAsync(string script)
 		{
 			if (!ScriptHandlerInitialized)
 				return default;
@@ -366,33 +442,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				// Wrap the script in a try-catch block
 				string wrappedScript = $@"
-            (function() {{
-                try {{
-                    return (function() {{
-                        {script}
+                    (function() {{
+                        try {{
+                            return (function() {{
+                                {script}
+                            }})();
+                        }} catch (e) {{
+                            return 'Error:' + e.message + '\r\n' + e.stack;
+                        }}
                     }})();
-                }} catch (e) {{
-                    return 'Error:' + e.message + '\n' + e.stack;
-                }}
-            }})();
-        ";
+                ";
 
-				var result = _WebBrowser.InvokeScript("eval", new object[] { wrappedScript });
-				// Check if the result indicates an error
-				if (result != null && result is string resultStr && resultStr.StartsWith("Error:"))
+				// Execute the script asynchronously and get the result synchronously
+				var resultJson = await _WebView2.ExecuteScriptAsync(wrappedScript);
+
+				// The result is a JSON-formatted string; deserialize it
+				if (resultJson != null)
 				{
-					Global.MainControl.InfoPanel.SetBodyError(resultStr);
-					return default;
-				}
-				else
-				{
-					return result;
+					var result = JsonSerializer.Deserialize<string>(resultJson);
+					if (result.StartsWith("Error:"))
+					{
+						Global.MainControl.InfoPanel.SetBodyError(result);
+						Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(result + "\r\n");
+						return default;
+					}
+					else
+					{
+						return result;
+					}
 				}
 			}
 			catch (Exception ex)
 			{
 				// Handle exceptions that occur during script invocation
 				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
 			}
 			return default;
 		}
@@ -411,21 +495,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
-		private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
+		private async void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			var isCtrlDown = Keyboard.Modifiers == ModifierKeys.Control;
 			if (isCtrlDown && e.Key == Key.C)
 			{
-				bool isFocused = (bool)_WebBrowser.InvokeScript("isElementFocused");
+				bool isFocused = (bool)await InvokeScriptAsync("isElementFocused();");
 				if (isFocused)
 				{
-					InvokeScript("Copy();");
+					await InvokeScriptAsync("Copy();");
 					e.Handled = true;
 				}
 			}
 		}
 
-		private void KeyboardHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private async void KeyboardHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			// Check if CTRL+C is pressed
 			if (Keyboard.Modifiers != ModifierKeys.Control || e.KeyCode != System.Windows.Forms.Keys.C)
@@ -445,21 +529,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var thisWindow = new System.Windows.Interop.WindowInteropHelper(win).Handle;
 			if (foregroundWindow != thisWindow)
 				return;
-			// Assuming the WebBrowser control is hosted in the WPF window, you need to get its native handle.
+			// Assuming the WebView2 control is hosted in the WPF window, you need to get its native handle.
 			var window = Window.GetWindow(this);
 			var helper = new System.Windows.Interop.WindowInteropHelper(window);
-			var webBrowserHandle = _WebBrowser.Handle;
-			if (webBrowserHandle == IntPtr.Zero)
+			IntPtr webView2Handle = _WebView2.Handle;
+			if (webView2Handle == IntPtr.Zero)
 				return;
 			var focusedControl = NativeMethods.GetFocus();
-			if (!IsAncestor(webBrowserHandle, focusedControl))
+			if (!IsAncestor(webView2Handle, focusedControl))
 				return;
-			// Works with the browswer warning about access to clipboard.
-			InvokeScript("Copy();");
+			// Works without the browser warning about access to clipboard.
+			await InvokeScriptAsync("Copy();");
 			e.Handled = true;
 		}
 
-		// Helper method to determine if webBrowserHandle is ancestor of focusedControl
+		// Helper method to determine if webView2Handle is ancestor of focusedControl
 		private bool IsAncestor(IntPtr ancestorHandle, IntPtr childHandle)
 		{
 			if (childHandle == IntPtr.Zero)
@@ -487,7 +571,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 			[DllImport("user32.dll", SetLastError = true)]
 			internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
 		}
 
 	}

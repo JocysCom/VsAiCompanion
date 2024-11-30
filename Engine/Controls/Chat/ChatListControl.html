@@ -1,5 +1,4 @@
-﻿<!-- saved from url=(0014)about:internet -->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
@@ -12,6 +11,7 @@
 	<script src="ChatListControl/core-js.min.js" defer="defer"></script>
 	<script src="ChatListControl/marked.min.js" defer="defer"></script>
 	<script src="ChatListControl/prism.js" defer="defer"></script>
+	<script src="ChatListControl/howler.min.js" defer="defer"></script>
 	<style>
 		/*em: Unit relative to the font-size of the parent element.
 			1em is equal to the font size of the parent element, so if the parent's font-size is 16px, 1em would be 16px. */
@@ -475,16 +475,43 @@
 						console.log(a.Data);
 						var audioInfo = JSON.parse(a.Data);
 						var audioFullPath = Item.Location + "\\" + Item.Name + "\\" + audioInfo.Name;
-						var link = document.createElement("a");
-						link.href = "file://" + audioFullPath;
-						link.target = "_blank";
-						var audio = document.createElement('audio');
-						audio.controls = true;
-						audio.src = (audioInfo.DataUri)
+						var audioDiv = document.createElement("div");
+						var audioSrc = (audioInfo.DataUri)
 							? audioInfo.DataUri
 							: audioFullPath;
-						link.appendChild(audio);
-						aData = link.outerHTML;
+						try {
+							
+
+							//var audio = document.createElement('audio');
+							//audio.controls = true;
+							//audio.src = (audioInfo.DataUri)
+							//	? audioInfo.DataUri
+							//	: audioFullPath;
+							//audioDiv.appendChild(audio);
+							// ---------------------------------
+							// Initialize the Howl object from howler.js
+							var sound = new Howl({
+								src: audioSrc,
+								html5: false // Enable HTML5 Audio for larger files and formats
+							});
+							// Create play and pause buttons
+							var playButton = document.createElement('button');
+							playButton.innerText = 'Play';
+							playButton.onclick = function () {
+								sound.play();
+							};
+							var pauseButton = document.createElement('button');
+							pauseButton.innerText = 'Pause';
+							pauseButton.onclick = function () {
+								sound.pause();
+							};
+							// Append buttons to a container
+							audioDiv.appendChild(playButton);
+							audioDiv.appendChild(pauseButton);
+						} catch (e) {
+							audioDiv.innerText = 'Error:' + e.message + '\r\n' + e.stack;
+						}
+						aData = audioDiv.outerHTML;
 					}
 					else if (a.IsMarkdown) {
 						aData = (a.Data) ? a.Data : "";
@@ -914,6 +941,12 @@
 			// The code will only run if the file is opened locally.
 			if (window.location.href.indexOf("file://") == -1)
 				return;
+
+			SetItem({
+				Location: "d:\\Projects\\Jocys.com GitHub\\VsAiCompanion\\Engine\\Controls\\Chat",
+				Name: "ChatListControl"
+			});
+
 			var testText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 			var codeText = "" +
 				// Add Text code block to test.
@@ -956,14 +989,14 @@
 							Title: "Image",
 							Instructions: "",
 							Type: ContextType.Image,
-							Data: "{ \"Path\": \"image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 1024, \"Height\": 1024}",
+							Data: "{ \"Name\": \"test_image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 128, \"Height\": 128}",
 							IsMarkdown: false,
 						},
 						{
 							Title: "Audio",
 							Instructions: "",
 							Type: ContextType.Audio,
-							Data: "{ \"Path\": \"audio.mp3\", \"Prompt\": \"AI Promtp\"}",
+							Data: "{ \"Name\": \"test_audio.mp3\", \"Prompt\": \"AI Promtp\"}",
 							IsMarkdown: false,
 						},
 					]

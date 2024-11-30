@@ -83,6 +83,7 @@
 		<PackageReference Include="System.Net.Http" />
 		<PackageReference Include="System.Runtime.Loader" />
 		<PackageReference Include="YamlDotNet" />
+		<PackageReference Include="Microsoft.Web.WebView2" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.DirectoryServices" />
