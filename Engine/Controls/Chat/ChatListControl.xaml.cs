@@ -199,8 +199,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			_WebView2 = new WebView2();
 			_WebView2.Name = "WebView2";
-			//_WebView2.Visibility = Visibility.Collapsed;
-			LoadingLabel.Visibility = Visibility.Collapsed;
+			_WebView2.Visibility = Visibility.Collapsed;
 			_WebView2.NavigationStarting += WebView2_NavigationStarting;
 			_WebView2.NavigationCompleted += WebView2_NavigationCompleted;
 			MainGrid.Children.Add(_WebView2);

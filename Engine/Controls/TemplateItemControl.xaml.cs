@@ -49,7 +49,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
 			//SelectionRadioButton.IsEnabled = Global.GetSelection != null;
-			Item = null;
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
@@ -430,66 +429,66 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItem Item
 		{
 			get => _Item;
-			set
+		}
+
+		public async Task BindData(TemplateItem item)
+		{
+			if (Equals(item, _Item))
+				return;
+			var oldItem = _Item;
+			// Update from previous settings.
+			if (_Item != null)
 			{
-				if (Equals(value, _Item))
-					return;
-				var oldItem = _Item;
-				// Update from previous settings.
-				if (_Item != null)
-				{
-					_Item.PropertyChanged -= _item_PropertyChanged;
-					ChatSettings settings = null;
-					Helper.RunSynchronously(async () => settings = await ChatPanel.MessagesPanel.GetWebSettingsAsync());
-					_Item.Settings = settings;
-				}
-				ChatPanel.MonitorTextBoxSelections(false);
-				// Make sure that custom AiModel old and new item is available to select.
-				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
-				UpdateListNames(new string[] { value?.Name, oldItem?.Name });
-				// Set new item.
-				_Item = value ?? AppHelper.GetNewTemplateItem(true);
-				// This will trigger AiCompanionComboBox_SelectionChanged event.
-				AiModelBoxPanel.Item = null;
-				if (ChatPanel.AttachmentsPanel.CurrentItems != null)
-					ChatPanel.AttachmentsPanel.CurrentItems = null;
-				DataContext = _Item;
-				_Item.PropertyChanged += _item_PropertyChanged;
-				AiModelBoxPanel.Item = _Item;
-				ToolsPanel.Item = _Item;
-				OnPropertyChanged(nameof(CreativityName));
-				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
-				UpdateListNames(new string[] { _Item?.Name, });
-				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
-				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
-				IconPanel.BindData(_Item);
-				CanvasPanel.Item = _Item;
-				ExternalModelsPanel.Item = _Item;
-				PromptsPanel.BindData(_Item);
-				ListsPromptsPanel.BindData(_Item);
-				ChatPanel.MessagesPanel.SetDataItems(_Item);
-				ChatPanel.IsBusy = _Item.IsBusy;
-				ChatPanel.UpdateMessageEdit();
-				System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
-				// AutoSend once enabled then...
-				if (DataType == ItemType.Task && _Item.AutoSend)
-				{
-					// Disable auto-send so that it won't trigger every time item is bound.
-					_Item.AutoSend = false;
-					ControlsHelper.AppBeginInvoke(() =>
-					{
-						var voiceInstructions = GetVoiceInstructions();
-						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, extraInstructions: voiceInstructions);
-					});
-				}
-				_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
-				if (PanelSettings.Focus)
-					RestoreTabSelection();
-				ChatPanel.MonitorTextBoxSelections(true);
-				UpdateAvatarControl();
-				UpdateListEditButtons();
+				_Item.PropertyChanged -= _item_PropertyChanged;
+				var settings = await ChatPanel.MessagesPanel.GetWebSettingsAsync();
+				_Item.Settings = settings;
 			}
+			ChatPanel.MonitorTextBoxSelections(false);
+			// Make sure that custom AiModel old and new item is available to select.
+			AppHelper.UpdateModelCodes(item?.AiService, AiModelBoxPanel.AiModels, item?.AiModel, oldItem?.AiModel);
+			UpdateListNames(new string[] { item?.Name, oldItem?.Name });
+			// Set new item.
+			_Item = item ?? AppHelper.GetNewTemplateItem(true);
+			// This will trigger AiCompanionComboBox_SelectionChanged event.
+			AiModelBoxPanel.Item = null;
+			if (ChatPanel.AttachmentsPanel.CurrentItems != null)
+				ChatPanel.AttachmentsPanel.CurrentItems = null;
+			DataContext = _Item;
+			_Item.PropertyChanged += _item_PropertyChanged;
+			AiModelBoxPanel.Item = _Item;
+			ToolsPanel.Item = _Item;
+			OnPropertyChanged(nameof(CreativityName));
+			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
+			AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
+			UpdateListNames(new string[] { _Item?.Name, });
+			PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
+			ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
+			IconPanel.BindData(_Item);
+			CanvasPanel.Item = _Item;
+			ExternalModelsPanel.Item = _Item;
+			PromptsPanel.BindData(_Item);
+			ListsPromptsPanel.BindData(_Item);
+			ChatPanel.MessagesPanel.SetDataItems(_Item);
+			ChatPanel.IsBusy = _Item.IsBusy;
+			ChatPanel.UpdateMessageEdit();
+			System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
+			// AutoSend once enabled then...
+			if (DataType == ItemType.Task && _Item.AutoSend)
+			{
+				// Disable auto-send so that it won't trigger every time item is bound.
+				_Item.AutoSend = false;
+				ControlsHelper.AppBeginInvoke(() =>
+				{
+					var voiceInstructions = GetVoiceInstructions();
+					_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, extraInstructions: voiceInstructions);
+				});
+			}
+			_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
+			if (PanelSettings.Focus)
+				RestoreTabSelection();
+			ChatPanel.MonitorTextBoxSelections(true);
+			UpdateAvatarControl();
+			UpdateListEditButtons();
 		}
 
 		// Move to settings later.
@@ -621,7 +620,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.UpdateAvatarControl(ChatPanel.AvatarPanelBorder, Item?.ShowAvatar == true);
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -672,9 +671,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				RebindItemOnLoad = false;
 				var item = Item;
-				Item = null;
+				await BindData(null);
 				if (item != null)
-					_ = Helper.Debounce(() => Item = item);
+					_ = Helper.Debounce(async () => await BindData(item));
 			}
 		}
 
