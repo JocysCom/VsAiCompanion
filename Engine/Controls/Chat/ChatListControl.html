@@ -861,7 +861,9 @@
 				return v.toString(16);
 			}).replace(/-/g, "");
 		}
-
+		
+		var ExternalMessageAction = null;
+		
 		function MessageAction(button, id, action) {
 			button.classList.add('clicked');
 			setTimeout(function () {
@@ -870,11 +872,11 @@
 			if (action == 'DataCopy' || action == 'DataApply') {
 				// id = "{idPrefix}_{randomGuid}"
 				var panel = document.getElementById(id + "_data");
-				window.external.MessageAction("", action, panel.innerText);
+				ExternalMessageAction("", action, panel.innerText);
 			} else {
 				// id = "{idPrefix}_{messageId}[_{attachmentId}]"
 				var messageId = id.substr(idPrefix.length);
-				window.external.MessageAction(messageId, action, "");
+				ExternalMessageAction(messageId, action, "");
 			}
 		}
 
@@ -928,13 +930,27 @@
 		var isInsideApp = false;
 
 		window.onload = function () {
+			console.log("window.onload"); 
+			if (
+				typeof window.chrome !== 'undefined' &&
+				typeof window.chrome.webview !== 'undefined' &&
+				typeof window.chrome.webview.hostObjects !== 'undefined' &&
+				typeof window.chrome.webview.hostObjects.external !== 'undefined' &&
+				typeof window.chrome.webview.hostObjects.external.ExternalMessageAction === 'function'
+			) {
+				isInsideApp = true;
+				ExternalMessageAction = window.chrome.webview.hostObjects.external.ExternalMessageAction;
+			} else if (
+				typeof window.external !== 'undefined' &&
+				typeof window.external.ExternalMessageAction === 'function'
+			) {
+				isInsideApp = true;
+				ExternalMessageAction = window.external.ExternalMessageAction;
+			}
 
-			// This will call external `MessageAction` function without arguments.
-			//isInsideApp = typeof window.external.MessageAction !== "undefined";
-			// Correct way to check for existence of the external function.
-			isInsideApp = ('MessageAction' in window.external)
+			console.log("isInsideApp: " + isInsideApp); 
 			if (isInsideApp)
-				window.external.MessageAction("0", "Loaded", "");
+				ExternalMessageAction("0", "Loaded", "");
 
 			//SetZoom(50);
 

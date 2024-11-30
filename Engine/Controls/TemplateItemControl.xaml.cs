@@ -40,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += ChatPanel_MessagesPanel_WebBrowserDataLoaded;
-			ChatPanel.MessagesPanel.WebScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
+			ChatPanel.MessagesPanel.WebBrowserHostObject.OnMessageAction += ChatPanel_MessagesPanel_WebBrowserHostObject_OnMessageAction;
 			ChatPanel.SelectionSaved += ChatPanel_SelectionSaved;
 			ChatPanel.PropertyChanged += ChatPanel_PropertyChanged;
 			ChatPanel.MainTabControl.SelectionChanged += ChatPanel_MainTabControl_SelectionChanged;
@@ -159,13 +159,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			RestoreTabSelection();
 		}
 
-		private async void ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
+		private async void ChatPanel_MessagesPanel_WebBrowserHostObject_OnMessageAction(object sender, (string id, string action, string data) e)
 		{
-			var actionString = e[1];
-			if (string.IsNullOrEmpty(actionString))
+			if (string.IsNullOrEmpty(e.action))
 				return;
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
-			var ids = (e[0] ?? "").Split('_');
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e.action);
+			var ids = (e.id ?? "").Split('_');
 			var messageId = ids[0];
 			var message = ChatPanel.MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == messageId);
 			if (message == null)
