@@ -437,9 +437,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var info = new Plugins.Core.VsFunctions.AudioInfo()
 					{
 						Prompt = text,
+						Voice = voice,
 						// Set other properties as needed
 					};
-					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}.mp3"; // Assuming MP3 format
+					info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{info.Voice}.mp3"; // Assuming MP3 format
 					var audioBytes = bytes.ToArray();
 					var audioPath = SaveObjectAndAddAttachment(info, audioBytes, true);
 					return new OperationResult<string>(audioPath);

@@ -216,7 +216,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				else if (action == MessageAction.OpenFile)
 				{
-					FileExplorerHelper.OpenFile(fileFullPath);
+					if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+						FileExplorerHelper.OpenWithFile(fileFullPath);
+					else
+						FileExplorerHelper.OpenFile(fileFullPath);
 				}
 				else if (action == MessageAction.EditFile)
 				{

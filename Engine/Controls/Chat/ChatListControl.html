@@ -233,7 +233,7 @@
 			overflow: hidden;
 			border: 0 solid rgba(0, 0, 0, 0.2);
 			display: inline-block;
-			margin: 0 auto 2px auto;
+			margin: 0.5em auto 2px auto;
 			background: #ffffff;
 		}
 
@@ -243,19 +243,28 @@
 			opacity: 0.5;
 			display: flex;
 			padding: 0.2em 0.25em 0.25em 0.5em;
+			align-items: center; /* Ensures proper vertical alignment */
 		}
 
 		.expandable-head-text {
 			font-family: 'Cascadia Mono', 'Consolas';
 			font-size: 0.9em;
-			flex: 1;
+			flex: 1; /* This allows the text to take available space */
+			overflow: hidden; /* Prevents overflow */
+			white-space: nowrap; /* Prevents text wrapping */
+			text-overflow: ellipsis; /* Adds ellipsis for overflow text */
 			padding-top: 0.5em;
 		}
 
 		.expandable-head-indicator {
+			margin-left: 0.5em; /* Add if using this element */
 		}
 
 		.expandable-head-buttons {
+			display: flex;
+			gap: 0.5em; /* Adjust the space between buttons */
+			align-items: center; /* Ensures buttons are aligned */
+			justify-content: flex-end; /* Aligns buttons to the right */
 		}
 
 		.expandable-body {
@@ -979,14 +988,14 @@
 			</button>
 		</div>
 		<div id="expandableBoxImageButtonTemplate">
-			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'OpenFile')" title="Open" aria-label="Open File">📄</button>
+			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'OpenFile')" title="Open File. Hold SHIFT to Open With..." aria-label="Open File. Hold SHIFT to Open With...">📄</button>
 			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'EditFile')" title="Edit" aria-label="Edit File">✎</button>
 			<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'ExploreFile')" title="Explore" aria-label="Open file in Explorer">📂</button>
 		</div>
 		<div id="expandableBoxPanelTemplate">
 			<div class="expandable-box {PanelClass}" id="{Id}_panel" style="display: inline-block;">
 				<div class="expandable-head">
-					<span class="expandable-head-text">{Title}</span>
+					<span class="expandable-head-text" title="{Title}">{Title}</span>
 					<!--<span class="expandable-head-indicator" style="display: none;">…</span>-->
 					<span class="expandable-head-buttons">{TitleButtons}</span>
 				</div>

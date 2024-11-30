@@ -2,7 +2,7 @@
 
 - Fix: Chat copied to the clipboard could not be pasted as plain text.
 - New: Add support for OpenAI TTS (Text-to-Speech) models.
-- New: Add `Open`, `Edit`, and `Browse` buttons for Image and Audio attachments.
+- New: Add `Open`, `Open With...`, `Edit`, and `Browse` buttons for Image and Audio attachments.
 
 2024-11-26 v1.15.12
 
