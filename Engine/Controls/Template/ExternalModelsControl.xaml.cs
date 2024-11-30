@@ -18,11 +18,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var debugVisibility = InitHelper.IsDebug
-				? Visibility.Visible
-				: Visibility.Collapsed;
-			UseAudioToTextCheckBox.Visibility = debugVisibility;
-			TemplateAudioToTextComboBox.Visibility = debugVisibility;
 			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
 		}
 
