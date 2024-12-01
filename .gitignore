@@ -397,6 +397,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /Engine/Resources/BuildDate.txt
+/Engine/Resources/Settings/Temp
+/Engine/Resources/Settings.CompanyName/Temp
 /App/Resources/BuildDate.txt
 /Documents/Files
 /Resources/AI_Files
