@@ -26,8 +26,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public async Task<OperationResult<string>> VideoToText(string prompt, string[] pathsOrUrls)
 		{
-			if (!Item.UseVideoToText)
-				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Video_To_Text}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateVideoToText);
 			if (rItem == null)
@@ -188,8 +186,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Plugins.Core.image_quality imageQuality = Plugins.Core.image_quality.standard
 		)
 		{
-			if (!Item.UseCreateImage)
-				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Create_Image}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateCreateImage);
 			if (rItem == null)
@@ -292,8 +288,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Plugins.Core.image_size imageSize = Plugins.Core.image_size.size_1024x1024
 		)
 		{
-			if (!Item.UseModifyImage)
-				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Modify_Image}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateModifyImage);
 			if (rItem == null)
@@ -401,8 +395,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <param name="text">The text to generate audio for</param>
 		public async Task<OperationResult<string>> TextToSpeech(string text, string voice)
 		{
-			if (!Item.UseTextToAudio)
-				return new OperationResult<string>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Text_To_Audio}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateTextToAudio);
 			if (rItem == null)
@@ -477,9 +469,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			audio_transcription_format responseFormat
 		)
 		{
-			if (!Item.UseAudioToText)
-				return new OperationResult<DocItem[]>(new Exception($"Access denied. User must enable '{Resources.MainResources.main_Use_Text_To_Audio}' in [{Resources.MainResources.main_External_AI_Models}] tab."));
-
 			// Try to get reserved template item.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateTextToAudio);
 			if (rItem == null)

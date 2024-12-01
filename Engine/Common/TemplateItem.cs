@@ -505,30 +505,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region External AI Models
 
-		[DefaultValue(true)]
-		public bool UseTextToAudio { get => _UseTextToAudio; set => SetProperty(ref _UseTextToAudio, value); }
-		bool _UseTextToAudio;
-
-		[DefaultValue(false)]
-		public bool UseAudioToText { get => _UseAudioToText; set => SetProperty(ref _UseAudioToText, value); }
-		bool _UseAudioToText;
-
-		[DefaultValue(true)]
-		public bool UseVideoToText { get => _UseVideoToText; set => SetProperty(ref _UseVideoToText, value); }
-		bool _UseVideoToText;
-
-		[DefaultValue(true)]
-		public bool UseTextToVideo { get => _UseTextToVideo; set => SetProperty(ref _UseTextToVideo, value); }
-		bool _UseTextToVideo;
-
-		[DefaultValue(true)]
-		public bool UseCreateImage { get => _UseCreateImage; set => SetProperty(ref _UseCreateImage, value); }
-		bool _UseCreateImage;
-
-		[DefaultValue(true)]
-		public bool UseModifyImage { get => _UseModifyImage; set => SetProperty(ref _UseModifyImage, value); }
-		bool _UseModifyImage;
-
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToAudio)]
 		public string TemplateTextToAudio { get => _TemplateTextToAudio; set => SetProperty(ref _TemplateTextToAudio, value); }
 		string _TemplateTextToAudio;
