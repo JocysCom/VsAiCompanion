@@ -1,4 +1,4 @@
-2024-12-01 v1.16.6
+2024-12-01 v1.16.7
 
 - Fix: Copied chat could not be pasted as plain text.
 - Fix: Database function call crash with SQLite.

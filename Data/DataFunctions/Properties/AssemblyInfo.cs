@@ -19,5 +19,5 @@ using System.Reflection;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.16.6")]
-[assembly: AssemblyFileVersion("1.16.6")]
+[assembly: AssemblyVersion("1.16.7")]
+[assembly: AssemblyFileVersion("1.16.7")]

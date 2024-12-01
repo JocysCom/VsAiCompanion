@@ -196,7 +196,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				// Workaround: "Access is denied. (Exception from HRESULT: 0x80070005(E_ACCESSDENIED))"
 				// Specify a user data folder that extension can write to.
 				var tempFolderPath = AppHelper.GetTempFolderPath();
-				var userDataFolder = Path.Combine(tempFolderPath, "WebView2");
+				// Separate folders for extension and app to avoid locking issues.
+				var suffix = Global.IsVsExtension ? "VS" : "App";
+				var userDataFolder = Path.Combine(tempFolderPath, $"WebView2.{suffix}");
 				// Ensure the directory exists
 				if (!Directory.Exists(userDataFolder))
 					Directory.CreateDirectory(userDataFolder);
