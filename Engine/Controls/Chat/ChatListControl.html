@@ -1,5 +1,4 @@
-﻿<!-- saved from url=(0014)about:internet -->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
@@ -12,6 +11,7 @@
 	<script src="ChatListControl/core-js.min.js" defer="defer"></script>
 	<script src="ChatListControl/marked.min.js" defer="defer"></script>
 	<script src="ChatListControl/prism.js" defer="defer"></script>
+	<script src="ChatListControl/howler.min.js" defer="defer"></script>
 	<style>
 		/*em: Unit relative to the font-size of the parent element.
 			1em is equal to the font size of the parent element, so if the parent's font-size is 16px, 1em would be 16px. */
@@ -456,9 +456,9 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var imageInfo = JSON.parse(a.Data);
-						var imageFullPath = Item.Location + "\\" + Item.Name + "\\" + imageInfo.Name;
+						var imageFullPath = GetItemPath(imageInfo.Name);
 						var link = document.createElement("a");
-						link.href = "file://" + imageFullPath;
+						link.href = imageFullPath;
 						link.target = "_blank";
 						var img = document.createElement('img');
 						img.alt = imageInfo.Prompt;
@@ -474,17 +474,22 @@
 						displayPanelContent = true;
 						console.log(a.Data);
 						var audioInfo = JSON.parse(a.Data);
-						var audioFullPath = Item.Location + "\\" + Item.Name + "\\" + audioInfo.Name;
-						var link = document.createElement("a");
-						link.href = "file://" + audioFullPath;
-						link.target = "_blank";
-						var audio = document.createElement('audio');
-						audio.controls = true;
-						audio.src = (audioInfo.DataUri)
+						var audioFullPath = GetItemPath(audioInfo.Name);
+						var audioDiv = document.createElement("div");
+						var audioSrc = (audioInfo.DataUri)
 							? audioInfo.DataUri
 							: audioFullPath;
-						link.appendChild(audio);
-						aData = link.outerHTML;
+						try {
+							var audio = document.createElement('audio');
+							audio.controls = true;
+							audio.src = (audioInfo.DataUri)
+								? audioInfo.DataUri
+								: audioFullPath;
+							audioDiv.appendChild(audio);
+						} catch (e) {
+							audioDiv.innerText = 'Error:' + e.message + '\r\n' + e.stack;
+						}
+						aData = audioDiv.outerHTML;
 					}
 					else if (a.IsMarkdown) {
 						aData = (a.Data) ? a.Data : "";
@@ -745,6 +750,15 @@
 			Item = item;
 			document.title = item.Name;
 		}
+		
+		function GetItemPath(name)
+		{
+			var path = Item.Location + "\\" + Item.Name + "\\" + name
+			path = isInsideApp
+				? path.replace("\\", "/")
+				: "file://" + path;
+			return path;
+		}
 
 		function SetSettings(settings) {
 			if (!settings)
@@ -834,7 +848,9 @@
 				return v.toString(16);
 			}).replace(/-/g, "");
 		}
-
+		
+		var ExternalMessageAction = null;
+		
 		function MessageAction(button, id, action) {
 			button.classList.add('clicked');
 			setTimeout(function () {
@@ -843,11 +859,11 @@
 			if (action == 'DataCopy' || action == 'DataApply') {
 				// id = "{idPrefix}_{randomGuid}"
 				var panel = document.getElementById(id + "_data");
-				window.external.MessageAction("", action, panel.innerText);
+				ExternalMessageAction("", action, panel.innerText);
 			} else {
 				// id = "{idPrefix}_{messageId}[_{attachmentId}]"
 				var messageId = id.substr(idPrefix.length);
-				window.external.MessageAction(messageId, action, "");
+				ExternalMessageAction(messageId, action, "");
 			}
 		}
 
@@ -901,19 +917,39 @@
 		var isInsideApp = false;
 
 		window.onload = function () {
+			console.log("window.onload"); 
+			if (
+				typeof window.chrome !== 'undefined' &&
+				typeof window.chrome.webview !== 'undefined' &&
+				typeof window.chrome.webview.hostObjects !== 'undefined' &&
+				typeof window.chrome.webview.hostObjects.external !== 'undefined' &&
+				typeof window.chrome.webview.hostObjects.external.ExternalMessageAction === 'function'
+			) {
+				isInsideApp = true;
+				ExternalMessageAction = window.chrome.webview.hostObjects.external.ExternalMessageAction;
+			} else if (
+				typeof window.external !== 'undefined' &&
+				typeof window.external.ExternalMessageAction === 'function'
+			) {
+				isInsideApp = true;
+				ExternalMessageAction = window.external.ExternalMessageAction;
+			}
 
-			// This will call external `MessageAction` function without arguments.
-			//isInsideApp = typeof window.external.MessageAction !== "undefined";
-			// Correct way to check for existence of the external function.
-			isInsideApp = ('MessageAction' in window.external)
+			console.log("isInsideApp: " + isInsideApp); 
 			if (isInsideApp)
-				window.external.MessageAction("0", "Loaded", "");
+				ExternalMessageAction("0", "Loaded", "");
 
 			//SetZoom(50);
 
 			// The code will only run if the file is opened locally.
 			if (window.location.href.indexOf("file://") == -1)
 				return;
+
+			SetItem({
+				Location: "d:\\Projects\\Jocys.com GitHub\\VsAiCompanion\\Engine\\Controls\\Chat",
+				Name: "ChatListControl"
+			});
+
 			var testText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 			var codeText = "" +
 				// Add Text code block to test.
@@ -956,14 +992,14 @@
 							Title: "Image",
 							Instructions: "",
 							Type: ContextType.Image,
-							Data: "{ \"Path\": \"image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 1024, \"Height\": 1024}",
+							Data: "{ \"Name\": \"test_image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 128, \"Height\": 128}",
 							IsMarkdown: false,
 						},
 						{
 							Title: "Audio",
 							Instructions: "",
 							Type: ContextType.Audio,
-							Data: "{ \"Path\": \"audio.mp3\", \"Prompt\": \"AI Promtp\"}",
+							Data: "{ \"Name\": \"test_audio.mp3\", \"Prompt\": \"AI Promtp\"}",
 							IsMarkdown: false,
 						},
 					]

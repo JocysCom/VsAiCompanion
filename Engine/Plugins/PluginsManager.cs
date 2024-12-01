@@ -241,7 +241,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToTextCallback = ai.VideoToText;
 					mm.GetTempFolderPath = AppHelper.GetTempFolderPath;
 					mm.GenerateImageCallback = ai.CreateImageAsync;
-					mm.TextToAudioCallback = ai.TextToAudio;
+					mm.TextToSpeechCallback = ai.TextToSpeech;
+					mm.TranscribeAudioCallback = ai.TranscribeAudio;
 					mm.ModifyImageCallback = ai.ModifyImageAsync;
 					mm.GetStructuredImageAnalysisInstructions = () => Global.AppSettings.StructuredImageAnalysisInstructions;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
@@ -251,7 +252,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToTextCallback = null;
 					mm.ModifyImageCallback = null;
 					mm.GenerateImageCallback = null;
-					mm.TextToAudioCallback = null;
+					mm.TranscribeAudioCallback = null;
+					mm.TextToSpeechCallback = null;
 					mm.GetTempFolderPath = null;
 					mm.AISpeakCallback = null;
 					ai.Item = null;

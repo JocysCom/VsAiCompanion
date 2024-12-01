@@ -120,5 +120,61 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
+		#region Create Audio
+
+		/// <summary>
+		/// Generates an audio using the specified prompt by using OpenAI TTS (text-to-speech) voice models.
+		/// </summary>
+		/// <param name="text">The text to generate audio for.</param>
+		/// <param name="voice">Generated speech voice: "alloy", "echo", "fable", "onyx", "nova" or "shimmer"</param>
+		/// <returns>Operation result containing the path to the generated voice file.</returns>
+		[RiskLevel(RiskLevel.None)]
+		public async Task<OperationResult<string>> TextToSpeech(
+			string text,
+			string voice)
+		{
+			return await TextToSpeechCallback(text, voice);
+		}
+
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
+		public Func<string, string, Task<OperationResult<string>>> TextToSpeechCallback;
+
+		#endregion
+
+
+		#region Transcribe Audio
+
+		/// <summary>
+		/// Transcribes the provided audio files to text using the OpenAI transcription service.
+		/// </summary>
+		/// <param name="prompt">An optional text to guide the style or content of the transcription. The prompt should be in the specified language.</param>
+		/// <param name="language">The language of the audio files. If not specified, the language will be detected automatically.</param>
+		/// <param name="timestampGranularities">The desired timestamp intervals in the transcription.</param>
+		/// <param name="responseFormat">The format of the transcription response.</param>
+		/// <param name="pathsOrUrls">
+		/// An array of file paths or URLs pointing to the audio files to be transcribed. The files must be in one of the supported formats (mp3, mp4, mpeg, mpga, m4a, wav, or webm), and each must not exceed 25 MB in size.
+		/// </param>
+		[RiskLevel(RiskLevel.Medium)]
+		public async Task<OperationResult<DocItem[]>> TranscribeAudio(
+			string prompt,
+			string[] pathsOrUrls,
+			string language = null,
+			audio_timestamp_granularities timestampGranularities = audio_timestamp_granularities.@default,
+			audio_transcription_format responseFormat = audio_transcription_format.verbose_json
+		)
+		{
+			return await TranscribeAudioCallback(prompt, pathsOrUrls, language, timestampGranularities, responseFormat);
+		}
+
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
+		public Func<string, string[], string, audio_timestamp_granularities, audio_transcription_format, Task<OperationResult<DocItem[]>>> TranscribeAudioCallback;
+
+		#endregion
+
+
 	}
 }

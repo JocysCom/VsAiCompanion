@@ -29,10 +29,9 @@ OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD
   <Created>2024-02-25T22:52:23.8458776+00:00</Created>
   <Modified>2024-02-25T22:52:23.8458776+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-  <AiModel>dall-e-3</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>

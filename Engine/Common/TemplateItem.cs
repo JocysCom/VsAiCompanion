@@ -21,6 +21,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			CancellationTokenSources = new BindingList<CancellationTokenSource>();
 			CancellationTokenSources.ListChanged += HttpClients_ListChanged;
+			PropertyChanged += TemplateItem_PropertyChanged;
+		}
+
+		private void TemplateItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(Name) || e.PropertyName == nameof(AiModel) || e.PropertyName == nameof(AiServiceId))
+			{
+				OnPropertyChanged(nameof(DisplayName));
+			}
 		}
 
 		private void HttpClients_ListChanged(object sender, ListChangedEventArgs e)
@@ -32,6 +41,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 					IsBusy = isBusy;
 			}
 		}
+
+		[XmlIgnore, JsonIgnore]
+		public string DisplayName { get => $"{Name} ({AiService?.Name}, {AiModel})"; }
 
 		public string TemplateName { get => _TemplateName; set => SetProperty(ref _TemplateName, value); }
 		string _TemplateName;
@@ -504,30 +516,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 		#region External AI Models
-
-		[DefaultValue(true)]
-		public bool UseTextToAudio { get => _UseTextToAudio; set => SetProperty(ref _UseTextToAudio, value); }
-		bool _UseTextToAudio;
-
-		[DefaultValue(false)]
-		public bool UseAudioToText { get => _UseAudioToText; set => SetProperty(ref _UseAudioToText, value); }
-		bool _UseAudioToText;
-
-		[DefaultValue(true)]
-		public bool UseVideoToText { get => _UseVideoToText; set => SetProperty(ref _UseVideoToText, value); }
-		bool _UseVideoToText;
-
-		[DefaultValue(true)]
-		public bool UseTextToVideo { get => _UseTextToVideo; set => SetProperty(ref _UseTextToVideo, value); }
-		bool _UseTextToVideo;
-
-		[DefaultValue(true)]
-		public bool UseCreateImage { get => _UseCreateImage; set => SetProperty(ref _UseCreateImage, value); }
-		bool _UseCreateImage;
-
-		[DefaultValue(true)]
-		public bool UseModifyImage { get => _UseModifyImage; set => SetProperty(ref _UseModifyImage, value); }
-		bool _UseModifyImage;
 
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToAudio)]
 		public string TemplateTextToAudio { get => _TemplateTextToAudio; set => SetProperty(ref _TemplateTextToAudio, value); }

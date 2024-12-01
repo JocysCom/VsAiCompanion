@@ -65,14 +65,15 @@
 
 	<!--  Tasks / Templates → Options → Multimedia  -->
 
-	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
-	<sys:String x:Key="main_External_AI_Models">External AI Models</sys:String>
+	<sys:String x:Key="main_Audio_To_Text">Audio-To-Text</sys:String>
 	<sys:String x:Key="main_Create_Image">Create Image</sys:String>
+	<sys:String x:Key="main_External_AI_Models">External AI Models</sys:String>
+	<sys:String x:Key="main_External_AI_Models_Help">Assign templates for different tasks. These templates can outline which API service and AI model should be utilized for each task.</sys:String>
 	<sys:String x:Key="main_Modify_Image">Modify Image</sys:String>
-	<sys:String x:Key="main_Use_Text_To_Audio">Use Text-To-Audio</sys:String>
-	<sys:String x:Key="main_Use_Audio_To_Text">Use Audio-To-Text</sys:String>
-	<sys:String x:Key="main_Use_Video_To_Text">Use Video-To-Text</sys:String>
-	<sys:String x:Key="main_Use_Text_To_Video">Use Text-To-Video</sys:String>
+	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
+	<sys:String x:Key="main_Text_To_Audio">Text-To-Audio</sys:String>
+	<sys:String x:Key="main_Text_To_Video">Text-To-Image</sys:String>
+	<sys:String x:Key="main_Video_To_Text">Image-To-Text</sys:String>
 
 	<!--  Tasks / Templates → Canvas  -->
 

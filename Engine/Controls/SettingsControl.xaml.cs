@@ -5,6 +5,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -34,7 +35,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		ISettingsListFileItem currentItem;
 
-		void UpdateOnSelectionChanged()
+		async Task UpdateOnSelectionChanged()
 		{
 			var item = ListPanel.MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().FirstOrDefault();
 			if (currentItem != null)
@@ -42,7 +43,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			currentItem = item;
 			if (DataType == ItemType.Task || DataType == ItemType.Template)
 			{
-				TemplateItemPanel.Item = (TemplateItem)item;
+				await TemplateItemPanel.BindData((TemplateItem)item);
 			}
 			else if (DataType == ItemType.FineTuning)
 			{
@@ -359,7 +360,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
 			if (shiftDown)
 				return;
-			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?._WebBrowser;
+			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?._WebView2;
 			if (wb != null)
 			{
 				var bodiesSize = TemplateItemPanel?.Item?.Messages.Sum(x => x.Body?.Length ?? 0);
@@ -392,7 +393,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MainGridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
-			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?._WebBrowser;
+			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?._WebView2;
 			if (wb != null)
 			{
 				wb.Visibility = Visibility.Visible;

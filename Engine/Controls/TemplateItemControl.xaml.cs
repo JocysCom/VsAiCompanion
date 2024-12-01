@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -39,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += ChatPanel_MessagesPanel_WebBrowserDataLoaded;
-			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
+			ChatPanel.MessagesPanel.WebBrowserHostObject.OnMessageAction += ChatPanel_MessagesPanel_WebBrowserHostObject_OnMessageAction;
 			ChatPanel.SelectionSaved += ChatPanel_SelectionSaved;
 			ChatPanel.PropertyChanged += ChatPanel_PropertyChanged;
 			ChatPanel.MainTabControl.SelectionChanged += ChatPanel_MainTabControl_SelectionChanged;
@@ -48,7 +49,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
 			//SelectionRadioButton.IsEnabled = Global.GetSelection != null;
-			Item = null;
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
@@ -158,13 +158,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			RestoreTabSelection();
 		}
 
-		private async void ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
+		private async void ChatPanel_MessagesPanel_WebBrowserHostObject_OnMessageAction(object sender, (string id, string action, string data) e)
 		{
-			var actionString = e[1];
-			if (string.IsNullOrEmpty(actionString))
+			if (string.IsNullOrEmpty(e.action))
 				return;
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
-			var ids = (e[0] ?? "").Split('_');
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e.action);
+			var ids = (e.id ?? "").Split('_');
 			var messageId = ids[0];
 			var message = ChatPanel.MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == messageId);
 			if (message == null)
@@ -282,12 +281,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void Global_OnSaveSettings(object sender, EventArgs e)
+		private async void Global_OnSaveSettings(object sender, EventArgs e)
 		{
 			// Update from previous settings.
 			if (_Item != null)
 			{
-				var settings = ChatPanel.MessagesPanel.GetWebSettings();
+				var settings = await ChatPanel.MessagesPanel.GetWebSettingsAsync();
 				if (settings != null)
 					_Item.Settings = settings;
 			}
@@ -316,7 +315,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isEdit = !string.IsNullOrEmpty(ChatPanel.EditMessageId);
 			if (isEdit)
 			{
-				ChatPanel.ApplyMessageEdit();
+				await ChatPanel.ApplyMessageEditAsync();
 			}
 			else
 			{
@@ -430,64 +429,66 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItem Item
 		{
 			get => _Item;
-			set
+		}
+
+		public async Task BindData(TemplateItem item)
+		{
+			if (Equals(item, _Item))
+				return;
+			var oldItem = _Item;
+			// Update from previous settings.
+			if (_Item != null)
 			{
-				if (Equals(value, _Item))
-					return;
-				var oldItem = _Item;
-				// Update from previous settings.
-				if (_Item != null)
-				{
-					_Item.PropertyChanged -= _item_PropertyChanged;
-					_Item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
-				}
-				ChatPanel.MonitorTextBoxSelections(false);
-				// Make sure that custom AiModel old and new item is available to select.
-				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
-				UpdateListNames(new string[] { value?.Name, oldItem?.Name });
-				// Set new item.
-				_Item = value ?? AppHelper.GetNewTemplateItem(true);
-				// This will trigger AiCompanionComboBox_SelectionChanged event.
-				AiModelBoxPanel.Item = null;
-				if (ChatPanel.AttachmentsPanel.CurrentItems != null)
-					ChatPanel.AttachmentsPanel.CurrentItems = null;
-				DataContext = _Item;
-				_Item.PropertyChanged += _item_PropertyChanged;
-				AiModelBoxPanel.Item = _Item;
-				ToolsPanel.Item = _Item;
-				OnPropertyChanged(nameof(CreativityName));
-				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
-				UpdateListNames(new string[] { _Item?.Name, });
-				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
-				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
-				IconPanel.BindData(_Item);
-				CanvasPanel.Item = _Item;
-				ExternalModelsPanel.Item = _Item;
-				PromptsPanel.BindData(_Item);
-				ListsPromptsPanel.BindData(_Item);
-				ChatPanel.MessagesPanel.SetDataItems(_Item);
-				ChatPanel.IsBusy = _Item.IsBusy;
-				ChatPanel.UpdateMessageEdit();
-				System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
-				// AutoSend once enabled then...
-				if (DataType == ItemType.Task && _Item.AutoSend)
-				{
-					// Disable auto-send so that it won't trigger every time item is bound.
-					_Item.AutoSend = false;
-					ControlsHelper.AppBeginInvoke(() =>
-					{
-						var voiceInstructions = GetVoiceInstructions();
-						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, extraInstructions: voiceInstructions);
-					});
-				}
-				_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
-				if (PanelSettings.Focus)
-					RestoreTabSelection();
-				ChatPanel.MonitorTextBoxSelections(true);
-				UpdateAvatarControl();
-				UpdateListEditButtons();
+				_Item.PropertyChanged -= _item_PropertyChanged;
+				var settings = await ChatPanel.MessagesPanel.GetWebSettingsAsync();
+				_Item.Settings = settings;
 			}
+			ChatPanel.MonitorTextBoxSelections(false);
+			// Make sure that custom AiModel old and new item is available to select.
+			AppHelper.UpdateModelCodes(item?.AiService, AiModelBoxPanel.AiModels, item?.AiModel, oldItem?.AiModel);
+			UpdateListNames(new string[] { item?.Name, oldItem?.Name });
+			// Set new item.
+			_Item = item ?? AppHelper.GetNewTemplateItem(true);
+			// This will trigger AiCompanionComboBox_SelectionChanged event.
+			AiModelBoxPanel.Item = null;
+			if (ChatPanel.AttachmentsPanel.CurrentItems != null)
+				ChatPanel.AttachmentsPanel.CurrentItems = null;
+			DataContext = _Item;
+			_Item.PropertyChanged += _item_PropertyChanged;
+			AiModelBoxPanel.Item = _Item;
+			ToolsPanel.Item = _Item;
+			OnPropertyChanged(nameof(CreativityName));
+			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
+			AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
+			UpdateListNames(new string[] { _Item?.Name, });
+			PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
+			ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
+			IconPanel.BindData(_Item);
+			CanvasPanel.Item = _Item;
+			ExternalModelsPanel.Item = _Item;
+			PromptsPanel.BindData(_Item);
+			ListsPromptsPanel.BindData(_Item);
+			ChatPanel.MessagesPanel.SetDataItems(_Item);
+			ChatPanel.IsBusy = _Item.IsBusy;
+			ChatPanel.UpdateMessageEdit();
+			System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
+			// AutoSend once enabled then...
+			if (DataType == ItemType.Task && _Item.AutoSend)
+			{
+				// Disable auto-send so that it won't trigger every time item is bound.
+				_Item.AutoSend = false;
+				ControlsHelper.AppBeginInvoke(() =>
+				{
+					var voiceInstructions = GetVoiceInstructions();
+					_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, extraInstructions: voiceInstructions);
+				});
+			}
+			_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
+			if (PanelSettings.Focus)
+				RestoreTabSelection();
+			ChatPanel.MonitorTextBoxSelections(true);
+			UpdateAvatarControl();
+			UpdateListEditButtons();
 		}
 
 		// Move to settings later.
@@ -619,7 +620,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.UpdateAvatarControl(ChatPanel.AvatarPanelBorder, Item?.ShowAvatar == true);
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -670,9 +671,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				RebindItemOnLoad = false;
 				var item = Item;
-				Item = null;
+				await BindData(null);
 				if (item != null)
-					_ = Helper.Debounce(() => Item = item);
+					_ = Helper.Debounce(async () => await BindData(item));
 			}
 		}
 
@@ -691,9 +692,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			RestoreTabSelection();
 		}
 
-		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
+		private async void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
 		{
-			ChatPanel.MessagesPanel.InvokeScript("ScrollToBottom()");
+			await ChatPanel.MessagesPanel.InvokeScriptAsync("ScrollToBottom()");
 			RestoreTabSelection();
 		}
 
@@ -920,7 +921,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		System.Windows.Forms.SaveFileDialog ExportSaveFileDialog { get; } = new System.Windows.Forms.SaveFileDialog();
 
-		private void SaveAsButton_Click(object sender, RoutedEventArgs e)
+		private async void SaveAsButton_Click(object sender, RoutedEventArgs e)
 		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.html";
@@ -936,7 +937,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
 			// Cast the document to an HTMLDocument
-			var html = GetPageHtml();
+			var html = await GetPageHtmlAsync();
 			if (string.IsNullOrEmpty(html))
 				return;
 			var ext = System.IO.Path.GetExtension(dialog.FileName).ToLower();
@@ -953,10 +954,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		public string GetPageHtml()
+		public async Task<string> GetPageHtmlAsync()
 		{
 			// Cast the document to an HTMLDocument
-			var html = (string)ChatPanel.MessagesPanel.InvokeScript("document.documentElement.outerHTML;");
+			var html = (string)await ChatPanel.MessagesPanel.InvokeScriptAsync("document.documentElement.outerHTML;");
 			if (!string.IsNullOrEmpty(html))
 				html = CleanupHtml(html);
 			return html;
@@ -991,9 +992,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			FileExplorerHelper.OpenFileInExplorerAndSelect(fileFullPath);
 		}
 
-		private void CopyButton_Click(object sender, RoutedEventArgs e)
+		private async void CopyButton_Click(object sender, RoutedEventArgs e)
 		{
-			var html = GetPageHtml();
+			var html = await GetPageHtmlAsync();
 			AppHelper.SetClipboardHtml(html);
 		}
 

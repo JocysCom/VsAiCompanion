@@ -24,16 +24,32 @@
 			<RowDefinition />
 			<RowDefinition />
 			<RowDefinition />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		<CheckBox Name="UseTextToAudioCheckBox" Content="{StaticResource main_Use_Text_To_Audio}" IsChecked="{Binding UseTextToAudio}" />
+
+		<Border
+			Grid.Column="0"
+			Grid.ColumnSpan="5"
+			Margin="3"
+			Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_External_AI_Models_Help}" />
+		</Border>
+
+		<Label
+			Name="UseTextToAudioCheckBox"
+			Grid.Row="1"
+			Margin="3"
+			Content="{StaticResource main_Text_To_Audio}" />
 		<ComboBox
 			Name="TemplateTextToAudioComboBox"
+			Grid.Row="1"
 			Grid.Column="1"
 			MinWidth="128"
 			Margin="0,3,0,3"
@@ -42,14 +58,14 @@
 			SelectedValue="{Binding TemplateTextToAudio}"
 			SelectedValuePath="Key" />
 
-		<CheckBox
+		<Label
 			Name="UseAudioToTextCheckBox"
-			Grid.Row="1"
-			Content="{StaticResource main_Use_Audio_To_Text}"
-			IsChecked="{Binding UseAudioToText}" />
+			Grid.Row="2"
+			Margin="3"
+			Content="{StaticResource main_Audio_To_Text}" />
 		<ComboBox
 			Name="TemplateAudioToTextComboBox"
-			Grid.Row="1"
+			Grid.Row="2"
 			Grid.Column="1"
 			MinWidth="128"
 			Margin="0,3,0,3"
@@ -58,14 +74,14 @@
 			SelectedValue="{Binding TemplateAudioToText}"
 			SelectedValuePath="Key" />
 
-		<CheckBox
+		<Label
 			Name="UseTextToVideoCheckBox"
-			Grid.Row="2"
-			Content="{StaticResource main_Use_Text_To_Video}"
-			IsChecked="{Binding UseTextToVideo}" />
+			Grid.Row="3"
+			Margin="3"
+			Content="{StaticResource main_Text_To_Video}" />
 		<ComboBox
 			Name="TemplateTextToVideoComboBox"
-			Grid.Row="2"
+			Grid.Row="3"
 			Grid.Column="1"
 			MinWidth="128"
 			Margin="0,3,0,3"
@@ -74,14 +90,14 @@
 			SelectedValue="{Binding TemplateTextToVideo}"
 			SelectedValuePath="Key" />
 
-		<CheckBox
+		<Label
 			Name="UseVideoToTextCheckBox"
-			Grid.Row="3"
-			Content="{StaticResource main_Use_Video_To_Text}"
-			IsChecked="{Binding UseVideoToText}" />
+			Grid.Row="4"
+			Margin="3"
+			Content="{StaticResource main_Video_To_Text}" />
 		<ComboBox
 			Name="TemplateVideoToTextComboBox"
-			Grid.Row="3"
+			Grid.Row="4"
 			Grid.Column="1"
 			MinWidth="128"
 			Margin="0,3,0,3"
@@ -91,14 +107,14 @@
 			SelectedValuePath="Key" />
 
 
-		<CheckBox
+		<Label
 			Name="TemplateCreateImageCheckBox"
-			Grid.Row="4"
-			Content="{StaticResource main_Create_Image}"
-			IsChecked="{Binding UseCreateImage}" />
+			Grid.Row="5"
+			Margin="3"
+			Content="{StaticResource main_Create_Image}" />
 		<ComboBox
 			Name="TemplateCreateImageComboBox"
-			Grid.Row="4"
+			Grid.Row="5"
 			Grid.Column="1"
 			MinWidth="128"
 			Margin="0,3,0,3"
@@ -107,14 +123,14 @@
 			SelectedValue="{Binding TemplateCreateImage}"
 			SelectedValuePath="Key" />
 
-		<CheckBox
+		<Label
 			Name="TemplateModifyImageImageCheckBox"
-			Grid.Row="5"
-			Content="{StaticResource main_Modify_Image}"
-			IsChecked="{Binding UseModifyImage}" />
+			Grid.Row="6"
+			Margin="3"
+			Content="{StaticResource main_Modify_Image}" />
 		<ComboBox
 			Name="TemplateModifyImageComboBox"
-			Grid.Row="5"
+			Grid.Row="6"
 			Grid.Column="1"
 			MinWidth="128"
 			Margin="0,3,0,3"
@@ -124,13 +140,13 @@
 			SelectedValuePath="Key" />
 
 		<Label
-			Grid.Row="0"
+			Grid.Row="1"
 			Grid.Column="2"
-			Margin="3,3,3,3"
+			Margin="3"
 			Content="{StaticResource main_Auto_Generate_Title}" />
 		<ComboBox
 			Name="GenerateTitleTemplateComboBox"
-			Grid.Row="0"
+			Grid.Row="1"
 			Grid.Column="3"
 			MinWidth="128"
 			Margin="0,3,0,3"

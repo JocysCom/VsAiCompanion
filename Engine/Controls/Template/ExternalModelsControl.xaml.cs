@@ -18,16 +18,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var debugVisibility = InitHelper.IsDebug
-				? Visibility.Visible
-				: Visibility.Collapsed;
-			UseAudioToTextCheckBox.Visibility = debugVisibility;
-			TemplateAudioToTextComboBox.Visibility = debugVisibility;
 			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
 		}
 
 		public Dictionary<string, string> PluginTemplates
-			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
+			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.DisplayName);
 
 		public Dictionary<string, string> GenerateTitleTemplates
 		{
@@ -35,7 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			{
 				var kv = Global.Templates.Items
 					.Where(x => x.Name.StartsWith(SettingsSourceManager.TemplateGenerateTitleTaskName))
-					.ToDictionary(x => x.Name, x => x.Name);
+					.ToDictionary(x => x.Name, x => x.DisplayName);
 				//kv.Add(null, "Default");
 				return kv;
 			}

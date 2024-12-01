@@ -1,8 +1,12 @@
-2024-11-26 v1.15.16
+2024-12-01 v1.16.6
 
-- Fix: Chat copied to the clipboard could not be pasted as plain text.
-- New: Add support for OpenAI TTS (Text-to-Speech) models.
-- New: Add `Open`, `Open With...`, `Edit`, and `Browse` buttons for Image and Audio attachments.
+- Fix: Copied chat could not be pasted as plain text.
+- Fix: Database function call crash with SQLite.
+- Fix: Connection issue with the `http` schema for the local API (such as LM Studio).
+- New: Added support for OpenAI Text-to-Speech models.
+- New: Added support for OpenAI Speech-to-Text models.
+- New: Added `Open`, `Open With...`, `Edit`, and `Browse` buttons for Image and Audio attachments.
+- Update: Chat has been updated to use the Microsoft Edge WebView2 control.
 
 2024-11-26 v1.15.12
 
