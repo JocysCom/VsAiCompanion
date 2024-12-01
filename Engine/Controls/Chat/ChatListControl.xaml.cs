@@ -193,25 +193,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (_WebView2.CoreWebView2 == null)
 			{
 				_WebView2.CoreWebView2InitializationCompleted += _WebView2_CoreWebView2InitializationCompleted;
-				if (Global.IsVsExtension)
-				{
-					// Workaround: "Access is denied. (Exception from HRESULT: 0x80070005(E_ACCESSDENIED))"
-					// Specify a user data folder that extension can write to.
-					var tempFolderPath = AppHelper.GetTempFolderPath();
-					var userDataFolder = Path.Combine(tempFolderPath, "WebView2", "UserData");
-					// Ensure the directory exists
-					if (!Directory.Exists(userDataFolder))
-						Directory.CreateDirectory(userDataFolder);
-					// Create CoreWebView2Environment with the specified user data folder
-					var env = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
-					// Initialize WebView2 with the environment
-					await _WebView2.EnsureCoreWebView2Async(env);
-				}
-				else
-				{
-					// Initialize WebView2
-					await _WebView2.EnsureCoreWebView2Async();
-				}
+				// Workaround: "Access is denied. (Exception from HRESULT: 0x80070005(E_ACCESSDENIED))"
+				// Specify a user data folder that extension can write to.
+				var tempFolderPath = AppHelper.GetTempFolderPath();
+				var userDataFolder = Path.Combine(tempFolderPath, "WebView2");
+				// Ensure the directory exists
+				if (!Directory.Exists(userDataFolder))
+					Directory.CreateDirectory(userDataFolder);
+				// Create CoreWebView2Environment with the specified user data folder
+				var env = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
+				// Initialize WebView2 with the environment
+				await _WebView2.EnsureCoreWebView2Async(env);
 			}
 		}
 
