@@ -222,6 +222,36 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
           <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
+        <AiModel>
+          <Path>Company Name AI</Path>
+          <Name>tts-1-hd</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>617713eb-71ce-c5d2-7936-517b3b06d383</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+          <MaxInputTokens>2048</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Company Name AI</Path>
+          <Name>text-embedding-ada-002</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>a1c7712b-fc5f-840b-aa04-a81f6748768d</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Company Name AI</Path>
+          <Name>whisper-1</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>8e494b36-9c17-ddc7-9ec9-e91ed7b75cfc</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+          <MaxInputTokens>2048</MaxInputTokens>
+        </AiModel>
       </AiModels>
       <MailAccounts />
       <Plugins>
@@ -453,6 +483,14 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.StopText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToSpeech</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TranscribeAudio</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

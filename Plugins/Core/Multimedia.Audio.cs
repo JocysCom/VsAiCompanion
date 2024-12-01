@@ -162,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			string[] pathsOrUrls,
 			string language = null,
 			audio_timestamp_granularities timestampGranularities = audio_timestamp_granularities.@default,
-			audio_transcription_format responseFormat = audio_transcription_format.VerboseJson
+			audio_transcription_format responseFormat = audio_transcription_format.verbose_json
 		)
 		{
 			return await TranscribeAudioCallback(prompt, pathsOrUrls, language, timestampGranularities, responseFormat);

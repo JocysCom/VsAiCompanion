@@ -21,6 +21,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			CancellationTokenSources = new BindingList<CancellationTokenSource>();
 			CancellationTokenSources.ListChanged += HttpClients_ListChanged;
+			PropertyChanged += TemplateItem_PropertyChanged;
+		}
+
+		private void TemplateItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(Name) || e.PropertyName == nameof(AiModel) || e.PropertyName == nameof(AiServiceId))
+			{
+				OnPropertyChanged(nameof(DisplayName));
+			}
 		}
 
 		private void HttpClients_ListChanged(object sender, ListChangedEventArgs e)
@@ -32,6 +41,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 					IsBusy = isBusy;
 			}
 		}
+
+		[XmlIgnore, JsonIgnore]
+		public string DisplayName { get => $"{Name} ({AiService?.Name}, {AiModel})"; }
 
 		public string TemplateName { get => _TemplateName; set => SetProperty(ref _TemplateName, value); }
 		string _TemplateName;

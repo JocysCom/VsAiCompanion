@@ -470,9 +470,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		)
 		{
 			// Try to get reserved template item.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateTextToAudio);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateAudioToText);
 			if (rItem == null)
-				return new OperationResult<DocItem[]>(new Exception($"Can't find '{Item.TemplateTextToAudio}'"));
+				return new OperationResult<DocItem[]>(new Exception($"Can't find '{Item.TemplateAudioToText}'"));
 
 			// Optional parameters
 			if (string.IsNullOrWhiteSpace(prompt))
@@ -513,7 +513,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						{
 							throw new Exception($"File '{audioFilePath}' exceeds the 25 MB size limit.");
 						}
-						using (var stream = System.IO.File.OpenRead(audioFilePath))
+						using (var stream = File.OpenRead(audioFilePath))
 						{
 							var result = await audioClient.TranscribeAudioAsync(stream, audioFilePath, options, cancellationToken);
 							var data = Client.Serialize(result.Value);

@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -82,9 +81,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 			await SetWebSettingsAsync(Item.Settings);
 		}
-
-		private void Tasks_ListChanged(object sender, ListChangedEventArgs e)
-			=> UpdateUpdateButton();
 
 		public async Task SetWebSettingsAsync(ChatSettings settings)
 		{
@@ -170,13 +166,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public ItemType DataType { get; set; }
 
-		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-			=> UpdateUpdateButton();
-
-		void UpdateUpdateButton()
-		{
-		}
-
 		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -200,7 +189,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			_WebView2.Name = "WebView2";
 			_WebView2.Visibility = Visibility.Collapsed;
 			_WebView2.NavigationStarting += WebView2_NavigationStarting;
-			_WebView2.NavigationCompleted += WebView2_NavigationCompleted;
 			MainGrid.Children.Add(_WebView2);
 			if (_WebView2.CoreWebView2 == null)
 			{
@@ -212,7 +200,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
 		{
 			var uri = new Uri(e.Request.Uri);
-			if (uri.Host == "appassets.example")
+			if (uri.Host == appAssetsHost)
 			{
 				var name = Uri.UnescapeDataString(uri.Segments.Last());
 				MemoryStream stream = null;
@@ -256,7 +244,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			var uri = e.Uri;
 			// Check if it's trying to navigate to one of our files.
-			if (uri.StartsWith("http://appassets.example/"))
+			if (uri.StartsWith($"http://{appAssetsHost}/"))
 				return;
 			if (!string.IsNullOrEmpty(e.Uri))
 				ControlsHelper.OpenUrl(e.Uri);
@@ -265,6 +253,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		}
 
 		public BrowserHostObject WebBrowserHostObject;
+
+		// According to RFC 6761, the `.invalid` domain is intended for
+		// use in online construction of domain names that are sure to be invalid
+		// and which should not be looked up in the DNS via the normal resolution mechanism.
+		private string appAssetsHost = "appassets.invalid";
 
 		private async void _WebView2_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
 		{
@@ -278,7 +271,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				await Task.Delay(0);
 
-				WebBrowserHostObject.OnMessageAction += _BrowserHostObject_OnMessageAction;
+				WebBrowserHostObject.OnMessageAction += WebBrowserHostObject_OnMessageAction;
 				_WebView2.CoreWebView2.AddHostObjectToScript("external", WebBrowserHostObject);
 
 				await _WebView2.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(
@@ -289,7 +282,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				_WebView2.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
 				var tempFolderPath = AppHelper.GetTempFolderPath();
 				// Set initial source after initialization
-				_WebView2.CoreWebView2.Navigate("http://appassets.example/ChatListControl.html");
+				_WebView2.CoreWebView2.Navigate($"http://{appAssetsHost}/ChatListControl.html");
 			}
 			catch (Exception ex)
 			{
@@ -298,7 +291,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
-		private void _BrowserHostObject_OnMessageAction(object sender, (string id, string action, string data) e)
+		private void WebBrowserHostObject_OnMessageAction(object sender, (string id, string action, string data) e)
 		{
 			if (string.IsNullOrEmpty(e.action))
 				return;
@@ -351,22 +344,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
-		public static string contentsFile = "ChatListControl.html";
-		public static object contentsLock = new object();
-		public static string contents;
-
-		// Don't work correctly.
-		public static string MinifyJavaScript(string input)
-		{
-			var singleLinePattern = @"(?<![""'])//.*";
-			var multiLinePattern = @"(?<![""'])/\*(.|\n)*?\*/";
-			var s = input;
-			s = Regex.Replace(s, singleLinePattern, "", RegexOptions.Multiline);
-			s = Regex.Replace(s, multiLinePattern, "", RegexOptions.Singleline);
-			return s;
-		}
-
-
 		byte[] GetChatResource(string name)
 		{
 			byte[] data;
@@ -384,22 +361,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				data = Helper.FindResource<byte[]>(name, GetType().Assembly);
 			}
 			return data;
-		}
-
-		/// <summary>
-		/// Replace the paths to with the actual file contents.
-		/// </summary>
-		void LoadResource(ref string contents, string name)
-		{
-			var data = GetChatResource(name);
-			contents = contents.Replace("ChatListControl/" + name, ClassLibrary.Files.Mime.GetResourceDataUri(name, data));
-		}
-
-		private void WebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
-		{
-
-
-			// Handle navigation completed if needed
 		}
 
 		public event EventHandler WebBrowserDataLoaded;
@@ -443,18 +404,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
 			}
 			return default;
-		}
-
-		string GetResource(string name)
-		{
-			var asm = GetType().Assembly;
-			var fullName = asm.GetManifestResourceNames()
-				.Where(x => x.EndsWith(name))
-				.First();
-			var stream = asm.GetManifestResourceStream(fullName);
-			var reader = new StreamReader(stream, true);
-			var contents = reader.ReadToEnd();
-			return contents;
 		}
 
 		#endregion

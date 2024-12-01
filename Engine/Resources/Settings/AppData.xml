@@ -191,6 +191,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
+          <IsDefault>true</IsDefault>
           <ApiSecretKey />
           <DefaultAiModel>gpt-4o</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
@@ -242,7 +243,6 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
-          <IsDefault>true</IsDefault>
           <ResponseStreaming>false</ResponseStreaming>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-4o</DefaultAiModel>
@@ -984,6 +984,14 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.StopText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TextToSpeech</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.TranscribeAudio</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

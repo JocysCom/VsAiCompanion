@@ -1038,19 +1038,19 @@
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format">
             <summary> The format of the transcription. </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Text">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.text">
             <summary> Plain text only. </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Json">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.json">
             <summary> Plain text only. </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.VerboseJson">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.verbose_json">
             <summary> Plain text provided with additional metadata, such as duration and timestamps. </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Srt">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.srt">
             <summary> Text formatted as SubRip (.srt) file. </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.Vtt">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.audio_transcription_format.vtt">
             <summary> Text formatted as a Web Video Text Tracks, a.k.a. WebVTT, (.vtt) file. </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
