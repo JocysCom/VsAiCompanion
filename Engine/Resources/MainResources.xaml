@@ -75,6 +75,11 @@
 	<sys:String x:Key="main_Text_To_Video">Text-To-Image</sys:String>
 	<sys:String x:Key="main_Video_To_Text">Image-To-Text</sys:String>
 
+	<!--  Tasks | Templates → Options → Visual Studio  -->
+
+	<sys:String x:Key="main_VisualStudio_Feature_Description">Options apply only when running in Visual Studio as an extension.</sys:String>
+	<sys:String x:Key="main_EnableCopilotInstructions">Enable .github\copilot-instructions.md</sys:String>
+
 	<!--  Tasks / Templates → Canvas  -->
 
 	<sys:String x:Key="main_CanvasPanelEnabled_Name">Use Canvas Panel</sys:String>

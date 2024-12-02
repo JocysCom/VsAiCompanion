@@ -150,8 +150,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!IsVsExtension)
 					return null;
 				// Load but do not save.
-				var allProperties = _SolutionHelper.GetProperties();
-				var solutionDir = allProperties.FirstOrDefault(p => p.Key == "SolutionDir").Value;
+				var solutionDir = GetSolutionDir();
+				if (string.IsNullOrEmpty(solutionDir))
+					return null;
 				var path = System.IO.Path.Combine(solutionDir, ".config\\aicomp\\Templates");
 				var data = new SettingsData<TemplateItem>($"{path}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 				{
@@ -159,6 +160,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				};
 				return data;
 			}
+		}
+
+		public static string GetSolutionDir()
+		{
+			var allProperties = _SolutionHelper.GetProperties();
+			var solutionDir = allProperties.FirstOrDefault(p => p.Key == "SolutionDir").Value;
+			if (!string.IsNullOrEmpty(solutionDir))
+				return solutionDir;
+			var solutionPath = allProperties.FirstOrDefault(p => p.Key == "SolutionPath").Value;
+			if (!string.IsNullOrEmpty(solutionPath))
+				return new FileInfo(solutionPath).Directory.FullName;
+			return null;
 		}
 
 		public const string TasksName = nameof(Tasks);

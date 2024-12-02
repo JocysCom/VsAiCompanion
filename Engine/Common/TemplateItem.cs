@@ -432,6 +432,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseMailAccount { get => _UseMailAccount; set => SetProperty(ref _UseMailAccount, value); }
 		bool _UseMailAccount;
 
+		[DefaultValue(false)]
+		public bool EnableCopilotInstructions { get => _EnableCopilotInstructionst; set => SetProperty(ref _EnableCopilotInstructionst, value); }
+		bool _EnableCopilotInstructionst;
+
 		/// <summary>
 		/// Inbox monitoring is enabled.
 		/// </summary>

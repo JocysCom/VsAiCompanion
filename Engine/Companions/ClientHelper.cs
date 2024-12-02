@@ -7,6 +7,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -108,6 +109,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return completionMessages;
 		}
 
+
+		private static string GetCopilotInstructions()
+		{
+			var solutionDir = Global.GetSolutionDir();
+			if (string.IsNullOrEmpty(solutionDir))
+				return null;
+			var path = solutionDir;
+			var di = new DirectoryInfo(path);
+			while (di != null && di.Exists)
+			{
+				var fullFileName = Path.Combine(path, ".github", "copilot-instructions.md");
+				if (File.Exists(fullFileName))
+					return File.ReadAllText(fullFileName);
+				di = di.Parent;
+			}
+			return null;
+		}
+
 		public async static Task Send(TemplateItem item,
 			Func<Task> executeBeforeAddMessage = null,
 			string overrideText = null,
@@ -172,10 +191,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var globalInstructions = Global.AppSettings.GlobalInstructionsEnabled
 					? Global.AppSettings.GlobalInstructions
 					: "";
+				var copilotInstructions = "";
+				if (Global.IsVsExtension && item.EnableCopilotInstructions)
+					copilotInstructions = GetCopilotInstructions();
 				// Prepare instructions.
 				var instructions = JoinMessageParts(
 					globalInstructions,
-					item.TextInstructions
+					item.TextInstructions,
+					copilotInstructions
 					);
 				if (item.UseMacros)
 					instructions = AppHelper.ReplaceMacros(instructions, vsData);

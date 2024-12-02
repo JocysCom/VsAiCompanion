@@ -108,6 +108,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Text_To_Audio => FindResource(nameof(main_Text_To_Audio));
         public static string main_Text_To_Video => FindResource(nameof(main_Text_To_Video));
         public static string main_Video_To_Text => FindResource(nameof(main_Video_To_Text));
+        public static string main_VisualStudio_Feature_Description => FindResource(nameof(main_VisualStudio_Feature_Description));
+        public static string main_EnableCopilotInstructions => FindResource(nameof(main_EnableCopilotInstructions));
         public static string main_CanvasPanelEnabled_Name => FindResource(nameof(main_CanvasPanelEnabled_Name));
         public static string main_CanvasPanelEnabled_Help => FindResource(nameof(main_CanvasPanelEnabled_Help));
         public static string main_CanvasEditorElementPath_Name => FindResource(nameof(main_CanvasEditorElementPath_Name));

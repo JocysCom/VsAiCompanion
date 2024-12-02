@@ -1,0 +1,179 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Template.VisualStudioControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controlsShared="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:engineControls="clr-namespace:JocysCom.VS.AiCompanion.Engine"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="250"
+	d:DesignWidth="800"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<StackPanel DataContext="{Binding Item, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+		<Border Grid.ColumnSpan="2" Margin="3,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_VisualStudio_Feature_Description}" />
+		</Border>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="194*" />
+				<ColumnDefinition Width="251*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+				<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
+					<GroupBox.Header>
+						<StackPanel Orientation="Horizontal">
+							<Label
+								x:Name="AttachmentIcon"
+								Margin="-2"
+								Padding="0"
+								VerticalAlignment="Center"
+								Content="&#xE16C;"
+								FontFamily="Segoe MDL2 Assets" />
+							<Label
+								x:Name="ContextTypeLabel"
+								Padding="4,0,0,0"
+								VerticalAlignment="Center"
+								Content="Attachments" />
+						</StackPanel>
+					</GroupBox.Header>
+					<StackPanel Orientation="Vertical">
+						<controls:EnumComboBox
+							x:Name="AttachmentEnumComboBox"
+							Width="170"
+							HorizontalAlignment="Left"
+							ItemsSource="{Binding AttachContexts, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							SelectedValue="{Binding AttachContext}"
+							Style="{StaticResource ComboBox_Dynamic}"
+							Text="None" />
+						<CheckBox x:Name="EnableCopilotInstructionsCheckBox" Content="{StaticResource main_EnableCopilotInstructions}" IsChecked="{Binding EnableCopilotInstructions}" />
+					</StackPanel>
+				</GroupBox>
+				<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
+					<GroupBox.Header>
+						<CheckBox
+							Name="UseMacrosCheckBox"
+							Margin="-4"
+							Content="Use Macros"
+							IsChecked="{Binding UseMacros}" />
+					</GroupBox.Header>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<engineControls:PropertyComboBox
+							x:Name="VsMacrosComboBox"
+							Grid.Row="0"
+							Grid.Column="1"
+							Width="100"
+							Style="{StaticResource ComboBox_Static}"
+							Text="Environment" />
+						<Label
+							Grid.Row="0"
+							Grid.Column="0"
+							VerticalAlignment="Center"
+							Content="Environment"
+							Visibility="Collapsed" />
+						<Label
+							Grid.Row="0"
+							Grid.Column="2"
+							VerticalAlignment="Center"
+							Content="Selection"
+							Visibility="Collapsed" />
+						<ComboBox
+							Name="SelectionComboBox"
+							Grid.Row="0"
+							Grid.Column="3"
+							Width="90"
+							DisplayMemberPath="Key"
+							Style="{StaticResource ComboBox_Static}"
+							Text="Selection" />
+						<ComboBox
+							Name="DateComboBox"
+							Grid.Row="1"
+							Grid.Column="1"
+							Width="100"
+							DisplayMemberPath="Key"
+							Style="{StaticResource ComboBox_Static}"
+							Text="Date" />
+						<Label
+							Grid.Row="1"
+							Grid.Column="0"
+							VerticalAlignment="Center"
+							Content="Date"
+							Visibility="Collapsed" />
+						<Label
+							Grid.Row="1"
+							Grid.Column="2"
+							Content="Document"
+							Visibility="Collapsed" />
+						<ComboBox
+							Name="FileComboBox"
+							Grid.Row="1"
+							Grid.Column="3"
+							Width="90"
+							DisplayMemberPath="Key"
+							Style="{StaticResource ComboBox_Static}"
+							Text="Document" />
+						<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+							<Button
+								Name="PropertiesRefreshButton"
+								Grid.Row="1"
+								Grid.Column="3"
+								Margin="0,0,3,0"
+								VerticalAlignment="Center"
+								Click="PropertiesRefreshButton_Click"
+								Visibility="Collapsed">
+								<StackPanel>
+									<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+									<Label Content="Refresh" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+					</Grid>
+				</GroupBox>
+				<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+					<GroupBox.Header>
+						<Label x:Name="AutomationVsLabel" Padding="0" Content="Automation" />
+					</GroupBox.Header>
+					<StackPanel Orientation="Vertical">
+						<ComboBox
+							Name="AutoOperationComboBox"
+							Width="100"
+							Margin="3,3,3,8"
+							ItemsSource="{Binding AutoOperations, ElementName=This}"
+							SelectedValue="{Binding AutoOperation}" />
+						<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
+					</StackPanel>
+				</GroupBox>
+			</WrapPanel>
+		</Grid>
+
+	</StackPanel>
+</UserControl>

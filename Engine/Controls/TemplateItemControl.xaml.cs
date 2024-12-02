@@ -49,7 +49,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
 			//SelectionRadioButton.IsEnabled = Global.GetSelection != null;
-			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
@@ -360,10 +359,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		public DataOperation[] AutoOperations
-			=> (DataOperation[])Enum.GetValues(typeof(DataOperation));
 		public Dictionary<ToolCallApprovalProcess, string> PluginApprovalProcesses
-			=> ClassLibrary.Runtime.Attributes.GetDictionary((ToolCallApprovalProcess[])Enum.GetValues(typeof(ToolCallApprovalProcess)));
+				=> ClassLibrary.Runtime.Attributes.GetDictionary((ToolCallApprovalProcess[])Enum.GetValues(typeof(ToolCallApprovalProcess)));
 
 		public Dictionary<RiskLevel, string> MaxRiskLevels
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
@@ -398,18 +395,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(RoleListNames));
 		}
 
-		public ObservableCollection<CheckBoxViewModel> AttachContexts
-		{
-			get
-			{
-				if (_AttachContexts == null)
-					_AttachContexts = EnumComboBox.GetItemSource<ContextType>();
-				return _AttachContexts;
-			}
-			set => _AttachContexts = value;
-		}
-		ObservableCollection<CheckBoxViewModel> _AttachContexts;
-
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{
 			get
@@ -425,11 +410,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		Dictionary<MessageBoxOperation, string> _MessageBoxOperations;
 
-		TemplateItem _Item;
 		public TemplateItem Item
 		{
 			get => _Item;
 		}
+		TemplateItem _Item;
 
 		public async Task BindData(TemplateItem item)
 		{
@@ -464,6 +449,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 			ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 			IconPanel.BindData(_Item);
+			await VisualStudioPanel.BindData(_Item);
 			CanvasPanel.Item = _Item;
 			ExternalModelsPanel.Item = _Item;
 			PromptsPanel.BindData(_Item);
@@ -574,47 +560,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region Macros
-
-		private void PropertiesRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			InitMacros();
-		}
-
-		void InitMacros()
-		{
-			AddKeys(SelectionComboBox, null, AppHelper.GetReplaceMacrosSelection());
-			AddKeys(FileComboBox, null, AppHelper.GetReplaceMacrosDocument());
-			AddKeys(DateComboBox, null, AppHelper.GetReplaceMacrosDate());
-			AddKeys(VsMacrosComboBox, null, Global.GetEnvironmentProperties());
-		}
-
-		int alwaysSelectedIndex = -1;
-
-		void AddKeys(ComboBox cb, string name, IEnumerable<PropertyItem> list)
-		{
-			var options = new List<PropertyItem>();
-			options.AddRange(list);
-			cb.ItemsSource = options;
-			cb.SelectedIndex = alwaysSelectedIndex;
-			cb.SelectionChanged += ComboBox_SelectionChanged;
-		}
-		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			var cb = (ComboBox)sender;
-			if (cb.SelectedIndex <= alwaysSelectedIndex)
-				return;
-			var item = (PropertyItem)cb.SelectedItem;
-			cb.SelectedIndex = alwaysSelectedIndex;
-			var box = ChatPanel.GetFocusedTextBox();
-			AppHelper.InsertText(box, "{" + item.Key + "}");
-			// Enable use of macros.
-			if (!_Item.UseMacros)
-				_Item.UseMacros = true;
-		}
-
-		#endregion
-
 		public void UpdateAvatarControl()
 		{
 			Global.UpdateAvatarControl(ChatPanel.AvatarPanelBorder, Item?.ShowAvatar == true);
@@ -626,20 +571,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var head = "Caring for Your Sensitive Data";
-				var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
-				Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentIcon, head, body, MessageBoxImage.Warning);
-				Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
-				if (!Global.IsVsExtension)
-				{
-					Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-					Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-					Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-					Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-					Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-				}
 				CodeBlockPanel.GetFocused = ChatPanel.GetFocusedTextBox;
+				VisualStudioPanel.GetFocused = ChatPanel.GetFocusedTextBox;
 				AppHelper.InitHelp(this);
 				// Remove control, which visibility is controlled by the code.
 				var excludeElements = new FrameworkElement[] {

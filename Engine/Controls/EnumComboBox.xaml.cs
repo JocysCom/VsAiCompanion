@@ -115,6 +115,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var box = (EnumComboBox)d;
+			if (ControlsHelper.IsDesignMode(box))
+				return;
 			var value = (Enum)box.GetValue(SelectedValueProperty);
 			var items = ((ObservableCollection<CheckBoxViewModel>)box.ItemsSource)?.ToArray();
 			if (items == null)
@@ -146,6 +148,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			if (ControlsHelper.AllowLoad(this))
 			{
 				UpdateListMonitoring();
