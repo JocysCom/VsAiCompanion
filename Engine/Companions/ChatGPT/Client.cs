@@ -332,17 +332,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 			var endpoint = new Uri(Service.BaseUrl);
-			OpenAIClient client;
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
+			OpenAIClient client;
 			if (Service.IsAzureOpenAI)
 			{
-				client = string.IsNullOrEmpty(apiSecretKey)
-					? new AzureOpenAIClient(endpoint, new DefaultAzureCredential())
-					: new AzureOpenAIClient(endpoint, new System.ClientModel.ApiKeyCredential(apiSecretKey));
+				if (string.IsNullOrEmpty(apiSecretKey))
+				{
+					client = new AzureOpenAIClient(endpoint, new DefaultAzureCredential());
+				}
+				else
+				{
+					var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
+					client = new AzureOpenAIClient(endpoint, credential);
+				}
 			}
 			else
 			{
-				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
 				//var pipeline = new HttpPipeline(transport);
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
@@ -366,6 +371,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var transport = new HttpClientPipelineTransport(httpClient);
 					options.Transport = transport;
 				}
+				if (string.IsNullOrEmpty(apiSecretKey))
+					apiSecretKey = "NoKey";
+				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
 				client = new OpenAIClient(credential, options);
 				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				//prop.SetValue(client, false);

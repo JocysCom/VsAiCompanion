@@ -1,3 +1,7 @@
+2024-12-02 v1.16.9
+
+- Fix: Resolve the issue when the API is not using API keys.
+
 2024-12-01 v1.16.7
 
 - Fix: Copied chat could not be pasted as plain text.
