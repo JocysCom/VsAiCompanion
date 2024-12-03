@@ -125,8 +125,11 @@
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Build" />
+	<PackageReference Include="Microsoft.ServiceHub.Framework" />
     <PackageReference Include="Microsoft.VisualStudio.SDK" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" />
+    <PackageReference Include="NPOI" />
+    <PackageReference Include="System.CodeDom" />
     <PackageReference Include="System.Linq.Async" />
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.Threading.Tasks.Extensions" />

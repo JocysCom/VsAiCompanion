@@ -15,8 +15,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.16.7</AssemblyVersion>
-		<FileVersion>1.16.7</FileVersion>
+		<AssemblyVersion>1.16.10</AssemblyVersion>
+		<FileVersion>1.16.10</FileVersion>
 		<Title>Jocys.com AI Companion Core Plugins</Title>
 		<Description>Core Plugins for AI Companion.</Description>
 		<Product>AI Companion Core Plugins</Product>
@@ -65,9 +65,9 @@
 		<Reference Include="System.Net.Http" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="bblanchon.PDFium.Linux" ExcludeAssets="All" PrivateAssets="all"  IncludeAssets="None" />
+		<PackageReference Include="bblanchon.PDFium.Linux" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" />
 		<PackageReference Include="bblanchon.PDFium.macOS" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" />
-		<PackageReference Include="bblanchon.PDFium.Win32"  GeneratePathProperty="true" ExcludeAssets="All"  IncludeAssets="None" />
+		<PackageReference Include="bblanchon.PDFium.Win32" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" GeneratePathProperty="true" />
 		<PackageReference Include="BouncyCastle.Cryptography"  />
 		<PackageReference Include="ColorCode.HTML"  />
 		<PackageReference Include="DocumentFormat.OpenXml"  />
@@ -77,9 +77,9 @@
 		<PackageReference Include="PdfPig"  />
 		<PackageReference Include="PDFtoImage"  />
 		<PackageReference Include="SixLabors.ImageSharp"  />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies"  ExcludeAssets="All" PrivateAssets="All" />
-		<PackageReference Include="SkiaSharp.NativeAssets.macOS"  ExcludeAssets="All" PrivateAssets="All" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Win32"  GeneratePathProperty="true" ExcludeAssets="All" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" />
+		<PackageReference Include="SkiaSharp.NativeAssets.macOS" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Win32" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" GeneratePathProperty="true" />
 		<PackageReference Include="System.Data.OleDb"  />
 		<PackageReference Include="System.Formats.Asn1"  />
 		<PackageReference Include="Tiktoken"  />
