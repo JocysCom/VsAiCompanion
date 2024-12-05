@@ -102,7 +102,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (!ScriptHandlerInitialized)
 				return null;
-			var json = (string)await InvokeScriptAsync($"GetSettings();");
+			var json = await InvokeScriptAsync($"GetSettings();") as string;
 			if (string.IsNullOrEmpty(json))
 				return null;
 			try
@@ -425,8 +425,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var isCtrlDown = Keyboard.Modifiers == ModifierKeys.Control;
 			if (isCtrlDown && e.Key == Key.C)
 			{
-				bool isFocused = (bool)await InvokeScriptAsync("isElementFocused();");
-				if (isFocused)
+				// Can return string error.
+				var isFocused = await InvokeScriptAsync("isElementFocused();") as bool?;
+				if (isFocused == true)
 				{
 					await InvokeScriptAsync("Copy();");
 					e.Handled = true;

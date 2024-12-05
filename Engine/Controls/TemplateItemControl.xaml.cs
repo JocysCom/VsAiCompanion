@@ -890,7 +890,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public async Task<string> GetPageHtmlAsync()
 		{
 			// Cast the document to an HTMLDocument
-			var html = (string)await ChatPanel.MessagesPanel.InvokeScriptAsync("document.documentElement.outerHTML;");
+			var html = await ChatPanel.MessagesPanel.InvokeScriptAsync("document.documentElement.outerHTML;") as string;
 			if (!string.IsNullOrEmpty(html))
 				html = CleanupHtml(html);
 			return html;
