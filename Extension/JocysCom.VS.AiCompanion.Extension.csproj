@@ -99,7 +99,7 @@
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Bcl.AsyncInterfaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.batteries_v2.dll" />
     <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.core.dll" />
-	<!--
+    <VSIXSourceItem Include="$(OutputPath)\System.Memory.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Data.ConnectionUI.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Data.SqlClient.SNI.x64.dll" />
     <VSIXSourceItem Include="$(OutputPath)\Microsoft.Win32.Registry.dll" />
@@ -107,16 +107,14 @@
     <VSIXSourceItem Include="$(OutputPath)\System.Buffers.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Collections.Immutable.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Diagnostics.DiagnosticSource.dll" />
-    <VSIXSourceItem Include="$(OutputPath)\System.Memory.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Numerics.Vectors.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Reflection.Metadata.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Runtime.CompilerServices.Unsafe.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Security.AccessControl.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Security.Principal.Windows.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Dataflow.dll" />
-    <VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Extensions.dll" />
+	<VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Extensions.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.ValueTuple.dll" />
-	-->
     <!-- Include all locally copied assemblies in the VSIX package -->
     <VSIXSourceItem Include="@(ReferenceCopyLocalPaths)" />
   </ItemGroup>
@@ -198,6 +196,11 @@
 	<Message Text="Removing unwanted culture directories..." Importance="high" />
 	<RemoveDir Directories="@(FluentValidationExcludedCultures->'$(OutputPath)%(Filename)')" />    
   </Target>
+	<Target Name="RemoveFolders" AfterTargets="Build">
+		<!-- List of unwanted files or directories -->
+		<Message Text="Removing unwanted runtime directories in VSIX" Importance="high" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)CleanupZip.ps1&quot; &quot;$(OutputPath)JocysCom.VS.AiCompanion.Extension.vsix&quot;" />
+	</Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

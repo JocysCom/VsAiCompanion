@@ -1,8 +1,9 @@
 2024-12-05 v1.16.12
 
-- Fix: App crashes when trying to copy content without an element focused.
+- Fix: Crash when trying to copy content without an element focused.
+- Fix: Crash when trying edit database connection.
 
-- 2024-12-03 v1.16.10
+2024-12-03 v1.16.10
 
 - Fix: Resolve the issue when the API is not using API keys.
 - New: Add `Enable .github\copilot-instructions.md` option.
