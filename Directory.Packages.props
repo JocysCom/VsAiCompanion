@@ -50,7 +50,7 @@
 		<PackageVersion Include="Microsoft.Identity.Web" Version="3.2.2" />
 		<PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
 		<PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="[8.1.2,$(MaxDnVersion))" />
-		<PackageVersion Include="Microsoft.ML" Version="3.0.1" />
+		<PackageVersion Include="Microsoft.ML" Version="4.0.0" />
 		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
 		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
 		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="[17.9.37000,$(MaxVsVersion))" />
@@ -90,7 +90,7 @@
 		<PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
 		<PackageVersion Include="System.Text.Json" Version="[8.0.5,$(MaxDnVersion))" />
 		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
 		<PackageVersion Include="Tiktoken" Version="2.2.0" />
 		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 		<PackageVersion Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
