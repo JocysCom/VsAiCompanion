@@ -13,6 +13,7 @@ using System.Threading;
 using SQLitePCL;
 using Microsoft.Data.SqlClient;
 
+
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.SQLite;
@@ -242,7 +243,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			DbConnection connection;
 			if (isPortable)
 			{
-				connection = new System.Data.SQLite.SQLiteConnection(connectionString);
+				connection = NewSqliteConnection(connectionString);
 			}
 			else
 			{
@@ -266,15 +267,33 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		public static string PathToConnectionString(string path)
 		{
+#if NETFRAMEWORK
+			var conn = new System.Data.SQLite.SQLiteConnectionStringBuilder() { DataSource = path };
+#else
 			var conn = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder() { DataSource = path };
+#endif
 			// Ensure file is not locked.
 			conn.Pooling = false;
 			return conn.ToString();
 		}
 
+		private static DbConnection NewSqliteConnection(string connectionString)
+		{
+#if NETFRAMEWORK
+			var conn = new System.Data.SQLite.SQLiteConnection(connectionString);
+#else
+			var conn = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
+#endif
+			return conn;
+		}
+
 		public static string ConnectionStringToPath(string connectionString)
 		{
+#if NETFRAMEWORK
+			var conn = new System.Data.SQLite.SQLiteConnectionStringBuilder(connectionString);
+#else
 			var conn = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(connectionString);
+#endif
 			return conn.DataSource;
 		}
 
@@ -282,7 +301,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		{
 			var isPortable = IsPortable(connectionString);
 			var conn = isPortable
-				? (DbConnection)new Microsoft.Data.Sqlite.SqliteConnection(connectionString)
+
+				? NewSqliteConnection(connectionString)
 				: (DbConnection)new Microsoft.Data.SqlClient.SqlConnection(connectionString);
 #if !NETFRAMEWORK
 			if (!isPortable)

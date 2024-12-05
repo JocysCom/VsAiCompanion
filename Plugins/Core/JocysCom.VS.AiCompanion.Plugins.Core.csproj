@@ -57,10 +57,10 @@
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<PackageReference Include="System.Text.Json"  />
 		<PackageReference Include="HtmlRenderer.PdfSharp" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<PackageReference Include="System.Data.SQLite" />
 		<PackageReference Include="System.Data.SQLite.EF6" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<Reference Include="System.Device" />
 		<Reference Include="System.Net.Http" />
 	</ItemGroup>
