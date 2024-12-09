@@ -1,11 +1,15 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -18,7 +22,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Will initialize new default window, which will own other window which can be disposed.
 		/// </summary>
-		public TrayManager()
+		public TrayManager(string mutexPrefix = null)
 		{
 			// Create the main application window which will take minimum amount of memory.
 			// Main application window is impossible to dispose until the application closes.
@@ -30,6 +34,8 @@ namespace JocysCom.ClassLibrary.Controls
 			awHelper.EnsureHandle();
 			Application.Current.MainWindow = appWindow;
 			// Now you can start the main window.
+			if (!string.IsNullOrEmpty(mutexPrefix))
+				InitInstanceManager(mutexPrefix);
 		}
 
 		public void CreateTrayIcon()
@@ -37,7 +43,6 @@ namespace JocysCom.ClassLibrary.Controls
 			// Item: Open Application.
 			OpenApplicationMenu = new System.Windows.Forms.ToolStripMenuItem();
 			OpenApplicationMenu.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-			OpenApplicationMenu.Text = "Open Application";
 			OpenApplicationMenu.Click += OpenApplicationToolStripMenuItem_Click;
 			// Item: Exit Menu.
 			ExitMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,8 +66,16 @@ namespace JocysCom.ClassLibrary.Controls
 		public void SetTrayFromWindow(Window window)
 		{
 			var icon = GetIcon(window.GetType().Assembly);
+			var text = "";
+			// If second+ instance then...
+			if (InstanceNumber >= 2)
+			{
+				icon = OverlayNumberOnIcon(icon, InstanceNumber);
+				text += $" ({InstanceNumber})";
+			}
 			OpenApplicationMenu.Image = icon.ToBitmap();
-			TrayNotifyIcon.Text = window.Title;
+			OpenApplicationMenu.Text = "Open Application" + text;
+			TrayNotifyIcon.Text = $"{window.Title}" + text;
 			TrayNotifyIcon.Icon = icon;
 			TrayNotifyIcon.Visible = true;
 		}
@@ -297,8 +310,8 @@ namespace JocysCom.ClassLibrary.Controls
 			IntPtr myHandle = new WindowInteropHelper(window).Handle;
 			// Get the window's content bounds
 			Rect contentBounds = VisualTreeHelper.GetDescendantBounds((Visual)window.Content);
-			Point topLeft;
-			Point bottomRight;
+			System.Windows.Point topLeft;
+			System.Windows.Point bottomRight;
 			try
 			{
 				topLeft = window.PointToScreen(contentBounds.TopLeft);
@@ -339,6 +352,109 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			// All points are not covered by other windows
 			return true;
+		}
+
+		#endregion
+
+		#region Instance Manager
+
+		private const int MaxInstances = 100; // Adjust as needed
+		private MemoryMappedFile mmf;
+		private Mutex mutex;
+		public int InstanceNumber { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="mutexPrefix">"Local\\MyAppInstanceName"</param>
+		/// <exception cref="InvalidOperationException"></exception>
+		void InitInstanceManager(string mutexPrefix)
+		{
+			// Initialize or create the memory-mapped file
+			mmf = MemoryMappedFile.CreateOrOpen(mutexPrefix + "Numbers", MaxInstances, MemoryMappedFileAccess.ReadWrite);
+			// Mutex to synchronize access
+			mutex = new Mutex(false, mutexPrefix + "Mutex");
+			// Assign the smallest available number
+			mutex.WaitOne();
+			try
+			{
+				using (var accessor = mmf.CreateViewAccessor(0, MaxInstances, MemoryMappedFileAccess.ReadWrite))
+				{
+					for (int i = 0; i < MaxInstances; i++)
+					{
+						bool isTaken = accessor.ReadBoolean(i);
+						if (!isTaken)
+						{
+							InstanceNumber = i + 1; // Numbers start at 1
+							accessor.Write(i, true);
+							return;
+						}
+					}
+					throw new InvalidOperationException("Maximum number of instances reached.");
+				}
+			}
+			finally
+			{
+				mutex.ReleaseMutex();
+			}
+		}
+
+		void DisposeInitInstanceManager()
+		{
+			if (mmf == null)
+				return;
+			// Release the assigned number
+			mutex.WaitOne();
+			try
+			{
+				using (var accessor = mmf.CreateViewAccessor(0, MaxInstances, MemoryMappedFileAccess.Write))
+					accessor.Write(InstanceNumber - 1, false);
+			}
+			finally
+			{
+				mutex.ReleaseMutex();
+				mmf.Dispose();
+				mutex.Dispose();
+			}
+		}
+
+		public static Icon OverlayNumberOnIcon(Icon baseIcon, int number)
+		{
+			using (Bitmap bitmap = baseIcon.ToBitmap())
+			using (Graphics g = Graphics.FromImage(bitmap))
+			{
+				// Define the font and brush for the number
+				using (Font font = new Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0))
+				using (System.Drawing.Brush brush = new SolidBrush(System.Drawing.Color.Black))
+				using (SolidBrush backgroundBrush = new SolidBrush(System.Drawing.Color.Transparent))
+				{
+					// Measure the size of the number
+					string numberStr = number.ToString();
+					SizeF textSize = g.MeasureString(numberStr, font);
+
+					// Define the position for the number (center)
+					float x = (bitmap.Width - textSize.Width) / 2;
+					float y = (bitmap.Height - textSize.Height) / 2;
+
+					// Optional: Add a background circle for better visibility
+					float padding = -6;
+					float diameter = Math.Max(textSize.Width, textSize.Height) + padding;
+					float circleX = (bitmap.Width - diameter) / 2;
+					float circleY = (bitmap.Height - diameter) / 2;
+					g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+					var circleBrush = new SolidBrush(System.Drawing.Color.FromArgb(255, System.Drawing.Color.LightGray));
+					g.FillRectangle(circleBrush, circleX, circleY, diameter, diameter);
+
+					// Draw the number
+					g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+					g.DrawString(numberStr, font, brush, x, y);
+				}
+
+				// Convert the modified bitmap back to an icon
+				IntPtr hIcon = bitmap.GetHicon();
+				Icon resultIcon = Icon.FromHandle(hIcon);
+				return resultIcon;
+			}
 		}
 
 		#endregion
@@ -557,6 +673,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void Dispose()
 		{
 			Dispose(true);
+			DisposeInitInstanceManager();
 			GC.SuppressFinalize(this);
 		}
 

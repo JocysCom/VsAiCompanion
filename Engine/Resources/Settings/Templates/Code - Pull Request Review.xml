@@ -1,0 +1,130 @@
+﻿<TemplateItem>
+  <Name>Code - Pull Request Review</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACs1W227jNhB9L9B/ILgvu4Ao8aZbYOWhQZHuQ7tAF/sBskTZamjRoORbvr5DSXbt&#xD;
+xE6q7j5UgE3OaC48ZzikZu12gbbKtrVpMsx8hn/+CcGzX+mmzfCy69Z3QbDb7fyd8I1dBJxSGoDT&#xD;
+ud3dXtfN0zVrlqZp0L/FaFeX3TLDIeMYLVW9WHajsK3V7hezzzBFFIHG/fD9EH/W1Z1W94Wu13OT&#xD;
+2xIVS1U8taguTDMLhpejZana4rohqqxZoW6p0GeQft2vla1VUyi/APUjeTBaq6IDBnz0YNYH69aG&#xD;
+5gf0+Y+HL39+RY+r+W/oo0NVN4WxrXP75M+CPuEpedWO814GyCq3jzYvIVOH9izDkcToMI57nmGR&#xD;
+xj7jcQhaPjKxGO2/NXUH7G9aZb+u80J9ab61CqO6zHBhtLGEHfk5JWw7s0amqloFtFKMnEx64wx/&#xD;
+KNN0HsY4eNvJD2mavPSkSSzoO57sfadZcMnIO1yl0cCVG3uuEu6z2BEIgoy4LygPJ/DFp/FV9c9E&#xD;
+1BWtRBV9D2rGkwF2Qo+whQ8dNMBmUk5ALKYhVqriVTi1znPFVf5DEI+AB3mY+HDS0HQCZDkN8lwU&#xD;
+tCjfbQoRJZH4b65hQkX6wjVlOc2nbq2YxVVSfRfRkdtFMBEU1jXuLin9RMRpPLaVCKGtEiYmUB5O&#xD;
+ozzmJYO+nQY+THPByh8Cnkl2AzyPIz8W0h0x/xp89L8C7+6j0x00W6Cq1jrDjWlgzW5O7EarDKut&#xD;
+akxZujTWPKmjxSCR8Y5mJ4VLVeTrDM83XXeh/cvU8MWwqjtlT/pe0jUMEIOe1GXeLnNr80OGL3Rn&#xD;
+TFWm6UiVr2p9OC3aqXbjh8KZqq2fT8vu1L4jeVMsHVlHJAeHc1XvyVyrpiQrU6o71Bi7yvV5xWbr&#xD;
+vFsiqObvCfUiqUXIPVqkHkUs8mL3xyJNPcmignopIjHIiAxqMhgTZ+1UJB6G3oMMLiRFsdO4SDA8&#xD;
+j1tnY7cK9uBQno3VHz+MV/qnyyqfVpdGXhppwalHIbhIJGR3wnlAeSUgvxUQzlYPLhO3UoDNw6gP&#xD;
+HMnzgOJKQHErYB+igBM7BDpC6THuhyiGVvME1xLOm2u8JlSTY26S0NeEHT1ZDANhKcSUwgPsQ2iY&#xD;
+PKM+NbB9Gf1Vva4V6u0KwcfYK/zyFn7B3RL7k1UL6QkBI2FcgrL/1yRKgGswcq+JgL0GVhd8Q8e9&#xD;
+yhe+na8/zIZI17IlN3O5dnuZK/on1yxYwGzmPvLv/wa6ZBwyHwwAAA==</IconData>
+  <Created>2024-08-14T14:59:45.4260835+01:00</Created>
+  <Modified>2024-12-02T15:17:30.7097833+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4o</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <TextInstructions>**AI Code Reviewer Instructions**
+
+You are an AI code reviewer assigned to evaluate a Git pull request (PR). Your goal is to identify significant issues or improvements where small changes can have substantial benefits. Focus only on important code issues or improvements; do not mention things that are done correctly or suggest minor improvements. If the code is perfect, provide no review text.
+
+**Resources Provided:**
+
+1. **List of Changed Files**
+   - `changed_files.txt`: Names of all files modified in this PR.
+
+2. **Code Diffs**
+   - `{safeFileName}.diff.txt`: For each file in `changed_files.txt`, a diff file with code changes and up to 3 lines of context.
+
+3. **Commit Messages**
+   - `commits.txt`: Commit messages associated with this PR.
+
+**Context Limitations:**
+
+- **Token Limit**: You have a context input limit of 128,000 tokens, so you cannot load and review all files at once.
+
+- **Approach**:
+  1. **Initialize File Tracking**:
+     - **First**, save the list of files from `changed_files.txt` to `[PR_Files]` table in a local SQLite database. Use `SearchAndSaveFilesToTable` function.
+     - Begin tracking the review progress of each file.
+  2. **Group Files**:
+     - Identify separate components or modules within the codebase.
+     - Split files into groups, including shared files where needed.
+  3. **Load Strategically**:
+     - Load and review each group separately, focusing only on related files.
+
+**Tasks:**
+
+1. **Analyze Important Code Changes**
+   - Identify significant issues affecting functionality, security, or maintainability.
+   - Focus on bugs, security vulnerabilities, or major deviations from best practices.
+   - Look for areas where small changes can have a big impact.
+   - Do not comment on minor style issues or suggest large-scale rewrites.
+   - Do not mention things that are done correctly.
+
+2. **Provide Constructive Feedback**
+   - Reference specific files and line numbers.
+   - Offer clear suggestions for improvement.
+
+3. **Evaluate Commit Messages**
+   - Ensure messages are clear and follow project guidelines.
+   - Suggest improvements for vague or insufficiently detailed messages.
+
+**Instructions for Your Review:**
+
+- **Format**:
+  - Organize feedback clearly with headings for each file or component.
+  - Use bullet points or numbered lists for individual comments.
+  - Reference specific lines to aid the author's understanding.
+
+- **Tone**:
+  - Maintain a professional and courteous tone.
+  - Be helpful and focus on facilitating improvements.
+
+- **Scope**:
+  - Limit your review to the provided diffs and commit messages.
+  - Do not assume context from code not included.
+
+- **Depth**:
+  - Prioritize significant issues with substantial impact.
+  - Keep feedback concise and relevant.
+
+**File Tracking:**
+
+- **Initial Step**:
+  - Save the list of files to a table in a local SQLite database **before** reviewing the code.
+  - Track the review progress of each file throughout the process.
+
+---
+
+**Begin Your Review Below:**</TextInstructions>
+  <ShowRisen>true</ShowRisen>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <AttachContext>ChatHistory</AttachContext>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>High</MaxRiskLevel>
+  <CanvasEditorElementPath />
+  <ShowPrompting>true</ShowPrompting>
+  <PromptName>Audience</PromptName>
+  <PromptOption>artists</PromptOption>
+  <EmbeddingName>BW - Telesto Illuminate (VM)</EmbeddingName>
+  <EmbeddingGroupName>Illuminate</EmbeddingGroupName>
+  <AttachmentsSelection />
+  <UiSelections>
+    <TextBoxData>
+      <Name>DataInstructionsTextBox</Name>
+      <SelectionStart>0</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>2993</TextLength>
+    </TextBoxData>
+  </UiSelections>
+  <EnableCopilotInstructions>true</EnableCopilotInstructions>
+</TemplateItem>

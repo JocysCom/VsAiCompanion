@@ -50,7 +50,9 @@ namespace JocysCom.VS.AiCompanion
 				System.Windows.Forms.Application.EnableVisualStyles();
 				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 				// Create tray manager first (initialize new default window).
-				TrayManager = new TrayManager();
+				// Use `Local` to prevent app from freezing due to the access permissions.
+				var mutexPrefix = typeof(Engine.MainControl).Namespace;
+				TrayManager = new TrayManager($"Local\\{mutexPrefix}");
 				Global.TrayManager = TrayManager;
 				TrayManager.OnExitClick += TrayManager_OnExitClick;
 			}

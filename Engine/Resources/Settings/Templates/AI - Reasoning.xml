@@ -1,0 +1,82 @@
+﻿<TemplateItem>
+  <Name>AI - Reasoning</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACr1V227jNhB9L9B/IJiXXUCUNBR1C6w8NCjSfdgu0MV+gExRtrq0aFD0LV/foaSo&#xD;
+dhH38lIDNmfmzPDMGZLJajhuyFHZoTN9RSEE+uMPBD/nne6Him6d2z9G0el0Ck9JaOwm4nEcR1h0&#xD;
+nfd41l3//b1sKMsyGlFKTl3jthVNgVOyVd1m62bn2KnTT+Zc0ZjEBCP+S5+m/Veuc1o96W5wZHAX&#xD;
+rUh/2K2VVQ3ppOlX0YTPyY0a5N1c0lqzI26ryCf0fj7vle1UL1UoMfzCno3WSjqcQ0iezf5ifYdk&#xD;
+fSGffn3+8ttX8rJb/0I+eG1dL40dfNnHcBWNnAt/O8z26KNwVdsXWzfI5MgZUDEKvuCaCUrOvKJl&#xD;
+FkKO9gVtiPMwEUDJZq741ncOT+EwKPt1X0v1pf82KEq6pqLSaGMZvM1poRyc2RPTtoPC8cYUB2H2&#xD;
+bEyu6ANP17wVNPrbIvhLEdR13sJN0Sq6VfYPmoXXhysvikk0AIRlKUQ66U5SEebA0/8gnP8fwota&#xD;
+tPG/Ee5vwXLyqw1pO60r2psee/Y2swetKqqOqjdN42ms+a7eMiaPze8DloCnkvW+ouuDczfR302H&#xD;
+r3XXOWWX+OjpDhd/kZZwUw/b2tr6UtGb2NWkWtM71ta7Tl+Wpn3oND/Sq9DQvS5tO3V2rO7l1g/r&#xD;
+TQm+Ot/Yma216hu2M416JL2xu1pfn9hqX7stwdP8XGYBZLFmnIdpEOs4YHkcpugD+pn3IdeC4yIw&#xD;
+zIP4db4GB3tU+JamUR+s/vAwP4mPtye2MAHwICmEZlk2EY07JsgWsITL3K9FmBIAhKaFxxLzBGFo&#xD;
+I06Yb5KVYSoZdsQJE2MxYQX+SpYEMWGox2cWgfBJiCVB5gNJAOBlBuOeGfH6GL6DlIybACbJBMkw&#xD;
+kM+N8ClBIozEY0eCAKJCgm87JoB5gce4CHKZopOSAokwUgQcc5Ar8ew+fVKAqGSefIzjT5Bj07j4&#xD;
+eBKgWD+JEjWLAHBHzcCrBqETD9zMH96ZP787/zwLMtwlFuP4IdNstF/JCImEaxB/YqM9Y/7Y7tUl&#xD;
+SXYXwz8497G40FDicbzxeXvG/I28V4fX6B3saij+RY1Decghb4t2Gccq2qC18v89n/4AeaVRdXgH&#xD;
+AAA=</IconData>
+  <Created>2024-08-14T14:59:45.4260835+01:00</Created>
+  <Modified>2024-12-09T09:45:42.0884827+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4o</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <TextInstructions>1. **Adopt a 7-Step Reasoning Structure**: When a user requests the specified reasoning format, break down your answer into seven distinct points. Each point should be given as an individual response, and after providing each point, ask the user if they are ready to proceed to the next one. Do not provide subsequent points until the user confirms.&#xD;
+&#xD;
+2. **Content of Each Step**:  &#xD;
+   - **Step 1**: Identify the nature of the problem or question, clarifying if it’s objective, subjective, or mixed.  &#xD;
+   - **Step 2**: Offer an initial, preliminary understanding or interpretation of the problem.  &#xD;
+   - **Step 3**: Present your first full attempt at answering or solving the problem, providing the reasoning or argument in a structured and coherent manner.  &#xD;
+   - **Step 4**: Reflect on the assumptions made in Step 3. Acknowledge any premises, interpretations, or frameworks you relied on.  &#xD;
+   - **Step 5**: Enumerate any unverified assumptions from Step 4. Discuss how these assumptions might influence the accuracy or soundness of the answer.  &#xD;
+   - **Step 6**: Evaluate the logic and reasoning chain from Steps 3–5. Confirm whether the reasoning is sound, the connections are clear, and the conclusions follow logically from the premises.  &#xD;
+   - **Step 7**: Refine the initial answer based on the analysis from Steps 4–6, presenting a more robust, final conclusion.&#xD;
+&#xD;
+3. **Interaction Model**: After producing each step, explicitly ask the user: “Are you ready to proceed to the next point?” Wait for their confirmation before continuing.&#xD;
+&#xD;
+4. **Clarity and Detail**: Each point should be detailed, clearly stated, and should represent a logical progression from the previous point. Make sure the explanation is thorough, especially in Steps 4–7, where reflection, verification, and refinement occur.&#xD;
+&#xD;
+5. **No Premature Summarization**: Do not summarize the final conclusion until reaching Step 7. Each step serves a distinct purpose and should be delivered separately and only upon user confirmation.</TextInstructions>
+  <ShowRisen>true</ShowRisen>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <AttachContext>ChatHistory</AttachContext>
+  <Messages>
+    <MessageItem>
+      <Id>36cd6af0a4ee431a87a726f08c1034f0</Id>
+      <User>User</User>
+      <Body>Chat instructions ensures a systematic and logical reasoning process, promoting clarity and precision in responses. By breaking down answers into distinct, interactive steps, the chat fosters user engagement and deeper understanding. This approach enhances critical thinking, verifies assumptions, and refines conclusions, ultimately delivering thoughtful and robust answers.
+	  
+Chat instructions created from post by Adeel Malik (knowledgecampscience). https://community.openai.com/t/superior-reasoning-than-o1/980010</Body>
+      <Attachments />
+      <Date>2024-12-09T09:45:42.0425088+00:00</Date>
+      <Type>Information</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>High</MaxRiskLevel>
+  <CanvasEditorElementPath />
+  <ShowPrompting>true</ShowPrompting>
+  <PromptName>Audience</PromptName>
+  <PromptOption>artists</PromptOption>
+  <EmbeddingName>BW - Telesto Illuminate (VM)</EmbeddingName>
+  <EmbeddingGroupName>Illuminate</EmbeddingGroupName>
+  <AttachmentsSelection />
+  <UiSelections>
+    <TextBoxData>
+      <Name>DataInstructionsTextBox</Name>
+      <SelectionStart>0</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>2019</TextLength>
+    </TextBoxData>
+  </UiSelections>
+  <EnableCopilotInstructions>true</EnableCopilotInstructions>
+</TemplateItem>
