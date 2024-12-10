@@ -1,0 +1,286 @@
+﻿/*em: Unit relative to the font-size of the parent element.
+			1em is equal to the font size of the parent element, so if the parent's font-size is 16px, 1em would be 16px. */
+
+html, body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Segoe UI', Arial, sans-serif;
+	background-color: white;
+	font-size: 0.9em;
+}
+
+/* Information (system message) */
+.color-Information {
+	background-color: #f0f0f0;
+}
+
+/* Question (system message) */
+.color-Question {
+	background-color: #d4f1d4;
+}
+
+/* Warning (system message) */
+.color-Warning {
+	background-color: #fef9d9;
+}
+
+/* Error (system message) */
+.color-Error {
+	background-color: #ffd6d6;
+}
+
+/* In (messages from other person) */
+.color-In {
+	background-color: #f7f9fc;
+}
+
+/* Out (my messages) */
+.color-Out {
+	background-color: #d1e6ff;
+}
+
+.icon-Information {
+	background: url('IconInformation.svg') no-repeat transparent;
+	background-size: contain;
+}
+
+.icon-Question {
+	background: url('IconQuestion.svg') no-repeat transparent;
+	background-size: contain;
+}
+
+.icon-Warning {
+	background: url('IconWarning.svg') no-repeat transparent;
+	background-size: contain;
+}
+
+.icon-Error {
+	background: url('IconError.svg') no-repeat transparent;
+	background-size: contain;
+}
+
+.icon-Out {
+	background: url('IconOut.svg') no-repeat transparent;
+	background-size: contain;
+}
+
+.icon-In {
+	background: url('IconIn.svg') no-repeat transparent;
+	background-size: contain;
+}
+
+.item-Automated {
+	display: none;
+}
+
+.item-Normal {
+}
+
+.item-hide {
+	display: none;
+}
+
+.chat-log {
+	width: 100%;
+}
+
+.chat-container {
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+.chat-user {
+	position: relative;
+	width: 2em;
+	height: 2em;
+	margin-left: 0.5em;
+	margin-bottom: -2em;
+}
+
+.chat-message {
+	padding: 0 1em 0 3em;
+}
+
+.chat-message-head {
+}
+
+.chat-message-body {
+	margin-top: 0.5em;
+}
+
+.chat-message-data {
+}
+
+.chat-date {
+	font-family: 'Segoe UI', Arial, sans-serif;
+	font-size: 0.9em;
+	opacity: 0.25;
+}
+
+.chat-button {
+	font-family: 'Segoe UI Symbol', 'Arial Unicode MS', 'Noto Sans Symbols', sans-serif;
+	cursor: pointer;
+	color: white;
+	opacity: 0.20;
+	border: none;
+	padding: 0.25em 0.5em 0.25em 0.5em;
+	border-radius: 0.5em;
+	background: linear-gradient(to bottom, #00aeec, #008adc);
+	transition: opacity 0.3s ease;
+	font-size: 0.9em;
+	margin-left: 0.5em;
+}
+
+.chat-button-red:hover {
+	color: #e57373;
+}
+
+.chat-button-green:hover {
+	color: #81c784;
+}
+
+.chat-button:hover {
+	opacity: 0.8;
+	outline: none;
+}
+
+.chat-button.clicked {
+	background: linear-gradient(to bottom, #00ff00, #008000);
+}
+
+code {
+	font-family: 'Cascadia Mono', 'Consolas';
+	font-size: 0.9em;
+	background-color: rgba(0, 0, 0, 0.05);
+	padding-left: 0.1em;
+	padding-right: 0.1em;
+}
+
+pre code[class*="language-"] {
+	font-family: 'Cascadia Mono', 'Consolas';
+	font-size: 0.9em;
+}
+
+pre code[class*="language-text"] {
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	margin-block-start: 0.5em;
+	margin-block-end: 0.5em;
+}
+
+.display-none {
+	display: none !important;
+}
+
+.expandable-button-visible {
+	opacity: 1.0 !important;
+}
+
+.expandable-button {
+	cursor: pointer;
+	color: black;
+	opacity: 0.50;
+	border: none;
+	padding: 0.25em 0.5em 0.25em 0.5em;
+	border-radius: 0.5em;
+	background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+	transition: opacity 0.3s ease;
+	font-size: 0.9em;
+	margin-left: 0.5em;
+}
+
+	.expandable-button:hover {
+		/* opacity: 1.0;  */
+		outline: none;
+	}
+
+	.expandable-button.clicked {
+		/* background: linear-gradient(to bottom, #00ff00, #008000); */
+	}
+
+
+.expandable-box {
+	min-width: 10em;
+	max-width: 100%;
+	width: auto;
+	box-sizing: border-box; /* This includes padding and borders in the div's total width */
+	border-radius: 0.5em;
+	overflow: hidden;
+	border: 0 solid rgba(0, 0, 0, 0.2);
+	display: inline-block;
+	margin: 0.5em auto 2px auto;
+	background: #ffffff;
+}
+
+.expandable-head {
+	background-color: rgba(0, 116, 255, 0.2);
+	cursor: pointer;
+	opacity: 0.5;
+	display: flex;
+	padding: 0.2em 0.25em 0.25em 0.5em;
+	align-items: center; /* Ensures proper vertical alignment */
+}
+
+.expandable-head-text {
+	font-family: 'Cascadia Mono', 'Consolas';
+	font-size: 0.9em;
+	flex: 1; /* This allows the text to take available space */
+	overflow: hidden; /* Prevents overflow */
+	white-space: nowrap; /* Prevents text wrapping */
+	text-overflow: ellipsis; /* Adds ellipsis for overflow text */
+	padding-top: 0.5em;
+}
+
+.expandable-head-indicator {
+	margin-left: 0.5em; /* Add if using this element */
+}
+
+.expandable-head-buttons {
+	display: flex;
+	gap: 0.5em; /* Adjust the space between buttons */
+	align-items: center; /* Ensures buttons are aligned */
+	justify-content: flex-end; /* Aligns buttons to the right */
+}
+
+.expandable-body {
+	padding: 0 0 0.5em 0;
+	width: 100%;
+	max-height: 64em; /* 1024px; */
+	overflow: auto;
+}
+
+.expandable-instructions {
+	padding: 0.5em 0.5em 0 0.5em;
+}
+
+	.expandable-instructions p {
+		padding: 0;
+		margin: 0;
+	}
+
+	.expandable-instructions pre {
+		padding: 0;
+		margin: 0;
+	}
+
+.expandable-data {
+	padding: 0.5em 0.5em 0 0.5em;
+}
+
+	.expandable-data p {
+		padding: 0;
+		margin: 0;
+	}
+
+	.expandable-data pre {
+		padding: 0;
+		margin: 0;
+	}

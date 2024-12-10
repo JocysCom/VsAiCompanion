@@ -1,3 +1,8 @@
+2024-12-09 v1.16.14
+
+- New: App instance number indicator on the tray icon.
+- Update: Improved several templates.
+
 2024-12-05 v1.16.12
 
 - Fix: Crash when trying to copy content without an element focused.
