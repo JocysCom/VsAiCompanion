@@ -102,6 +102,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			return tokens;
 		}
 
+		#region Body Streaming Support
+
+		/// <summary>
+		/// The buffer to accumulate streamed text.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
+		public string BodyBuffer { get => _BodyBuffer; }
+		string _BodyBuffer;
+
+		// An object to lock on for thread safety.
+		private readonly object _BodyBufferLock = new object();
+
+		/// <summary>
+		/// Adds text to the BodyBuffer from the stream.
+		/// </summary>
+		public void AddToBodyBuffer(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return;
+			lock (_BodyBufferLock)
+			{
+				_BodyBuffer += text;
+				// Event handler must process the buffer if necessary.
+				OnPropertyChanged(nameof(BodyBuffer));
+				_Body += text;
+				_BodyBuffer = string.Empty;
+			}
+		}
+
+		#endregion
+
+
 		#region ■ ISettingsItem
 
 		public override bool IsEmpty =>

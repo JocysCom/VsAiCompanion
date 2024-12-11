@@ -143,17 +143,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			await InvokeScriptAsync($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
 		}
 
+		public async Task AppendMessageBody(string messageId, string newText)
+		{
+			var messageIdJson = JsonSerializer.Serialize(messageId);
+			var newTextJson = JsonSerializer.Serialize(newText);
+			await InvokeScriptAsync($"AppendMessageBody({messageIdJson}, {newTextJson});");
+		}
+
 		private async void DataItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.ListChangedType == ListChangedType.ItemAdded)
 				await InsertWebMessage(Item.Messages[e.NewIndex], true);
 			if (e.ListChangedType == ListChangedType.ItemChanged)
 			{
+				var propertyName = e.PropertyDescriptor?.Name;
 				var allowUpdate =
-					e.PropertyDescriptor.Name == nameof(MessageItem.Type) ||
-					e.PropertyDescriptor.Name == nameof(MessageItem.Updated);
+					propertyName == nameof(MessageItem.Type) ||
+					propertyName == nameof(MessageItem.Updated);
 				if (allowUpdate)
 					await UpdateWebMessage(Item.Messages[e.NewIndex], false);
+				if (propertyName == nameof(MessageItem.BodyBuffer))
+				{
+					var message = Item.Messages[e.NewIndex];
+					await AppendMessageBody(message.Id, message.BodyBuffer);
+				}
 			}
 		}
 

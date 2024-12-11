@@ -448,17 +448,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var maxInputTokens = GetMaxInputTokens(serviceItem);
 			// Other settings.
 			var messageItems = new List<MessageItem>();
-			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			var functionResults = new List<MessageAttachments>();
 			var answer = "";
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
 			var id = Guid.NewGuid();
+			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "...", MessageType.In);
 			ControlsHelper.AppInvoke(() =>
 			{
 				serviceItem.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
 				Global.AvatarPanel?.PlayMessageSentAnimation();
+				serviceItem.Messages.Add(assistantMessageItem);
 			});
 			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
@@ -544,7 +545,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							if (choice.ContentUpdate != null)
 							{
 								foreach (var cu in choice.ContentUpdate)
+								{
 									answer += cu.Text;
+									ControlsHelper.AppInvoke(() =>
+									{
+										assistantMessageItem.AddToBodyBuffer(cu.Text);
+									});
+								}
 							}
 							if (choice.ToolCallUpdates != null)
 							{
@@ -645,6 +652,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			assistantMessageItem.Body = answer;
 			assistantMessageItem.Date = DateTime.Now;
+			ControlsHelper.AppInvoke(() =>
+			{
+				assistantMessageItem.Updated = DateTime.Now;
+			});
 			if (!messageItems.Contains(assistantMessageItem))
 				messageItems.Add(assistantMessageItem);
 			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())

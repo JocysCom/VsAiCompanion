@@ -170,9 +170,6 @@ function CreateMessageHtml(message) {
 				var audioInfo = JSON.parse(a.Data);
 				var audioFullPath = GetItemPath(audioInfo.Name);
 				var audioDiv = document.createElement("div");
-				var audioSrc = (audioInfo.DataUri)
-					? audioInfo.DataUri
-					: audioFullPath;
 				try {
 					var audio = document.createElement('audio');
 					audio.controls = true;
@@ -755,13 +752,18 @@ var currentMessageBodies = {};
 	@param newText New text to append to the message body.
  */
 function AppendMessageBody(messageId, newText) {
+	console.log("messageId: " + messageId + ", text: " + newText);
 	// Get message element by message Id.
 	var el = document.getElementById(idPrefix + messageId);
-	if (!el)
+	if (!el) {
+		console.log("Error: no element");
 		return;
+	}
 	var bodyEl = el.getElementsByClassName("chat-message-body")[0];
-	if (!bodyEl)
+	if (!bodyEl) {
+		console.log("Error: no message body element");
 		return;
+	}
 	// Initialize current message body if it doesn't exist
 	if (!currentMessageBodies[messageId]) {
 		currentMessageBodies[messageId] = "";
@@ -770,6 +772,9 @@ function AppendMessageBody(messageId, newText) {
 	var currentMessageTextBody = currentMessageBodies[messageId];
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
+	// Scroll if needed
+	if (autoScroll && keepScrollOnTheBottom)
+		ScrollToBottom();
 }
 
 
