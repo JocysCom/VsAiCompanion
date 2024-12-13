@@ -148,6 +148,29 @@ html, body {
 	background: linear-gradient(to bottom, #00ff00, #008000);
 }
 
+.chat-message-status {
+    margin-left: 0.5em;
+    color: gray;
+    animation: opacitySlide 1.5s infinite linear;
+}
+
+.status-text {
+    color: gray;
+    animation: opacitySlide 1.5s infinite linear;
+}
+
+@keyframes opacitySlide {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
 code {
 	font-family: 'Cascadia Mono', 'Consolas';
 	font-size: 0.9em;

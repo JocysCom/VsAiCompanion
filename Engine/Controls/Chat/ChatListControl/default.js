@@ -58,6 +58,35 @@ function SetZoom(zoom) {
 	}
 }
 
+function InsertMessage(message, autoScroll) {
+	var chatLog = document.getElementById('chatLog');
+	var messageHTML = CreateMessageHtml(message)
+	chatLog.insertAdjacentHTML('beforeend', messageHTML);
+	// Scroll to the bottom of the chatLog div.
+	if (autoScroll && keepScrollOnTheBottom)
+		ScrollToBottom();
+	UpdateRegenerateButtons();
+}
+
+function UpdateMessageStatus(messageId, status) {
+    var messageEl = document.getElementById(idPrefix + messageId + "_status");
+    if (!messageEl)
+		return false;
+    var statusTextEl = messageEl.querySelector('.status-text');
+    // Update the text content
+    statusTextEl.textContent = status;
+    // Add or remove animation classes if necessary
+    //if (status === "Responding") {
+    //    statusTextEl.classList.add('responding');
+    //    statusTextEl.classList.remove('thinking');
+    //} else if (status === "Thinking") {
+    //    statusTextEl.classList.add('thinking');
+    //    statusTextEl.classList.remove('responding');
+    //} else {
+    //    statusTextEl.classList.remove('thinking', 'responding');
+    //}
+}
+
 function DeleteMessage(messageId) {
 	var messageEl = document.getElementById(idPrefix + messageId);
 	messageEl.parentElement.removeChild(messageEl);
@@ -89,20 +118,12 @@ function UpdateMessage(message, autoScroll) {
 		chatLog.insertAdjacentHTML('beforeend', messageHTML);
 	}
 	// Scroll if needed
+	if (autoScroll === undefined)
+		autoScroll = true;
 	if (autoScroll && keepScrollOnTheBottom)
 		ScrollToBottom();
 	UpdateRegenerateButtons();
 	return true;
-}
-
-function InsertMessage(message, autoScroll) {
-	var chatLog = document.getElementById('chatLog');
-	var messageHTML = CreateMessageHtml(message)
-	chatLog.insertAdjacentHTML('beforeend', messageHTML);
-	// Scroll to the bottom of the chatLog div.
-	if (autoScroll && keepScrollOnTheBottom)
-		ScrollToBottom();
-	UpdateRegenerateButtons();
 }
 
 function CreateMessageHtml(message) {
@@ -709,7 +730,7 @@ function SimulateMessages() {
 function SimulateStreaming() {
 	// Start streaming a new message
 	var message = {
-		Type: MessageType.Out,
+		Type: MessageType.In,
 		Id: generateGUID(),
 		User: "AI Assistant",
 		Date: new Date(),
@@ -723,6 +744,8 @@ function SimulateStreaming() {
 	var streamedText = ["Hello", " world", "! Here", " is", " some", " streamed", " text."];
 	var index = 0;
 
+	UpdateMessageStatus(message.Id, "Replying");
+
 	function streamNextChunk() {
 		if (index < streamedText.length) {
 			console.log(streamedText[index]);
@@ -730,12 +753,15 @@ function SimulateStreaming() {
 			index++;
 			setTimeout(streamNextChunk, 500);  // Simulate delay between chunks
 		} else {
+			
 			// Streaming complete
 			delete currentMessageBodies[message.Id];
+			UpdateMessageStatus(message.Id, "");
 		}
 	}
 
 	streamNextChunk();
+	
 }
 
 
@@ -751,7 +777,7 @@ var currentMessageBodies = {};
 	@param messageId Unique message Id.
 	@param newText New text to append to the message body.
  */
-function AppendMessageBody(messageId, newText) {
+function AppendMessageBody(messageId, newText, autoScroll) {
 	console.log("messageId: " + messageId + ", text: " + newText);
 	// Get message element by message Id.
 	var el = document.getElementById(idPrefix + messageId);
@@ -773,6 +799,8 @@ function AppendMessageBody(messageId, newText) {
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
 	// Scroll if needed
+	if (autoScroll === undefined)
+		autoScroll = true;
 	if (autoScroll && keepScrollOnTheBottom)
 		ScrollToBottom();
 }

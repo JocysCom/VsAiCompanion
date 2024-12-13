@@ -61,6 +61,9 @@
 						<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')" title="Copy" aria-label="Copy">📄</button>
 						<button class="chat-button item-{Automated} chat-button-green regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;" title="Regenerate" aria-label="Regenerate">🔃</button>
 						{Buttons}
+						<span class="chat-message-status" id="{Id}_status">
+						  <span class="status-text">Thinking</span>
+						</span>
 					</div>
 					<div class="chat-message-body {BodyHide}">{Body}</div>
 					<div class="chat-message-data {DataHide}">{Data}</div>
