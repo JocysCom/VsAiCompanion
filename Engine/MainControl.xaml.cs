@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -46,6 +47,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			TutorialHelper.SetupTutorialHelper(this);
 			InfoPanel.BusyCount.MouseDown += BusyCount_MouseDown;
 		}
+
+		public ThemeType[] UiThemes { get; set; } = (ThemeType[])Enum.GetValues(typeof(ThemeType));
 
 		public void UpdateInfoPanelDefaults()
 		{

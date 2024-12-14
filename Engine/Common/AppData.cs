@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Controls.UpdateControl;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -235,12 +236,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 
-		#region IO Presets
+		#region UI
 
 		/// <summary>UI Preset</summary>
 		[DefaultValue("Advanced")]
 		public string UiPresetName { get => _UiPresetName; set => SetProperty(ref _UiPresetName, value); }
 		private string _UiPresetName;
+
+		/// <summary>UI Theme.</summary>
+		[DefaultValue(ThemeType.Auto)]
+		public ThemeType UiTheme { get => _UiTheme; set => SetProperty(ref _UiTheme, value); }
+		private ThemeType _UiTheme;
 
 		#endregion
 

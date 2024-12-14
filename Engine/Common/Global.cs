@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.HotKey;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls;
@@ -14,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -629,6 +631,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				// Apply new prest to controls.
 				UiPresetsManager.ApplyUiPreset(AppSettings.UiPresetName, UiPresetsManager.AllUiElements.Keys.ToArray());
+			}
+			if (e.PropertyName == nameof(Engine.AppData.UiTheme))
+			{
+				ThemeHelper.SwitchAppTheme(AppSettings.UiTheme);
 			}
 			if (e.PropertyName == nameof(Engine.AppData.AiWindowHotKey) || e.PropertyName == nameof(Engine.AppData.AiWindowHotKeyEnabled))
 				UpdateAiWindowHotKey();

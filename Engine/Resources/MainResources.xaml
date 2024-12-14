@@ -422,8 +422,10 @@
 	<sys:String x:Key="main_Tools">Tools</sys:String>
 	<sys:String x:Key="main_Mirror">Mirror</sys:String>
 	<sys:String x:Key="main_UI">UI</sys:String>
+	<sys:String x:Key="main_Theme">Theme</sys:String>
 	<sys:String x:Key="main_Features">Features</sys:String>
 	<sys:String x:Key="main_UI_Preset">UI Preset</sys:String>
+	<sys:String x:Key="main_UI_Theme">UI Theme</sys:String>
 	<sys:String x:Key="main_Account">Account</sys:String>
 	<sys:String x:Key="main_Create_a_Job_and_Model_from_File">Create a Job and Model from File</sys:String>
 	<sys:String x:Key="main_Date">Date</sys:String>

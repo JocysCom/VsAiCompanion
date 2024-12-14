@@ -387,8 +387,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Tools => FindResource(nameof(main_Tools));
         public static string main_Mirror => FindResource(nameof(main_Mirror));
         public static string main_UI => FindResource(nameof(main_UI));
+        public static string main_Theme => FindResource(nameof(main_Theme));
         public static string main_Features => FindResource(nameof(main_Features));
         public static string main_UI_Preset => FindResource(nameof(main_UI_Preset));
+        public static string main_UI_Theme => FindResource(nameof(main_UI_Theme));
         public static string main_Account => FindResource(nameof(main_Account));
         public static string main_Create_a_Job_and_Model_from_File => FindResource(nameof(main_Create_a_Job_and_Model_from_File));
         public static string main_Date => FindResource(nameof(main_Date));

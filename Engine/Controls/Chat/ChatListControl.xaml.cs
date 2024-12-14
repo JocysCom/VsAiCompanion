@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using UglyToad.PdfPig.Graphics.Operations.TextObjects;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -139,15 +140,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// </summary>
 		public async Task UpdateWebMessage(MessageItem item, bool autoScroll)
 		{
-			var json = JsonSerializer.Serialize(item);
-			await InvokeScriptAsync($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
+			var arg1 = JsonSerializer.Serialize(item);
+			var arg2 = JsonSerializer.Serialize(autoScroll);
+			await InvokeScriptAsync($"UpdateMessage({arg1}, {arg2});");
+		}
+
+		/// <summary>
+		/// Update web message status.
+		/// </summary>
+		public async Task UpdateMessageStatus(string messageId, string status)
+		{
+			var arg1 = JsonSerializer.Serialize(messageId);
+			var arg2 = JsonSerializer.Serialize(status);
+			await InvokeScriptAsync($"UpdateMessageStatus({arg1}, {arg2});");
 		}
 
 		public async Task AppendMessageBody(string messageId, string newText)
 		{
-			var messageIdJson = JsonSerializer.Serialize(messageId);
-			var newTextJson = JsonSerializer.Serialize(newText);
-			await InvokeScriptAsync($"AppendMessageBody({messageIdJson}, {newTextJson});");
+			var arg1 = JsonSerializer.Serialize(messageId);
+			var arg2 = JsonSerializer.Serialize(newText);
+			await InvokeScriptAsync($"AppendMessageBody({arg1}, {arg2});");
 		}
 
 		private async void DataItems_ListChanged(object sender, ListChangedEventArgs e)
