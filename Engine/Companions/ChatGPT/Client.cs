@@ -356,17 +356,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				options.AddPolicy(new AddHeadersPolicy(headers), PipelinePosition.PerCall);
 				if (useLogger)
 				{
-					// Create HttpClient with HttpClientLogger handler
-					var logger = new HttpClientLogger(new HttpClientHandler());
-					// Create the HttpClient to use HttpClientLogger
-					var httpClient = new HttpClient(logger)
-					{
-						BaseAddress = endpoint,
-						Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
-					};
-					// Register the handler in the HttpPipeline (hypothetical approach)
-					var transport = new HttpClientPipelineTransport(httpClient);
-					options.Transport = transport;
+					//// Create HttpClient with HttpClientLogger handler
+					//var logger = new HttpClientLogger(new HttpClientHandler());
+					//// Create the HttpClient to use HttpClientLogger
+					//var httpClient = new HttpClient(logger)
+					//{
+					//	BaseAddress = endpoint,
+					//	Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
+					//};
+					//// Register the handler in the HttpPipeline (hypothetical approach)
+					//var transport = new HttpClientPipelineTransport(httpClient);
+					//options.Transport = transport;
 				}
 				if (string.IsNullOrEmpty(apiSecretKey))
 					apiSecretKey = "NoKey";
@@ -444,7 +444,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var creativity = serviceItem.Creativity;
 			var maxInputTokens = GetMaxInputTokens(serviceItem);
 			// Other settings.
-			var messageItems = new List<MessageItem>();
+			var newMessageItems = new List<MessageItem>();
 			var functionResults = new List<MessageAttachments>();
 			var answer = "";
 			var cancellationTokenSource = new CancellationTokenSource();
@@ -453,10 +453,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			ControlsHelper.AppInvoke(() =>
 			{
-				assistantMessageItem.Status = "Processing...";
 				serviceItem.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
 				Global.AvatarPanel?.PlayMessageSentAnimation();
+				newMessageItems.Add(assistantMessageItem);
 				serviceItem.Messages.Add(assistantMessageItem);
 				assistantMessageItem.Status = "Thinking";
 			});
@@ -509,47 +509,62 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var toolCallIdsByIndex = new Dictionary<int, string>();
 					var functionNamesByIndex = new Dictionary<int, string>();
 					var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
+
 					var result = chatClient.CompleteChatStreamingAsync(
-					messages, completionsOptions, cancellationTokenSource.Token);
+						messages, completionsOptions, cancellationTokenSource.Token);
+
 					var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
-					// OpenAI libraries have issue with loading correct libraries in visual studio e.
-					while (await choicesEnumerator.MoveNextAsync())
+					// Loop through the enumerator asynchronously
+					try
 					{
-						var choice = choicesEnumerator.Current;
-						if (choice.ContentUpdate != null)
+						while (await choicesEnumerator.MoveNextAsync().ConfigureAwait(false))
 						{
-							foreach (var cu in choice.ContentUpdate)
+							var choice = choicesEnumerator.Current;
+							if (choice.ContentUpdate != null)
 							{
-								answer += cu.Text;
-								ControlsHelper.AppInvoke(() =>
+								foreach (var cu in choice.ContentUpdate)
 								{
-									assistantMessageItem.AddToBodyBuffer(cu.Text);
-								});
-							}
-						}
-						if (choice.ToolCallUpdates != null)
-						{
-							foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
-							{
-								var index = update.Index;
-								if (!string.IsNullOrEmpty(update.ToolCallId))
-									toolCallIdsByIndex[index] = update.ToolCallId;
-								if (!string.IsNullOrEmpty(update.FunctionName))
-									functionNamesByIndex[index] = update.FunctionName;
-								if (update.FunctionArgumentsUpdate != null)
-								{
-									// If arguments storage don't exists yet then...
-									if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
+									answer += cu.Text;
+									ControlsHelper.AppInvoke(() =>
 									{
-										stream = new MemoryStream();
-										functionArgumentsByIndex[index] = stream;
-									}
-									using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
-										updateStream.CopyTo(stream);
+										if (assistantMessageItem.Status != null)
+											assistantMessageItem.Status = null;
+										assistantMessageItem.AddToBodyBuffer(cu.Text);
+									});
 								}
 							}
+							if (choice.ToolCallUpdates != null)
+							{
+								foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
+								{
+									var index = update.Index;
+									if (!string.IsNullOrEmpty(update.ToolCallId))
+										toolCallIdsByIndex[index] = update.ToolCallId;
+									if (!string.IsNullOrEmpty(update.FunctionName))
+										functionNamesByIndex[index] = update.FunctionName;
+									if (update.FunctionArgumentsUpdate != null)
+									{
+										// If arguments storage doesn't exist yet, then...
+										if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
+										{
+											stream = new MemoryStream();
+											functionArgumentsByIndex[index] = stream;
+										}
+										using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
+											updateStream.CopyTo(stream);
+									}
+								}
+							}
+							// Yield control to allow UI updates or other tasks to process
+							await Task.Yield();
 						}
 					}
+					finally
+					{
+						if (choicesEnumerator != null)
+							await choicesEnumerator.DisposeAsync();
+					}
+
 					foreach (var kv in toolCallIdsByIndex)
 					{
 						var index = kv.Key;
@@ -606,7 +621,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				}
 				// Get approval and process functions.
 				await ProcessFunctions(serviceItem, functions,
-					functionResults, messageItems, assistantMessageItem,
+					functionResults, assistantMessageItem,
 					cancellationTokenSource);
 			}
 			catch
@@ -631,8 +646,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				assistantMessageItem.Updated = DateTime.Now;
 				assistantMessageItem.Status = null;
 			});
-			//if (!messageItems.Contains(assistantMessageItem))
-			//	messageItems.Add(assistantMessageItem);
 			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
@@ -641,10 +654,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				userAutoReplyMessageItem.IsAutomated = true;
 				ControlsHelper.AppInvoke(() =>
 				{
-					messageItems.Add(userAutoReplyMessageItem);
+					newMessageItems.Add(userAutoReplyMessageItem);
+					serviceItem.Messages.Add(userAutoReplyMessageItem);
 				});
 			}
-			return messageItems;
+			return newMessageItems;
 		}
 
 		public static ChatCompletionOptions GetChatCompletionOptions(float creativity)
@@ -714,7 +728,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			List<chat_completion_function> functions,
 			// Output parameters
 			List<MessageAttachments> functionResults,
-			List<MessageItem> messageItems,
 			MessageItem assistantMessageItem,
 			CancellationTokenSource cancellationTokenSource
 			)
@@ -738,9 +751,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			fnCallAttachment.Title = "Function Calls";
 			// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
 			fnCallAttachment.SendType = AttachmentSendType.User;
-			assistantMessageItem.Attachments.Add(fnCallAttachment);
-			assistantMessageItem.IsAutomated = true;
-			messageItems.Add(assistantMessageItem);
 			// Note: Maybe ask AI asistant to record call in its reply.
 			// Add call to user message so that AI will see what functions it called.
 			//var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
@@ -750,8 +760,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			//functionResults.Add(fnCallAttachmentUser);
 			ControlsHelper.AppInvoke(() =>
 			{
-				item.Messages.Add(assistantMessageItem);
-				item.Modified = DateTime.Now;
+				assistantMessageItem.Attachments.Add(fnCallAttachment);
+				assistantMessageItem.IsAutomated = true;
+				var now = DateTime.Now;
+				assistantMessageItem.Updated = now;
+				item.Modified = now;
 			});
 			// Process function calls.
 			if (item.PluginsEnabled)

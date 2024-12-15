@@ -470,28 +470,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						if (client is null)
 							return;
 						// Send body and context data. Make sure it runs on NON-UI thread.
-						var messageItems = await Task.Run(async () => await client.QueryAI(
+						var responseMessages = await Task.Run(async () => await client.QueryAI(
 							item,
 							chatLogMessages,
 							embeddingText
 						)).ConfigureAwait(true);
-						// If assistant message was received.
-						var assistantMessage = messageItems.FirstOrDefault();
-						if (assistantMessage != null)
-						{
-							// Workaround: Re-add 
-							//if (item.Messages.Contains(assistantMessage) && assistantMessage.Attachments.Count > 1)
-							//	item.Messages.Remove(assistantMessage);
-							if (!item.Messages.Contains(assistantMessage))
-							{
-								item.Messages.Add(assistantMessage);
-								item.Modified = DateTime.Now;
-							}
-							// Automation.
-							SetData(item, assistantMessage.Body);
-						}
+						// First message is assistance response.
+						//var assistantMessage = responseMessages.FirstOrDefault();
 						// If auto-reply message was added then...
-						var userMessage = messageItems.Skip(1).FirstOrDefault();
+						var userMessage = responseMessages.Skip(1).FirstOrDefault();
 						if (userMessage != null)
 						{
 							await Send(item, overrideMessage: userMessage);
@@ -550,12 +537,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (client is null)
 					return text;
 				// Send body and context data. Make sure it runs on NON-UI thread.
-				var messageItem = await Task.Run(async () => await client.QueryAI(
+				var responseMessages = await Task.Run(async () => await client.QueryAI(
 					rItem,
 					messages,
 					null
 				)).ConfigureAwait(true);
-				return messageItem.FirstOrDefault()?.Body ?? text;
+				// First message is assistance response.
+				return responseMessages.FirstOrDefault()?.Body ?? text;
 			}
 			catch (Exception ex)
 			{
@@ -600,12 +588,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (client is null)
 					return;
 				// Send body and context data. Make sure it runs on NON-UI thread.
-				var response = await Task.Run(async () => await client.QueryAI(
+				var responseMessages = await Task.Run(async () => await client.QueryAI(
 					rItem,
 					messages,
 					null
 				)).ConfigureAwait(true);
-				var body = response.FirstOrDefault()?.Body;
+				// First message is assistance response.
+				var body = responseMessages.FirstOrDefault()?.Body;
 				if (!string.IsNullOrEmpty(body))
 				{
 					if (taskName.StartsWith(SettingsSourceManager.TemplateGenerateTitleTaskName))
@@ -670,12 +659,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (client is null)
 					return null;
 				// Send body and context data. Make sure it runs on NON-UI thread.
-				var response = await Task.Run(async () => await client.QueryAI(
+				var responseMessages = await Task.Run(async () => await client.QueryAI(
 					rItem,
 					messages,
 					null
 				)).ConfigureAwait(true);
-				var body = response.FirstOrDefault()?.Body;
+				// First message is assistance response.
+				var body = responseMessages.FirstOrDefault()?.Body;
 				return body;
 			}
 			catch (Exception ex)

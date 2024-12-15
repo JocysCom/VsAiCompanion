@@ -22,7 +22,7 @@
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageVersion Include="Microsoft.ML" Version="3.0.1" />
 		<!-- Other Packages -->
-		<PackageVersion Include="Azure.AI.OpenAI" Version="2.0.0" />
+		<PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
 		<PackageVersion Include="Azure.ResourceManager" Version="1.13.0" />
 		<PackageVersion Include="bblanchon.PDFium.Linux" Version="133.0.6872" />
 		<PackageVersion Include="bblanchon.PDFium.macOS" Version="133.0.6872" />

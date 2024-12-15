@@ -71,12 +71,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				messages.Add(message);
 				var client = AiClientFactory.GetAiClient(rItem.AiService);
 				// Send body and context data. Make sure it runs on NON-UI thread.
-				var response = await Task.Run(async () => await client.QueryAI(
+				var responseMessages = await Task.Run(async () => await client.QueryAI(
 					rItem,
 					messages,
 					null
 				)).ConfigureAwait(true);
-				var body = response.FirstOrDefault()?.Body;
+				// First message is assistance response.
+				var body = responseMessages.FirstOrDefault()?.Body;
 				return new OperationResult<string>(body);
 			}
 			catch (Exception ex)

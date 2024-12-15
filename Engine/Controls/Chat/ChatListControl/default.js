@@ -315,26 +315,27 @@ function AttachmentButton_Click(sender, id) {
 		}, 500);
 	}
 	var button = document.getElementById(id + "_button");
-	var panel = document.getElementById();
+	var panel = document.getElementById(id + "_panel");
 	// Toggle visibility
-	var isPanelHidden = panel.classList.contains("display-none");
-	SetVisible(panel, !isPanelHidden)
-	if (isPanelHidden) {
-		button.classList.add("expandable-button-visible");
-	} else {
+	var isVisible = !panel.classList.contains("display-none");
+	SetVisible(panel, !isVisible)
+	if (isVisible) {
 		button.classList.remove("expandable-button-visible");
+	} else {
+		button.classList.add("expandable-button-visible");
 	}
 }
 
 function SetVisible(el, isVisible) {
 	var isControlVisible = !el.classList.contains("display-none");
+	console.log("SetVisible: " + isVisible + ", isControlVisible: " + isControlVisible);
 	// if must show and is not visible then...
 	if (isVisible && !isControlVisible) {
-		el.classList.add("display-none");
+		el.classList.remove("display-none");
 	}
 	// If must hide and is visible then...
 	else if (!isVisible && isControlVisible) {
-		el.classList.remove("display-none");
+		el.classList.add("display-none");
 	}
 }
 
@@ -710,6 +711,7 @@ function SimulateMessages() {
 			Data: codeText,
 			Attachments: [
 				{
+					Id: generateGUID(),
 					Title: "Data to Process",
 					Instructions: "aaa",
 					Type: ContextType.Selection,
@@ -717,6 +719,7 @@ function SimulateMessages() {
 					IsMarkdown: true,
 				},
 				{
+					Id: generateGUID(),
 					Title: "Image",
 					Instructions: "",
 					Type: ContextType.Image,
@@ -724,6 +727,7 @@ function SimulateMessages() {
 					IsMarkdown: false,
 				},
 				{
+					Id: generateGUID(),
 					Title: "Audio",
 					Instructions: "",
 					Type: ContextType.Audio,

@@ -29,16 +29,24 @@ namespace JocysCom.ClassLibrary.Web.Services
 		protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			Request = request;
-			// Convert to collection now before it is disposed.
+
+			// Log the request headers and other info if needed
 			RequestCollection = await WebHelper.ToCollection(Request).ConfigureAwait(continueOnCapturedContext);
+
 			try
 			{
-				// Check for cancellation before sending HttpRequest
 				if (cancellationToken.IsCancellationRequested)
 					throw new TaskCanceledException();
+
+				// Send the request
 				Response = await base.SendAsync(request, cancellationToken).ConfigureAwait(continueOnCapturedContext);
-				// Convert to collection now before it is disposed.
-				ResponseCollection = await WebHelper.ToCollection(Response, request.GetHashCode()).ConfigureAwait(continueOnCapturedContext);
+
+				// Replace the response content with the logging content
+				if (Response.Content != null)
+				{
+					var loggingContent = new LoggingHttpContent(Response.Content);
+					Response.Content = loggingContent;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -46,18 +54,17 @@ namespace JocysCom.ClassLibrary.Web.Services
 				AddTraceLog(TraceEventType.Critical);
 				throw;
 			}
-			if (Response is null || !Response.IsSuccessStatusCode)
+
+			// Log the response headers, status code, etc., but avoid reading the content now
+			ResponseCollection = await WebHelper.ToCollection(Response, request.GetHashCode()).ConfigureAwait(continueOnCapturedContext);
+
+			if (Response == null || !Response.IsSuccessStatusCode)
 				AddTraceLog(TraceEventType.Error);
 			else
 				AddTraceLog(TraceEventType.Information);
-			// Note: TaskCompletionSource creates a task that does not contain a delegate.
-			//var tsc = new TaskCompletionSource<HttpResponseMessage>();
-			// Also sets the task state to "RanToCompletion"
-			//tsc.SetResult(Response);
-			//return tsc.Task.Result;
+
 			return Response;
 		}
-
 		#region Tracing
 
 		/// <summary>
