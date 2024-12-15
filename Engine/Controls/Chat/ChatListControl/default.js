@@ -90,11 +90,13 @@ function DeleteMessage(messageId) {
 	var messageEl = document.getElementById(idPrefix + messageId);
 	messageEl.parentElement.removeChild(messageEl);
 	UpdateRegenerateButtons();
+	UpdateKeepScrollOnTheBottom();
 }
 
 function DeleteMessages() {
 	var chatLog = document.getElementById('chatLog');
 	chatLog.innerHTML = "";
+	UpdateKeepScrollOnTheBottom();
 }
 
 function UpdateMessage(message, autoScroll) {
@@ -116,12 +118,12 @@ function UpdateMessage(message, autoScroll) {
 	} else {
 		chatLog.insertAdjacentHTML('beforeend', messageHTML);
 	}
+	UpdateRegenerateButtons();
 	// Scroll if needed
 	if (autoScroll === undefined)
 		autoScroll = true;
 	if (autoScroll && keepScrollOnTheBottom)
 		ScrollToBottom();
-	UpdateRegenerateButtons();
 	return true;
 }
 
@@ -337,6 +339,10 @@ function SetVisible(el, isVisible) {
 	else if (!isVisible && isControlVisible) {
 		el.classList.add("display-none");
 	}
+	// Making items visible can expand content.
+	// Make sure to keep scroll on the bottom.
+	if (keepScrollOnTheBottom)
+		ScrollToBottom();
 }
 
 /** Prepare text for markdown and display as HTML. */
@@ -429,9 +435,10 @@ function ApplyDiffference(el, newHtml) {
 
 
 function ScrollToBottom() {
+	// Add a 50ms delay to make sure the UI has enough time to update, and the scroll ends up at the bottom.
 	window.setTimeout(function () {
 		window.scroll(0, document.body.scrollHeight);
-	}, 0);
+	}, 50);
 }
 
 function Copy() {
@@ -531,14 +538,18 @@ function IsScrollOnTheBottom() {
 let scrollTimeout;
 var keepScrollOnTheBottom = true;
 
+function UpdateKeepScrollOnTheBottom() {
+	keepScrollOnTheBottom = IsScrollOnTheBottom();
+	console.log("keepScrollOnTheBottom: " + keepScrollOnTheBottom);
+}
+
 function window_scroll() {
 	// Clear the timeout if it exists
 	if (scrollTimeout)
 		clearTimeout(scrollTimeout);
 	// Set a timeout to run the function after a short delay
 	scrollTimeout = setTimeout(function () {
-		keepScrollOnTheBottom = IsScrollOnTheBottom();
-		console.log("keepScrollOnTheBottom: " + keepScrollOnTheBottom);
+		UpdateKeepScrollOnTheBottom();
 		scrollTimeout = null;
 	}, 100);
 }
@@ -755,7 +766,11 @@ function SimulateStreaming() {
 	InsertMessage(message, true);
 
 	// Simulate streaming by appending text over time
-	var streamedText = ["Hello", " world", "! Here", " is", " some", " streamed", " text."];
+	var streamedText = [
+		"Hello", " world", "! Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"Hello", " world", "! Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"Hello", " world", "! Here", " is", " some", " streamed", " text."
+	];
 	var index = 0;
 
 	UpdateMessageStatus(message.Id, "Replying");
@@ -765,7 +780,7 @@ function SimulateStreaming() {
 			console.log(streamedText[index]);
 			AppendMessageBody(message.Id, streamedText[index]);
 			index++;
-			setTimeout(streamNextChunk, 500);  // Simulate delay between chunks
+			setTimeout(streamNextChunk, 100);  // Simulate delay between chunks
 		} else {
 
 			// Streaming complete
@@ -773,9 +788,7 @@ function SimulateStreaming() {
 			UpdateMessageStatus(message.Id, "");
 		}
 	}
-
 	streamNextChunk();
-
 }
 
 
@@ -813,7 +826,7 @@ function AppendMessageBody(messageId, newText, autoScroll) {
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
 	// Scroll if needed
-	if (autoScroll === undefined)
+	if (autoScroll !== true || autoScroll !== false)
 		autoScroll = true;
 	if (autoScroll && keepScrollOnTheBottom)
 		ScrollToBottom();
