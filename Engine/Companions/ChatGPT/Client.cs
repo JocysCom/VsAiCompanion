@@ -35,10 +35,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		private const string usagePath = "usage";
 		private const string modelsPath = "models";
 		private const string filesPath = "files";
-		private const string chatCompletionsPath = "chat/completions";
-		private const string completionsPath = "completions";
 		private const string fineTuningJobsPath = "fine_tuning/jobs";
-
 		public const string FineTuningPurpose = "fine-tune";
 
 		private readonly AiService Service;
@@ -466,175 +463,151 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
 			{
-				// If Text Completion mode.
-				if (IsTextCompletionMode(modelName))
+				var messages = new List<ChatMessage>();
+				foreach (var messageToSend in messagesToSend)
 				{
-					var messages = messagesToSend
-						.Select(x => new UserChatMessage(x.content as string))
-						.ToList();
-					var request = new text_completion_request
+					var stringContent = messageToSend.content as string;
+					ChatMessageContentPart[] contentItems = null;
+					if (messageToSend.content is content_item[] citems)
+						contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
+					switch (messageToSend.role)
 					{
-						model = modelName,
-						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
-						temperature = (float)creativity,
-						stream = service.ResponseStreaming,
-					};
-					if (service.ServiceType == ApiServiceType.OpenAI)
-						request.max_tokens = maxInputTokens;
-					var data = await GetAsync<text_completion_response>(completionsPath, request, null, service.ResponseStreaming, cancellationTokenSource.Token);
-					foreach (var dataItem in data)
-						foreach (var chatChoice in dataItem.choices)
-							answer += chatChoice.text;
+						case message_role.user:
+							if (contentItems != null)
+								messages.Add(new UserChatMessage(contentItems));
+							else if (!string.IsNullOrEmpty(stringContent))
+								messages.Add(new UserChatMessage(stringContent));
+							break;
+						case message_role.assistant:
+							if (!string.IsNullOrEmpty(stringContent))
+								messages.Add(new AssistantChatMessage(stringContent));
+							break;
+						case message_role.system:
+							if (!string.IsNullOrEmpty(stringContent))
+								messages.Add(new SystemChatMessage(stringContent));
+							break;
+					}
 				}
-				// If Chat Completion mode.
-				else
-				{
-					var messages = new List<ChatMessage>();
-					foreach (var messageToSend in messagesToSend)
-					{
-						var stringContent = messageToSend.content as string;
-						ChatMessageContentPart[] contentItems = null;
-						if (messageToSend.content is content_item[] citems)
-							contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
-						switch (messageToSend.role)
-						{
-							case message_role.user:
-								if (contentItems != null)
-									messages.Add(new UserChatMessage(contentItems));
-								else if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new UserChatMessage(stringContent));
-								break;
-							case message_role.assistant:
-								if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new AssistantChatMessage(stringContent));
-								break;
-							case message_role.system:
-								if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new SystemChatMessage(stringContent));
-								break;
-						}
-					}
 
-					var completionsOptions = GetChatCompletionOptions((float)creativity);
-					var addToolsToOptions = serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
-					var addToolsToMessage = serviceItem.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
-					ControlsHelper.AppInvoke(() =>
-					{
-						if (addToolsToOptions)
-						{
-							var tools = PluginsManager.GetChatToolDefinitions(serviceItem);
-							PluginsManager.ProvideTools(tools, serviceItem, options: completionsOptions);
-						}
-					});
-					var client = await GetAiClient();
-					var chatClient = client.GetChatClient(modelName);
-					var toolCalls = new List<ChatToolCall>();
-					// If streaming  mode is enabled and AI model supports streaming then...
-					if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
-					{
-						var toolCallIdsByIndex = new Dictionary<int, string>();
-						var functionNamesByIndex = new Dictionary<int, string>();
-						var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
-						var result = chatClient.CompleteChatStreamingAsync(
-						messages, completionsOptions, cancellationTokenSource.Token);
-						var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
-						// OpenAI libraries have issue with loading correct libraries in visual studio e.
-						while (await choicesEnumerator.MoveNextAsync())
-						{
-							var choice = choicesEnumerator.Current;
-							if (choice.ContentUpdate != null)
-							{
-								foreach (var cu in choice.ContentUpdate)
-								{
-									answer += cu.Text;
-									ControlsHelper.AppInvoke(() =>
-									{
-										assistantMessageItem.AddToBodyBuffer(cu.Text);
-									});
-								}
-							}
-							if (choice.ToolCallUpdates != null)
-							{
-								foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
-								{
-									var index = update.Index;
-									if (!string.IsNullOrEmpty(update.ToolCallId))
-										toolCallIdsByIndex[index] = update.ToolCallId;
-									if (!string.IsNullOrEmpty(update.FunctionName))
-										functionNamesByIndex[index] = update.FunctionName;
-									if (update.FunctionArgumentsUpdate != null)
-									{
-										// If arguments storage don't exists yet then...
-										if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
-										{
-											stream = new MemoryStream();
-											functionArgumentsByIndex[index] = stream;
-										}
-										using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
-											updateStream.CopyTo(stream);
-									}
-								}
-							}
-						}
-						foreach (var kv in toolCallIdsByIndex)
-						{
-							var index = kv.Key;
-							var toolCallId = kv.Value;
-							var functionName = functionNamesByIndex[index];
-							// Getting function arguments.
-							var stream = functionArgumentsByIndex[index];
-							stream.Position = 0; // Reset the stream position to the beginning
-							var functionArguments = BinaryData.FromStream(stream);
-							var toolCall = ChatToolCall.CreateFunctionToolCall(toolCallId, functionName, functionArguments);
-							toolCalls.Add(toolCall);
-						}
-					}
-					// Streaming is not supported.
-					// Could be local non-secure HTTP connection.
-					else
-					{
-						var result = await chatClient.CompleteChatAsync(
-							messages, completionsOptions, cancellationTokenSource.Token);
-						var completion = result.Value;
-						switch (completion.FinishReason)
-						{
-							case ChatFinishReason.Stop:
-							case ChatFinishReason.ToolCalls:
-								answer = string.Join("\r\n", completion.Content?.Select(x => x.Text));
-								break;
-							case ChatFinishReason.Length:
-								answer = "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
-								break;
-							case ChatFinishReason.ContentFilter:
-								answer = "Omitted content due to a content filter flag.";
-								break;
-							default:
-								answer = result.ToString();
-								break;
-						}
-						if (completion.ToolCalls?.Any() == true)
-							toolCalls.AddRange(completion.ToolCalls);
-					}
-					List<chat_completion_function> functions = null;
-					if (addToolsToMessage)
-					{
-						// Get new answer message without function JSON and function calls.
-						var (assistantMessage, functionCalls) = PluginsManager.ProcessAssistantMessage(answer);
-						if (functionCalls.Any())
-						{
-							answer = assistantMessage;
-							functions = functionCalls.ToList();
-						}
-					}
+				var completionsOptions = GetChatCompletionOptions((float)creativity);
+				var addToolsToOptions = serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+				var addToolsToMessage = serviceItem.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+				ControlsHelper.AppInvoke(() =>
+				{
 					if (addToolsToOptions)
 					{
-						functions = ConvertChatToolCallsTo(toolCalls);
+						var tools = PluginsManager.GetChatToolDefinitions(serviceItem);
+						PluginsManager.ProvideTools(tools, serviceItem, options: completionsOptions);
 					}
-					// Get approval and process functions.
-					await ProcessFunctions(serviceItem, functions,
-						functionResults, messageItems, assistantMessageItem,
-						cancellationTokenSource);
+				});
+				var client = await GetAiClient();
+				var chatClient = client.GetChatClient(modelName);
+				var toolCalls = new List<ChatToolCall>();
+				// If streaming  mode is enabled and AI model supports streaming then...
+				if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
+				{
+					var toolCallIdsByIndex = new Dictionary<int, string>();
+					var functionNamesByIndex = new Dictionary<int, string>();
+					var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
+					var result = chatClient.CompleteChatStreamingAsync(
+					messages, completionsOptions, cancellationTokenSource.Token);
+					var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
+					// OpenAI libraries have issue with loading correct libraries in visual studio e.
+					while (await choicesEnumerator.MoveNextAsync())
+					{
+						var choice = choicesEnumerator.Current;
+						if (choice.ContentUpdate != null)
+						{
+							foreach (var cu in choice.ContentUpdate)
+							{
+								answer += cu.Text;
+								ControlsHelper.AppInvoke(() =>
+								{
+									assistantMessageItem.AddToBodyBuffer(cu.Text);
+								});
+							}
+						}
+						if (choice.ToolCallUpdates != null)
+						{
+							foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
+							{
+								var index = update.Index;
+								if (!string.IsNullOrEmpty(update.ToolCallId))
+									toolCallIdsByIndex[index] = update.ToolCallId;
+								if (!string.IsNullOrEmpty(update.FunctionName))
+									functionNamesByIndex[index] = update.FunctionName;
+								if (update.FunctionArgumentsUpdate != null)
+								{
+									// If arguments storage don't exists yet then...
+									if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
+									{
+										stream = new MemoryStream();
+										functionArgumentsByIndex[index] = stream;
+									}
+									using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
+										updateStream.CopyTo(stream);
+								}
+							}
+						}
+					}
+					foreach (var kv in toolCallIdsByIndex)
+					{
+						var index = kv.Key;
+						var toolCallId = kv.Value;
+						var functionName = functionNamesByIndex[index];
+						// Getting function arguments.
+						var stream = functionArgumentsByIndex[index];
+						stream.Position = 0; // Reset the stream position to the beginning
+						var functionArguments = BinaryData.FromStream(stream);
+						var toolCall = ChatToolCall.CreateFunctionToolCall(toolCallId, functionName, functionArguments);
+						toolCalls.Add(toolCall);
+					}
 				}
+				// Streaming is not supported.
+				// Could be local non-secure HTTP connection.
+				else
+				{
+					var result = await chatClient.CompleteChatAsync(
+						messages, completionsOptions, cancellationTokenSource.Token);
+					var completion = result.Value;
+					switch (completion.FinishReason)
+					{
+						case ChatFinishReason.Stop:
+						case ChatFinishReason.ToolCalls:
+							answer = string.Join("\r\n", completion.Content?.Select(x => x.Text));
+							break;
+						case ChatFinishReason.Length:
+							answer = "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
+							break;
+						case ChatFinishReason.ContentFilter:
+							answer = "Omitted content due to a content filter flag.";
+							break;
+						default:
+							answer = result.ToString();
+							break;
+					}
+					if (completion.ToolCalls?.Any() == true)
+						toolCalls.AddRange(completion.ToolCalls);
+				}
+				List<chat_completion_function> functions = null;
+				if (addToolsToMessage)
+				{
+					// Get new answer message without function JSON and function calls.
+					var (assistantMessage, functionCalls) = PluginsManager.ProcessAssistantMessage(answer);
+					if (functionCalls.Any())
+					{
+						answer = assistantMessage;
+						functions = functionCalls.ToList();
+					}
+				}
+				if (addToolsToOptions)
+				{
+					functions = ConvertChatToolCallsTo(toolCalls);
+				}
+				// Get approval and process functions.
+				await ProcessFunctions(serviceItem, functions,
+					functionResults, messageItems, assistantMessageItem,
+					cancellationTokenSource);
 			}
 			catch
 			{
@@ -650,7 +623,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
-			assistantMessageItem.Body = answer;
+			if (assistantMessageItem.Body != answer)
+				assistantMessageItem.Body = answer;
 			assistantMessageItem.Date = DateTime.Now;
 			ControlsHelper.AppInvoke(() =>
 			{
@@ -791,11 +765,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					functionResults.Add(fnResultAttachment);
 				}
 			}
-		}
-
-		public static bool IsTextCompletionMode(string modelName)
-		{
-			return modelName.Contains("davinci") || modelName.Contains("instruct");
 		}
 
 		public static int GetMaxInputTokens(TemplateItem item)

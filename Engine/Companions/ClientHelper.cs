@@ -437,24 +437,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					.SelectMany(x => ConvertMessageItemToChatMessage(item.UseSystemInstructions, x, includeAttachments: null)).ToList();
 				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
 				chatLogMessages = attachMessages.Concat(chatLogMessages).ToList();
-				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
-				{
-					// Create attachment.
-					var a0 = new MessageAttachments();
-					a0.Title = Global.AppSettings.ContextChatTitle;
-					a0.Instructions = Global.AppSettings.ContextChatInstructions;
-					a0.Type = ContextType.ChatHistory;
-					var options = new JsonSerializerOptions();
-					options.WriteIndented = true;
-					var json = JsonSerializer.Serialize(attachMessages, ChatLogOptions);
-					a0.Data = $"```json\r\n{json}\r\n```";
-					a0.IsMarkdown = true;
-					// Update messages.
-					var message = ConvertMessageItemToChatMessage(false, m, includeAttachments: true);
-					var content = JoinMessageParts(message[0].content as string, ConvertAttachmentsToString(a0));
-					chatLogMessages.Clear();
-					chatLogMessages.Add(new chat_completion_message(message_role.user, content));
-				}
 			}
 			var maxTokens = Client.GetMaxInputTokens(item);
 			if (!item.Messages.Contains(m))

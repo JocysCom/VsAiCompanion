@@ -68,14 +68,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				? FineTuningFolderType.TuningFiles
 				: FineTuningFolderType.SourceFiles;
 			var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
-			bool success;
-			if (Client.IsTextCompletionMode(aiModel))
-			{
-				success = Convert<text_completion_item>(sourceFullName, targetFullName, null);
-			}
-			else
-			{
-				success = Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
+			bool success = Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
 				{
 					if (string.IsNullOrEmpty(systemMessage))
 						return;
@@ -83,7 +76,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						return;
 					r.messages.Insert(0, new chat_completion_message(message_role.system, systemMessage));
 				});
-			}
 			return success
 				? targetFullName
 				: null;

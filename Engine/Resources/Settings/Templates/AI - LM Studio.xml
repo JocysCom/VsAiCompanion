@@ -1,0 +1,37 @@
+﻿<TemplateItem>
+  <Name>AI - LM Studio</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACrVVS2+bQBC+V+p/mGJFiqWy7C7YQAU5tI3jQ3yK1DuFBVYlrLWs69i/vvvAifNw&#xD;
+lT7CYWfYeX0z8yGy4WcDW16pNvfmkQct402rnH532/VD7rVKrT8FwXa7RdsQCdkEFGMc6EDv4v07&#xD;
+gOyD78NXVvOegWoZdFopJDSyqDjrFfi+c6tYPVhN687n6uDCq9wz/kQXJbmHzzzYaUmw0e7oQdtp&#xD;
+TcsxiU4zKLEGUdcD05CNh7nwS9EJmXuT+Zc4uVx4EJwIcEkfhUQLEn2+fAjJgsdIXSfB2MpD97LY&#xD;
+2t6/F+WPRopNX4FkpSr6pmN6vKoFe8kqKIXsmRzup2LcTi1A3mmpxc6Kmndd7m1kdz6xs5o6mPcg&#xD;
+rnSJNSgBazFwxUUPhYYxlIWGYLDdfLsCXurrQ+kGlCz6oRbyNves2hWKnScfk6kLO6fTw7AzxVXH&#xD;
+Lq5XcKM2FRdZ4C5Gq6m/4HJQsC50s7bjEJ+BWBclV7tDSe1p7XrdK4qSCGhBEI1DcCcGvRKgaBbF&#xD;
+LYkQwfFzs2/NSxO9X8UoDWcwQ2H4xBGPeZIlpQhH1hpZa+SsYxqbYL8K0ZxGkJqXEvsoxhGaxf5R&#xD;
+kNMdqPnTbGTEvIxQkialidcYXIh/n8ie4X41AqWIJMmp7pdE95ScRD1mcqjJHMUpfS3so2J/CDtE&#xD;
+mKZAEj349OTWUjRPX+jK4W59a94fqDxZ2Me9+iNVcg+FR9+fIdYN06ytjphVb7ruX6iFEU3ik9N9&#xD;
+NbX0LCj9b9QyoJ7u6E2oRdDsGYX/nlovwX4Tas1Q/BtmGetzYjkaZUGjZWb+WBe/AEw26CzwBgAA</IconData>
+  <Created>2024-02-25T22:52:23.8075286+00:00</Created>
+  <Modified>2024-11-26T21:47:32.5775188+00:00</Modified>
+  <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
+  <AiModel>meta-llama-3.1-8b-instruct</AiModel>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <AttachContext>ChatHistory</AttachContext>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <GenerateTitleTemplate>® System - Generate Title - xAI</GenerateTitleTemplate>
+  <AutoGenerateTitle>true</AutoGenerateTitle>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>Medium</MaxRiskLevel>
+  <ShowPrompting>true</ShowPrompting>
+  <AttachmentsSelection />
+  <TemplateVideoToText>® System - Video-To-Text - xAI</TemplateVideoToText>
+</TemplateItem>

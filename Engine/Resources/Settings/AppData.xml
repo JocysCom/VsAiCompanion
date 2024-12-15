@@ -47,8 +47,8 @@
       <PandocUpdateTimeSettings />
       <StartPosition>
         <Left>454</Left>
-        <Top>135</Top>
-        <Width>1033</Width>
+        <Top>135.33333333333331</Top>
+        <Width>1033.3333333333333</Width>
         <Height>816</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
@@ -67,7 +67,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.21831683168316832</GridSplitterPosition>
+          <GridSplitterPosition>0.21810971579643093</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
@@ -76,7 +76,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.21336633663366336</GridSplitterPosition>
+          <GridSplitterPosition>0.21348314606741575</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -108,6 +108,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
+          <GridSplitterPosition>0.29973297730307075</GridSplitterPosition>
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
@@ -217,8 +218,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</Id>
-          <ResponseStreaming>false</ResponseStreaming>
-          <DefaultAiModel>Mistral</DefaultAiModel>
+          <DefaultAiModel>meta-llama-3.1-8b-instruct</DefaultAiModel>
           <AiModels />
           <BaseUrl>http://localhost:1234/v1/</BaseUrl>
           <ModelFilter />
@@ -744,6 +744,26 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>LM Studio (Local Machine)</Path>
+          <Name>meta-llama-3.1-8b-instruct</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cc4309f0-dc71-ffda-5847-615b5c8476c2</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
+          <MaxInputTokens>2048</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>LM Studio (Local Machine)</Path>
+          <Name>text-embedding-nomic-embed-text-v1.5</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cb95c376-da7a-3b1e-f6a5-9e393790f750</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />

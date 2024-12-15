@@ -23,22 +23,11 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				}
 				try
 				{
-					if (Client.IsTextCompletionMode(aiModel))
-					{
-						List<text_completion_response> result;
-						var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
-						statusDetails = success
-							? $"Validated successfully. {result.Count} item(s) found."
-							: error;
-					}
-					else
-					{
-						List<chat_completion_request> result;
-						var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
-						statusDetails = success
-							? $"Validated successfully. {result.Count} item(s) found."
-							: error;
-					}
+					List<chat_completion_request> result;
+					var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
+					statusDetails = success
+						? $"Validated successfully. {result.Count} item(s) found."
+						: error;
 				}
 				catch (Exception ex)
 				{
