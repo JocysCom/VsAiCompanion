@@ -169,15 +169,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (e.ListChangedType == ListChangedType.ItemChanged)
 			{
 				var propertyName = e.PropertyDescriptor?.Name;
-				var allowUpdate =
-					propertyName == nameof(MessageItem.Type) ||
-					propertyName == nameof(MessageItem.Updated);
-				if (allowUpdate)
-					await UpdateWebMessage(Item.Messages[e.NewIndex], false);
-				if (propertyName == nameof(MessageItem.BodyBuffer))
+				var message = Item.Messages[e.NewIndex];
+				switch (propertyName)
 				{
-					var message = Item.Messages[e.NewIndex];
-					await AppendMessageBody(message.Id, message.BodyBuffer);
+					case nameof(MessageItem.Type):
+					case nameof(MessageItem.Updated):
+						await UpdateWebMessage(message, false);
+						break;
+					case nameof(MessageItem.BodyBuffer):
+						await AppendMessageBody(message.Id, message.BodyBuffer);
+						break;
+					case nameof(MessageItem.Status):
+						await UpdateMessageStatus(message.Id, message.Status);
+						break;
+					default:
+						break;
 				}
 			}
 		}

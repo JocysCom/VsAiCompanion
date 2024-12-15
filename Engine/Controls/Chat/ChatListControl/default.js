@@ -68,23 +68,22 @@ function InsertMessage(message, autoScroll) {
 	UpdateRegenerateButtons();
 }
 
+function isEmpty(s) {
+	return s === null || s === undefined || s === "";
+}
+
 function UpdateMessageStatus(messageId, status) {
-    var messageEl = document.getElementById(idPrefix + messageId + "_status");
-    if (!messageEl)
-		return false;
-    var statusTextEl = messageEl.querySelector('.status-text');
-    // Update the text content
-    statusTextEl.textContent = status;
-    // Add or remove animation classes if necessary
-    //if (status === "Responding") {
-    //    statusTextEl.classList.add('responding');
-    //    statusTextEl.classList.remove('thinking');
-    //} else if (status === "Thinking") {
-    //    statusTextEl.classList.add('thinking');
-    //    statusTextEl.classList.remove('responding');
-    //} else {
-    //    statusTextEl.classList.remove('thinking', 'responding');
-    //}
+	var id = idPrefix + messageId + "_status";
+	console.log("el[" + id + "].textContent: " + status);
+	var statusEl = document.getElementById(id);
+	if (!statusEl) {
+		console.log("Error: el[" + id + "] element not found");
+	}
+	var statusTextEl = statusEl.querySelector('.status-text');
+	// Update the text content
+	statusTextEl.textContent = status;
+	// Show/Hide the status element
+	SetVisible(statusEl, !isEmpty(status));
 }
 
 function DeleteMessage(messageId) {
@@ -242,9 +241,9 @@ function CreateMessageHtml(message) {
 		.replace(/{User}/g, message.User)
 		.replace(/{Date}/g, FormatDateTime(message.Date))
 		.replace(/{Body}/g, bodyContents)
-		.replace(/{BodyHide}/g, bodyContents === "" ? "item-hide" : "")
+		.replace(/{BodyHide}/g, isEmpty(bodyContents) ? "display-none" : "")
 		.replace(/{Data}/g, data)
-		.replace(/{DataHide}/g, data === "" ? "item-hide" : "")
+		.replace(/{DataHide}/g, isEmpty(data) ? "display-none" : "")
 		.replace(/{Buttons}/g, buttons);
 	return messageHTML;
 }
@@ -316,15 +315,26 @@ function AttachmentButton_Click(sender, id) {
 		}, 500);
 	}
 	var button = document.getElementById(id + "_button");
-	var panel = document.getElementById(id + "_panel");
+	var panel = document.getElementById();
 	// Toggle visibility
 	var isPanelHidden = panel.classList.contains("display-none");
+	SetVisible(panel, !isPanelHidden)
 	if (isPanelHidden) {
-		panel.classList.remove("display-none");
 		button.classList.add("expandable-button-visible");
 	} else {
-		panel.classList.add("display-none");
 		button.classList.remove("expandable-button-visible");
+	}
+}
+
+function SetVisible(el, isVisible) {
+	var isControlVisible = !el.classList.contains("display-none");
+	// if must show and is not visible then...
+	if (isVisible && !isControlVisible) {
+		el.classList.add("display-none");
+	}
+	// If must hide and is visible then...
+	else if (!isVisible && isControlVisible) {
+		el.classList.remove("display-none");
 	}
 }
 
@@ -753,7 +763,7 @@ function SimulateStreaming() {
 			index++;
 			setTimeout(streamNextChunk, 500);  // Simulate delay between chunks
 		} else {
-			
+
 			// Streaming complete
 			delete currentMessageBodies[message.Id];
 			UpdateMessageStatus(message.Id, "");
@@ -761,7 +771,7 @@ function SimulateStreaming() {
 	}
 
 	streamNextChunk();
-	
+
 }
 
 
@@ -833,6 +843,7 @@ function ApplyDiffference(el, newHtml) {
 			i += 1;
 		}
 	}
+	SetVisible(el, !isEmpty(tempEl.innerText));
 }
 
 // #endregion

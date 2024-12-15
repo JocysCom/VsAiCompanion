@@ -36,6 +36,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public string Body { get => _Body; set => SetProperty(ref _Body, value); }
 		string _Body;
 
+		[DefaultValue(null)]
+		public string Status { get => _Status; set => SetProperty(ref _Status, value); }
+		string _Status;
+
 		[DefaultValue(false)]
 		public bool IsPreview { get => _IsPreview; set => SetProperty(ref _IsPreview, value); }
 		bool _IsPreview;

@@ -453,13 +453,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
 			var id = Guid.NewGuid();
-			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "...", MessageType.In);
+			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			ControlsHelper.AppInvoke(() =>
 			{
+				assistantMessageItem.Status = "Processing...";
 				serviceItem.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
 				Global.AvatarPanel?.PlayMessageSentAnimation();
 				serviceItem.Messages.Add(assistantMessageItem);
+				assistantMessageItem.Status = "Thinking";
 			});
 			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
@@ -476,8 +478,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
 						temperature = (float)creativity,
 						stream = service.ResponseStreaming,
-
-
 					};
 					if (service.ServiceType == ApiServiceType.OpenAI)
 						request.max_tokens = maxInputTokens;
@@ -655,9 +655,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			ControlsHelper.AppInvoke(() =>
 			{
 				assistantMessageItem.Updated = DateTime.Now;
+				assistantMessageItem.Status = null;
 			});
-			if (!messageItems.Contains(assistantMessageItem))
-				messageItems.Add(assistantMessageItem);
+			//if (!messageItems.Contains(assistantMessageItem))
+			//	messageItems.Add(assistantMessageItem);
 			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
