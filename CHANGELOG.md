@@ -1,6 +1,8 @@
-2024-12-09 v1.16.14
+2024-12-15 v1.16.16
 
+- Fix: Chat window not always staying scrolled to the bottom.
 - New: App instance number indicator on the tray icon.
+- Update: Enable streaming of content directly from the server to the chat window.
 - Update: Improved several templates.
 
 2024-12-05 v1.16.12
