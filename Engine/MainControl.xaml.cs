@@ -32,6 +32,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			UiThemeLabel.Visibility = debugVisibility;
+			UiThemeComboBox.Visibility = debugVisibility;
 			// Temporary: Hide "Assistants" feature for release users.
 			TeamsTabItem.Visibility = debugVisibility;
 			UpdatesTabItem.Visibility = !Global.IsVsExtension

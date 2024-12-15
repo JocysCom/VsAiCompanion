@@ -244,7 +244,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private string _UiPresetName;
 
 		/// <summary>UI Theme.</summary>
-		[DefaultValue(ThemeType.Auto)]
+		[DefaultValue(ThemeType.Light)]
 		public ThemeType UiTheme { get => _UiTheme; set => SetProperty(ref _UiTheme, value); }
 		private ThemeType _UiTheme;
 

@@ -70,6 +70,7 @@
 					SelectedValue="{Binding UiPresetName, Source={x:Static root:Global.AppSettings}}"
 					SelectedValuePath="Name" />
 				<Label
+					Name="UiThemeLabel"
 					Padding="6,3,0,3"
 					VerticalAlignment="Center"
 					Content="{StaticResource main_Theme}"

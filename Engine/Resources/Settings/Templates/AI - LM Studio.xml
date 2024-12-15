@@ -25,13 +25,10 @@ NbX0LCj9b9QyoJ7u6E2oRdDsGYX/nlovwX4Tas1Q/BtmGetzYjkaZUGjZWb+WBe/AEw26CzwBgAA</Ic
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
-  <GenerateTitleTemplate>® System - Generate Title - xAI</GenerateTitleTemplate>
-  <AutoGenerateTitle>true</AutoGenerateTitle>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
   <MaxRiskLevel>Medium</MaxRiskLevel>
   <ShowPrompting>true</ShowPrompting>
   <AttachmentsSelection />
-  <TemplateVideoToText>® System - Video-To-Text - xAI</TemplateVideoToText>
 </TemplateItem>
