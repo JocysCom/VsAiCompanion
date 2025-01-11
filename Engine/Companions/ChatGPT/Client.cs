@@ -432,17 +432,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// </summary>
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
 		public async Task<List<MessageItem>> QueryAI(
-			TemplateItem serviceItem,
+			TemplateItem item,
 			List<chat_completion_message> messagesToSend,
 			string embeddingText
 		)
 		{
 			// Service item.
-			var service = serviceItem.AiService;
-			var modelName = serviceItem.AiModel;
+			var service = item.AiService;
+			var modelName = item.AiModel;
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			var creativity = serviceItem.Creativity;
-			var maxInputTokens = GetMaxInputTokens(serviceItem);
+			var maxInputTokens = GetMaxInputTokens(item);
 			// Other settings.
 			var newMessageItems = new List<MessageItem>();
 			var functionResults = new List<MessageAttachments>();
@@ -453,11 +452,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			ControlsHelper.AppInvoke(() =>
 			{
-				serviceItem.CancellationTokenSources.Add(cancellationTokenSource);
+				item.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
 				Global.AvatarPanel?.PlayMessageSentAnimation();
 				newMessageItems.Add(assistantMessageItem);
-				serviceItem.Messages.Add(assistantMessageItem);
+				item.Messages.Add(assistantMessageItem);
 				assistantMessageItem.Status = "Thinking";
 			});
 			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
@@ -489,15 +488,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 				}
 
-				var completionsOptions = GetChatCompletionOptions((float)creativity);
-				var addToolsToOptions = serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
-				var addToolsToMessage = serviceItem.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+				var completionsOptions = GetChatCompletionOptions(item);
+				var addToolsToOptions = item.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+				var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
 				ControlsHelper.AppInvoke(() =>
 				{
 					if (addToolsToOptions)
 					{
-						var tools = PluginsManager.GetChatToolDefinitions(serviceItem);
-						PluginsManager.ProvideTools(tools, serviceItem, options: completionsOptions);
+						var tools = PluginsManager.GetChatToolDefinitions(item);
+						PluginsManager.ProvideTools(tools, item, options: completionsOptions);
 					}
 				});
 				var client = await GetAiClient();
@@ -620,7 +619,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					functions = ConvertChatToolCallsTo(toolCalls);
 				}
 				// Get approval and process functions.
-				await ProcessFunctions(serviceItem, functions,
+				await ProcessFunctions(item, functions,
 					functionResults, assistantMessageItem,
 					cancellationTokenSource);
 			}
@@ -633,7 +632,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				ControlsHelper.AppInvoke(() =>
 				{
 					Global.MainControl.InfoPanel.RemoveTask(id);
-					serviceItem.CancellationTokenSources.Remove(cancellationTokenSource);
+					item.CancellationTokenSources.Remove(cancellationTokenSource);
 					Global.AvatarPanel?.PlayMessageReceivedAnimation();
 				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
@@ -655,20 +654,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				ControlsHelper.AppInvoke(() =>
 				{
 					newMessageItems.Add(userAutoReplyMessageItem);
-					serviceItem.Messages.Add(userAutoReplyMessageItem);
+					item.Messages.Add(userAutoReplyMessageItem);
 				});
 			}
 			return newMessageItems;
 		}
 
-		public static ChatCompletionOptions GetChatCompletionOptions(float creativity)
+		public static ChatCompletionOptions GetChatCompletionOptions(TemplateItem item)
 		{
 			var options = new ChatCompletionOptions();
-			// Need to use reflection to set the Temperature property
-			// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
-			typeof(ChatCompletionOptions)
-				.GetProperty(nameof(ChatCompletionOptions.Temperature), BindingFlags.Public | BindingFlags.Instance)
-					?.SetValue(options, creativity, null);
+			options.Temperature = (float)item.Creativity;
+			//// Need to use reflection to set the Temperature property
+			//// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
+			//typeof(ChatCompletionOptions)
+			//	.GetProperty(nameof(ChatCompletionOptions.Temperature), BindingFlags.Public | BindingFlags.Instance)
+			//		?.SetValue(options, (float)item.Creativity, null);
 			return options;
 		}
 
@@ -795,11 +795,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			// Autodetect.
 			modelName = modelName.ToLowerInvariant();
-			if (modelName.Contains("gpt-5"))
-				return 256 * 1000;
+			// o1 supports 200K tokens.
+			if (modelName.StartsWith("o1") && !modelName.StartsWith("o1-preview"))
+				return 200 * 1000;
 			// All GPT-4 preview models support 128K tokens (2024-01-28).
 			if (modelName.Contains("-128k") ||
-				modelName.StartsWith("o1") ||
+				modelName.StartsWith("o3") ||
+				modelName.StartsWith("o1-preview") ||
 				modelName.Contains("gpt-4o") ||
 				modelName.Contains("grok") ||
 				modelName.Contains("gemini") ||
@@ -830,17 +832,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public static void SetModelFeatures(AiModel item)
 		{
-			if (item.Name.StartsWith("o1"))
+			if (item.Name.StartsWith("o1-preview"))
 			{
 				item.Features = AiModelFeatures.ChatSupport;
 				item.IsFeaturesKnown = true;
-				return;
 			}
-			if (item.Name.Contains("gemini"))
+			else if (item.Name.StartsWith("o1"))
+			{
+				item.Features = AiModelFeatures.ChatSupport | AiModelFeatures.SystemMessages | AiModelFeatures.FunctionCalling;
+				item.IsFeaturesKnown = true;
+			}
+			else if (item.Name.Contains("gemini"))
 			{
 				item.Features = AiModelFeatures.ChatSupport | AiModelFeatures.SystemMessages;
 				item.IsFeaturesKnown = true;
-				return;
 			}
 		}
 

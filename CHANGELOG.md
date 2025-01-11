@@ -1,3 +1,7 @@
+2025-01-11 v1.16.17
+
+- Fix: Updated the context size and features of the `o1` model.
+
 2024-12-15 v1.16.16
 
 - Fix: Chat window not always staying scrolled to the bottom.

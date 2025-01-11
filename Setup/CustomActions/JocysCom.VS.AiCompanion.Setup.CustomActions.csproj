@@ -6,8 +6,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.16.12</AssemblyVersion>
-		<FileVersion>1.16.12</FileVersion>
+		<AssemblyVersion>1.16.17</AssemblyVersion>
+		<FileVersion>1.16.17</FileVersion>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
