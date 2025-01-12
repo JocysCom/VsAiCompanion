@@ -264,6 +264,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ServiceType => FindResource(nameof(main_ServiceType));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
         public static string main_Max_Input_Tokens => FindResource(nameof(main_Max_Input_Tokens));
+        public static string main_Max_Output_Tokens => FindResource(nameof(main_Max_Output_Tokens));
+        public static string main_Max_Output_Tokens_Help => FindResource(nameof(main_Max_Output_Tokens_Help));
         public static string main_Model => FindResource(nameof(main_Model));
         public static string main_Features_are_kown => FindResource(nameof(main_Features_are_kown));
         public static string main_Allowed_Recipients => FindResource(nameof(main_Allowed_Recipients));

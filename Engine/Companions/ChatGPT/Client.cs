@@ -664,6 +664,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var options = new ChatCompletionOptions();
 			options.Temperature = (float)item.Creativity;
+			if (item.MaxCompletionTokensEnabled)
+				options.MaxOutputTokenCount = item.MaxCompletionTokens;
 			//// Need to use reflection to set the Temperature property
 			//// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
 			//typeof(ChatCompletionOptions)

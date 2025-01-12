@@ -280,6 +280,8 @@
 	<!--  Options → AI Models  -->
 	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
 	<sys:String x:Key="main_Max_Input_Tokens">Max Input Tokens</sys:String>
+	<sys:String x:Key="main_Max_Output_Tokens">Max Output Tokens</sys:String>
+	<sys:String x:Key="main_Max_Output_Tokens_Help">The maximum number of tokens that can be generated in a completion includes both displayed output tokens and reasoning tokens. This can help manage costs.</sys:String>
 	<sys:String x:Key="main_Model">Model</sys:String>
 	<sys:String x:Key="main_Features_are_kown">Features are known</sys:String>
 

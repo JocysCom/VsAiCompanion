@@ -104,12 +104,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		double _Creativity = 1.0;
 
 		/// <summary>
-		/// Maximum number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens.
-		/// Can be used to control costs.
+		/// The maximum number of tokens that can be generated in a completion includes both displayed output tokens and reasoning tokens. This can help manage costs.
 		/// </summary>
-		[DefaultValue(null)]
-		public int? MaxCompletionTokens { get => _MaxCompletionTokens; set => SetProperty(ref _MaxCompletionTokens, value); }
-		int? _MaxCompletionTokens;
+		[DefaultValue(16384)]
+		public int MaxCompletionTokens { get => _MaxCompletionTokens; set => SetProperty(ref _MaxCompletionTokens, value); }
+		int _MaxCompletionTokens;
+
+		[DefaultValue(false)]
+		public bool MaxCompletionTokensEnabled { get => _MaxCompletionTokensEnabled; set => SetProperty(ref _MaxCompletionTokensEnabled, value); }
+		bool _MaxCompletionTokensEnabled;
 
 		/// <summary>
 		/// Documents files, selction, clipboard.

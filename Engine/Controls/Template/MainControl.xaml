@@ -185,5 +185,22 @@
 				</StackPanel>
 			</StackPanel>
 		</GroupBox>
+
+		<GroupBox x:Name="ModelGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Context_Options}">
+			<StackPanel Orientation="Horizontal">
+				<CheckBox
+					x:Name="MaxCompletionTokensCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Max_Output_Tokens_Help}"
+					AutomationProperties.Name="{StaticResource main_Max_Output_Tokens}"
+					Content="{StaticResource main_Max_Output_Tokens}"
+					IsChecked="{Binding MaxCompletionTokensEnabled}" />
+				<JcControls:NumericUpDown
+					x:Name="MaxCompletionTokensUpDown"
+					LargeChange="1024"
+					Maximum="9223372036854775807"
+					SmallChange="1024"
+					Value="{Binding MaxCompletionTokens, UpdateSourceTrigger=PropertyChanged}" />
+			</StackPanel>
+		</GroupBox>
 	</WrapPanel>
 </UserControl>

@@ -1,6 +1,7 @@
-2025-01-11 v1.16.17
+2025-01-12 v1.16.18
 
 - Fix: Updated the context size and features of the `o1` model.
+- New: `Max Output Tokens` option. This can help manage costs.
 
 2024-12-15 v1.16.16
 
