@@ -1,0 +1,189 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Template.MainControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:controlsShared="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="250"
+	d:DesignWidth="800"
+	Loaded="This_Loaded"
+	Unloaded="This_Unloaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<WrapPanel DataContext="{Binding Item, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+		<controlsShared:IconUserControl
+			x:Name="IconPanel"
+			Grid.Row="1"
+			Width="64"
+			Height="64"
+			VerticalAlignment="Top" />
+		<StackPanel Orientation="Vertical">
+			<GroupBox x:Name="CreativityGroupBox" Margin="0,0,0,3" VerticalAlignment="Top">
+				<GroupBox.Header>
+					<StackPanel Orientation="Horizontal">
+						<Label
+							x:Name="CreativityLabel"
+							Margin="0"
+							Padding="0"
+							Content="Creativity - " />
+						<Label
+							Margin="0"
+							Padding="0"
+							VerticalAlignment="Center"
+							Content="{Binding CreativityName, ElementName=This}" />
+					</StackPanel>
+				</GroupBox.Header>
+				<StackPanel Orientation="Vertical">
+					<Slider
+						Name="CreativitySlider"
+						Width="145"
+						AutomationProperties.HelpText="{StaticResource main_Tasks_Main_Creativity_Slider}"
+						AutomationProperties.Name="Creativity Slider"
+						IsSnapToTickEnabled="True"
+						Maximum="2"
+						Minimum="0"
+						Tag="Creativity"
+						TickFrequency="0.5"
+						TickPlacement="BottomRight"
+						Value="{Binding Creativity}" />
+				</StackPanel>
+			</GroupBox>
+			<CheckBox
+				Name="IsPinnedCheckBox"
+				Margin="5,0,0,0"
+				AutomationProperties.HelpText="{StaticResource main_Pinned_Template_Task_Help}"
+				AutomationProperties.Name="{StaticResource main_Pinned_Template_Task_Name}"
+				Content="{StaticResource main_Pinned_Template_Task_Name}"
+				IsChecked="{Binding IsPinned}" />
+			<CheckBox
+				Name="IsFavoriteCheckBox"
+				Margin="5,0,0,0"
+				AutomationProperties.HelpText="{StaticResource main_Show_Template_Icon_in_Toolbar_Help}"
+				AutomationProperties.Name="{StaticResource main_Show_Template_Icon_in_Toolbar_Name}"
+				Content="{StaticResource main_Show_Template_Icon_in_Toolbar_Name}"
+				IsChecked="{Binding IsFavorite}"
+				Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
+		</StackPanel>
+		<GroupBox
+			x:Name="AutomationGroupBox"
+			Grid.Row="1"
+			Grid.Column="1"
+			Margin="3,0,0,3"
+			VerticalAlignment="Stretch">
+			<GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<Label
+						Grid.Row="2"
+						Grid.Column="1"
+						Padding="0"
+						VerticalAlignment="Center"
+						Content="Automation" />
+				</StackPanel>
+			</GroupBox.Header>
+			<StackPanel Orientation="Vertical">
+				<StackPanel Orientation="Horizontal">
+					<StackPanel>
+						<CheckBox
+							Name="AutoSendCheckBox"
+							AutomationProperties.HelpText="{StaticResource main_Send_Task_on_Create_Help}"
+							AutomationProperties.Name="{StaticResource main_Send_Task_on_Create_Name}"
+							Content="{StaticResource main_Send_Task_on_Create_Name}"
+							IsChecked="{Binding AutoSend}" />
+						<CheckBox
+							Name="AutoFormatMessageCheckBox"
+							Margin="0"
+							AutomationProperties.HelpText="{StaticResource main_Auto_Format_Message_Help}"
+							AutomationProperties.Name="{StaticResource main_Auto_Format_Message_Name}"
+							IsChecked="{Binding AutoFormatMessage}">
+							<TextBlock VerticalAlignment="Center">
+								<Run Text="Auto" />
+								<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
+							</TextBlock>
+						</CheckBox>
+					</StackPanel>
+					<StackPanel>
+						<CheckBox
+							Name="AutoRemoveCheckBox"
+							Margin="0,0,0,3"
+							VerticalAlignment="Bottom"
+							AutomationProperties.HelpText="{StaticResource main_Remove_Task_on_Complete_Help}"
+							AutomationProperties.Name="{StaticResource main_Remove_Task_on_Complete_Name}"
+							Content="{StaticResource main_Remove_Task_on_Complete_Name}"
+							IsChecked="{Binding AutoRemove}" />
+						<ComboBox
+							Name="MessageBoxOperationComboBox"
+							Width="138"
+							Margin="3,0,0,0"
+							VerticalAlignment="Top"
+							AutomationProperties.HelpText="{StaticResource main_Send_Message_Action_Help}"
+							AutomationProperties.Name="{StaticResource main_Send_Message_Action_Name}"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
+							SelectedValue="{Binding MessageBoxOperation}"
+							SelectedValuePath="Key" />
+					</StackPanel>
+				</StackPanel>
+
+				<StackPanel Orientation="Horizontal">
+					<CheckBox
+						Name="AutoGenerateTitleCheckBox"
+						AutomationProperties.HelpText="{StaticResource main_Auto_Generate_Title_Help}"
+						AutomationProperties.Name="{StaticResource main_Auto_Generate_Title_Name}"
+						Content="{StaticResource main_Auto_Generate_Title_Name}"
+						IsChecked="{Binding AutoGenerateTitle}" />
+				</StackPanel>
+			</StackPanel>
+
+		</GroupBox>
+		<GroupBox
+			x:Name="InstructionsGroupBox"
+			Grid.Row="1"
+			Grid.Column="1"
+			Margin="3,0,3,3"
+			VerticalAlignment="Stretch">
+			<GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<Label
+						Grid.Row="2"
+						Grid.Column="1"
+						Padding="0"
+						VerticalAlignment="Center"
+						Content="Instructions" />
+				</StackPanel>
+			</GroupBox.Header>
+			<StackPanel
+				Grid.Row="2"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal">
+				<StackPanel VerticalAlignment="Top">
+					<CheckBox
+						Name="IsSystemInstructionsCheckBox"
+						Margin="0"
+						AutomationProperties.HelpText="{StaticResource main_Use_System_Message_Help}"
+						AutomationProperties.Name="{StaticResource main_Use_System_Message_Name}"
+						Content="{StaticResource main_Use_System_Message_Name}"
+						IsChecked="{Binding IsSystemInstructions}" />
+					<CheckBox
+						Name="UseMaximumContextCheckBox"
+						Margin="0"
+						AutomationProperties.HelpText="{StaticResource main_Use_Maximum_Context_Help}"
+						AutomationProperties.Name="{StaticResource main_Use_Maximum_Context_Name}"
+						Content="{StaticResource main_Use_Maximum_Context_Name}"
+						IsChecked="{Binding UseMaximumContext}" />
+				</StackPanel>
+			</StackPanel>
+		</GroupBox>
+	</WrapPanel>
+</UserControl>

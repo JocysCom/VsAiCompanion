@@ -340,25 +340,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			RestoreTabSelection();
 		}
 
-		public string CreativityName
-		{
-			get
-			{
-				var v = _Item?.Creativity;
-				if (v is null)
-					return "";
-				if (v >= 2 - 0.25)
-					return "Very Creative";
-				if (v >= 1.5 - 0.25)
-					return "Creative";
-				if (v >= 1 - 0.25)
-					return "Balanced";
-				if (v >= 0.5 - 0.25)
-					return "Precise";
-				return "Very Precise";
-			}
-		}
-
 		public Dictionary<ToolCallApprovalProcess, string> PluginApprovalProcesses
 				=> ClassLibrary.Runtime.Attributes.GetDictionary((ToolCallApprovalProcess[])Enum.GetValues(typeof(ToolCallApprovalProcess)));
 
@@ -395,26 +376,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(RoleListNames));
 		}
 
-		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
-		{
-			get
-			{
-				if (_MessageBoxOperations == null)
-				{
-					var values = (MessageBoxOperation[])Enum.GetValues(typeof(MessageBoxOperation));
-					_MessageBoxOperations = ClassLibrary.Runtime.Attributes.GetDictionary(values);
-				}
-				return _MessageBoxOperations;
-			}
-			set => _MessageBoxOperations = value;
-		}
-		Dictionary<MessageBoxOperation, string> _MessageBoxOperations;
+
+		#region ■ Properties
 
 		public TemplateItem Item
 		{
 			get => _Item;
 		}
 		TemplateItem _Item;
+
+		[Category("Main"), DefaultValue(ItemType.None)]
+		public ItemType DataType
+		{
+			get => _DataType;
+			set
+			{
+				_DataType = value;
+				if (ControlsHelper.IsDesignMode(this))
+					return;
+				// Update panel settings.
+				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
+				PanelSettings = Global.AppSettings.GetTaskSettings(value);
+				ZoomSlider.Value = PanelSettings.ChatPanelZoom;
+				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
+				// Update the rest.
+				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
+				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
+				OnPropertyChanged(nameof(BarPanelVisibility));
+			}
+		}
+		private ItemType _DataType;
 
 		public async Task BindData(TemplateItem item)
 		{
@@ -439,16 +430,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ChatPanel.AttachmentsPanel.CurrentItems != null)
 				ChatPanel.AttachmentsPanel.CurrentItems = null;
 			DataContext = _Item;
+			await MainPanel.BindData(_Item, DataType, ChatPanel);
 			_Item.PropertyChanged += _item_PropertyChanged;
 			AiModelBoxPanel.Item = _Item;
 			ToolsPanel.Item = _Item;
-			OnPropertyChanged(nameof(CreativityName));
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
 			UpdateListNames(new string[] { _Item?.Name, });
 			PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 			ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
-			IconPanel.BindData(_Item);
 			await VisualStudioPanel.BindData(_Item);
 			CanvasPanel.Item = _Item;
 			ExternalModelsPanel.Item = _Item;
@@ -477,6 +467,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateListEditButtons();
 		}
 
+		#endregion
+
 		// Move to settings later.
 		public const string TextToProcess = "Text to process:";
 
@@ -487,9 +479,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				case nameof(TemplateItem.IsBusy):
 					ChatPanel.IsBusy = _Item.IsBusy;
 					ChatPanel.UpdateMessageEdit();
-					break;
-				case nameof(TemplateItem.Creativity):
-					OnPropertyChanged(nameof(CreativityName));
 					break;
 				case nameof(TemplateItem.IsSystemInstructions):
 					var text = _Item.TextInstructions.Trim();
@@ -526,39 +515,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					break;
 			}
 		}
-
-		#region ■ Properties
-
-		[Category("Main"), DefaultValue(ItemType.None)]
-		public ItemType DataType
-		{
-			get => _DataType;
-			set
-			{
-				_DataType = value;
-				if (ControlsHelper.IsDesignMode(this))
-					return;
-				// Update panel settings.
-				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
-				PanelSettings = Global.AppSettings.GetTaskSettings(value);
-				ZoomSlider.Value = PanelSettings.ChatPanelZoom;
-				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
-
-				var binding = new System.Windows.Data.Binding();
-				binding.Path = new PropertyPath(nameof(TemplateItemVisibility));
-				binding.Source = this;
-				ChatPanel.MessagesPanel.DataType = value;
-				ChatPanel.MessagePlaceholderTabItem.SetBinding(UIElement.VisibilityProperty, binding);
-				// Update the rest.
-				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
-				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
-				OnPropertyChanged(nameof(BarPanelVisibility));
-				OnPropertyChanged(nameof(TemplateItemVisibility));
-			}
-		}
-		private ItemType _DataType;
-
-		#endregion
 
 		public void UpdateAvatarControl()
 		{
@@ -631,12 +587,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			RestoreTabSelection();
 		}
 
-		private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
-		{
-			ControlsHelper.OpenUrl(e.Uri.AbsoluteUri);
-			e.Handled = true;
-		}
-
 		private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			PanelSettings.ChatPanelZoom = (int)ZoomSlider.Value;
@@ -685,7 +635,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
 				OnPropertyChanged(nameof(BarPanelVisibility));
-				OnPropertyChanged(nameof(TemplateItemVisibility));
 			}
 			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
 			{
@@ -700,9 +649,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public Visibility BarPanelVisibility
 			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
-
-		public Visibility TemplateItemVisibility
-			=> PanelSettings.IsBarPanelVisible && _DataType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
 
 		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
 		{
