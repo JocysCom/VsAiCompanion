@@ -131,10 +131,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
+          <GridSplitterPosition>0.29973297730307075</GridSplitterPosition>
           <ListSelection>
-            <string>gpt-4o</string>
+            <string>o1-2024-12-17</string>
           </ListSelection>
-          <ListSelectedIndex>1</ListSelectedIndex>
+          <ListSelectedIndex>43</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
@@ -294,6 +295,70 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
+          <Path>Google Gemini</Path>
+          <Name>gemini-1.5-flash</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>052a059f-9838-0ac5-c27e-a833b63f6938</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>SystemMessages ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Google Gemini</Path>
+          <Name>gemini-1.5-pro</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cb4376d9-9751-a5b4-a222-c093ac45eb32</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>SystemMessages ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>xAi Grok</Path>
+          <Name>grok-beta</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>88e2561e-01e6-7704-d428-54126fb25e13</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>xAi Grok</Path>
+          <Name>grok-vision-beta</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>7ad00887-1455-bd44-d6fe-65169b09455d</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>LM Studio (Local Machine)</Path>
+          <Name>meta-llama-3.1-8b-instruct</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cc4309f0-dc71-ffda-5847-615b5c8476c2</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
+          <MaxInputTokens>2048</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>LM Studio (Local Machine)</Path>
+          <Name>text-embedding-nomic-embed-text-v1.5</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cb95c376-da7a-3b1e-f6a5-9e393790f750</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
           <Path>Open AI</Path>
           <Name>babbage-002</Name>
           <Created>0001-01-01T00:00:00</Created>
@@ -321,7 +386,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>9a1dc5bf-d075-b3d9-50a2-82951f6ccf50</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -331,7 +396,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>ab2af793-cba0-b803-b61f-2f06f623083a</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -359,26 +424,6 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
           <Id>5a5b4ecc-4eb3-6ac3-92b6-adb2dcb9934e</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>Open AI</Path>
-          <Name>gpt-3.5-turbo-0301</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>98da0619-d7a5-abc1-d82b-eeebf0f2be49</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>Open AI</Path>
-          <Name>gpt-3.5-turbo-0613</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>47f0bfeb-4e2e-ea48-3a7b-76b0128a7bac</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
@@ -475,16 +520,6 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
-          <Name>gpt-4-1106-vision-preview</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>9b9f0dfc-6bad-070e-69b4-987d74b61ab3</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>Open AI</Path>
           <Name>gpt-4-turbo</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -509,16 +544,6 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
           <Id>a92bd67d-5675-94b8-9adc-5a142b7bafe8</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>Open AI</Path>
-          <Name>gpt-4-vision-preview</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>87c20de8-7034-fd7f-07b9-0f493ee86c42</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
@@ -555,6 +580,46 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
+          <Name>gpt-4o-2024-11-20</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>53d05b96-0158-a071-90df-7df3c4e988f6</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-audio-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>be4bc7df-f277-4893-585d-332e6f2e7b80</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-audio-preview-2024-10-01</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>8f968564-14e9-e75a-42c6-4faedd4b9cc3</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-audio-preview-2024-12-17</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>fe400b3d-a8c0-cb69-6c5d-42a41b645e64</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>gpt-4o-mini</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -575,6 +640,100 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
+          <Name>gpt-4o-mini-audio-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>14519984-0626-f5bd-fc9a-9d4df4bf884d</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-mini-audio-preview-2024-12-17</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>0f2bdf74-7e25-219b-0acf-357fc10e4881</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-mini-realtime-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>d0e97568-eec8-c385-9240-c5721a0c56f0</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-mini-realtime-preview-2024-12-17</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>75a06366-ac6b-d893-cb44-1d59ff4f948b</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-realtime-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>d589a734-642c-5d50-85d7-821b93207e18</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-realtime-preview-2024-10-01</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>83dde687-e2ab-8f09-cee1-b8a77d916961</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-realtime-preview-2024-12-17</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>9a0a49d3-618b-dd61-40f6-921bfe053850</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>o1</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>25fae51b-0a93-3794-c380-5c71490bfdcb</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>200000</MaxInputTokens>
+          <Features>SystemMessages FunctionCalling ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>o1-2024-12-17</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>a2063b4f-7805-4bea-89a8-9ccb8dbda4d2</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>200000</MaxInputTokens>
+          <Features>SystemMessages FunctionCalling ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>o1-mini</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -582,7 +741,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
-          <Features>ChatSupport</Features>
+          <Features>SystemMessages FunctionCalling ChatSupport</Features>
           <IsFeaturesKnown>true</IsFeaturesKnown>
         </AiModel>
         <AiModel>
@@ -594,7 +753,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
-          <Features>ChatSupport</Features>
+          <Features>SystemMessages FunctionCalling ChatSupport</Features>
           <IsFeaturesKnown>true</IsFeaturesKnown>
         </AiModel>
         <AiModel>
@@ -620,6 +779,26 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <MaxInputTokens>128000</MaxInputTokens>
           <Features>ChatSupport</Features>
           <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>omni-moderation-2024-09-26</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>385c9243-1c16-edea-69c1-4fb945a2f57c</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2048</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>omni-moderation-latest</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>4e59dcca-b51b-537b-26f9-42196ea5dd62</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -659,7 +838,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>38225cc4-7e6c-1ffb-d681-0e90cdbbe701</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -669,7 +848,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>94d899d2-3b40-8f4f-f39c-34699af72338</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -679,7 +858,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>69d29bda-3f15-daeb-0689-f2b6f2fca4f7</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -689,7 +868,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>0a7f9be3-feaa-3f84-326f-19632c5051f8</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -699,71 +878,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>53eb1f52-5ad9-40ea-fe6b-a8960a583ee9</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>Google Gemini</Path>
-          <Name>gemini-1.5-flash</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>052a059f-9838-0ac5-c27e-a833b63f6938</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-          <Features>SystemMessages ChatSupport</Features>
-          <IsFeaturesKnown>true</IsFeaturesKnown>
-        </AiModel>
-        <AiModel>
-          <Path>Google Gemini</Path>
-          <Name>gemini-1.5-pro</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>cb4376d9-9751-a5b4-a222-c093ac45eb32</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>8b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-          <Features>SystemMessages ChatSupport</Features>
-          <IsFeaturesKnown>true</IsFeaturesKnown>
-        </AiModel>
-        <AiModel>
-          <Path>xAi Grok</Path>
-          <Name>grok-beta</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>88e2561e-01e6-7704-d428-54126fb25e13</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>xAi Grok</Path>
-          <Name>grok-vision-beta</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>7ad00887-1455-bd44-d6fe-65169b09455d</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>LM Studio (Local Machine)</Path>
-          <Name>meta-llama-3.1-8b-instruct</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>cc4309f0-dc71-ffda-5847-615b5c8476c2</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
           <MaxInputTokens>2048</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>LM Studio (Local Machine)</Path>
-          <Name>text-embedding-nomic-embed-text-v1.5</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>cb95c376-da7a-3b1e-f6a5-9e393790f750</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />

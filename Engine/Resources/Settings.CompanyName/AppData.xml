@@ -48,8 +48,8 @@
       <StartPosition>
         <Left>420</Left>
         <Top>60</Top>
-        <Width>1033</Width>
-        <Height>815.5</Height>
+        <Width>1033.3333333333333</Width>
+        <Height>815.3333333333333</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -60,7 +60,8 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.2099009900990099</GridSplitterPosition>
+          <GridSplitterPosition>0.21017845340383345</GridSplitterPosition>
+          <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
@@ -68,7 +69,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.22178217821782178</GridSplitterPosition>
+          <GridSplitterPosition>0.22207534699272968</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -105,6 +106,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
+          <GridSplitterPosition>0.29973297730307075</GridSplitterPosition>
           <ListSelection>
             <string>Company Name AI</string>
           </ListSelection>
@@ -145,6 +147,7 @@
       </UserProfiles>
       <OverrideInfoDefaultHead>AI Companion for CyberNet Solutions</OverrideInfoDefaultHead>
       <OverrideInfoDefaultBody>Your expert consultant that analyzes your project files and collaborates with you to optimize efficiency, streamline processes, and elevate your overall productivity.</OverrideInfoDefaultBody>
+      <UiPresetName>Simple</UiPresetName>
       <ContextFunctionResponseInstructions>To call a function, Provide the function call as JSON that strictly adheres to the JSON schema for function calls, which is supplied below.&#xD;
 Enclose the JSON code in triple backticks with "JSON" after the opening backticks, like this:&#xD;
 ```JSON&#xD;

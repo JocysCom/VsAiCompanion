@@ -798,12 +798,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// Autodetect.
 			modelName = modelName.ToLowerInvariant();
 			// o1 supports 200K tokens.
-			if (modelName.StartsWith("o1") && !modelName.StartsWith("o1-preview"))
+			if (modelName.StartsWith("o1") && !modelName.Contains("o1-preview") && !modelName.Contains("mini"))
 				return 200 * 1000;
 			// All GPT-4 preview models support 128K tokens (2024-01-28).
 			if (modelName.Contains("-128k") ||
 				modelName.StartsWith("o3") ||
-				modelName.StartsWith("o1-preview") ||
+				modelName.StartsWith("o1") ||
 				modelName.Contains("gpt-4o") ||
 				modelName.Contains("grok") ||
 				modelName.Contains("gemini") ||
