@@ -118,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="content">The text content to encode into the QR code.</param>
 		/// <param name="pixelsPerModule">The size of each QR code module in pixels. Default is 20.</param>
-		/// <param name="qrImageFormat">The desired output format for the QR code (`png` or `svg`).</param>
+		/// <param name="qrImageFormat">The desired output format for the QR code (`svg` or `png`). Default and recommended is `svg`.</param>
 		/// <param name="darkColorHtmlHex">The HTML HEX color for the QR code pixels. Default is `#000000`.</param>
 		/// <param name="lightColorHtmlHex">The background HTML HEX color for the QR code. Default is `#FFFFFF`.</param>
 		/// <returns>An the path to the generated QR code image on success</returns>
@@ -126,7 +126,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public async Task<OperationResult<string>> GenerateQrCodeImage(
 			string content,
 			int pixelsPerModule = 20,
-			string qrImageFormat = "png",
+			string qrImageFormat = "svg",
 			string darkColorHtmlHex = "#000000",
 			string lightColorHtmlHex = "#ffffff"
 			)

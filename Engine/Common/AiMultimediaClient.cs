@@ -387,7 +387,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public async Task<OperationResult<string>> GenerateQrCodeImage(
 			string content,
 			int pixelsPerModule = 20,
-			string qrImageFormat = "png",
+			string qrImageFormat = "svg",
 			string darkColorHtmlHex = "#000000",
 			string lightColorHtmlHex = "#ffffff"
 		)
@@ -408,8 +408,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 						var svgQr = new SvgQRCode(qrCodeData);
 						var svgText = svgQr.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex, true);
 						bytes = System.Text.Encoding.UTF8.GetBytes(svgText);
-						info.Width = pixelsPerModule;
-						info.Height = pixelsPerModule;
+						info.Width = 512;
+						info.Height = 512;
+						info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}.{qrImageFormat}";
 						break;
 					default:
 						// Generate bitmap-based image
@@ -422,9 +423,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 							await Task.Run(() => qrBitmap.Save(ms, ImageFormat.Png));
 							bytes = ms.ToArray();
 						}
+						info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{info.Width}x{info.Height}.{qrImageFormat}";
 						break;
 				}
-				info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{info.Width}x{info.Height}.{qrImageFormat}";
 				// Save the image and update messages
 				var imageBytes = bytes.ToArray();
 				var pngPath = SaveObjectAndAddAttachment(info, imageBytes, false);

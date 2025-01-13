@@ -1,3 +1,7 @@
+2025-01-13 v1.16.22
+
+- New: `GenerateQrCodeImage` function. Can be used to send data to a mobile using the camera.
+
 2025-01-12 v1.16.20
 
 - Fix: Updated the context size and features of the `o1` model.
