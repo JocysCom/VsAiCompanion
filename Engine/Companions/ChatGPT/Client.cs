@@ -1,6 +1,4 @@
-﻿using Azure.AI.OpenAI;
-using Azure.Identity;
-using JocysCom.ClassLibrary;
+﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
@@ -16,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -280,100 +277,66 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public event EventHandler MessageDone;
 
-		public class AddHeadersPolicy : PipelinePolicy
-		{
-			private readonly IDictionary<string, string> _headers;
-
-			public AddHeadersPolicy(IDictionary<string, string> headers)
-			{
-				_headers = headers;
-			}
-			public override void Process(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int currentIndex)
-			{
-				// Add the headers to the request
-				foreach (var header in _headers)
-				{
-					message.Request.Headers.Set(header.Key, header.Value);
-				}
-				// Continue processing the next policy in the pipeline
-				ProcessNext(message, pipeline, currentIndex + 1);
-			}
-
-			public override async ValueTask ProcessAsync(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int currentIndex)
-			{
-				var ms = new MemoryStream();
-				if (message.Request.Content != null)
-				{
-					message.Request.Content?.WriteTo(ms);
-					ms.Position = 0;
-					// Convert binary data to string
-					var jsonString = Encoding.UTF8.GetString(ms.ToArray());
-					//var stringContent = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
-					//var o = Client.Deserialize<OpenAI.Chat.ChatCompletionOptions>(jsonString);
-					//// Create BinaryContent from the stream
-					//var binaryContent = System.ClientModel.BinaryContent.Create(ms);
-					//message.Request.Content = binaryContent;
-				}
-				// Add the headers to the request
-				//foreach (var header in _headers)
-				//{
-				//	message.Request.Headers.Set(header.Key, header.Value);
-				//}
-				// Continue processing the next policy in the pipeline asynchronously
-				await ProcessNextAsync(message, pipeline, currentIndex + 1).ConfigureAwait(false);
-			}
-		}
-
 		public async Task<OpenAIClient> GetAiClient(bool useLogger = true, CancellationToken cancellationToken = default)
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 			var endpoint = new Uri(Service.BaseUrl);
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
+			var headProperties = new Dictionary<string, string>
+			{
+				//{ "Content-Type", "application/json" },
+			};
+			var bodyProperties = new Dictionary<string, string>
+			{
+				//{ "reasoning_effort", "high" },
+			};
 			OpenAIClient client;
+			// If use modified OpenAIClient by Microsoft then...
 			if (Service.IsAzureOpenAI)
 			{
+				// Using `Azure.AI.OpenAI.AzureOpenAIClient` by `azure-sdk Microsoft`
+				var options = new Azure.AI.OpenAI.AzureOpenAIClientOptions();
+				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
+				//if (headProperties.Any())
+				//	options.AddPolicy(new AddHeadersPolicy(headProperties), PipelinePosition.PerCall);
+				//if (bodyProperties.Any())
+				//	options.AddPolicy(new ModifyRequestBodyPolicy(bodyProperties), PipelinePosition.PerCall);
 				if (string.IsNullOrEmpty(apiSecretKey))
 				{
-					client = new AzureOpenAIClient(endpoint, new DefaultAzureCredential());
+					var credential = new Azure.Identity.DefaultAzureCredential();
+					client = new Azure.AI.OpenAI.AzureOpenAIClient(endpoint, credential, options);
 				}
 				else
 				{
 					var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
-					client = new AzureOpenAIClient(endpoint, credential);
+					client = new Azure.AI.OpenAI.AzureOpenAIClient(endpoint, credential, options);
 				}
 			}
 			else
 			{
-				//var pipeline = new HttpPipeline(transport);
+				// Using `OpenAI.OpenAIClient` by `OpenAIOfficial`
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				options.Endpoint = endpoint;
-				var headers = new Dictionary<string, string>
-				{
-					{ "Content-Type", "application/json" },
-				};
-				options.AddPolicy(new AddHeadersPolicy(headers), PipelinePosition.PerCall);
-				if (useLogger)
-				{
-					//// Create HttpClient with HttpClientLogger handler
-					//var logger = new HttpClientLogger(new HttpClientHandler());
-					//// Create the HttpClient to use HttpClientLogger
-					//var httpClient = new HttpClient(logger)
-					//{
-					//	BaseAddress = endpoint,
-					//	Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
-					//};
-					//// Register the handler in the HttpPipeline (hypothetical approach)
-					//var transport = new HttpClientPipelineTransport(httpClient);
-					//options.Transport = transport;
-				}
+				// Always create a custom transport so the pipeline is used.
+				HttpMessageHandler handler = new HttpClientHandler();
+				//if (useLogger)
+				//	handler = new HttpClientLogger(handler);
+				if (headProperties.Any())
+					handler = new ModifyRequestHeadHandler(headProperties, handler);
+				if (bodyProperties.Any())
+					handler = new ModifyRequestBodyHandler(bodyProperties, handler);
+				var httpClient = new HttpClient(handler);
+				httpClient.BaseAddress = endpoint;
+				httpClient.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
+				// Register the handler in the HttpPipeline
+				var transport = new HttpClientPipelineTransport(httpClient);
+				options.Transport = transport;
 				if (string.IsNullOrEmpty(apiSecretKey))
 					apiSecretKey = "NoKey";
 				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
 				client = new OpenAIClient(credential, options);
-				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-				//prop.SetValue(client, false);
 			}
 			return client;
 		}

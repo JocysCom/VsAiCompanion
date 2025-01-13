@@ -55,7 +55,7 @@
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="System.Text.Json"  />
+		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="HtmlRenderer.PdfSharp" />
 		<PackageReference Include="System.Data.SQLite" />
 		<PackageReference Include="System.Data.SQLite.EF6" />
@@ -68,21 +68,22 @@
 		<PackageReference Include="bblanchon.PDFium.Linux" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" />
 		<PackageReference Include="bblanchon.PDFium.macOS" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" />
 		<PackageReference Include="bblanchon.PDFium.Win32" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" GeneratePathProperty="true" />
-		<PackageReference Include="BouncyCastle.Cryptography"  />
-		<PackageReference Include="ColorCode.HTML"  />
-		<PackageReference Include="DocumentFormat.OpenXml"  />
-		<PackageReference Include="HtmlAgilityPack"  />
-		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing"  />
-		<PackageReference Include="NPOI"  />
-		<PackageReference Include="PdfPig"  />
-		<PackageReference Include="PDFtoImage"  />
-		<PackageReference Include="SixLabors.ImageSharp"  />
+		<PackageReference Include="BouncyCastle.Cryptography" />
+		<PackageReference Include="ColorCode.HTML" />
+		<PackageReference Include="DocumentFormat.OpenXml" />
+		<PackageReference Include="HtmlAgilityPack" />
+		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
+		<PackageReference Include="NPOI" />
+		<PackageReference Include="PdfPig" />
+		<PackageReference Include="PDFtoImage" />
+		<PackageReference Include="QRCoder" />
+		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" />
 		<PackageReference Include="SkiaSharp.NativeAssets.macOS" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Win32" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" GeneratePathProperty="true" />
-		<PackageReference Include="System.Data.OleDb"  />
-		<PackageReference Include="System.Formats.Asn1"  />
-		<PackageReference Include="Tiktoken"  />
+		<PackageReference Include="System.Data.OleDb" />
+		<PackageReference Include="System.Formats.Asn1" />
+		<PackageReference Include="Tiktoken" />
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Reference the native DLLs and specify the destination within the project -->

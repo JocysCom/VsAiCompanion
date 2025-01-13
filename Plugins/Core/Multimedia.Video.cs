@@ -113,6 +113,33 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
+		/// <summary>
+		/// Generates a QR code in the specified format from the given content and saves it to the provided path.
+		/// </summary>
+		/// <param name="content">The text content to encode into the QR code.</param>
+		/// <param name="pixelsPerModule">The size of each QR code module in pixels. Default is 20.</param>
+		/// <param name="qrImageFormat">The desired output format for the QR code (`png` or `svg`).</param>
+		/// <param name="darkColorHtmlHex">The HTML HEX color for the QR code pixels. Default is `#000000`.</param>
+		/// <param name="lightColorHtmlHex">The background HTML HEX color for the QR code. Default is `#FFFFFF`.</param>
+		/// <returns>An the path to the generated QR code image on success</returns>
+		[RiskLevel(RiskLevel.Low)]
+		public async Task<OperationResult<string>> GenerateQrCodeImage(
+			string content,
+			int pixelsPerModule = 20,
+			string qrImageFormat = "png",
+			string darkColorHtmlHex = "#000000",
+			string lightColorHtmlHex = "#ffffff"
+			)
+		{
+			return await GenerateQrCodeImageCallback(content, pixelsPerModule, qrImageFormat, darkColorHtmlHex, lightColorHtmlHex);
+		}
+
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
+		public Func<string, int, string, string, string, Task<OperationResult<string>>> GenerateQrCodeImageCallback;
+
+
 		#region DALL-E
 
 

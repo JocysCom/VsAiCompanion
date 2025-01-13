@@ -1444,6 +1444,22 @@
             <returns>Operation result containing the path to the captured image.</returns>
             <exception cref="T:System.ArgumentException">Thrown if invalid parameters are supplied.</exception>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateQrCodeImage(System.String,System.Int32,System.String,System.String,System.String)">
+            <summary>
+            Generates a QR code in the specified format from the given content and saves it to the provided path.
+            </summary>
+            <param name="content">The text content to encode into the QR code.</param>
+            <param name="pixelsPerModule">The size of each QR code module in pixels. Default is 20.</param>
+            <param name="qrImageFormat">The desired output format for the QR code (`png` or `svg`).</param>
+            <param name="darkColorHtmlHex">The HTML HEX color for the QR code pixels. Default is `#000000`.</param>
+            <param name="lightColorHtmlHex">The background HTML HEX color for the QR code. Default is `#FFFFFF`.</param>
+            <returns>An the path to the generated QR code image on success</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateQrCodeImageCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImage(System.String,JocysCom.VS.AiCompanion.Plugins.Core.image_size,JocysCom.VS.AiCompanion.Plugins.Core.image_style,JocysCom.VS.AiCompanion.Plugins.Core.image_quality)">
             <summary>
             Generates an image using the specified prompt.

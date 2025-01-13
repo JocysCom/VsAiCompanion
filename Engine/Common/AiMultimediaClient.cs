@@ -7,6 +7,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI.Audio;
 using OpenAI.Images;
+using QRCoder;
 using System;
 using System.ClientModel;
 using System.Collections.Generic;
@@ -176,7 +177,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private async Task<ImageClient> GetImageClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
 		{
 			var client = new Client(rItem.AiService);
-			OpenAI.OpenAIClient aiClient = await client.GetAiClient(false, cancellationToken);
+			OpenAI.OpenAIClient aiClient = await client.GetAiClient(useLogger: false, cancellationToken: cancellationToken);
 			return aiClient.GetImageClient(rItem.AiModel);
 		}
 
@@ -381,12 +382,68 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Create QR Code Images
+
+		public async Task<OperationResult<string>> GenerateQrCodeImage(
+			string content,
+			int pixelsPerModule = 20,
+			string qrImageFormat = "png",
+			string darkColorHtmlHex = "#000000",
+			string lightColorHtmlHex = "#ffffff"
+		)
+		{
+			try
+			{
+				var qrGenerator = new QRCodeGenerator();
+				var qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+				byte[] bytes;
+				var info = new Plugins.Core.VsFunctions.ImageInfo()
+				{
+					Prompt = content
+				};
+				switch (qrImageFormat)
+				{
+					case "svg":
+						// Generate SVG string
+						var svgQr = new SvgQRCode(qrCodeData);
+						var svgText = svgQr.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex, true);
+						bytes = System.Text.Encoding.UTF8.GetBytes(svgText);
+						info.Width = pixelsPerModule;
+						info.Height = pixelsPerModule;
+						break;
+					default:
+						// Generate bitmap-based image
+						using (var qrCode = new QRCode(qrCodeData))
+						using (var qrBitmap = qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex, true))
+						{
+							info.Width = qrBitmap.Width;
+							info.Height = qrBitmap.Height;
+							var ms = new MemoryStream();
+							await Task.Run(() => qrBitmap.Save(ms, ImageFormat.Png));
+							bytes = ms.ToArray();
+						}
+						break;
+				}
+				info.Name = $"{info.Type}_{DateTime.Now:yyyyMMdd_HHmmss}_{info.Width}x{info.Height}.{qrImageFormat}";
+				// Save the image and update messages
+				var imageBytes = bytes.ToArray();
+				var pngPath = SaveObjectAndAddAttachment(info, imageBytes, false);
+				return new OperationResult<string>(pngPath);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<string>(ex);
+			}
+		}
+
+		#endregion
+
 		#region Text to Speech
 
 		private async Task<OpenAI.Audio.AudioClient> GetAudioClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
 		{
 			var client = new Client(rItem.AiService);
-			OpenAI.OpenAIClient aiClient = await client.GetAiClient(false, cancellationToken);
+			OpenAI.OpenAIClient aiClient = await client.GetAiClient(useLogger: false, cancellationToken: cancellationToken);
 			return aiClient.GetAudioClient(rItem.AiModel);
 		}
 

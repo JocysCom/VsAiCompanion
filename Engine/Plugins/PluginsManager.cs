@@ -241,6 +241,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToTextCallback = ai.VideoToText;
 					mm.GetTempFolderPath = AppHelper.GetTempFolderPath;
 					mm.GenerateImageCallback = ai.CreateImageAsync;
+					mm.GenerateQrCodeImageCallback = ai.GenerateQrCodeImage;
 					mm.TextToSpeechCallback = ai.TextToSpeech;
 					mm.TranscribeAudioCallback = ai.TranscribeAudio;
 					mm.ModifyImageCallback = ai.ModifyImageAsync;
@@ -252,6 +253,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToTextCallback = null;
 					mm.ModifyImageCallback = null;
 					mm.GenerateImageCallback = null;
+					mm.GenerateQrCodeImageCallback = null;
 					mm.TranscribeAudioCallback = null;
 					mm.TextToSpeechCallback = null;
 					mm.GetTempFolderPath = null;
