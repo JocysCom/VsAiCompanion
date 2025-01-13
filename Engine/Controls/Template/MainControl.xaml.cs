@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 {
@@ -110,6 +111,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		}
 
 		#endregion
+
+		public Dictionary<reasoning_effort, string> ReasoningEfforts
+		{
+			get
+			{
+				if (_ReasoningEfforts == null)
+				{
+					var values = (reasoning_effort[])Enum.GetValues(typeof(reasoning_effort));
+					_ReasoningEfforts = ClassLibrary.Runtime.Attributes.GetDictionary(values);
+				}
+				return _ReasoningEfforts;
+			}
+			set => _ReasoningEfforts = value;
+		}
+		Dictionary<reasoning_effort, string> _ReasoningEfforts;
+
 
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{

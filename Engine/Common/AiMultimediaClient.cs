@@ -177,7 +177,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private async Task<ImageClient> GetImageClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
 		{
 			var client = new Client(rItem.AiService);
-			OpenAI.OpenAIClient aiClient = await client.GetAiClient(useLogger: false, cancellationToken: cancellationToken);
+			OpenAI.OpenAIClient aiClient = await client.GetAiClient(useLogger: false, rItem, cancellationToken);
 			return aiClient.GetImageClient(rItem.AiModel);
 		}
 
@@ -444,7 +444,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private async Task<OpenAI.Audio.AudioClient> GetAudioClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
 		{
 			var client = new Client(rItem.AiService);
-			OpenAI.OpenAIClient aiClient = await client.GetAiClient(useLogger: false, cancellationToken: cancellationToken);
+			OpenAI.OpenAIClient aiClient = await client.GetAiClient(useLogger: false, rItem, cancellationToken);
 			return aiClient.GetAudioClient(rItem.AiModel);
 		}
 

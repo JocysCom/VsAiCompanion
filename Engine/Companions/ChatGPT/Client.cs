@@ -277,7 +277,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public event EventHandler MessageDone;
 
-		public async Task<OpenAIClient> GetAiClient(bool useLogger = true, CancellationToken cancellationToken = default)
+		public async Task<OpenAIClient> GetAiClient(bool useLogger = true, TemplateItem item = null, CancellationToken cancellationToken = default)
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
@@ -287,9 +287,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				//{ "Content-Type", "application/json" },
 			};
-			var bodyProperties = new Dictionary<string, string>
+			var bodyProperties = new Dictionary<string, string>();
+			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
 			{
-				//{ "reasoning_effort", "high" },
+				bodyProperties.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
 			};
 			OpenAIClient client;
 			// If use modified OpenAIClient by Microsoft then...
@@ -353,7 +354,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			CancellationToken cancellationToken = default
 			)
 		{
-			var client = await GetAiClient();
+			var client = await GetAiClient(false);
 			var clientToken = new CancellationTokenSource();
 			clientToken.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(clientToken.Token, cancellationToken);
@@ -462,7 +463,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						PluginsManager.ProvideTools(tools, item, options: completionsOptions);
 					}
 				});
-				var client = await GetAiClient();
+				var client = await GetAiClient(false, item);
 				var chatClient = client.GetChatClient(modelName);
 				var toolCalls = new List<ChatToolCall>();
 				// If streaming  mode is enabled and AI model supports streaming then...

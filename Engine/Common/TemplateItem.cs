@@ -114,6 +114,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool MaxCompletionTokensEnabled { get => _MaxCompletionTokensEnabled; set => SetProperty(ref _MaxCompletionTokensEnabled, value); }
 		bool _MaxCompletionTokensEnabled;
 
+		[DefaultValue(reasoning_effort.medium)]
+		public reasoning_effort ReasoningEffort { get => _ReasoningEffort; set => SetProperty(ref _ReasoningEffort, value); }
+		reasoning_effort _ReasoningEffort;
+
 		/// <summary>
 		/// Documents files, selction, clipboard.
 		/// </summary>

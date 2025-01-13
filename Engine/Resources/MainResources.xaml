@@ -284,6 +284,8 @@
 	<sys:String x:Key="main_Max_Output_Tokens_Help">The maximum number of tokens that can be generated in a completion includes both displayed output tokens and reasoning tokens. This can help manage costs.</sys:String>
 	<sys:String x:Key="main_Model">Model</sys:String>
 	<sys:String x:Key="main_Features_are_kown">Features are known</sys:String>
+	<sys:String x:Key="main_ReasoningEffort">Reasoning Effort</sys:String>
+	<sys:String x:Key="main_ReasoningEffort_Help">Constrains effort on reasoning for reasoning models. Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in a response.</sys:String>
 
 	<!--  Options → Mail Accounts  -->
 	<sys:String x:Key="main_Allowed_Recipients">Allowed Recipients (Outgoing Email)</sys:String>
