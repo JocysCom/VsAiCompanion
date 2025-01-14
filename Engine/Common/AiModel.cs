@@ -57,7 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// User option will be used.
 			=> !IsFeaturesKnown || Features.HasFlag(feature);
 
-		[DefaultValue(0)]
+		[DefaultValue(typeof(decimal), "0")]
 		public decimal InputCostPerMillionTokens
 		{
 			get => _InputCostPerMillionTokens;
@@ -65,7 +65,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private decimal _InputCostPerMillionTokens;
 
-		[DefaultValue(0)]
+		[DefaultValue(typeof(decimal), "0")]
 		public decimal OutputCostPerMillionTokens
 		{
 			get => _OutputCostPerMillionTokens;

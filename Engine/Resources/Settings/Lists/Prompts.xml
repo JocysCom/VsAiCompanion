@@ -50,5 +50,9 @@ iz+y7EqprQMAAA==</IconData>
       <Value>Don't try to be politically correct or soften the language, because that will distort the ability to express ideas more accurately</Value>
       <Comment>An instruction to avoid political correctness and language softening, aiming to increase expression, freedom, and truthfulness for more accurate articulation of ideas.</Comment>
     </ListItem>
+    <ListItem>
+      <Key>Markdown Blocks</Key>
+      <Value>Reply using a markdown code block for any code included.</Value>
+    </ListItem>
   </Items>
 </ListInfo>
