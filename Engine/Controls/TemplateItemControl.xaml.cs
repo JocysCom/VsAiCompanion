@@ -57,9 +57,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
-			// Lists Dropdowns.
-			Global.Lists.Items.ListChanged += Global_Lists_Items_Items_ListChanged;
-			UpdateListNames();
 			// Embeddings dropdown.
 			Global.Embeddings.Items.ListChanged += Embeddings_Items_ListChanged;
 			UpdateEmbeddingNames();
@@ -113,11 +110,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			UpdateAvatarControl();
-		}
-
-		private void Global_Lists_Items_Items_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			AppHelper.CollectionChanged(e, UpdateListNames, nameof(ListInfo.Path), nameof(ListInfo.Name));
 		}
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)
@@ -347,36 +339,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
 				((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new[] { RiskLevel.Unknown }).ToArray());
 
-		public ObservableCollection<ListInfo> ContextListNames { get; set; } = new ObservableCollection<ListInfo>();
-		public ObservableCollection<ListInfo> ProfileListNames { get; set; } = new ObservableCollection<ListInfo>();
-		public ObservableCollection<ListInfo> RoleListNames { get; set; } = new ObservableCollection<ListInfo>();
-
-		private void UpdateListNames()
-		{
-			var name = Item?.Name;
-			if (string.IsNullOrEmpty(name))
-				UpdateListNames(new string[] { });
-			else
-				UpdateListNames(new string[] { name });
-		}
-
-		private void UpdateListNames(string[] extraPaths)
-		{
-			// Update ContextListNames
-			var names = AppHelper.GetListNames(extraPaths, "Context", "Company", "Department");
-			CollectionsHelper.Synchronize(names, ContextListNames);
-			OnPropertyChanged(nameof(ContextListNames));
-			// Update ProfileListNames
-			names = AppHelper.GetListNames(extraPaths, "Profile", "Persona");
-			CollectionsHelper.Synchronize(names, ProfileListNames);
-			OnPropertyChanged(nameof(ProfileListNames));
-			// Update RoleListNames
-			names = AppHelper.GetListNames(extraPaths, "Role");
-			CollectionsHelper.Synchronize(names, RoleListNames);
-			OnPropertyChanged(nameof(RoleListNames));
-		}
-
-
 		#region ■ Properties
 
 		public TemplateItem Item
@@ -422,7 +384,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.MonitorTextBoxSelections(false);
 			// Make sure that custom AiModel old and new item is available to select.
 			AppHelper.UpdateModelCodes(item?.AiService, AiModelBoxPanel.AiModels, item?.AiModel, oldItem?.AiModel);
-			UpdateListNames(new string[] { item?.Name, oldItem?.Name });
 			// Set new item.
 			_Item = item ?? AppHelper.GetNewTemplateItem(true);
 			// This will trigger AiCompanionComboBox_SelectionChanged event.
@@ -431,12 +392,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.AttachmentsPanel.CurrentItems = null;
 			DataContext = _Item;
 			await MainPanel.BindData(_Item, DataType, ChatPanel);
+			await PersonalizationPanel.BindData(_Item);
 			_Item.PropertyChanged += _item_PropertyChanged;
 			AiModelBoxPanel.Item = _Item;
 			ToolsPanel.Item = _Item;
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
-			UpdateListNames(new string[] { _Item?.Name, });
 			PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 			ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 			await VisualStudioPanel.BindData(_Item);
@@ -464,7 +425,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				RestoreTabSelection();
 			ChatPanel.MonitorTextBoxSelections(true);
 			UpdateAvatarControl();
-			UpdateListEditButtons();
 		}
 
 		#endregion
@@ -500,17 +460,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				case nameof(TemplateItem.EmbeddingGroupName):
 					_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 					break;
-				case nameof(TemplateItem.Context0ListName):
-				case nameof(TemplateItem.Context1ListName):
-				case nameof(TemplateItem.Context2ListName):
-				case nameof(TemplateItem.Context3ListName):
-				case nameof(TemplateItem.Context4ListName):
-				case nameof(TemplateItem.Context5ListName):
-				case nameof(TemplateItem.Context6ListName):
-				case nameof(TemplateItem.Context7ListName):
-				case nameof(TemplateItem.Context8ListName):
-					UpdateListEditButtons();
-					break;
 				default:
 					break;
 			}
@@ -540,16 +489,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					MaximumRiskLevelComboBox,
 					PluginApprovalProcessComboBox,
 					PluginApprovalTemplateComboBox,
-					// Other controls.
-					Context0EditButton,
-					Context1EditButton,
-					Context2EditButton,
-					Context3EditButton,
-					Context4EditButton,
-					Context5EditButton,
-					Context6EditButton,
-					Context7EditButton,
-					Context8EditButton,
  				};
 				UiPresetsManager.InitControl(this, excludeElements: excludeElements);
 			}
@@ -875,59 +814,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var html = await GetPageHtmlAsync();
 			AppHelper.SetClipboardHtml(html);
-		}
-
-		#endregion
-
-		#region Open List
-
-		private void Context0EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context0ListName);
-		private void Context1EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context1ListName);
-		private void Context2EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context2ListName);
-		private void Context3EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context3ListName);
-		private void Context4EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context4ListName);
-		private void Context5EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context5ListName);
-		private void Context6EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context6ListName);
-		private void Context7EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context7ListName);
-		private void Context8EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context8ListName);
-
-		void OpenListItem(string name)
-		{
-			if (string.IsNullOrEmpty(name))
-				return;
-			var grid = Global.MainControl.ListsPanel.ListPanel.MainDataGrid;
-			ControlsHelper.EnsureTabItemSelected(grid);
-			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(grid, nameof(ISettingsListFileItem.Name), list, 0);
-			_ = Helper.Debounce(() =>
-			{
-				Global.MainControl.ListsPanel.ListsItemPanel?.InstructionsTextBox.Focus();
-			});
-		}
-
-		void UpdateListEditButtons()
-		{
-			var dic = new Dictionary<Button, string>()
-			{
-				{ Context0EditButton, Item?.Context0ListName },
-				{ Context1EditButton, Item?.Context1ListName },
-				{ Context2EditButton, Item?.Context2ListName },
-				{ Context3EditButton, Item?.Context3ListName },
-				{ Context4EditButton, Item?.Context4ListName },
-				{ Context5EditButton, Item?.Context5ListName },
-				{ Context6EditButton, Item?.Context6ListName },
-				{ Context7EditButton, Item?.Context7ListName },
-				{ Context8EditButton, Item?.Context8ListName }
-			};
-			foreach (var button in dic.Keys.ToArray())
-			{
-				var enabled = !string.IsNullOrEmpty(dic[button]);
-				ControlsHelper.SetEnabled(button, enabled);
-
-				var visibility = enabled ? Visibility.Visible : Visibility.Hidden;
-				if (button.Visibility != visibility)
-					button.Visibility = visibility;
-			}
 		}
 
 		#endregion

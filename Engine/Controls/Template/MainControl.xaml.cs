@@ -58,6 +58,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			OnPropertyChanged(nameof(Item));
 		}
 
+		private void _item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(TemplateItem.Creativity):
+					OnPropertyChanged(nameof(CreativityName));
+					break;
+				default:
+					break;
+			}
+		}
+
 		private Chat.ChatControl ChatPanel;
 
 		[Category("Main"), DefaultValue(ItemType.None)]
@@ -85,18 +97,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		private ItemType _DataType;
 
 		#endregion
-
-		private void _item_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case nameof(TemplateItem.Creativity):
-					OnPropertyChanged(nameof(CreativityName));
-					break;
-				default:
-					break;
-			}
-		}
 
 		#region PanelSettings
 

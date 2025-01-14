@@ -145,6 +145,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Temperature_Creativity_Help => FindResource(nameof(main_Temperature_Creativity_Help));
         public static string main_Tasks_Main_Creativity_Slider => FindResource(nameof(main_Tasks_Main_Creativity_Slider));
         public static string main_Personalize_the_chat => FindResource(nameof(main_Personalize_the_chat));
+        public static string main_Personalization => FindResource(nameof(main_Personalization));
         public static string main_Chat_Send_Name => FindResource(nameof(main_Chat_Send_Name));
         public static string main_Chat_Send_Help => FindResource(nameof(main_Chat_Send_Help));
         public static string main_Chat_Stop_Name => FindResource(nameof(main_Chat_Stop_Name));

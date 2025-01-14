@@ -1,0 +1,269 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Template.PersonalizationControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="250"
+	d:DesignWidth="800"
+	Loaded="This_Loaded"
+	Unloaded="This_Unloaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<StackPanel DataContext="{Binding Item, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+		<Border Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="FeatureDescriptionLabel" Text="{DynamicResource main_Personalize_the_chat}" />
+		</Border>
+		<WrapPanel Orientation="Horizontal">
+			<StackPanel MinWidth="128" Orientation="Vertical">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context0TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding ContextListNames, ElementName=This}"
+						SelectedValue="{Binding Context0ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context0EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context0EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context1TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding ContextListNames, ElementName=This}"
+						SelectedValue="{Binding Context1ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context1EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context1EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context2TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding ProfileListNames, ElementName=This}"
+						SelectedValue="{Binding Context2ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context2EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context2EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+			</StackPanel>
+			<StackPanel MinWidth="128" Orientation="Vertical">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context3TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding RoleListNames, ElementName=This}"
+						SelectedValue="{Binding Context3ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context3EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context3EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context4TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding ProfileListNames, ElementName=This}"
+						SelectedValue="{Binding Context4ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context4EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context4EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context5TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding RoleListNames, ElementName=This}"
+						SelectedValue="{Binding Context5ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context5EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context5EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+			</StackPanel>
+			<StackPanel MinWidth="128" Orientation="Vertical">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context6TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding ProfileListNames, ElementName=This}"
+						SelectedValue="{Binding Context6ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context6EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context6EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context7TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding RoleListNames, ElementName=This}"
+						SelectedValue="{Binding Context7ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context7EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context7EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ComboBox
+						Name="Context8TemplateComboBox"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Name"
+						ItemsSource="{Binding RoleListNames, ElementName=This}"
+						SelectedValue="{Binding Context8ListName}"
+						SelectedValuePath="Name" />
+					<Button
+						Name="Context8EditButton"
+						Grid.Column="1"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="Context8EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</Grid>
+			</StackPanel>
+		</WrapPanel>
+	</StackPanel>
+</UserControl>
