@@ -191,12 +191,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var globalInstructions = Global.AppSettings.GlobalInstructionsEnabled
 					? Global.AppSettings.GlobalInstructions
 					: "";
+				var modelInstructions = aiModel.InstructionsEnabled
+					? aiModel.Instructions
+					: "";
 				var copilotInstructions = "";
 				if (Global.IsVsExtension && item.EnableCopilotInstructions)
 					copilotInstructions = GetCopilotInstructions();
 				// Prepare instructions.
 				var instructions = JoinMessageParts(
 					globalInstructions,
+					modelInstructions,
 					item.TextInstructions,
 					copilotInstructions
 					);

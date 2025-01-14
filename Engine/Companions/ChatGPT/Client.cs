@@ -297,7 +297,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (Service.IsAzureOpenAI)
 			{
 				// Using `Azure.AI.OpenAI.AzureOpenAIClient` by `azure-sdk Microsoft`
-				var options = new Azure.AI.OpenAI.AzureOpenAIClientOptions();
+				var options = new Azure.AI.OpenAI.AzureOpenAIClientOptions(Azure.AI.OpenAI.AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				//if (headProperties.Any())
 				//	options.AddPolicy(new AddHeadersPolicy(headProperties), PipelinePosition.PerCall);
@@ -807,6 +807,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				item.Features = AiModelFeatures.ChatSupport | AiModelFeatures.SystemMessages | AiModelFeatures.FunctionCalling;
 				item.IsFeaturesKnown = true;
+				item.Instructions = "Reply using a markdown code block for any code included.";
 			}
 			else if (item.Name.Contains("gemini"))
 			{

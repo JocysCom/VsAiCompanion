@@ -78,5 +78,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, string.IsNullOrWhiteSpace(value) ? "" : value); }
 		string _Instructions;
 
+		/// <summary>Enable model instructions.</summary>
+		[DefaultValue(false)]
+		public bool InstructionsEnabled { get => _InstructionsEnabled; set => SetProperty(ref _InstructionsEnabled, value); }
+		bool _InstructionsEnabled;
+
+
 	}
 }

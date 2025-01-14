@@ -19,40 +19,69 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<WrapPanel DataContext="{Binding Item, ElementName=This}">
-		<GroupBox Grid.Row="3" Margin="3,0,3,3" HorizontalAlignment="Left">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<WrapPanel DataContext="{Binding Item, ElementName=This}">
+			<GroupBox Grid.Row="3" Margin="3,0,3,3" HorizontalAlignment="Left">
+				<GroupBox.Header>
+					<StackPanel Margin="-4" Orientation="Horizontal">
+						<CheckBox Name="IsFeaturesKnownCheckBox" Content="{StaticResource main_Features_are_kown}" IsChecked="{Binding IsFeaturesKnown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</StackPanel>
+				</GroupBox.Header>
+				<controls:EnumItemsControl
+					x:Name="FeaturesEnumItemsControl"
+					Width="170"
+					VerticalAlignment="Center"
+					ItemsSource="{Binding FeaturesItemsSource, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					SelectedValue="{Binding Features, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			</GroupBox>
+			<GroupBox x:Name="ProgramGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Context_Options}">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Label VerticalAlignment="Center" Content="{StaticResource main_Max_Input_Tokens}" />
+					<JcControls:NumericUpDown
+						x:Name="MaxInputTokensUpdown"
+						Grid.Column="1"
+						LargeChange="1024"
+						Maximum="9223372036854775807"
+						SmallChange="1024"
+						Value="{Binding MaxInputTokens, UpdateSourceTrigger=PropertyChanged}" />
+				</Grid>
+			</GroupBox>
+		</WrapPanel>
+		<GroupBox Grid.Row="1" Margin="3,0,3,0">
 			<GroupBox.Header>
-				<StackPanel Margin="-4" Orientation="Horizontal">
-					<CheckBox Name="IsFeaturesKnownCheckBox" Content="{StaticResource main_Features_are_kown}" IsChecked="{Binding IsFeaturesKnown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				</StackPanel>
+				<CheckBox
+					x:Name="InstructionsEnabledCheckBox"
+					Margin="-4"
+					AutomationProperties.HelpText="{StaticResource main_Model_Instructions_Help}"
+					AutomationProperties.Name="{StaticResource main_Model_Instructions}"
+					Content="{StaticResource main_Model_Instructions}"
+					IsChecked="{Binding InstructionsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			</GroupBox.Header>
-			<controls:EnumItemsControl
-				x:Name="FeaturesEnumItemsControl"
-				Width="170"
-				VerticalAlignment="Center"
-				ItemsSource="{Binding FeaturesItemsSource, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-				SelectedValue="{Binding Features, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<TextBox
+				Name="InstructionsTextBox"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				AcceptsReturn="True"
+				AutomationProperties.HelpText="{StaticResource main_Model_Instructions_Help}"
+				AutomationProperties.Name="{StaticResource main_Model_Instructions}"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SpellCheck.IsEnabled="True"
+				Text="{Binding Instructions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				TextWrapping="Wrap" />
 		</GroupBox>
 
-		<GroupBox x:Name="ProgramGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Context_Options}">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Label VerticalAlignment="Center" Content="{StaticResource main_Max_Input_Tokens}" />
-				<JcControls:NumericUpDown
-					x:Name="MaxInputTokensUpdown"
-					Grid.Column="1"
-					LargeChange="1024"
-					Maximum="9223372036854775807"
-					SmallChange="1024"
-					Value="{Binding MaxInputTokens, UpdateSourceTrigger=PropertyChanged}" />
-			</Grid>
-		</GroupBox>
-
-	</WrapPanel>
+	</Grid>
 </UserControl>
