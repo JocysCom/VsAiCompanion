@@ -52,11 +52,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(false)]
 		public bool IsFeaturesKnown { get => _IsFeaturesKnown; set => SetProperty(ref _IsFeaturesKnown, value); }
 		bool _IsFeaturesKnown;
-
 		public bool HasFeature(AiModelFeatures feature)
 			// Assume that feature is supported if it is not known.
 			// User option will be used.
 			=> !IsFeaturesKnown || Features.HasFlag(feature);
+
+		[DefaultValue(0)]
+		public decimal InputCostPerMillionTokens
+		{
+			get => _InputCostPerMillionTokens;
+			set => SetProperty(ref _InputCostPerMillionTokens, value);
+		}
+		private decimal _InputCostPerMillionTokens;
+
+		[DefaultValue(0)]
+		public decimal OutputCostPerMillionTokens
+		{
+			get => _OutputCostPerMillionTokens;
+			set => SetProperty(ref _OutputCostPerMillionTokens, value);
+		}
+		private decimal _OutputCostPerMillionTokens;
 
 	}
 }
