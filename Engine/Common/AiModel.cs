@@ -73,5 +73,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private decimal _OutputCostPerMillionTokens;
 
+		/// <summary>Model Instructions that will be included at the start of every message.</summary>
+		[DefaultValue("")]
+		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, string.IsNullOrWhiteSpace(value) ? "" : value); }
+		string _Instructions;
+
 	}
 }
