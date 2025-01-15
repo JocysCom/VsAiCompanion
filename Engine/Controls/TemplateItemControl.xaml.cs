@@ -57,9 +57,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
-			// Embeddings dropdown.
-			Global.Embeddings.Items.ListChanged += Embeddings_Items_ListChanged;
-			UpdateEmbeddingNames();
 			// Mails dropdown.
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
 			UpdateMailAccounts();
@@ -393,6 +390,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			DataContext = _Item;
 			await MainPanel.BindData(_Item, DataType, ChatPanel);
 			await PersonalizationPanel.BindData(_Item);
+			await VisualStudioPanel.BindData(_Item);
+			await EmbeddingsPanel.BindData(_Item);
 			_Item.PropertyChanged += _item_PropertyChanged;
 			AiModelBoxPanel.Item = _Item;
 			ToolsPanel.Item = _Item;
@@ -400,7 +399,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
 			PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 			ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
-			await VisualStudioPanel.BindData(_Item);
 			CanvasPanel.Item = _Item;
 			ExternalModelsPanel.Item = _Item;
 			PromptsPanel.BindData(_Item);
@@ -420,7 +418,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, extraInstructions: voiceInstructions);
 				});
 			}
-			_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 			if (PanelSettings.Focus)
 				RestoreTabSelection();
 			ChatPanel.MonitorTextBoxSelections(true);
@@ -456,9 +453,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					break;
 				case nameof(TemplateItem.ShowAvatar):
 					UpdateAvatarControl();
-					break;
-				case nameof(TemplateItem.EmbeddingGroupName):
-					_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 					break;
 				default:
 					break;
@@ -606,54 +600,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.AppSettings.IsSpellCheckEnabled = false;
 		}
 
-		#region Embeddings
-
-		public ObservableCollection<string> EmbeddingNames { get; set; } = new ObservableCollection<string>();
-
-		public void UpdateEmbeddingNames()
-		{
-			var names = Global.Embeddings.Items.Select(x => x.Name).ToList();
-			if (!names.Contains(""))
-				names.Insert(0, "");
-			CollectionsHelper.Synchronize(names, EmbeddingNames);
-			OnPropertyChanged(nameof(EmbeddingNames));
-		}
-
-		public ObservableCollection<CheckBoxViewModel> EmbeddingGroupFlags
-		{
-			get
-			{
-				if (_EmbeddingGroupFlags == null)
-					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroupFlag>();
-				EmbeddingHelper.UpdateGroupFlagsFromDatabase(Item?.UseEmbeddings == true ? Item?.EmbeddingName : null, _EmbeddingGroupFlags);
-				return _EmbeddingGroupFlags;
-			}
-			set => _EmbeddingGroupFlags = value;
-		}
-		ObservableCollection<CheckBoxViewModel> _EmbeddingGroupFlags;
-
-		private void Embeddings_Items_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var update = false;
-			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(TemplateItem.EmbeddingName))
-				update = true;
-			if (e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted)
-				update = true;
-			if (update)
-				_ = Helper.Debounce(UpdateEmbeddingNames);
-		}
-
-		public Dictionary<EmbeddingGroupFlag, string> FilePartGroups
-			=> ClassLibrary.Runtime.Attributes.GetDictionary(
-				(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
-
-		public void EmbeddingGroupFlags_OnPropertyChanged()
-		{
-			OnPropertyChanged(nameof(EmbeddingGroupFlags));
-		}
-
-		#endregion
 
 		#region Mail
 

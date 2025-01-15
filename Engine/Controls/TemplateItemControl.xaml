@@ -222,34 +222,7 @@
 							<Label x:Name="EmbeddingsContextLabel" Content="Embeddings" />
 						</StackPanel>
 					</TabItem.Header>
-					<WrapPanel Orientation="Horizontal">
-						<CheckBox Name="UseEmbeddingsCheckBox" Content="Use Embeddings" IsChecked="{Binding UseEmbeddings}" />
-						<ComboBox
-							Name="EmbeddingNameComboBox"
-							MinWidth="128"
-							Margin="0,3,3,3"
-							VerticalAlignment="Top"
-							ItemsSource="{Binding EmbeddingNames, ElementName=This}"
-							SelectedValue="{Binding EmbeddingName}" />
-						<Label x:Name="EmbeddingsLabel" Margin="3" Content="Group Name" />
-
-						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
-						<Label
-							x:Name="EmbeddingGroupFlagLabel"
-							Grid.Row="3"
-							Grid.Column="1"
-							Margin="3"
-							Content="Group Flags" />
-
-						<controls:EnumComboBox
-							x:Name="EmbeddingGroupFlagComboBox"
-							MinWidth="64"
-							VerticalAlignment="Center"
-							ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-							SelectedValue="{Binding EmbeddingGroupFlag}"
-							Style="{StaticResource ComboBox_Dynamic}"
-							Text="None" />
-					</WrapPanel>
+					<controlsTemplate:EmbeddingsControl x:Name="EmbeddingsPanel" />
 				</TabItem>
 
 				<TabItem x:Name="ToolsTabItem" x:FieldModifier="public">
