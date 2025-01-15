@@ -1,11 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
 using HtmlAgilityPack;
 using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
-using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
@@ -13,7 +11,6 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -57,14 +54,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
-			// Mails dropdown.
-			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
-			UpdateMailAccounts();
-			// Show debug features.
-			var debugVisibility = InitHelper.IsDebug
-				? Visibility.Visible
-				: Visibility.Collapsed;
-			MonitorInboxCheckBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
 			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
 		}
@@ -392,6 +381,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await PersonalizationPanel.BindData(_Item);
 			await VisualStudioPanel.BindData(_Item);
 			await EmbeddingsPanel.BindData(_Item);
+			await MailPanel.BindData(_Item);
 			_Item.PropertyChanged += _item_PropertyChanged;
 			AiModelBoxPanel.Item = _Item;
 			ToolsPanel.Item = _Item;
@@ -600,33 +590,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.AppSettings.IsSpellCheckEnabled = false;
 		}
 
-
-		#region Mail
-
-		public ObservableCollection<string> MailAccounts { get; set; } = new ObservableCollection<string>();
-
-		public void UpdateMailAccounts()
-		{
-			var names = Global.AppSettings.MailAccounts.Select(x => x.Name).ToList();
-			if (!names.Contains(""))
-				names.Insert(0, "");
-			CollectionsHelper.Synchronize(names, MailAccounts);
-			OnPropertyChanged(nameof(MailAccounts));
-		}
-
-		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var update = false;
-			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(MailAccount.Name))
-				update = true;
-			if (e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted)
-				update = true;
-			if (update)
-				_ = Helper.Debounce(UpdateMailAccounts);
-		}
-
-		#endregion
 
 		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
 		{

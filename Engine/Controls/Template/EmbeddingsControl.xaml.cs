@@ -17,7 +17,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 	/// <summary>
 	/// Interaction logic for EmbeddingsControl.xaml
 	/// </summary>
-	public partial class EmbeddingsControl : UserControl
+	public partial class EmbeddingsControl : UserControl, INotifyPropertyChanged
 	{
 		public EmbeddingsControl()
 		{
@@ -68,8 +68,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		private void Embeddings_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			var update = false;
-			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(TemplateItem.EmbeddingName))
-				update = true;
+			if (e.ListChangedType == ListChangedType.ItemChanged)
+			{
+				if (e.PropertyDescriptor?.Name == nameof(TemplateItem.Name))
+					update = true;
+				if (e.PropertyDescriptor?.Name == nameof(TemplateItem.EmbeddingName))
+					update = true;
+			}
 			if (e.ListChangedType == ListChangedType.ItemAdded ||
 				e.ListChangedType == ListChangedType.ItemDeleted)
 				update = true;
