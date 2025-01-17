@@ -283,26 +283,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 			var endpoint = new Uri(Service.BaseUrl);
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
-			var headProperties = new Dictionary<string, string>
-			{
-				//{ "Content-Type", "application/json" },
-			};
-			var bodyProperties = new Dictionary<string, string>();
-			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
-			{
-				bodyProperties.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
-			};
 			OpenAIClient client;
 			// If use modified OpenAIClient by Microsoft then...
 			if (Service.IsAzureOpenAI)
 			{
 				// Using `Azure.AI.OpenAI.AzureOpenAIClient` by `azure-sdk Microsoft`
-				var options = new Azure.AI.OpenAI.AzureOpenAIClientOptions(Azure.AI.OpenAI.AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+				var options = new Azure.AI.OpenAI.AzureOpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-				//if (headProperties.Any())
-				//	options.AddPolicy(new AddHeadersPolicy(headProperties), PipelinePosition.PerCall);
-				//if (bodyProperties.Any())
-				//	options.AddPolicy(new ModifyRequestBodyPolicy(bodyProperties), PipelinePosition.PerCall);
+				options.Transport = GetTransport(item);
 				if (string.IsNullOrEmpty(apiSecretKey))
 				{
 					var credential = new Azure.Identity.DefaultAzureCredential();
@@ -320,26 +308,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				options.Endpoint = endpoint;
-				// Always create a custom transport so the pipeline is used.
-				HttpMessageHandler handler = new HttpClientHandler();
-				//if (useLogger)
-				//	handler = new HttpClientLogger(handler);
-				if (headProperties.Any())
-					handler = new ModifyRequestHeadHandler(headProperties, handler);
-				if (bodyProperties.Any())
-					handler = new ModifyRequestBodyHandler(bodyProperties, handler);
-				var httpClient = new HttpClient(handler);
-				httpClient.BaseAddress = endpoint;
-				httpClient.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-				// Register the handler in the HttpPipeline
-				var transport = new HttpClientPipelineTransport(httpClient);
-				options.Transport = transport;
+				options.Transport = GetTransport(item);
 				if (string.IsNullOrEmpty(apiSecretKey))
 					apiSecretKey = "NoKey";
 				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
 				client = new OpenAIClient(credential, options);
 			}
 			return client;
+		}
+
+		public PipelineTransport GetTransport(TemplateItem item = null)
+		{
+			var endpoint = new Uri(Service.BaseUrl);
+			var linkProperties = new Dictionary<string, string>
+			{
+				//{ "api-version", "2024-12-01-preview" },
+			};
+			var headRequestProperties = new Dictionary<string, string>
+			{
+			};
+			var headContentProperties = new Dictionary<string, string>
+			{
+				//{ "Content-Type", "application/json" },
+			};
+			var bodyProperties = new Dictionary<string, string>();
+			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
+			{
+				bodyProperties.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
+			};
+			// Always create a custom transport so the pipeline is used.
+			HttpMessageHandler handler = new HttpClientHandler();
+			//if (useLogger)
+			//	handler = new HttpClientLogger(handler);
+			handler = new ModifyRequestHandler(linkProperties, headRequestProperties, headContentProperties, bodyProperties, handler);
+			var httpClient = new HttpClient(handler);
+			httpClient.BaseAddress = endpoint;
+			httpClient.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
+			// Register the handler in the HttpPipeline
+			var transport = new HttpClientPipelineTransport(httpClient);
+			return transport;
 		}
 
 		/// <summary>
