@@ -1,0 +1,124 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.ConfigListControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controlsShared="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="150"
+	d:DesignWidth="400"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+			<Button
+				Name="AddButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="AddButton_Click"
+				ToolTip="{StaticResource main_Add_New}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label x:Name="AddButtonLabel" Content="{StaticResource main_Add_New}" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="EditButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="EditButton_Click"
+				ToolTip="{StaticResource main_Edit}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+					<Label x:Name="EditButtonLabel" Content="{StaticResource main_Edit}" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="DeleteButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="DeleteButton_Click"
+				ToolTip="{StaticResource main_Delete}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
+					<Label x:Name="DeleteButtonLabel" Content="{StaticResource main_Delete}" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<DataGrid
+			x:Name="MainDataGrid"
+			Grid.Row="1"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			x:FieldModifier="public"
+			AutoGenerateColumns="False"
+			CanUserAddRows="True"
+			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
+			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			SelectionChanged="MainDataGrid_SelectionChanged"
+			SelectionMode="Extended">
+			<DataGrid.Columns>
+				<DataGridCheckBoxColumn
+					x:Name="EnabledColumn"
+					Width="Auto"
+					Binding="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
+					IsThreeState="False" />
+				<DataGridComboBoxColumn
+					x:Name="CategoryColumn"
+					Width="Auto"
+					Header="{StaticResource main_Category}"
+					SelectedItemBinding="{Binding Category}" />
+				<DataGridTextColumn
+					x:Name="KeyColumn"
+					Binding="{Binding Key}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Key}" />
+				<DataGridTextColumn
+					x:Name="ValueColumn"
+					Width="*"
+					Binding="{Binding Value}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Value}" />
+				<DataGridTextColumn
+					x:Name="CommentColumn"
+					Width="Auto"
+					Binding="{Binding Comment}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Comment}"
+					Visibility="Collapsed" />
+			</DataGrid.Columns>
+			<!--<DataGrid.CellStyle>
+				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
+			</DataGrid.CellStyle>-->
+		</DataGrid>
+	</Grid>
+</UserControl>

@@ -421,6 +421,66 @@
             segment-level timestamp information.
             </summary>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem">
+            <summary>
+            Config item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Id">
+            <summary>
+            Unique identifier for this item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.ParentId">
+            <summary>
+            Identifier of the parent item, applicable in hierarchical structures.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Category">
+            <summary>
+            Logical grouping or type classification for the item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Key">
+            <summary>
+            Human-readable label that clarifies the item's purpose or content.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.DataType">
+            <summary>
+            Defines how the value should be interpreted or managed.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Value">
+            <summary>
+            Actual content or data associated with the item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Description">
+            <summary>
+            In-depth explanation or notes about the item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Tags">
+            <summary>
+            Words or phrases that facilitate searching or categorization.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.Enabled">
+            <summary>
+            Indicates whether the item is active or being utilized.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.CreateDate">
+            <summary>
+            Timestamp marking when the item was originally added.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ConfigItem.UpdateDate">
+            <summary>
+            Timestamp reflecting when the item was last updated.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper">
             <summary>
             File Helper

@@ -34,24 +34,24 @@
 					<StackPanel Orientation="Horizontal">
 						<Label
 							x:Name="CreativityLabel"
-							AutomationProperties.HelpText="{StaticResource main_Temperature_Creativity_Help}"
-							AutomationProperties.Name="{StaticResource main_Temperature_Creativity}"
 							Margin="0"
 							Padding="0"
+							AutomationProperties.HelpText="{StaticResource main_Temperature_Creativity_Help}"
+							AutomationProperties.Name="{StaticResource main_Temperature_Creativity}"
 							Content="{StaticResource main_Temperature_Creativity}" />
 						<Label
 							x:Name="CreativitySeparatorLabel"
-							AutomationProperties.HelpText="{StaticResource main_Temperature_Creativity_Help}"
-							AutomationProperties.Name="{StaticResource main_Temperature_Creativity}"
 							Margin="0"
 							Padding="0"
+							AutomationProperties.HelpText="{StaticResource main_Temperature_Creativity_Help}"
+							AutomationProperties.Name="{StaticResource main_Temperature_Creativity}"
 							Content=" - " />
 						<Label
 							Margin="0"
 							Padding="0"
+							VerticalAlignment="Center"
 							AutomationProperties.HelpText="{StaticResource main_Temperature_Creativity_Help}"
 							AutomationProperties.Name="{StaticResource main_Temperature_Creativity}"
-							VerticalAlignment="Center"
 							Content="{Binding CreativityName, ElementName=This}" />
 					</StackPanel>
 				</GroupBox.Header>

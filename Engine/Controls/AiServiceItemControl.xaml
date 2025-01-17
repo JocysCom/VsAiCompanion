@@ -132,6 +132,16 @@
 			Grid.ColumnSpan="2"
 			Margin="4"
 			x:FieldModifier="public">
+			<TabItem Name="RequestOverridesTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{StaticResource main_RequestOverrides}" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:ConfigListControl x:Name="RequestOverridesListControl" />
+			</TabItem>
+
 			<TabItem Name="HelpTabPage">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

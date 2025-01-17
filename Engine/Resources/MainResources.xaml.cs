@@ -202,6 +202,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ProcessMaxErrors_Help => FindResource(nameof(main_ProcessMaxErrors_Help));
         public static string main_Comment => FindResource(nameof(main_Comment));
         public static string main_Key => FindResource(nameof(main_Key));
+        public static string main_Category => FindResource(nameof(main_Category));
         public static string main_List_Description => FindResource(nameof(main_List_Description));
         public static string main_List_Instructions => FindResource(nameof(main_List_Instructions));
         public static string main_List_IsEnabled => FindResource(nameof(main_List_IsEnabled));
@@ -265,6 +266,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Response_Streaming => FindResource(nameof(main_Response_Streaming));
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
         public static string main_ServiceType => FindResource(nameof(main_ServiceType));
+        public static string main_RequestOverrides => FindResource(nameof(main_RequestOverrides));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
         public static string main_Max_Input_Tokens => FindResource(nameof(main_Max_Input_Tokens));
         public static string main_Max_Output_Tokens => FindResource(nameof(main_Max_Output_Tokens));

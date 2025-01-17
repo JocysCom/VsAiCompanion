@@ -113,7 +113,7 @@
 			Grid.ColumnSpan="2"
 			Margin="0,0,0,0"
 			BorderBrush="{StaticResource BorderDark}"
-			BorderThickness="0,1,0,1">
+			BorderThickness="0,1,0,0">
 			<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
 				<Button
 					Name="AddButton"
