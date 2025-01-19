@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,11 +15,11 @@ using System.Windows.Input;
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
-	/// Interaction logic for ListsItemControl.xaml
+	/// Interaction User Control.
 	/// </summary>
-	public partial class ListsItemControl : UserControl
+	public partial class ListInfoControl : UserControl, INotifyPropertyChanged
 	{
-		public ListsItemControl()
+		public ListInfoControl()
 		{
 			InitializeComponent();
 			var statuses = new List<ProgressStatus?>() { null };
@@ -73,47 +74,55 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region Item
+		#region ■ Properties
+
+
+		/// <summary>
+		/// Gets the data item associated with this control.
+		/// </summary>
 		public ListInfo Item
 		{
 			get => _Item;
-			set
-			{
-				if (_Item != null)
-				{
-					_Item.PropertyChanged -= _Item_PropertyChanged;
-				}
-				_Item = value;
-				if (value != null)
-				{
-					//var path = Global.GetPath(value);
-					//if (!Directory.Exists(path))
-					//	Directory.CreateDirectory(path);
-					_Item.PropertyChanged += _Item_PropertyChanged;
-					ControlsHelper.SetItemsSource(MainDataGrid, null);
-				}
-				IconPanel.BindData(value);
-				DataContext = value;
-				ControlsHelper.SetItemsSource(MainDataGrid, value?.Items);
-				//AiModelBoxPanel.BindData(value);
-				//IconPanel.BindData(value);
-				// SourceFilesPanel.Data = value;
-				//TuningFilesPanel.Data = value;
-				//RemoteFilesPanel.Data = value;
-				//TuningJobsListPanel.Data = value;
-				//ModelsPanel.Data = value;
-				//OnPropertyChanged(nameof(DataFolderPath));
-				//OnPropertyChanged(nameof(DataFolderPathShow));
-			}
 		}
 		ListInfo _Item;
+
+		public async Task BindData(ListInfo value)
+		{
+			await Task.Delay(0);
+			if (_Item != null)
+			{
+				_Item.PropertyChanged -= _Item_PropertyChanged;
+			}
+			_Item = value;
+			if (value != null)
+			{
+				//var path = Global.GetPath(value);
+				//if (!Directory.Exists(path))
+				//	Directory.CreateDirectory(path);
+				_Item.PropertyChanged += _Item_PropertyChanged;
+				ControlsHelper.SetItemsSource(MainDataGrid, null);
+			}
+			IconPanel.BindData(value);
+			DataContext = value;
+			ControlsHelper.SetItemsSource(MainDataGrid, value?.Items);
+			//AiModelBoxPanel.BindData(value);
+			//IconPanel.BindData(value);
+			// SourceFilesPanel.Data = value;
+			//TuningFilesPanel.Data = value;
+			//RemoteFilesPanel.Data = value;
+			//TuningJobsListPanel.Data = value;
+			//ModelsPanel.Data = value;
+			//OnPropertyChanged(nameof(DataFolderPath));
+			OnPropertyChanged(nameof(Item));
+		}
 
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(ListInfo.Path))
+			switch (e.PropertyName)
 			{
-
+				default:
+					break;
 			}
 		}
 
@@ -231,6 +240,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(DescriptionLabel, Engine.Resources.MainResources.main_Description, Engine.Resources.MainResources.main_List_Description);
 			AppHelper.AddHelp(DescriptionTextBox, Engine.Resources.MainResources.main_Description, Engine.Resources.MainResources.main_List_Description);
 		}
+
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
 
 	}
 

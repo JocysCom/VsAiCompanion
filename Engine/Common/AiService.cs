@@ -55,6 +55,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsAzureOpenAI { get => _IsAzureOpenAI; set => SetProperty(ref _IsAzureOpenAI, value); }
 		bool _IsAzureOpenAI;
 
+		/// <summary>Override of the API version.</summary>
+		[DefaultValue("2024-12-01-preview")]
+		public string OverrideApiVersion { get => _OverrideApiVersion ?? ""; set => SetProperty(ref _OverrideApiVersion, value); }
+		string _OverrideApiVersion;
+
+		/// <summary>Enable the override of the API version.</summary>
+		[DefaultValue(false)]
+		public bool OverrideApiVersionEnabled { get => _OverrideApiVersionEnabled; set => SetProperty(ref _OverrideApiVersionEnabled, value); }
+		bool _OverrideApiVersionEnabled;
+
 		#region API Keys
 
 		/// <summary>Organization key. Usage from these API requests will count against the specified organization's subscription quota.</summary>

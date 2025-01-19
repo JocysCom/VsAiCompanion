@@ -259,7 +259,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_API_Organization_ID => FindResource(nameof(main_API_Organization_ID));
         public static string main_AI_Services => FindResource(nameof(main_AI_Services));
         public static string main_Default_AI_Model => FindResource(nameof(main_Default_AI_Model));
-        public static string main_Is_Azure_OpenAI => FindResource(nameof(main_Is_Azure_OpenAI));
+        public static string main_Use_Azure_OpenAI_Client => FindResource(nameof(main_Use_Azure_OpenAI_Client));
+        public static string main_Use_Azure_OpenAI_Client_Help => FindResource(nameof(main_Use_Azure_OpenAI_Client_Help));
         public static string main_Is_Default_AI_Service => FindResource(nameof(main_Is_Default_AI_Service));
         public static string main_Model_Filter => FindResource(nameof(main_Model_Filter));
         public static string main_Region => FindResource(nameof(main_Region));
@@ -267,6 +268,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
         public static string main_ServiceType => FindResource(nameof(main_ServiceType));
         public static string main_RequestOverrides => FindResource(nameof(main_RequestOverrides));
+        public static string main_Override_API_version => FindResource(nameof(main_Override_API_version));
+        public static string main_Override_API_version_Help => FindResource(nameof(main_Override_API_version_Help));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
         public static string main_Max_Input_Tokens => FindResource(nameof(main_Max_Input_Tokens));
         public static string main_Max_Output_Tokens => FindResource(nameof(main_Max_Output_Tokens));

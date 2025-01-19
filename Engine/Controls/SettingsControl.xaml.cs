@@ -55,7 +55,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (DataType == ItemType.Lists)
 			{
-				ListsItemPanel.Item = (ListInfo)item;
+				await ListsItemPanel.BindData((ListInfo)item);
 			}
 			else if (DataType == ItemType.UiPreset)
 			{
@@ -112,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItemControl TemplateItemPanel;
 		FineTuningItemControl FineTuningItemPanel;
 		AssistantItemControl AssistantItemPanel;
-		public ListsItemControl ListsItemPanel;
+		public ListInfoControl ListsItemPanel;
 		UiPresetItemControl UiPresetItemPanel;
 		EmbeddingsItemControl EmbeddingItemPanel;
 		MailAccountItemControl MailAccountItemPanel;
@@ -171,7 +171,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					if (ListsItemPanel == null)
 					{
-						var control = new ListsItemControl();
+						var control = new ListInfoControl();
 						ConfigureControl(control, value);
 						control.DataType = value;
 						ListsItemPanel = control;

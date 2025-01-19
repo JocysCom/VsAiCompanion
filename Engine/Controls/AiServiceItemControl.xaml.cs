@@ -112,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ModelFilterTextBox.Visibility = visibility;
 			ApiOrganizationIdLabel.Visibility = visibility;
 			ApiOrganizationIdVaultItemValuePanel.ValuePasswordBox.Visibility = visibility;
-			IsAzureOpenAiCheckBox.Visibility = visibility;
+			UseAzureOpenAiClientCheckBox.Visibility = visibility;
 			ResponseStreamingCheckBox.Visibility = visibility;
 		}
 

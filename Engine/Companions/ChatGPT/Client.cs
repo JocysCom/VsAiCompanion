@@ -320,22 +320,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public PipelineTransport GetTransport(TemplateItem item = null)
 		{
 			var endpoint = new Uri(Service.BaseUrl);
-			var linkProperties = new Dictionary<string, string>
-			{
-				//{ "api-version", "2024-12-01-preview" },
-			};
-			var headRequestProperties = new Dictionary<string, string>
-			{
-			};
-			var headContentProperties = new Dictionary<string, string>
-			{
-				//{ "Content-Type", "application/json" },
-			};
+			// Add/override link query properties.
+			var linkProperties = new Dictionary<string, string>();
+			if (item?.AiService?.IsAzureOpenAI == true && item?.AiService?.OverrideApiVersionEnabled == true)
+				linkProperties.Add("api-version", item.AiService.OverrideApiVersion);
+			// Add/override request header properties.
+			var headRequestProperties = new Dictionary<string, string>();
+			// Add/override content header properties.
+			var headContentProperties = new Dictionary<string, string>();
+				//headContentProperties.Add("Content-Type", "application/json");
+			// Add/override body properties.
 			var bodyProperties = new Dictionary<string, string>();
 			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
-			{
 				bodyProperties.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
-			};
 			// Always create a custom transport so the pipeline is used.
 			HttpMessageHandler handler = new HttpClientHandler();
 			//if (useLogger)

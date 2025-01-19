@@ -116,14 +116,46 @@
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Orientation="Horizontal">
-			<CheckBox Name="IsAzureOpenAiCheckBox" Content="{StaticResource main_Is_Azure_OpenAI}" IsChecked="{Binding IsAzureOpenAI}" />
-			<CheckBox Name="ResponseStreamingCheckBox" Content="{StaticResource main_Response_Streaming}" IsChecked="{Binding ResponseStreaming}" />
-			<JcControls:NumericUpDown
-				LargeChange="60"
-				Maximum="100000"
-				SmallChange="5"
-				Value="{Binding ResponseTimeout}" />
-			<Label Content="{StaticResource main_Response_Timeout}" />
+			<GroupBox Grid.Row="1" Margin="3,0,3,0">
+				<GroupBox.Header>
+					<CheckBox
+						x:Name="UseAzureOpenAiClientCheckBox"
+						Margin="-4"
+						AutomationProperties.HelpText="{StaticResource main_Model_Instructions_Help}"
+						AutomationProperties.Name="{StaticResource main_Use_Azure_OpenAI_Client}"
+						Content="{StaticResource main_Use_Azure_OpenAI_Client}"
+						IsChecked="{Binding IsAzureOpenAI, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				</GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox
+						x:Name="OverrideApiVersionCheckBox"
+						Margin="6,0,0,0"
+						AutomationProperties.HelpText="{StaticResource main_Override_API_version_Help}"
+						AutomationProperties.Name="{StaticResource main_Override_API_version}"
+						Content="{StaticResource main_Override_API_version}"
+						IsChecked="{Binding OverrideApiVersionEnabled}" />
+					<TextBox
+						Name="OverrideApiVersionTextBox"
+						MinWidth="128"
+						AutomationProperties.HelpText="{StaticResource main_Override_API_version_Help}"
+						AutomationProperties.Name="{StaticResource main_Override_API_version}"
+						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						ScrollViewer.VerticalScrollBarVisibility="Auto"
+						SpellCheck.IsEnabled="False"
+						Text="{Binding OverrideApiVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						TextWrapping="Wrap" />
+				</StackPanel>
+
+			</GroupBox>
+			<StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+				<CheckBox Name="ResponseStreamingCheckBox" Content="{StaticResource main_Response_Streaming}" IsChecked="{Binding ResponseStreaming}" />
+				<JcControls:NumericUpDown
+					LargeChange="60"
+					Maximum="100000"
+					SmallChange="5"
+					Value="{Binding ResponseTimeout}" />
+				<Label Content="{StaticResource main_Response_Timeout}" />
+			</StackPanel>
 		</StackPanel>
 		<TabControl
 			x:Name="MainTabControl"
@@ -132,15 +164,16 @@
 			Grid.ColumnSpan="2"
 			Margin="4"
 			x:FieldModifier="public">
-			<TabItem Name="RequestOverridesTabPage">
+
+			<!--<TabItem Name="RequestOverridesTabPage">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
 						<Label Content="{StaticResource main_RequestOverrides}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:ConfigListControl x:Name="RequestOverridesListControl" />
-			</TabItem>
+				<controls:ListInfoControl x:Name="RequestOverridesPanel" />
+			</TabItem>-->
 
 			<TabItem Name="HelpTabPage">
 				<TabItem.Header>

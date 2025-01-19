@@ -273,7 +273,8 @@
 	<sys:String x:Key="main_API_Organization_ID">API Organization ID</sys:String>
 	<sys:String x:Key="main_AI_Services">AI Services</sys:String>
 	<sys:String x:Key="main_Default_AI_Model">Default AI Model</sys:String>
-	<sys:String x:Key="main_Is_Azure_OpenAI">Is Azure OpenAI</sys:String>
+	<sys:String x:Key="main_Use_Azure_OpenAI_Client">Use Azure OpenAI Client</sys:String>
+	<sys:String x:Key="main_Use_Azure_OpenAI_Client_Help">The application will use Microsoft's Azure.AI.OpenAI.AzureOpenAIClient to communicate with the API.</sys:String>
 	<sys:String x:Key="main_Is_Default_AI_Service">Is Default AI Service</sys:String>
 	<sys:String x:Key="main_Model_Filter">Model Filter</sys:String>
 	<sys:String x:Key="main_Region">Location / Region</sys:String>
@@ -281,6 +282,8 @@
 	<sys:String x:Key="main_Response_Timeout">Response Timeout</sys:String>
 	<sys:String x:Key="main_ServiceType">ServiceType</sys:String>
 	<sys:String x:Key="main_RequestOverrides">Request Overrides</sys:String>
+	<sys:String x:Key="main_Override_API_version">Override API version.</sys:String>
+	<sys:String x:Key="main_Override_API_version_Help">Enable the override of the API version.</sys:String>
 
 	<!--  Options → AI Models  -->
 	<sys:String x:Key="main_AI_Models">AI Models</sys:String>

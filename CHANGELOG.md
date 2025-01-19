@@ -1,9 +1,10 @@
-2025-01-13 v1.16.24
+2025-01-19 v1.16.28
 
 - Fix: PDF to Image converter (SkiaSharp package version).
 - New: `GenerateQrCodeImage` function. Can be used to send data to a mobile using the camera.
 - New: `ReasoningEffort` option for the `o1` and `o1-mini` reasoning models.
 - New: The option to provide specific instructions for each AI model.
+- New: You can now override the Azure OpenAI API version (Options -> AI Services).
 
 2025-01-12 v1.16.20
 
