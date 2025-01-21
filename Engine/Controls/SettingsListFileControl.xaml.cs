@@ -700,6 +700,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.EnsureTabItemSelected(this);
 		}
 
+
+		private void MainDataGrid_CopyPathMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			// Ensure something is selected in the DataGrid
+			if (MainDataGrid.SelectedItem is ISettingsListFileItem selectedItem)
+			{
+				// Format: /{DataType}/{Item.Name}
+				var path = $"/{DataType}/{selectedItem.Name}";
+				System.Windows.Clipboard.SetText(path);
+			}
+		}
+
 		#region Grouping
 
 		private string _GroupingProperty;
@@ -764,16 +776,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
-
-		private void MainDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
-		{
-		}
-
-		private void MainDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-		{
-
-		}
-
 	}
 
 }

@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ClearMessages_Name => FindResource(nameof(main_ClearMessages_Name));
         public static string main_Copy => FindResource(nameof(main_Copy));
         public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
+        public static string main_Copy_Path => FindResource(nameof(main_Copy_Path));
         public static string main_Creativity => FindResource(nameof(main_Creativity));
         public static string main_Enable_Spell_Check_Help => FindResource(nameof(main_Enable_Spell_Check_Help));
         public static string main_Enable_Spell_Check_Name => FindResource(nameof(main_Enable_Spell_Check_Name));
@@ -344,6 +345,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_MirrorSettings_Text => FindResource(nameof(main_Reset_MirrorSettings_Text));
         public static string main_Reset_MirrorSettings_Help => FindResource(nameof(main_Reset_MirrorSettings_Help));
         public static string main_Reset_MirrorSettings_Name => FindResource(nameof(main_Reset_MirrorSettings_Name));
+        public static string main_UpdateInstructions => FindResource(nameof(main_UpdateInstructions));
+        public static string main_UpdateInstructions_Help => FindResource(nameof(main_UpdateInstructions_Help));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
         public static string main_Changes => FindResource(nameof(main_Changes));
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));

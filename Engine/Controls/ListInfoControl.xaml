@@ -33,21 +33,32 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Button
-			Name="ListToggleButton"
-			HorizontalAlignment="Left"
-			VerticalAlignment="Top"
-			Panel.ZIndex="10"
-			Click="ListToggleButton_Click"
-			Focusable="False">
-			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
-		</Button>
+		<Grid Grid.ColumnSpan="2" Margin="3,0,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Button
+				Name="ListToggleButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Top"
+				Panel.ZIndex="10"
+				Click="ListToggleButton_Click"
+				Focusable="False"
+				Visibility="{Binding ShowListToggle, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+			</Button>
+			<Border Grid.Column="1" Margin="0,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+				<TextBlock Name="FeatureDescriptionLabel" Text="{Binding FeatureDescription, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+			</Border>
+		</Grid>
 
-		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
-			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Lists_Feature_Description}" />
-		</Border>
-
-		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+		<StackPanel
+			Grid.Row="1"
+			Grid.Column="0"
+			Orientation="Vertical"
+			Visibility="{Binding ShowIcon, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 			<controlsShared:IconUserControl
 				x:Name="IconPanel"
 				Width="64"
@@ -65,8 +76,8 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Label x:Name="PathLabel" Content="{StaticResource main_Task_Path}" />
-			<StackPanel Grid.Column="1" Orientation="Horizontal">
+			<Label x:Name="PathLabel" Content="{StaticResource main_Task_Path}" Visibility="{Binding ShowOptions, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+			<StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowOptions, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 				<ComboBox MinWidth="128" ItemsSource="{Binding Paths, ElementName=This}" SelectedValue="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<CheckBox
 					Name="IsEnabledCheckBox"
@@ -79,7 +90,11 @@
 					Content="{StaticResource main_ReadOnly}"
 					IsChecked="{Binding IsReadOnly}" />
 			</StackPanel>
-			<Label x:Name="DescriptionLabel" Grid.Row="1" Content="{StaticResource main_Description}" />
+			<Label
+				x:Name="DescriptionLabel"
+				Grid.Row="1"
+				Content="{StaticResource main_Description}"
+				Visibility="{Binding ShowDescription, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 			<TextBox
 				Name="DescriptionTextBox"
 				Grid.Row="1"
@@ -92,8 +107,13 @@
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-				TextWrapping="Wrap" />
-			<Label x:Name="InstructionsLabel" Grid.Row="2" Content="{StaticResource main_Instructions}" />
+				TextWrapping="Wrap"
+				Visibility="{Binding ShowDescription, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+			<Label
+				x:Name="InstructionsLabel"
+				Grid.Row="2"
+				Content="{StaticResource main_Instructions}"
+				Visibility="{Binding ShowInstructions, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="2"
@@ -106,7 +126,8 @@
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Instructions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-				TextWrapping="Wrap" />
+				TextWrapping="Wrap"
+				Visibility="{Binding ShowInstructions, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 		</Grid>
 		<Border
 			Grid.Row="2"
@@ -153,6 +174,8 @@
 				</Button>
 			</StackPanel>
 		</Border>
+		<!--  Hidden element that binds to the UserControl’s DataContext  -->
+		<FrameworkElement x:Name="ProxyElement" DataContext="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Visibility="Collapsed" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="3"
@@ -181,7 +204,8 @@
 					x:Name="StatusColumn"
 					Width="Auto"
 					Header="{StaticResource main_Status}"
-					SelectedItemBinding="{Binding Status}" />
+					SelectedItemBinding="{Binding Status}"
+					Visibility="{Binding DataContext.ShowColumnStatus, Source={x:Reference ProxyElement}}" />
 				<DataGridTextColumn
 					x:Name="ValueColumn"
 					Width="Auto"
@@ -195,7 +219,8 @@
 					Binding="{Binding Comment}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{StaticResource main_Comment}" />
+					Header="{StaticResource main_Comment}"
+					Visibility="{Binding DataContext.ShowColumnComment, Source={x:Reference ProxyElement}}" />
 			</DataGrid.Columns>
 			<!--<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

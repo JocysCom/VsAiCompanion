@@ -312,6 +312,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void ResetLists(ZipStorer zip = null)
 			=> ResetItems(zip, Global.Lists, Global.AppSettings.ResetListsMirror, Global.ListsName, x => x.Name);
 
+		/// <summary>Reset Resets</summary>
+		public static void ResetResets(ZipStorer zip = null)
+		{
+			ResetItems(zip, Global.Resets, Global.AppSettings.ResetListsMirror, Global.ResetsName, x => x.Name);
+			if (!Global.Resets.Items.Any())
+			{
+				var li = new ListInfo()
+				{
+					Description = Resources.MainResources.main_UpdateInstructions_Help,
+				};
+				Global.Resets.Items.Add(li);
+			}
+		}
+
+
 		/// <summary>Reset UI Presets</summary>
 		public static void ResetUiPresets(ZipStorer zip = null)
 			=> ResetItems(zip, Global.UiPresets, Global.AppSettings.ResetUiPresetsMirror, Global.UiPresetsName, x => x.Name);

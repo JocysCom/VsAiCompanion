@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -116,6 +115,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public const string ResetsName = nameof(Resets);
+
+		public static SettingsData<ListInfo> Resets =
+			new SettingsData<ListInfo>($"{ResetsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
 		public const string UiPresetsName = nameof(UiPresets);
 
@@ -475,6 +478,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			FineTunings.Save();
 			Assistants.Save();
 			UiPresets.Save();
+			Resets.Save();
 		}
 
 		/// <summary>
@@ -573,6 +577,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Lists.Load();
 			if (Lists.IsSavePending)
 				Lists.Save();
+			// Load Resets items.
+			Resets.OnValidateData += Resets_OnValidateData;
+			Resets.Load();
+			if (Resets.IsSavePending)
+				Resets.Save();
 			// Load UI Presets.
 			UiPresets.OnValidateData += UiPresets_OnValidateData;
 			UiPresets.Load();
@@ -742,6 +751,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Lists.SortList(e.Items);
 					Lists.IsSavePending = true;
 				}
+			}
+		}
+
+		private static void Resets_OnValidateData(object sender, SettingsData<ListInfo>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				SettingsSourceManager.ResetResets();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
+			else
+			{
 			}
 		}
 

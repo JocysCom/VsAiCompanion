@@ -9,9 +9,9 @@ function ZipFiles {
 
 	# Remove temp folder from source.
 	$tmpPath = "$($PSScriptRoot)\$name\Temp"
-	if ([System.IO.Directory]::Exists($tmpPath)) {
+	if (Test-Path $tmpPath -PathType Container) {
 		# Delete the folder
-		[System.IO.Directory]::Delete($tmpPath, $true)
+		Remove-Item -Path $tmpPath -Recurse -Force
 	}
 
 	# Remove target zip file.

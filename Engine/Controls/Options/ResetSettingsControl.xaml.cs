@@ -1,5 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,11 +48,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private void ResetPromptsButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (!AppHelper.AllowReset("Promps"))
+			if (!AppHelper.AllowReset("Prompts"))
 				return;
 			SettingsSourceManager.ResetPrompts();
 			Global.Prompts.Save();
 			Global.TriggerPromptingUpdated();
+		}
+
+		private void ResetResetsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AppHelper.AllowReset("Resets"))
+				return;
+			SettingsSourceManager.ResetResets();
+			Global.Resets.Save();
 		}
 
 		private void ResetVoicesButton_Click(object sender, RoutedEventArgs e)
@@ -101,7 +111,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			Global.RaiseOnAiModelsUpdated();
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -109,6 +119,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
+				UpdateInstructionsPanel.ValueType = typeof(UpdateInstruction);
+				await UpdateInstructionsPanel.BindData(Global.Resets.Items.FirstOrDefault());
 			}
 		}
 

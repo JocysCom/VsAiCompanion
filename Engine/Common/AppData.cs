@@ -75,7 +75,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
-
 		[DefaultValue(RiskLevel.Critical)]
 		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
 		RiskLevel _MaxRiskLevel;
@@ -279,6 +278,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(true)]
 		public bool ResetListsMirror { get => _ResetListsMirror; set => SetProperty(ref _ResetListsMirror, value); }
 		private bool _ResetListsMirror;
+
+		[DefaultValue(true)]
+		public bool ResetResetsMirror { get => _ResetResetsMirror; set => SetProperty(ref _ResetResetsMirror, value); }
+		private bool _ResetResetsMirror;
 
 		[DefaultValue(true)]
 		public bool ResetEmbeddingsMirror { get => _ResetEmbeddingsMirror; set => SetProperty(ref _ResetEmbeddingsMirror, value); }

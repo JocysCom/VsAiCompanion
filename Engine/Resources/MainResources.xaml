@@ -14,6 +14,7 @@
 	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
 	<sys:String x:Key="main_Copy">Copy</sys:String>
 	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
+	<sys:String x:Key="main_Copy_Path">Copy Path</sys:String>
 	<sys:String x:Key="main_Creativity">Creativity</sys:String>
 	<sys:String x:Key="main_Enable_Spell_Check_Help">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
 	<sys:String x:Key="main_Enable_Spell_Check_Name">Spell Check</sys:String>
@@ -373,6 +374,9 @@
 	<sys:String x:Key="main_Reset_MirrorSettings_Text">Delete items not in original settings</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Help">Delete items that aren't present in the original/default settings when resetting the settings.</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Name">Mirror Settings</sys:String>
+
+	<sys:String x:Key="main_UpdateInstructions">Update Instructions</sys:String>
+	<sys:String x:Key="main_UpdateInstructions_Help">Update Instructions for application settings.</sys:String>
 
 	<!--  About  -->
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>

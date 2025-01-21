@@ -4,7 +4,7 @@ param (
 
     [Parameter(Mandatory = $true, Position = 1)]
     [string] $destFile,
-	
+    
     # Optional. The search string to match against the names of files.
     [Parameter(Mandatory = $false, Position = 2)]
     [string] $searchPattern,
@@ -21,7 +21,6 @@ param (
 if (!(Test-Path -Path $sourceDir)) {
     return
 }
-
 
 Add-Type -Assembly "System.IO.Compression.FileSystem"
 
@@ -60,8 +59,8 @@ function Get-FileChecksums {
     ForEach-Object {
         $checksum = Get-FileChecksum -filePath $_.FullName
         if ($checksum) {
-			[string]$key = $_.FullName.Replace($directory, "").TrimStart("\")
-			$checksums[$key] = $checksum
+            [string]$key = $_.FullName.Replace($directory, "").TrimStart("\")
+            $checksums[$key] = $checksum
         }
     }
     return $checksums
@@ -69,34 +68,71 @@ function Get-FileChecksums {
 
 function CheckAndZipFiles {
 
+    # Get file checksums...
     $sourceChecksums = Get-FileChecksums -directory $sourceDir -searchPattern $searchPattern
 
+    $tempDir = $null
     $destChecksums = @{}
     if (Test-Path -Path $destFile) {
         $tempDir = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName())
         [IO.Compression.ZipFile]::ExtractToDirectory($destFile, $tempDir)
         $destChecksums = Get-FileChecksums -directory $tempDir -searchPattern $searchPattern
-        Remove-Item -Path $tempDir -Recurse -Force
     }
 
     $checksumsChanged = $false
-    foreach ($key in $sourceChecksums.Keys) {
-        if (-not $destChecksums.ContainsKey($key)) {
-            Write-Host "New File: $key"
-			$checksumsChanged = $true
+
+    # 1. Compare files by checksums
+    $allFileKeys = ($sourceChecksums.Keys + $destChecksums.Keys) | Sort-Object -Unique
+    foreach ($key in $allFileKeys) {
+        if (-not $sourceChecksums.ContainsKey($key)) {
+            Write-Host "Zip-only file: $key"
+            $checksumsChanged = $true
             break
         }
-		if ($sourceChecksums[$key] -ne $destChecksums[$key]) {
-            Write-Host "File Changed: $key"
-			$checksumsChanged = $true
+        if (-not $destChecksums.ContainsKey($key)) {
+            Write-Host "New file on disk: $key"
+            $checksumsChanged = $true
+            break
+        }
+        if ($sourceChecksums[$key] -ne $destChecksums[$key]) {
+            Write-Host "File changed: $key"
+            $checksumsChanged = $true
             break
         }
     }
 
+    # 2. Compare directories: any directory in zip but missing on disk (or vice versa) triggers a rewrite.
+    if ($tempDir) {
+        $sourceDirs = Get-ChildItem -Path $sourceDir -Recurse -Directory | 
+                      ForEach-Object { $_.FullName.Replace($sourceDir, "").TrimStart("\") }
+        $destDirs   = Get-ChildItem -Path $tempDir  -Recurse -Directory |
+                      ForEach-Object { $_.FullName.Replace($tempDir, "").TrimStart("\") }
+
+        $allDirKeys = ($sourceDirs + $destDirs) | Sort-Object -Unique
+
+        foreach ($dirKey in $allDirKeys) {
+            if (-not $sourceDirs.Contains($dirKey)) {
+                Write-Host "Zip-only directory: $dirKey"
+                $checksumsChanged = $true
+                break
+            }
+            if (-not $destDirs.Contains($dirKey)) {
+                Write-Host "New directory on disk: $dirKey"
+                $checksumsChanged = $true
+                break
+            }
+        }
+
+        # Clean up extracted folder
+        Remove-Item -Path $tempDir -Recurse -Force
+    }
+
+    # 3. Rezip if needed
     if ($checksumsChanged) {
-        Write-Host "$($logPrefix)Source and destination checksums do not match. Updating destination file..."
-        if (Test-Path -Path $destFile) { Remove-Item -Path $destFile -Force }
-        
+        Write-Host "$($logPrefix)Source and destination checksums (or folders) do not match. Updating destination file..."
+        if (Test-Path -Path $destFile) {
+            Remove-Item -Path $destFile -Force
+        }
         if ($UseShellToZipFiles) {
             Compress-ZipFileUsingShell -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
         } else {
@@ -116,7 +152,9 @@ function Compress-ZipFileUsingCSharp {
     # Handling optional search pattern for zipping files.
     if (![string]::IsNullOrEmpty($searchPattern)) {
         $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
-        Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern | Copy-Item -Destination { Join-Path -Path $tempSourceDir -ChildPath ($_.FullName.Replace($sourceDir, "").TrimStart("\")) } -Container
+        Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern | Copy-Item -Destination {
+            Join-Path -Path $tempSourceDir -ChildPath ($_.FullName.Replace($sourceDir, "").TrimStart("\")) 
+        } -Container
         [IO.Compression.ZipFile]::CreateFromDirectory($tempSourceDir.FullName, $destFile)
         Remove-Item -Path $tempSourceDir -Recurse -Force
     } else {
@@ -143,7 +181,7 @@ function Compress-ZipFileUsingShell {
     }
 
     # Use Shell Application to manipulate the zip file
-    $shellApplication = new-object -com shell.application
+    $shellApplication = New-Object -ComObject Shell.Application
     $zipPackage = $shellApplication.NameSpace($destFile)
 
     if (-not $zipPackage) {
@@ -154,14 +192,14 @@ function Compress-ZipFileUsingShell {
     if (![string]::IsNullOrEmpty($searchPattern)) {
         $files = Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern
     } else {
-        $files = Get-ChildItem -Path $sourceDir -Recurse
+        $files = Get-ChildItem -Path $sourceDir -Recurse 
     }
 
     foreach ($file in $files) {
         $path = $file.FullName
         $zipPackage.CopyHere($path)
         
-        $maxRetries = 6
+        $maxRetries = 4
         $retryCount = 0
         Do {
             Start-Sleep -Seconds 2
@@ -173,7 +211,6 @@ function Compress-ZipFileUsingShell {
         } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
     }
 
-
     # Release COM objects
     [System.Runtime.InteropServices.Marshal]::ReleaseComObject($zipPackage) | Out-Null
     [System.Runtime.InteropServices.Marshal]::ReleaseComObject($shellApplication) | Out-Null
@@ -182,7 +219,6 @@ function Compress-ZipFileUsingShell {
 }
 
 $destName = [System.IO.Path]::GetFileName($destFile)
-
 $logPrefix = "$($destName): $($LogPrefix)"
 
 #==============================================================
@@ -195,9 +231,10 @@ $mutexName = "Global\$scriptName"
 $mutexCreated = $false
 $mutex = New-Object System.Threading.Mutex($true, $mutexName, [ref] $mutexCreated)
 if (-not $mutexCreated) {
-       
+    # Set timeout (e.g., 5 minutes = 300,000 milliseconds)
+    $timeout = 300000
     Write-Host "$($logPrefix)Another instance is running. Waiting..."
-    $mutex.WaitOne() > $null  # Wait indefinitely for the mutex
+    $waitResult = $mutex.WaitOne($timeout)
 }
 try {
     # Main script logic goes here...

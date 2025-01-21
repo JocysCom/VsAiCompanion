@@ -207,11 +207,16 @@
 			ScrollViewer.CanContentScroll="False"
 			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
-			SelectionMode="Extended"
-			Sorting="MainDataGrid_Sorting">
+			SelectionMode="Extended">
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 			</DataGrid.Resources>
+			<!--  Add this block to define the context menu.  -->
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem x:Name="CopyPathMenuItem" Click="MainDataGrid_CopyPathMenuItem_Click" Header="{DynamicResource main_Copy_Path}" />
+				</ContextMenu>
+			</DataGrid.ContextMenu>
 			<!--  GroupStyle for collapsible panels  -->
 			<DataGrid.GroupStyle>
 				<GroupStyle>

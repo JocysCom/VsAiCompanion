@@ -9,7 +9,9 @@ using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -74,8 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ Properties
-
+		#region ■ Property: Item
 
 		/// <summary>
 		/// Gets the data item associated with this control.
@@ -127,6 +128,294 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		#endregion
+
+		#region ■ Property: ShowListToggle
+
+		/// <summary>
+		/// Indicates whether the button used to toggle list visibility is shown.
+		/// </summary>
+		public static readonly DependencyProperty ShowListToggleProperty =
+			DependencyProperty.Register(
+				nameof(ShowListToggle),
+				typeof(Visibility),
+				typeof(ListInfoControl),
+				new PropertyMetadata(Visibility.Visible, OnShowListToggleChanged));
+
+		/// <summary>
+		/// Gets or sets a value controlling the visibility of
+		/// the ListToggleButton in the top-left corner.
+		/// </summary>
+		public Visibility ShowListToggle
+		{
+			get => (Visibility)GetValue(ShowListToggleProperty);
+			set => SetValue(ShowListToggleProperty, value);
+		}
+
+		private static void OnShowListToggleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
+			{
+			}
+		}
+
+		#endregion
+
+		#region ■ Property: ShowOptions
+
+		/// <summary>
+		/// Indicates whether the path label and associated options stack are visible.
+		/// </summary>
+		public static readonly DependencyProperty ShowOptionsProperty =
+			DependencyProperty.Register(
+				nameof(ShowOptions),
+				typeof(Visibility),
+				typeof(ListInfoControl),
+				new PropertyMetadata(Visibility.Visible, OnShowOptionsChanged));
+
+		/// <summary>
+		/// Gets or sets a value controlling the visibility of
+		/// the path label and StackPanel on the same row.
+		/// </summary>
+		public Visibility ShowOptions
+		{
+			get => (Visibility)GetValue(ShowOptionsProperty);
+			set => SetValue(ShowOptionsProperty, value);
+		}
+
+		private static void OnShowOptionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
+			{
+			}
+		}
+
+		#endregion
+
+		#region ■ Property: ShowIcon
+
+		/// <summary>
+		/// Indicates whether the path label and associated Icon stack are visible.
+		/// </summary>
+		public static readonly DependencyProperty ShowIconProperty =
+			DependencyProperty.Register(
+				nameof(ShowIcon),
+				typeof(Visibility),
+				typeof(ListInfoControl),
+				new PropertyMetadata(Visibility.Visible, OnShowIconChanged));
+
+		/// <summary>
+		/// Gets or sets a value controlling the visibility of
+		/// the path label and StackPanel on the same row.
+		/// </summary>
+		public Visibility ShowIcon
+		{
+			get => (Visibility)GetValue(ShowIconProperty);
+			set => SetValue(ShowIconProperty, value);
+		}
+
+		private static void OnShowIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
+			{
+			}
+		}
+
+		#endregion
+
+		#region ■ Property: FeatureDescription
+
+		/// <summary>
+		/// Brief textual summary shown at the top of this control.
+		/// </summary>
+		public static readonly DependencyProperty FeatureDescriptionProperty =
+			DependencyProperty.Register(
+				nameof(FeatureDescription),
+				typeof(string),
+				typeof(ListInfoControl),
+				new PropertyMetadata(string.Empty, OnFeatureDescriptionChanged));
+
+		/// <summary>
+		/// Gets or sets the text displayed by the FeatureDescriptionLabel.
+		/// </summary>
+		public string FeatureDescription
+		{
+			get => (string)GetValue(FeatureDescriptionProperty);
+			set => SetValue(FeatureDescriptionProperty, value);
+		}
+
+		private static void OnFeatureDescriptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is ListInfoControl ctrl && e.NewValue is string newText)
+			{
+
+			}
+		}
+
+		#endregion
+
+		#region ■ Property: ShowDescription
+
+		/// <summary>
+		/// Indicates whether the description label and textbox are visible.
+		/// </summary>
+		public static readonly DependencyProperty ShowDescriptionProperty =
+			DependencyProperty.Register(
+				nameof(ShowDescription),
+				typeof(Visibility),
+				typeof(ListInfoControl),
+				new PropertyMetadata(Visibility.Visible, OnShowDescriptionChanged));
+
+		/// <summary>
+		/// Gets or sets a value controlling the visibility of
+		/// the description label and textbox.
+		/// </summary>
+		public Visibility ShowDescription
+		{
+			get => (Visibility)GetValue(ShowDescriptionProperty);
+			set => SetValue(ShowDescriptionProperty, value);
+		}
+
+		private static void OnShowDescriptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
+			{
+			}
+		}
+
+		#endregion
+
+		#region ■ Property: ShowInstructions
+
+		/// <summary>
+		/// Indicates whether the instructions label and textbox are visible.
+		/// </summary>
+		public static readonly DependencyProperty ShowInstructionsProperty =
+			DependencyProperty.Register(
+				nameof(ShowInstructions),
+				typeof(Visibility),
+				typeof(ListInfoControl),
+				new PropertyMetadata(Visibility.Visible, OnShowInstructionsChanged));
+
+		/// <summary>
+		/// Gets or sets a value controlling the visibility of
+		/// the instructions label and textbox.
+		/// </summary>
+		public Visibility ShowInstructions
+		{
+			get => (Visibility)GetValue(ShowInstructionsProperty);
+			set => SetValue(ShowInstructionsProperty, value);
+		}
+
+		private static void OnShowInstructionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
+			{
+			}
+		}
+
+		#endregion
+
+		#region ■ Property: Column Comment
+
+		public static readonly DependencyProperty ValueTypeProperty =
+		DependencyProperty.Register(
+			nameof(ValueType), typeof(Type), typeof(ListInfoControl),
+			new PropertyMetadata(typeof(string), OnValueTypeChanged));
+
+		public Type ValueType
+		{
+			get => (Type)GetValue(ValueTypeProperty);
+			set => SetValue(ValueTypeProperty, value);
+		}
+
+		private static void OnValueTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var ctrl = (ListInfoControl)d;
+			ctrl.UpdateValueColumn();
+		}
+
+		private void UpdateValueColumn()
+		{
+			// Find existing Value column in the MainDataGrid.
+			var dgColumn = MainDataGrid.Columns.FirstOrDefault(c => c.Header?.ToString() == "Value");
+			if (dgColumn == null)
+				return;
+
+			// Remove the old column.
+			MainDataGrid.Columns.Remove(dgColumn);
+
+			if (ValueType != null && ValueType.IsEnum)
+			{
+				// Build a combo box column if ValueType is an enum.
+				var comboCol = new DataGridComboBoxColumn
+				{
+					Header = dgColumn.Header,
+					SelectedValueBinding = new Binding("Value")
+					{
+						Mode = BindingMode.TwoWay,
+						UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+					},
+					// Provide the enum values for ItemsSource:
+					ItemsSource = Enum.GetValues(ValueType).Cast<object>().ToList(),
+					// Optional: adjust the column width or styling
+					Width = DataGridLength.Auto
+				};
+				MainDataGrid.Columns.Add(comboCol);
+			}
+			else
+			{
+				// Fall back to a Text column if not an enum.
+				var textCol = new DataGridTextColumn
+				{
+					Header = dgColumn.Header,
+					Binding = new Binding("Value")
+					{
+						Mode = BindingMode.TwoWay,
+						UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+					},
+					Width = DataGridLength.Auto
+				};
+				MainDataGrid.Columns.Add(textCol);
+			}
+		}
+
+		#endregion
+
+
+		#region ■ Property: Column Status
+
+		/// <summary>Controls column visibility.</summary>
+		public static readonly DependencyProperty ShowColumnStatusProperty =
+			DependencyProperty.Register(
+				nameof(ShowColumnStatus), typeof(Visibility),
+				typeof(ListInfoControl), new PropertyMetadata(Visibility.Visible));
+
+		/// <summary>Controls column visibility.</summary>
+		public Visibility ShowColumnStatus
+		{
+			get => (Visibility)GetValue(ShowColumnStatusProperty);
+			set => SetValue(ShowColumnStatusProperty, value);
+		}
+
+		#endregion
+
+		#region ■ Property: Column Comment
+
+		/// <summary>Controls column visibility.</summary>
+		public static readonly DependencyProperty ShowColumnCommentProperty =
+			DependencyProperty.Register(
+				nameof(ShowColumnComment), typeof(Visibility),
+				typeof(ListInfoControl), new PropertyMetadata(Visibility.Visible));
+
+		/// <summary>Controls column visibility.</summary>
+		public Visibility ShowColumnComment
+		{
+			get => (Visibility)GetValue(ShowColumnCommentProperty);
+			set => SetValue(ShowColumnCommentProperty, value);
+		}
+
+		#endregion
+
 
 		public ObservableCollection<string> Paths { get; set; } = new ObservableCollection<string>();
 
