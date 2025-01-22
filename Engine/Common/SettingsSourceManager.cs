@@ -4,12 +4,13 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using SharpVectors.Dom;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -497,46 +498,57 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Reset With Instructions
 
-		public static Dictionary<ItemType, IEnumerable> GetItemsFromZip(ZipStorer zip, ItemType itemType)
+		public static Dictionary<ItemType, IEnumerable<ISettingsFileItem>> GetItemsFromZip(ZipStorer zip, AppData appData, params ItemType[] itemTypes)
+		{
+			if (itemTypes == null || itemTypes.Length == 0)
+				itemTypes = (ItemType[])Enum.GetValues(typeof(ItemType));
+			var items = itemTypes.ToDictionary(x => x, x => GetItemFromZip(zip, appData, x));
+			return items;
+		}
+
+		public static IEnumerable<ISettingsFileItem> GetItemFromZip(ZipStorer zip, AppData appData, ItemType itemType)
 		{
 			switch (itemType)
 			{
 				case ItemType.None:
 					break;
 				case ItemType.Task:
-					//return GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
-					break;
+					return GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				case ItemType.Template:
-					//return GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
-					break;
+					return GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 				case ItemType.FineTuning:
-					break;
+					return GetItemsFromZip(zip, Global.FineTuningsName, Global.FineTunings);
 				case ItemType.Assistant:
-					break;
+					return GetItemsFromZip(zip, Global.AssistantsName, Global.Assistants);
 				case ItemType.Lists:
-					break;
+					return GetItemsFromZip(zip, Global.ListsName, Global.Lists);
 				case ItemType.Embeddings:
-					break;
+					return GetItemsFromZip(zip, Global.EmbeddingsName, Global.Embeddings);
 				case ItemType.MailAccount:
-					break;
+					return appData.MailAccounts;
 				case ItemType.AiModel:
-					break;
+					if (Global.StoreAiServicesAndModelsInSeparateFile)
+						return GetItemsFromZip(zip, Global.AiModelsName, Global.AiModels);
+					return appData.AiModels;
 				case ItemType.AiService:
-					break;
+					if (Global.StoreAiServicesAndModelsInSeparateFile)
+						return GetItemsFromZip(zip, Global.AiServicesName, Global.AiServices);
+					return appData.AiServices;
 				case ItemType.Voice:
-					break;
+					return GetItemsFromZip(zip, Global.VoicesName, Global.Voices);
 				case ItemType.Attachment:
 					break;
 				case ItemType.VaultItem:
-					break;
+					return appData.VaultItems;
 				case ItemType.UiPreset:
-					break;
+					return GetItemsFromZip(zip, Global.UiPresetsName, Global.UiPresets);
+				case ItemType.ResetItem:
+					return GetItemsFromZip(zip, Global.ResetsName, Global.Resets);
 				default:
 					break;
 			}
 			return null;
 		}
-
 
 		/// <summary>Reset Resets</summary>
 		public static void ResetWithInstructions(bool confirm = false)
@@ -546,23 +558,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			try
 			{
 				var zip = GetSettingsZip();
-
-
-				// Load data from a single XML file.
 				var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
-				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
-				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
-				var zipFinetuning = GetItemsFromZip(zip, Global.FineTuningPath, Global.Templates);
-				var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
-				var zipEmbeddings = GetItemsFromZip(zip, Global.EmbeddingsName, Global.Embeddings);
-				var zipServices = Global.StoreAiServicesAndModelsInSeparateFile
-					? GetItemsFromZip(zip, Global.AiServicesName, Global.AiServices)
-					: zipAppDataItems[0].AiServices.ToList();
-				var zipModels = Global.StoreAiServicesAndModelsInSeparateFile
-					? GetItemsFromZip(zip, Global.AiModelsName, Global.AiModels)
-					: zipAppDataItems[0].AiModels.ToList();
-				var vaultItems = zipAppDataItems[0].VaultItems.ToList();
-				var resetItems = Global.Resets.Items?.FirstOrDefault()?.Items;
+				var zipItems = GetItemsFromZip(zip, zipAppDataItems[0]);
+				var resetItems = zipItems[ItemType.ResetItem].Cast<ListItem>().ToArray();
 				if (resetItems?.Any() != true)
 					return;
 				foreach (var resetItem in resetItems)
@@ -577,48 +575,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					UpdateInstruction instruction;
 					if (!Enum.TryParse(resetItem.Value, out instruction))
 						continue;
-					IEnumerable<ISettingsFileItem> source = null;
+					var source = zipItems[itemType];
 					var target = Global.GetSettingItems(itemType);
-					switch (itemType)
-					{
-						case ItemType.None:
-							break;
-						case ItemType.Task:
-							source = zipTasks;
-							break;
-						case ItemType.Template:
-							source = zipTemplates;
-							break;
-						case ItemType.FineTuning:
-							break;
-						case ItemType.Assistant:
-							break;
-						case ItemType.Lists:
-							source = zipLists;
-							break;
-						case ItemType.Embeddings:
-							source = zipEmbeddings;
-							break;
-						case ItemType.MailAccount:
-							break;
-						case ItemType.AiModel:
-							source = zipModels;
-							break;
-						case ItemType.AiService:
-							source = zipServices;
-							break;
-						case ItemType.Voice:
-							break;
-						case ItemType.Attachment:
-							break;
-						case ItemType.VaultItem:
-							source = vaultItems;
-							break;
-						case ItemType.UiPreset:
-							break;
-						default:
-							break;
-					}
 					if (instruction == UpdateInstruction.RestoreIfNotExists)
 					{
 						var sourceItem = source?.FirstOrDefault(x => x.Name == itemName);
@@ -633,6 +591,62 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Global.ShowError("ResetWithInstructions() error: " + ex.Message);
 			}
+		}
+
+		public static ContextMenu CreateContextMenuForElement(ItemType itemType, ISettingsFileItem item)
+		{
+			var contextMenu = new ContextMenu();
+			var path = $"/{itemType}/{item.Name}";
+			var head = new MenuItem() { Header = item.Name, IsEnabled = false, ToolTip = path };
+			contextMenu.Items.Add(head);
+			// Add "Copy Path" menu item:
+			var copyPathMenuItem = new MenuItem { Header = "Copy Path" };
+			copyPathMenuItem.Click += (s, e) =>
+			{
+				System.Windows.Clipboard.SetText(path);
+			};
+			contextMenu.Items.Add(copyPathMenuItem);
+			// Add reset menus if available.
+			var resetItems = Global.Resets.Items.FirstOrDefault()?.Items;
+			if (resetItems == null)
+				return contextMenu;
+			var resetItem = resetItems.FirstOrDefault(x => x.Key == path);
+			var presetMenuItem = new MenuItem { Header = "Update Instructions" };
+			contextMenu.Items.Add(presetMenuItem);
+			var instructions = (UpdateInstruction[])Enum.GetValues(typeof(UpdateInstruction));
+			foreach (var instruction in instructions)
+			{
+				var isChecked = resetItem?.Value == instruction.ToString() || (instruction == UpdateInstruction.None && resetItem == null);
+				var menuItem = new MenuItem { Header = Attributes.GetDescription(instruction), IsCheckable = true, IsChecked = isChecked };
+				menuItem.Checked += (s, e) =>
+				{
+					// Add or update instruction.
+					if (resetItem != null)
+					{
+						if (instruction == UpdateInstruction.None)
+						{
+							resetItems.Remove(resetItem);
+						}
+						else
+						{
+							resetItem.Value = instruction.ToString();
+						}
+					}
+					else if (instruction != UpdateInstruction.None)
+					{
+						resetItem = new ListItem { Key = path, Value = instruction.ToString() };
+						resetItems.Add(resetItem);
+					}
+				};
+				menuItem.Unchecked += (s, e) =>
+				{
+					if (resetItem != null)
+						resetItems.Remove(resetItem);
+
+				};
+				presetMenuItem.Items.Add(menuItem);
+			}
+			return contextMenu;
 		}
 
 		#endregion

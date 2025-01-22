@@ -701,16 +701,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 
-		private void MainDataGrid_CopyPathMenuItem_Click(object sender, RoutedEventArgs e)
+		#region Context Menu
+
+		private void MainDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			// Ensure something is selected in the DataGrid
-			if (MainDataGrid.SelectedItem is ISettingsListFileItem selectedItem)
+			// If you only want the context menu when a row is clicked:
+			var dataGrid = (DataGrid)sender;
+			var originalSource = e.OriginalSource as DependencyObject;
+			var row = ItemsControl.ContainerFromElement(dataGrid, originalSource) as DataGridRow;
+			if (row == null)
 			{
-				// Format: /{DataType}/{Item.Name}
-				var path = $"/{DataType}/{selectedItem.Name}";
-				System.Windows.Clipboard.SetText(path);
+				// Optionally set e.Handled = true if you do not want a blank or default menu to appear
+				// e.Handled = true;
+				return;
 			}
+			// Cast the row’s item to your type.
+			var item = row.Item as ISettingsListFileItem;
+			if (item == null)
+				return;
+			// Build your dynamic menu:
+			var menu = SettingsSourceManager.CreateContextMenuForElement(DataType, item);
+			// Assign it to the DataGrid.
+			dataGrid.ContextMenu = menu;
+			// Force it to open right now:
+			menu.PlacementTarget = dataGrid; // or row, whichever you prefer
+			menu.IsOpen = true;
+			// Mark as handled so WPF does not try to open any other context menus.
+			e.Handled = true;
 		}
+
+		#endregion
 
 		#region Grouping
 

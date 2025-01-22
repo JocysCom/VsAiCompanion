@@ -198,15 +198,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public const string FineTuningsName = nameof(FineTunings);
 
 		public static SettingsData<FineTuningItem> FineTunings =
-			new SettingsData<FineTuningItem>($"{nameof(ItemType.FineTuning)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			new SettingsData<FineTuningItem>($"{FineTuningsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
 
+		public const string AssistantsName = nameof(Assistants);
+
 		public static SettingsData<AssistantItem> Assistants =
-			new SettingsData<AssistantItem>($"{nameof(Assistants)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			new SettingsData<AssistantItem>($"{AssistantsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
@@ -285,10 +288,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		public static string FineTuningPath
-			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, FineTuningsName);
 
 		public static string AssistantsPath
-			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Assistants));
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, AssistantsName);
 
 		public static string PluginsSearchPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Plugins), nameof(Plugins.Core.Search));

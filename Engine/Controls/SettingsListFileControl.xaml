@@ -197,6 +197,7 @@
 			CanUserSortColumns="False"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ColumnWidth="Auto"
+			ContextMenuOpening="MainDataGrid_ContextMenuOpening"
 			HeadersVisibility="None"
 			IsReadOnly="False"
 			ItemsSource="{Binding Source={StaticResource GroupedData}}"
@@ -211,12 +212,6 @@
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 			</DataGrid.Resources>
-			<!--  Add this block to define the context menu.  -->
-			<DataGrid.ContextMenu>
-				<ContextMenu>
-					<MenuItem x:Name="CopyPathMenuItem" Click="MainDataGrid_CopyPathMenuItem_Click" Header="{DynamicResource main_Copy_Path}" />
-				</ContextMenu>
-			</DataGrid.ContextMenu>
 			<!--  GroupStyle for collapsible panels  -->
 			<DataGrid.GroupStyle>
 				<GroupStyle>
