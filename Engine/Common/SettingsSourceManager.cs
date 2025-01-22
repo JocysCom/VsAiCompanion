@@ -2,8 +2,10 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -346,23 +348,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			// ---
 			var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
-			var zipServices = zipAppDataItems[0].AiServices;
-			var zipModels = zipAppDataItems[0].AiModels;
+			var zipServices = Global.StoreAiServicesAndModelsInSeparateFile
+				// Get from a separate file.
+				? GetItemsFromZip(zip, Global.AiServicesName, Global.AiServices)
+				// Get from App Data.
+				: zipAppDataItems[0].AiServices.ToList();
+			var zipModels = Global.StoreAiServicesAndModelsInSeparateFile
+				? GetItemsFromZip(zip, Global.AiModelsName, Global.AiModels)
+				: zipAppDataItems[0].AiModels.ToList();
 			// Remove Services and Models
 			var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
-			var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
+			var servicesToRemove = Global.AiServices.Items.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
 			foreach (var service in servicesToRemove)
 			{
-				var modelsToRemove = Global.AppSettings.AiModels.Where(x => x.AiServiceId == service.Id).ToArray();
+				var modelsToRemove = Global.AiModels.Items.Where(x => x.AiServiceId == service.Id).ToArray();
 				foreach (var model in modelsToRemove)
-					Global.AppSettings.AiModels.Remove(model);
-				Global.AppSettings.AiServices.Remove(service);
+					Global.AiModels.Remove(model);
+				Global.AiServices.Remove(service);
 			}
 			// Add Services and Models
 			foreach (var item in zipServices)
-				Global.AppSettings.AiServices.Add(item);
+				Global.AiServices.Add(item);
 			foreach (var item in zipModels)
-				Global.AppSettings.AiModels.Add(item);
+				Global.AiModels.Add(item);
 			// ---
 			if (closeZip)
 				zip.Close();
@@ -486,6 +494,149 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		#endregion
+
+		#region Reset With Instructions
+
+		public static Dictionary<ItemType, IEnumerable> GetItemsFromZip(ZipStorer zip, ItemType itemType)
+		{
+			switch (itemType)
+			{
+				case ItemType.None:
+					break;
+				case ItemType.Task:
+					//return GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
+					break;
+				case ItemType.Template:
+					//return GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
+					break;
+				case ItemType.FineTuning:
+					break;
+				case ItemType.Assistant:
+					break;
+				case ItemType.Lists:
+					break;
+				case ItemType.Embeddings:
+					break;
+				case ItemType.MailAccount:
+					break;
+				case ItemType.AiModel:
+					break;
+				case ItemType.AiService:
+					break;
+				case ItemType.Voice:
+					break;
+				case ItemType.Attachment:
+					break;
+				case ItemType.VaultItem:
+					break;
+				case ItemType.UiPreset:
+					break;
+				default:
+					break;
+			}
+			return null;
+		}
+
+
+		/// <summary>Reset Resets</summary>
+		public static void ResetWithInstructions(bool confirm = false)
+		{
+			if (confirm && !AppHelper.AllowReset("Settings with Instructions", "Please note that this will override some data!"))
+				return;
+			try
+			{
+				var zip = GetSettingsZip();
+
+
+				// Load data from a single XML file.
+				var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
+				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
+				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
+				var zipFinetuning = GetItemsFromZip(zip, Global.FineTuningPath, Global.Templates);
+				var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
+				var zipEmbeddings = GetItemsFromZip(zip, Global.EmbeddingsName, Global.Embeddings);
+				var zipServices = Global.StoreAiServicesAndModelsInSeparateFile
+					? GetItemsFromZip(zip, Global.AiServicesName, Global.AiServices)
+					: zipAppDataItems[0].AiServices.ToList();
+				var zipModels = Global.StoreAiServicesAndModelsInSeparateFile
+					? GetItemsFromZip(zip, Global.AiModelsName, Global.AiModels)
+					: zipAppDataItems[0].AiModels.ToList();
+				var vaultItems = zipAppDataItems[0].VaultItems.ToList();
+				var resetItems = Global.Resets.Items?.FirstOrDefault()?.Items;
+				if (resetItems?.Any() != true)
+					return;
+				foreach (var resetItem in resetItems)
+				{
+					var typeAndName = resetItem.Key?.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+					if (typeAndName.Length != 2)
+						continue;
+					ItemType itemType;
+					if (!Enum.TryParse(typeAndName[0], out itemType))
+						continue;
+					var itemName = typeAndName[1];
+					UpdateInstruction instruction;
+					if (!Enum.TryParse(resetItem.Value, out instruction))
+						continue;
+					IEnumerable<ISettingsFileItem> source = null;
+					var target = Global.GetSettingItems(itemType);
+					switch (itemType)
+					{
+						case ItemType.None:
+							break;
+						case ItemType.Task:
+							source = zipTasks;
+							break;
+						case ItemType.Template:
+							source = zipTemplates;
+							break;
+						case ItemType.FineTuning:
+							break;
+						case ItemType.Assistant:
+							break;
+						case ItemType.Lists:
+							source = zipLists;
+							break;
+						case ItemType.Embeddings:
+							source = zipEmbeddings;
+							break;
+						case ItemType.MailAccount:
+							break;
+						case ItemType.AiModel:
+							source = zipModels;
+							break;
+						case ItemType.AiService:
+							source = zipServices;
+							break;
+						case ItemType.Voice:
+							break;
+						case ItemType.Attachment:
+							break;
+						case ItemType.VaultItem:
+							source = vaultItems;
+							break;
+						case ItemType.UiPreset:
+							break;
+						default:
+							break;
+					}
+					if (instruction == UpdateInstruction.RestoreIfNotExists)
+					{
+						var sourceItem = source?.FirstOrDefault(x => x.Name == itemName);
+						if (sourceItem == null)
+							continue;
+						if (target != null && !target.Cast<ISettingsFileItem>().Any(x => x.Name == itemName))
+							target.Add(sourceItem);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Global.ShowError("ResetWithInstructions() error: " + ex.Message);
+			}
+		}
+
+		#endregion
+
 
 		#region General Methods
 

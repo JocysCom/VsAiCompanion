@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -147,6 +148,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public string ModelFilter { get => _ModelFilter; set => SetProperty(ref _ModelFilter, value); }
 		string _ModelFilter;
+
+		/// <summary>Enable model instructions.</summary>
+		[DefaultValue(null)]
+		public ListInfo ExternalLinks
+		{
+			get => _ExternalLinks = _ExternalLinks ?? new ListInfo();
+			set => SetProperty(ref _ExternalLinks, value);
+		}
+		ListInfo _ExternalLinks;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeExternalLinks() => _ExternalLinks != null && !ExternalLinks.IsEmpty;
+
 
 	}
 

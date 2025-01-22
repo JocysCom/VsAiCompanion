@@ -172,10 +172,12 @@
 		<EmbeddedResource Remove="Resources\Embeddings\**" />
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\Embeddings\**" />
+		<None Remove="Resources\AI Service - DeepSeek.rtf" />
 		<None Remove="Resources\AI Service - Google Gemini.rtf" />
 		<None Remove="Resources\AI Service - Open AI.rtf" />
 		<None Remove="Resources\AI Service - Speech Service.rtf" />
 		<None Remove="Resources\AI Service - xAi Grok.rtf" />
+		<None Remove="Resources\AI Service - xAi.rtf" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
 		<None Remove="Resources\Documents.zip" />
 		<None Remove="Resources\IconExperience.License.txt" />
@@ -237,10 +239,11 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<EmbeddedResource Include="Resources\AI Service - DeepSeek.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Google Gemini.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Open AI.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Speech Service.rtf" />
-		<EmbeddedResource Include="Resources\AI Service - xAi Grok.rtf" />
+		<EmbeddedResource Include="Resources\AI Service - xAi.rtf" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />

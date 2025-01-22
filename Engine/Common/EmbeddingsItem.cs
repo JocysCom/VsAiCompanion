@@ -132,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[XmlIgnore, JsonIgnore]
 		public AiService AiService
-			=> Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
+			=> Global.AiServices.Items.FirstOrDefault(x => x.Id == AiServiceId);
 
 		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
 		string _AiModel;

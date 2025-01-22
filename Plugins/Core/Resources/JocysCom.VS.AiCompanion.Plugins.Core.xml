@@ -820,6 +820,9 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Items">
             <summary>List items: Key, Value, Comment.</summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.ShouldSerializeItems">
+            <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.IsEmpty">
             <inheritdoc/>
         </member>

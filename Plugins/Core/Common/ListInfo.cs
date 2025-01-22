@@ -42,10 +42,21 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 		BindingList<ListItem> _Items;
 
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeItems() => _Items?.Count > 0;
+
 		/// <inheritdoc/>
 		public override bool IsEmpty
 		{
-			get { return (_Items?.Count ?? 0) == 0; }
+			get
+			{
+				return
+					(_Items == null || _Items.Count == 0) &&
+					string.IsNullOrWhiteSpace(Name) &&
+					string.IsNullOrWhiteSpace(Description) &&
+					string.IsNullOrWhiteSpace(Instructions)
+					;
+			}
 		}
 
 	}

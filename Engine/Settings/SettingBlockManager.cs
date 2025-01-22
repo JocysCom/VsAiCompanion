@@ -14,33 +14,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 		{
 			return new List<SettingBlock>
 			{
-				new SettingBlock
-				{
-					Path = "/Settings/Templates/AIChat/Personalized",
-					Instruction = UpdateInstruction.RestoreIfNotExists
-				},
-				new SettingBlock
-				{
-					Path = "/Settings/List/Prompts/Prompts",
-					Instruction = UpdateInstruction.RestoreIfNotExists
-								 | UpdateInstruction.ResetToDefaultOnAppUpdate
-				},
-				new SettingBlock
-				{
-					Path = "Settings.Advanced.FeatureFlags",
-					Instruction = UpdateInstruction.MergeWithExisting
-				},
-				new SettingBlock
-				{
-					Path = "/Settings/UserPreferences/Theme",
-					Instruction = UpdateInstruction.OverwriteExisting
-								  | UpdateInstruction.BackupBeforeOverwrite
-				},
-				new SettingBlock
-				{
-					Path = "Settings.VersionInfo",
-					Instruction = UpdateInstruction.SkipIfLocalIsNewer
-				}
 			};
 		}
 	}

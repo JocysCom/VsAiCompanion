@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class AiModel : SettingsListFileItem
+	public class AiModel : SettingsListFileItem, IHasGuid
 	{
 		public AiModel()
 		{
@@ -35,7 +35,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		Guid _AiServiceId;
 
 		[XmlIgnore, JsonIgnore]
-		public string AiServiceName { get => Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
+		public string AiServiceName { get => Global.AiServices?.Items.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
 
 		[DefaultValue(0)]
 		public int MaxInputTokens { get => _MaxInputTokens; set => SetProperty(ref _MaxInputTokens, value); }
@@ -82,7 +82,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(false)]
 		public bool InstructionsEnabled { get => _InstructionsEnabled; set => SetProperty(ref _InstructionsEnabled, value); }
 		bool _InstructionsEnabled;
-
 
 	}
 }

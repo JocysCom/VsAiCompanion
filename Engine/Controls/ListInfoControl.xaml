@@ -22,7 +22,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
+	<Grid DataContext="{Binding Item, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
@@ -46,10 +46,14 @@
 				Panel.ZIndex="10"
 				Click="ListToggleButton_Click"
 				Focusable="False"
-				Visibility="{Binding ShowListToggle, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+				Visibility="{Binding ListToggleVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>
-			<Border Grid.Column="1" Margin="0,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+			<Border
+				Grid.Column="1"
+				Margin="0,3,3,3"
+				Style="{StaticResource BorderDescriptionNormal}"
+				Visibility="{Binding FeatureDescriptionVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 				<TextBlock Name="FeatureDescriptionLabel" Text="{Binding FeatureDescription, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 			</Border>
 		</Grid>
@@ -58,7 +62,7 @@
 			Grid.Row="1"
 			Grid.Column="0"
 			Orientation="Vertical"
-			Visibility="{Binding ShowIcon, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+			Visibility="{Binding IconVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 			<controlsShared:IconUserControl
 				x:Name="IconPanel"
 				Width="64"
@@ -76,8 +80,8 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Label x:Name="PathLabel" Content="{StaticResource main_Task_Path}" Visibility="{Binding ShowOptions, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
-			<StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowOptions, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
+			<Label x:Name="PathLabel" Content="{StaticResource main_Task_Path}" Visibility="{Binding OptionsVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+			<StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding OptionsVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
 				<ComboBox MinWidth="128" ItemsSource="{Binding Paths, ElementName=This}" SelectedValue="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<CheckBox
 					Name="IsEnabledCheckBox"
@@ -94,7 +98,7 @@
 				x:Name="DescriptionLabel"
 				Grid.Row="1"
 				Content="{StaticResource main_Description}"
-				Visibility="{Binding ShowDescription, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+				Visibility="{Binding DescriptionVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 			<TextBox
 				Name="DescriptionTextBox"
 				Grid.Row="1"
@@ -108,12 +112,12 @@
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap"
-				Visibility="{Binding ShowDescription, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+				Visibility="{Binding DescriptionVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 			<Label
 				x:Name="InstructionsLabel"
 				Grid.Row="2"
 				Content="{StaticResource main_Instructions}"
-				Visibility="{Binding ShowInstructions, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+				Visibility="{Binding InstructionsVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="2"
@@ -127,7 +131,7 @@
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Instructions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap"
-				Visibility="{Binding ShowInstructions, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
+				Visibility="{Binding InstructionsVisibility, ElementName=This, UpdateSourceTrigger=PropertyChanged}" />
 		</Grid>
 		<Border
 			Grid.Row="2"
@@ -185,9 +189,12 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
+			BeginningEdit="MainDataGrid_BeginningEdit"
 			CanUserAddRows="True"
+			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
+			PreviewMouseLeftButtonDown="MainDataGrid_PreviewMouseLeftButtonDown"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -205,7 +212,7 @@
 					Width="Auto"
 					Header="{StaticResource main_Status}"
 					SelectedItemBinding="{Binding Status}"
-					Visibility="{Binding DataContext.ShowColumnStatus, Source={x:Reference ProxyElement}}" />
+					Visibility="{Binding DataContext.ColumnStatusVisibility, Source={x:Reference ProxyElement}}" />
 				<DataGridTextColumn
 					x:Name="ValueColumn"
 					Width="Auto"
@@ -220,7 +227,7 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="{StaticResource main_Comment}"
-					Visibility="{Binding DataContext.ShowColumnComment, Source={x:Reference ProxyElement}}" />
+					Visibility="{Binding DataContext.ColumnCommentVisibility, Source={x:Reference ProxyElement}}" />
 			</DataGrid.Columns>
 			<!--<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

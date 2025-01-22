@@ -24,11 +24,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		Guid _AiServiceId;
 
 		public AiService AiService =>
-			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
+			Global.AiServices.Items.FirstOrDefault(x => x.Id == AiServiceId);
 
 		[XmlIgnore, JsonIgnore]
 		internal AiModel _AiModelItem =>
-			Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == AiServiceId && x.Name == AiModel);
+			Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == AiServiceId && x.Name == AiModel);
 
 		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
 		string _AiModel;

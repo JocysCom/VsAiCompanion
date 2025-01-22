@@ -402,39 +402,40 @@ Do not return as a code block.")]
 		/// </summary>
 		public void CleanupAiModels()
 		{
-			var serviceIds = AiServices.Select(x => x.Id).ToArray();
+			var serviceIds = Global.AiServices.Items.Select(x => x.Id).ToArray();
 			// Fix: Remove with empty name
-			var modelsToRemove = Global.AppSettings.AiModels.Where(x => string.IsNullOrWhiteSpace(x.Name)).ToArray();
+			var modelsToRemove = Global.AiModels.Items.Where(x => string.IsNullOrWhiteSpace(x.Name)).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Remove(model);
 			// Remove models without services.
-			modelsToRemove = AiModels.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
+			modelsToRemove = Global.AiModels.Items.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Remove(model);
 			// Remove duplicates
-			var modelsToKeep = AiModels
+			var modelsToKeep = Global.AiModels.Items
 				.GroupBy(model => new { model.AiServiceId, model.Name })
 				.Select(group => group.First())
 				.ToList();
-			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
+			modelsToRemove = Global.AiModels.Items.Except(modelsToKeep).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Items.Remove(model);
 			// Remove duplicates
-			modelsToKeep = AiModels
+			modelsToKeep = Global.AiModels.Items
 				.GroupBy(model => new { model.Id })
 				.Select(group => group.First())
 				.ToList();
-			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
+			modelsToRemove = Global.AiModels.Items.Except(modelsToKeep).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Items.Remove(model);
 			// Fix path property (use for the list only).
-			var models = AiModels.ToArray();
+			var models = Global.AiModels.Items.ToArray();
 			foreach (var model in models)
 				if (model.Path != model.AiServiceName)
 					model.Path = model.AiServiceName;
 		}
 
 		/// <summary>AI Services</summary>
+		//[Obsolete("Property is deprecated. Please use `Global.AiServices` property instead.")]
 		public SortableBindingList<AiService> AiServices
 		{
 			get => _AiServices.Value;
@@ -445,6 +446,7 @@ Do not return as a code block.")]
 
 
 		/// <summary>AI Models</summary>
+		//[Obsolete("Property is deprecated. Please use `Global.AiModels` property instead.")]
 		public SortableBindingList<AiModel> AiModels
 		{
 			get => _AiModels.Value;

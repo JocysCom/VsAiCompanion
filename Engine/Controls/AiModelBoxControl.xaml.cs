@@ -26,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
 		{
-			var items = Global.AppSettings.AiServices
+			var items = Global.AiServices.Items
 				.Where(x =>
 				x.ServiceType == ApiServiceType.None
 				|| x.ServiceType == ApiServiceType.OpenAI
@@ -53,8 +53,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					AiServicesComboBox.SelectionChanged += AiServicesComboBox_SelectionChanged;
 					var aiServiceId = _item.AiServiceId;
 					if (aiServiceId == Guid.Empty)
-						aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
-							Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
+						aiServiceId = Global.AiServices.Items.FirstOrDefault(x => x.IsDefault)?.Id ??
+							Global.AiServices.Items.FirstOrDefault()?.Id ?? Guid.Empty;
 					AiServicesComboBox.SelectedValue = aiServiceId;
 				}
 				OnPropertyChanged(nameof(Item));

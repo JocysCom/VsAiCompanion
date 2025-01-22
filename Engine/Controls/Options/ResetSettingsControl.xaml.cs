@@ -124,6 +124,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			}
 		}
 
+		private void ResetSettingsWithInstructions_Click(object sender, RoutedEventArgs e)
+		{
+			SettingsSourceManager.ResetWithInstructions(true);
+		}
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

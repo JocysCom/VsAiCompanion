@@ -149,7 +149,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
-			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
 			if (aiModel == null)
 			{
 				Global.SetWithTimeout(MessageBoxImage.Warning, $"AI model '{item.AiModel}' not found. Please refresh AI models.");

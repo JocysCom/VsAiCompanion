@@ -74,6 +74,18 @@
 					VerticalAlignment="Top"
 					Header="{StaticResource main_Reset_Settings}">
 					<StackPanel>
+
+						<Button
+							Name="ResetSettingsWithInstructionsButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetSettingsWithInstructions_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Settings_with_Instructions}" />
+							</StackPanel>
+						</Button>
+
 						<Button
 							Name="ResetAllSettingsButton"
 							HorizontalAlignment="Stretch"
@@ -293,14 +305,14 @@
 				</TabItem.Header>
 				<controls:ListInfoControl
 					x:Name="UpdateInstructionsPanel"
+					ColumnCommentVisibility="Collapsed"
+					ColumnStatusVisibility="Collapsed"
+					DescriptionVisibility="Collapsed"
 					FeatureDescription="{DynamicResource main_UpdateInstructions_Help}"
-					ShowColumnComment="Collapsed"
-					ShowColumnStatus="Collapsed"
-					ShowDescription="Collapsed"
-					ShowIcon="Collapsed"
-					ShowInstructions="Collapsed"
-					ShowListToggle="Collapsed"
-					ShowOptions="Collapsed" />
+					IconVisibility="Collapsed"
+					InstructionsVisibility="Collapsed"
+					ListToggleVisibility="Collapsed"
+					OptionsVisibility="Collapsed" />
 			</TabItem>
 
 		</TabControl>

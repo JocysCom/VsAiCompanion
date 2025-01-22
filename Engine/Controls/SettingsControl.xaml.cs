@@ -76,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (DataType == ItemType.AiService)
 			{
-				AiServiceItemPanel.Item = (AiService)item;
+				await AiServiceItemPanel.BindData((AiService)item);
 			}
 			else if (DataType == ItemType.AiModel)
 			{

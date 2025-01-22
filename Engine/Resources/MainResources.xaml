@@ -283,6 +283,7 @@
 	<sys:String x:Key="main_Response_Timeout">Response Timeout</sys:String>
 	<sys:String x:Key="main_ServiceType">ServiceType</sys:String>
 	<sys:String x:Key="main_RequestOverrides">Request Overrides</sys:String>
+	<sys:String x:Key="main_ExternalLinks">External Links</sys:String>
 	<sys:String x:Key="main_Override_API_version">Override API version.</sys:String>
 	<sys:String x:Key="main_Override_API_version_Help">Enable the override of the API version.</sys:String>
 
@@ -356,6 +357,7 @@
 	</sys:String>
 
 	<!--  Options → Reset Settings  -->
+	<sys:String x:Key="main_Reset_Settings_with_Instructions">Reset Settings with Instructions</sys:String>
 	<sys:String x:Key="main_Reset_All_Settings">Reset All Settings</sys:String>
 	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>

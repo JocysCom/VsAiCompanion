@@ -52,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 		[XmlIgnore, JsonIgnore]
-		public string AiServiceName { get => Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
+		public string AiServiceName { get => Global.AiServices.Items.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
 
 		#region Audio File Cache
 

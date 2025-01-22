@@ -328,7 +328,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var headRequestProperties = new Dictionary<string, string>();
 			// Add/override content header properties.
 			var headContentProperties = new Dictionary<string, string>();
-				//headContentProperties.Add("Content-Type", "application/json");
+			//headContentProperties.Add("Content-Type", "application/json");
 			// Add/override body properties.
 			var bodyProperties = new Dictionary<string, string>();
 			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
@@ -408,7 +408,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// Service item.
 			var service = item.AiService;
 			var modelName = item.AiModel;
-			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 			var maxInputTokens = GetMaxInputTokens(item);
 			// Other settings.
 			var newMessageItems = new List<MessageItem>();
@@ -754,7 +754,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var modelName = item.AiModel;
 			// Try to get max input tokens value from the settings.
-			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x =>
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x =>
 				x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
 			if (aiModel != null && aiModel.MaxInputTokens != 0)
 				return aiModel.MaxInputTokens;

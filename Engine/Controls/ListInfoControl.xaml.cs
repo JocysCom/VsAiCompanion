@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -129,60 +130,73 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ Property: ShowListToggle
+		#region ■ Property: ListToggleVisibility
 
 		/// <summary>
 		/// Indicates whether the button used to toggle list visibility is shown.
 		/// </summary>
-		public static readonly DependencyProperty ShowListToggleProperty =
+		public static readonly DependencyProperty ListToggleVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowListToggle),
+				nameof(ListToggleVisibility),
 				typeof(Visibility),
 				typeof(ListInfoControl),
-				new PropertyMetadata(Visibility.Visible, OnShowListToggleChanged));
+				new PropertyMetadata(Visibility.Visible));
 
 		/// <summary>
 		/// Gets or sets a value controlling the visibility of
 		/// the ListToggleButton in the top-left corner.
 		/// </summary>
-		public Visibility ShowListToggle
+		public Visibility ListToggleVisibility
 		{
-			get => (Visibility)GetValue(ShowListToggleProperty);
-			set => SetValue(ShowListToggleProperty, value);
-		}
-
-		private static void OnShowListToggleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
-			{
-			}
+			get => (Visibility)GetValue(ListToggleVisibilityProperty);
+			set => SetValue(ListToggleVisibilityProperty, value);
 		}
 
 		#endregion
 
-		#region ■ Property: ShowOptions
+		#region ■ Property: FeatureDescriptionVisibility
+
+		/// <summary>Show Feature Description</summary>
+		public static readonly DependencyProperty FeatureDescriptionVisibilityProperty =
+			DependencyProperty.Register(
+				nameof(FeatureDescriptionVisibility),
+				typeof(Visibility),
+				typeof(ListInfoControl),
+				new PropertyMetadata(Visibility.Visible));
+
+		/// <summary>Show Feature Description</summary>
+		public Visibility FeatureDescriptionVisibility
+		{
+			get => (Visibility)GetValue(FeatureDescriptionVisibilityProperty);
+			set => SetValue(FeatureDescriptionVisibilityProperty, value);
+		}
+
+		#endregion
+
+
+		#region ■ Property: OptionsVisibility
 
 		/// <summary>
 		/// Indicates whether the path label and associated options stack are visible.
 		/// </summary>
-		public static readonly DependencyProperty ShowOptionsProperty =
+		public static readonly DependencyProperty OptionsVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowOptions),
+				nameof(OptionsVisibility),
 				typeof(Visibility),
 				typeof(ListInfoControl),
-				new PropertyMetadata(Visibility.Visible, OnShowOptionsChanged));
+				new PropertyMetadata(Visibility.Visible, OnOptionsVisibilityChanged));
 
 		/// <summary>
 		/// Gets or sets a value controlling the visibility of
 		/// the path label and StackPanel on the same row.
 		/// </summary>
-		public Visibility ShowOptions
+		public Visibility OptionsVisibility
 		{
-			get => (Visibility)GetValue(ShowOptionsProperty);
-			set => SetValue(ShowOptionsProperty, value);
+			get => (Visibility)GetValue(OptionsVisibilityProperty);
+			set => SetValue(OptionsVisibilityProperty, value);
 		}
 
-		private static void OnShowOptionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private static void OnOptionsVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
 			{
@@ -191,29 +205,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ Property: ShowIcon
+		#region ■ Property: IconVisibility
 
 		/// <summary>
 		/// Indicates whether the path label and associated Icon stack are visible.
 		/// </summary>
-		public static readonly DependencyProperty ShowIconProperty =
+		public static readonly DependencyProperty IconVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowIcon),
+				nameof(IconVisibility),
 				typeof(Visibility),
 				typeof(ListInfoControl),
-				new PropertyMetadata(Visibility.Visible, OnShowIconChanged));
+				new PropertyMetadata(Visibility.Visible, OnIconVisibilityChanged));
 
 		/// <summary>
 		/// Gets or sets a value controlling the visibility of
 		/// the path label and StackPanel on the same row.
 		/// </summary>
-		public Visibility ShowIcon
+		public Visibility IconVisibility
 		{
-			get => (Visibility)GetValue(ShowIconProperty);
-			set => SetValue(ShowIconProperty, value);
+			get => (Visibility)GetValue(IconVisibilityProperty);
+			set => SetValue(IconVisibilityProperty, value);
 		}
 
-		private static void OnShowIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private static void OnIconVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
 			{
@@ -253,29 +267,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ Property: ShowDescription
+		#region ■ Property: DescriptionVisibility
 
 		/// <summary>
 		/// Indicates whether the description label and textbox are visible.
 		/// </summary>
-		public static readonly DependencyProperty ShowDescriptionProperty =
+		public static readonly DependencyProperty DescriptionVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowDescription),
+				nameof(DescriptionVisibility),
 				typeof(Visibility),
 				typeof(ListInfoControl),
-				new PropertyMetadata(Visibility.Visible, OnShowDescriptionChanged));
+				new PropertyMetadata(Visibility.Visible, OnDescriptionVisibilityChanged));
 
 		/// <summary>
 		/// Gets or sets a value controlling the visibility of
 		/// the description label and textbox.
 		/// </summary>
-		public Visibility ShowDescription
+		public Visibility DescriptionVisibility
 		{
-			get => (Visibility)GetValue(ShowDescriptionProperty);
-			set => SetValue(ShowDescriptionProperty, value);
+			get => (Visibility)GetValue(DescriptionVisibilityProperty);
+			set => SetValue(DescriptionVisibilityProperty, value);
 		}
 
-		private static void OnShowDescriptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private static void OnDescriptionVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
 			{
@@ -284,29 +298,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ Property: ShowInstructions
+		#region ■ Property: InstructionsVisibility
 
 		/// <summary>
 		/// Indicates whether the instructions label and textbox are visible.
 		/// </summary>
-		public static readonly DependencyProperty ShowInstructionsProperty =
+		public static readonly DependencyProperty InstructionsVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowInstructions),
+				nameof(InstructionsVisibility),
 				typeof(Visibility),
 				typeof(ListInfoControl),
-				new PropertyMetadata(Visibility.Visible, OnShowInstructionsChanged));
+				new PropertyMetadata(Visibility.Visible, OnInstructionsVisibilityChanged));
 
 		/// <summary>
 		/// Gets or sets a value controlling the visibility of
 		/// the instructions label and textbox.
 		/// </summary>
-		public Visibility ShowInstructions
+		public Visibility InstructionsVisibility
 		{
-			get => (Visibility)GetValue(ShowInstructionsProperty);
-			set => SetValue(ShowInstructionsProperty, value);
+			get => (Visibility)GetValue(InstructionsVisibilityProperty);
+			set => SetValue(InstructionsVisibilityProperty, value);
 		}
 
-		private static void OnShowInstructionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private static void OnInstructionsVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is ListInfoControl ctrl && e.NewValue is Visibility visibility)
 			{
@@ -336,38 +350,67 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void UpdateValueColumn()
 		{
-			// Find existing Value column in the MainDataGrid.
+			// Remove any existing “Value” column from the DataGrid.
 			var dgColumn = MainDataGrid.Columns.FirstOrDefault(c => c.Header?.ToString() == "Value");
-			if (dgColumn == null)
-				return;
-
-			// Remove the old column.
-			MainDataGrid.Columns.Remove(dgColumn);
+			if (dgColumn != null)
+				MainDataGrid.Columns.Remove(dgColumn);
 
 			if (ValueType != null && ValueType.IsEnum)
 			{
-				// Build a combo box column if ValueType is an enum.
-				var comboCol = new DataGridComboBoxColumn
+				// If your property is ProgressStatus? (nullable enum):
+				// Build a list that includes null + all possible enum values.
+				var enumList = new List<object>();
+				if (Nullable.GetUnderlyingType(ValueType) != null)
 				{
-					Header = dgColumn.Header,
+					// Add null (for the “no value” case):
+					enumList.Add(null);
+					var coreEnum = Nullable.GetUnderlyingType(ValueType);
+					if (coreEnum != null)
+						enumList.AddRange(Enum.GetValues(coreEnum).Cast<object>());
+				}
+				else
+				{
+					// If not nullable, just add all enum values.
+					enumList.AddRange(Enum.GetValues(ValueType).Cast<object>());
+				}
+
+				var comboColumn = new DataGridComboBoxColumn
+				{
+					Header = "Value",
 					SelectedValueBinding = new Binding("Value")
 					{
 						Mode = BindingMode.TwoWay,
 						UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
 					},
-					// Provide the enum values for ItemsSource:
-					ItemsSource = Enum.GetValues(ValueType).Cast<object>().ToList(),
-					// Optional: adjust the column width or styling
+					SelectedValuePath = ".",
 					Width = DataGridLength.Auto
 				};
-				MainDataGrid.Columns.Add(comboCol);
+
+				//// Create a DataGridCell style to center content horizontally (in display mode).
+				//var cellStyle = new Style(typeof(DataGridCell));
+				//cellStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+				//cellStyle.Setters.Add(new Setter(Control.MarginProperty, new Thickness(3, 0, 3, 0)));
+				//comboColumn.CellStyle = cellStyle;
+
+				//// Create an EditingElementStyle for the ComboBox's edit mode.
+				//var editingComboStyle = new Style(typeof(ComboBox));
+				//editingComboStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+				//editingComboStyle.Setters.Add(new Setter(Control.MarginProperty, new Thickness(3, 0, 3, 0)));
+				//comboColumn.EditingElementStyle = editingComboStyle;
+
+				// Add enum values to the ItemsSource. For nullable, include 'null' entry if needed.
+				var enumItems = new List<object>(Enum.GetValues(ValueType).Cast<object>());
+				comboColumn.ItemsSource = enumItems;
+
+				// Finally, add the column to your DataGrid.
+				MainDataGrid.Columns.Add(comboColumn);
 			}
 			else
 			{
-				// Fall back to a Text column if not an enum.
+				// Fallback to a Text column for non-enum cases.
 				var textCol = new DataGridTextColumn
 				{
-					Header = dgColumn.Header,
+					Header = dgColumn?.Header ?? "Value",
 					Binding = new Binding("Value")
 					{
 						Mode = BindingMode.TwoWay,
@@ -381,41 +424,39 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-
-		#region ■ Property: Column Status
+		#region ■ Property: Column Status Visibility
 
 		/// <summary>Controls column visibility.</summary>
-		public static readonly DependencyProperty ShowColumnStatusProperty =
+		public static readonly DependencyProperty ColumnStatusVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowColumnStatus), typeof(Visibility),
+				nameof(ColumnStatusVisibility), typeof(Visibility),
 				typeof(ListInfoControl), new PropertyMetadata(Visibility.Visible));
 
 		/// <summary>Controls column visibility.</summary>
-		public Visibility ShowColumnStatus
+		public Visibility ColumnStatusVisibility
 		{
-			get => (Visibility)GetValue(ShowColumnStatusProperty);
-			set => SetValue(ShowColumnStatusProperty, value);
+			get => (Visibility)GetValue(ColumnStatusVisibilityProperty);
+			set => SetValue(ColumnStatusVisibilityProperty, value);
 		}
 
 		#endregion
 
-		#region ■ Property: Column Comment
+		#region ■ Property: Column Comment Visibility
 
 		/// <summary>Controls column visibility.</summary>
-		public static readonly DependencyProperty ShowColumnCommentProperty =
+		public static readonly DependencyProperty ColumnCommentVisibilityProperty =
 			DependencyProperty.Register(
-				nameof(ShowColumnComment), typeof(Visibility),
+				nameof(ColumnCommentVisibility), typeof(Visibility),
 				typeof(ListInfoControl), new PropertyMetadata(Visibility.Visible));
 
 		/// <summary>Controls column visibility.</summary>
-		public Visibility ShowColumnComment
+		public Visibility ColumnCommentVisibility
 		{
-			get => (Visibility)GetValue(ShowColumnCommentProperty);
-			set => SetValue(ShowColumnCommentProperty, value);
+			get => (Visibility)GetValue(ColumnCommentVisibilityProperty);
+			set => SetValue(ColumnCommentVisibilityProperty, value);
 		}
 
 		#endregion
-
 
 		public ObservableCollection<string> Paths { get; set; } = new ObservableCollection<string>();
 
@@ -500,6 +541,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Debounce(UpdateButtons, AppHelper.NavigateDelayMs);
+		}
+
+		#endregion
+
+		#region Value Editing
+
+		private void MainDataGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			// 1) Force single-click to enter edit mode for any cell that isn't read-only:
+			if (e.OriginalSource is FrameworkElement fe)
+			{
+				var cell = fe.Parent as DataGridCell;
+				if (cell != null && !cell.IsEditing && !cell.IsReadOnly)
+				{
+					// Set the current cell and begin edit:
+					var dataGrid = (DataGrid)sender;
+					dataGrid.Focus();
+					dataGrid.CurrentCell = new DataGridCellInfo(cell);
+					dataGrid.BeginEdit();
+					e.Handled = true;
+				}
+			}
+		}
+
+		private void MainDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+		{
+			// 2) If it’s the “new item” row, WPF might not fully instantiate the editing element
+			//    until editing actually begins. This event ensures the row is created.
+			//    (No special code needed here unless you have custom logic for new rows.)
+		}
+
+		private void MainDataGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+		{
+			// 3) If it’s a ComboBox column, auto-open the dropdown:
+			if (e.Column is DataGridComboBoxColumn)
+			{
+				// Since the EditingElement may not be ready immediately, we use Dispatcher:
+				Dispatcher.BeginInvoke(new Action(() =>
+				{
+					if (e.EditingElement is ComboBox comboBox)
+					{
+						comboBox.IsDropDownOpen = true;
+					}
+				}), DispatcherPriority.Input);
+			}
 		}
 
 		#endregion

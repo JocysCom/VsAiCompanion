@@ -269,6 +269,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
         public static string main_ServiceType => FindResource(nameof(main_ServiceType));
         public static string main_RequestOverrides => FindResource(nameof(main_RequestOverrides));
+        public static string main_ExternalLinks => FindResource(nameof(main_ExternalLinks));
         public static string main_Override_API_version => FindResource(nameof(main_Override_API_version));
         public static string main_Override_API_version_Help => FindResource(nameof(main_Override_API_version_Help));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
@@ -327,6 +328,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Voice_Type => FindResource(nameof(main_Voice_Type));
         public static string main_Voices => FindResource(nameof(main_Voices));
         public static string main_Feature_UiPresets => FindResource(nameof(main_Feature_UiPresets));
+        public static string main_Reset_Settings_with_Instructions => FindResource(nameof(main_Reset_Settings_with_Instructions));
         public static string main_Reset_All_Settings => FindResource(nameof(main_Reset_All_Settings));
         public static string main_Reset_Application_Settings => FindResource(nameof(main_Reset_Application_Settings));
         public static string main_Reset_Embeddings => FindResource(nameof(main_Reset_Embeddings));

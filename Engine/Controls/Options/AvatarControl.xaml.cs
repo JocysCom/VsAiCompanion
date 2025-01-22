@@ -62,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		public void UpdateAiServices()
 		{
-			var services = Global.AppSettings.AiServices
+			var services = Global.AiServices.Items
 				.Where(x => x.ServiceType == ApiServiceType.Azure)
 				.ToList();
 			CollectionsHelper.Synchronize(services, AiServices);
@@ -136,7 +136,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		async Task<SynthesizeClient> GetClient(VoiceGender? overrideGender, string overrideLocale)
 		{
-			var service = Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == Item.AiServiceId);
+			var service = Global.AiServices.Items.FirstOrDefault(x => x.Id == Item.AiServiceId);
 			if (service == null)
 			{
 				LogPanel.Add("Service not found");
