@@ -2,6 +2,412 @@
   <Items>
     <ListInfo>
       <Description>Update Instructions for application settings.</Description>
+      <Items>
+        <ListItem>
+          <Key>/Template/® System - AI Window</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Audio-To-Text</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Create Image - Google</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Create Image - xAI</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Format Message</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Icon</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Image</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Title</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Title - Google</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Title - xAI</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Modify Image</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Plugin Approval</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Text-To-Audio</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Text-To-Video</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Video-To-Text</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Video-To-Text - Google</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Video-To-Text - xAI</Key>
+          <Value>RestoreIfNotExists</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail - Professional</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/AI - Chat (GPT-4o)</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/AI - Improve Prompt</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Check Spelling</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail - Casual</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Company - CyberNet Solutions</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 6 - Check Answer</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat - Personalized</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat (Gogle Gemini)</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat (xAI Grok)</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Computer Use</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Evaluate Morality</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Improve Prompt</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Introduction</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - LM Studio</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Reasoning</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Add types</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Check Spelling</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Cleanup</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Document</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Document steps</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Find a bug</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Fix Debug Exception</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Fix Selected Issue</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Handle errors</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Localize XAML</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Make easier to debug</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Make more readable</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Make more robust</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Project Analysis for AI</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Pull Request Review</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Simplify</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Smart Search</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Split</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Convert - KnockoutJS to Angular</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Custom - Historical Events</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Custom - Social Meeting Topics</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Custom - Transcript</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - API Calls</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - Creating a Company</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - Database Browsing</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - Lists - Project TODO</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - TTS Chat</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - TTS Narration</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - VS - Analyse Open Documents</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Casual</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Check Spelling</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Default</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Professional</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Legal - Check Contract</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Lists - Creating Roles and Profiles</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Lists - Update User Profile</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - English to Klingon</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - Klingon to English</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - To Americal English</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - To British English</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - To Lithuanian</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Book or Movie</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Explanation</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Fact Checking</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Health and Wellness</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Historical Events</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Homework Help</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Language Learning</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Travel Advice</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utiltiy - Cooking Ideas</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Voice - Tell a Story</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Add Character</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Add Emotions</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Assistance</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Business Benefits</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Character Picture</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Character Profile</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Keywords</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Simplify and Refine</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Story Picture</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Generate Demo Data</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 1 - Convert to Messages</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 2 - Validate Questions</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 3 - Split Messages</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 4 - Remove Duplicates</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 5 - Resolve Conflicts</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+      </Items>
     </ListInfo>
   </Items>
 </Data>

@@ -593,62 +593,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static ContextMenu CreateContextMenuForElement(ItemType itemType, ISettingsFileItem item)
-		{
-			var contextMenu = new ContextMenu();
-			var path = $"/{itemType}/{item.Name}";
-			var head = new MenuItem() { Header = item.Name, IsEnabled = false, ToolTip = path };
-			contextMenu.Items.Add(head);
-			// Add "Copy Path" menu item:
-			var copyPathMenuItem = new MenuItem { Header = "Copy Path" };
-			copyPathMenuItem.Click += (s, e) =>
-			{
-				System.Windows.Clipboard.SetText(path);
-			};
-			contextMenu.Items.Add(copyPathMenuItem);
-			// Add reset menus if available.
-			var resetItems = Global.Resets.Items.FirstOrDefault()?.Items;
-			if (resetItems == null)
-				return contextMenu;
-			var resetItem = resetItems.FirstOrDefault(x => x.Key == path);
-			var presetMenuItem = new MenuItem { Header = "Update Instructions" };
-			contextMenu.Items.Add(presetMenuItem);
-			var instructions = (UpdateInstruction[])Enum.GetValues(typeof(UpdateInstruction));
-			foreach (var instruction in instructions)
-			{
-				var isChecked = resetItem?.Value == instruction.ToString() || (instruction == UpdateInstruction.None && resetItem == null);
-				var menuItem = new MenuItem { Header = Attributes.GetDescription(instruction), IsCheckable = true, IsChecked = isChecked };
-				menuItem.Checked += (s, e) =>
-				{
-					// Add or update instruction.
-					if (resetItem != null)
-					{
-						if (instruction == UpdateInstruction.None)
-						{
-							resetItems.Remove(resetItem);
-						}
-						else
-						{
-							resetItem.Value = instruction.ToString();
-						}
-					}
-					else if (instruction != UpdateInstruction.None)
-					{
-						resetItem = new ListItem { Key = path, Value = instruction.ToString() };
-						resetItems.Add(resetItem);
-					}
-				};
-				menuItem.Unchecked += (s, e) =>
-				{
-					if (resetItem != null)
-						resetItems.Remove(resetItem);
-
-				};
-				presetMenuItem.Items.Add(menuItem);
-			}
-			return contextMenu;
-		}
-
 		#endregion
 
 

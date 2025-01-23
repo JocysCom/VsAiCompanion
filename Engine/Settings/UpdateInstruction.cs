@@ -9,15 +9,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 	[Flags]
 	public enum UpdateInstruction
 	{
-		/// <summary>
-		/// No special update action.
-		/// </summary>
 		None = 0,
-
-		/// <summary>
-		/// Restore the setting block if it does not exist.
-		/// </summary>
 		RestoreIfNotExists = 1 << 0,
+		RestoreIfNotExistsOnAppUpdate = 1 << 1,
+		RestoreIfNotDeleted = 1 << 2,
 
 		///// <summary>
 		///// Always reset this setting block to default values on app update.

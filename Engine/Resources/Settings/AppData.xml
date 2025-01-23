@@ -70,17 +70,99 @@
           <GridSplitterPosition>0.21810971579643093</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
+            <string>Grammar - Detail - Professional</string>
             <string>AI - Chat (GPT-4o)</string>
+            <string>AI - Improve Prompt</string>
+            <string>Grammar - Check Spelling</string>
+            <string>Grammar - Detail - Casual</string>
+            <string>Company - CyberNet Solutions</string>
+            <string>Grammar - Detail</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>6</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
           <GridSplitterPosition>0.21348314606741575</GridSplitterPosition>
           <ListSelection>
+            <string>® AI Tuning - Step 6 - Check Answer</string>
             <string>AI - Chat</string>
+            <string>AI - Chat - Personalized</string>
+            <string>AI - Chat (Gogle Gemini)</string>
+            <string>AI - Chat (xAI Grok)</string>
+            <string>AI - Computer Use</string>
+            <string>AI - Evaluate Morality</string>
+            <string>AI - Improve Prompt</string>
+            <string>AI - Introduction</string>
+            <string>AI - LM Studio</string>
+            <string>AI - Reasoning</string>
+            <string>Code - Add types</string>
+            <string>Code - Check Spelling</string>
+            <string>Code - Cleanup</string>
+            <string>Code - Document</string>
+            <string>Code - Document steps</string>
+            <string>Code - Find a bug</string>
+            <string>Code - Fix Debug Exception</string>
+            <string>Code - Fix Selected Issue</string>
+            <string>Code - Handle errors</string>
+            <string>Code - Localize XAML</string>
+            <string>Code - Make easier to debug</string>
+            <string>Code - Make more readable</string>
+            <string>Code - Make more robust</string>
+            <string>Code - Project Analysis for AI</string>
+            <string>Code - Pull Request Review</string>
+            <string>Code - Simplify</string>
+            <string>Code - Smart Search</string>
+            <string>Code - Split</string>
+            <string>Convert - KnockoutJS to Angular</string>
+            <string>Custom - Historical Events</string>
+            <string>Custom - Social Meeting Topics</string>
+            <string>Custom - Transcript</string>
+            <string>Demo - API Calls</string>
+            <string>Demo - Creating a Company</string>
+            <string>Demo - Database Browsing</string>
+            <string>Demo - Lists - Project TODO</string>
+            <string>Demo - TTS Chat</string>
+            <string>Demo - TTS Narration</string>
+            <string>Demo - VS - Analyse Open Documents</string>
+            <string>Grammar - Casual</string>
+            <string>Grammar - Check Spelling</string>
+            <string>Grammar - Default</string>
+            <string>Grammar - Professional</string>
+            <string>Legal - Check Contract</string>
+            <string>Lists - Creating Roles and Profiles</string>
+            <string>Lists - Update User Profile</string>
+            <string>Translate - English to Klingon</string>
+            <string>Translate - Klingon to English</string>
+            <string>Translate - To Americal English</string>
+            <string>Translate - To British English</string>
+            <string>Translate - To Lithuanian</string>
+            <string>Utility - Book or Movie</string>
+            <string>Utility - Explanation</string>
+            <string>Utility - Fact Checking</string>
+            <string>Utility - Health and Wellness</string>
+            <string>Utility - Historical Events</string>
+            <string>Utility - Homework Help</string>
+            <string>Utility - Language Learning</string>
+            <string>Utility - Travel Advice</string>
+            <string>Utiltiy - Cooking Ideas</string>
+            <string>Voice - Tell a Story</string>
+            <string>Writing - Add Character</string>
+            <string>Writing - Add Emotions</string>
+            <string>Writing - Assistance</string>
+            <string>Writing - Business Benefits</string>
+            <string>Writing - Character Picture</string>
+            <string>Writing - Character Profile</string>
+            <string>Writing - Keywords</string>
+            <string>Writing - Simplify and Refine</string>
+            <string>Writing - Story Picture</string>
+            <string>® AI Tuning - Generate Demo Data</string>
+            <string>® AI Tuning - Step 1 - Convert to Messages</string>
+            <string>® AI Tuning - Step 2 - Validate Questions</string>
+            <string>® AI Tuning - Step 3 - Split Messages</string>
+            <string>® AI Tuning - Step 4 - Remove Duplicates</string>
+            <string>® AI Tuning - Step 5 - Resolve Conflicts</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>76</ListSelectedIndex>
           <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>

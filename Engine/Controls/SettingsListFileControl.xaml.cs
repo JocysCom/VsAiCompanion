@@ -3,8 +3,10 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -476,6 +478,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#endregion
 
 		private void CopyButton_Click(object sender, RoutedEventArgs e)
+			=> CopySelectedItems();
+
+		private void PasteButton_Click(object sender, RoutedEventArgs e)
+		 => PasteItems();
+
+		public void CopySelectedItems()
 		{
 			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToArray();
 			if (!selectedItems.Any())
@@ -490,7 +498,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.ShowError(exception.Message);
 		}
 
-		private void PasteButton_Click(object sender, RoutedEventArgs e)
+		public void PasteItems()
 		{
 			try
 			{
@@ -515,6 +523,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			}
 		}
+
 
 		/// <summary>
 		///  Event is fired when the DataGrid is rendered and its items are loaded,
@@ -705,22 +714,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MainDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
+			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToArray();
+			var items = selectedItems.Cast<ISettingsListFileItem>().ToArray();
+			if (!items.Any())
+				return;
 			// If you only want the context menu when a row is clicked:
 			var dataGrid = (DataGrid)sender;
-			var originalSource = e.OriginalSource as DependencyObject;
-			var row = ItemsControl.ContainerFromElement(dataGrid, originalSource) as DataGridRow;
-			if (row == null)
-			{
-				// Optionally set e.Handled = true if you do not want a blank or default menu to appear
-				// e.Handled = true;
-				return;
-			}
-			// Cast the row’s item to your type.
-			var item = row.Item as ISettingsListFileItem;
-			if (item == null)
-				return;
 			// Build your dynamic menu:
-			var menu = SettingsSourceManager.CreateContextMenuForElement(DataType, item);
+			var menu = CreateContextMenuForElement(DataType, items);
 			// Assign it to the DataGrid.
 			dataGrid.ContextMenu = menu;
 			// Force it to open right now:
@@ -728,6 +729,82 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			menu.IsOpen = true;
 			// Mark as handled so WPF does not try to open any other context menus.
 			e.Handled = true;
+		}
+
+		public ContextMenu CreateContextMenuForElement(ItemType itemType, params ISettingsFileItem[] items)
+		{
+			var contextMenu = new ContextMenu();
+			// Create head item.
+			var header = items.Length > 1 ? $"{items.Length} {DataType} Items" : items[0].Name;
+			var head = new MenuItem() { Header = header, IsEnabled = false };
+			contextMenu.Items.Add(head);
+			// Copy
+			var copyMenuItem = new MenuItem { Header = "Copy" };
+			copyMenuItem.Click += (s, e)
+				=> CopySelectedItems();
+			contextMenu.Items.Add(copyMenuItem);
+			// Paste
+			var pasteMenuItem = new MenuItem { Header = "Paste" };
+			pasteMenuItem.Click += (s, e)
+				=> PasteItems();
+			contextMenu.Items.Add(pasteMenuItem);
+			// Add "Copy Path(s)" menu item:
+			var copyPathMenuItem = new MenuItem { Header = items.Length > 1 ? "Copy Paths" : "Copy Path" };
+			var paths = items.Select(x => $"/{itemType}/{x.Name}");
+			copyPathMenuItem.Click += (s, e) =>
+				System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, paths));
+			contextMenu.Items.Add(copyPathMenuItem);
+			// Add reset menus if available.
+			var allResetItems = Global.Resets.Items.FirstOrDefault()?.Items;
+			if (allResetItems == null)
+				return contextMenu;
+			var presetMenuItem = new MenuItem { Header = "Update Instructions" };
+			contextMenu.Items.Add(presetMenuItem);
+			var instructions = (Settings.UpdateInstruction[])Enum.GetValues(typeof(Settings.UpdateInstruction));
+			var resetItems = allResetItems.Where(x => paths.Contains(x.Key)).ToArray();
+			foreach (var instruction in instructions)
+			{
+				// Check if item have this instruction.
+				var itemsWithInstructionCount = resetItems.Where(x => x.Value == instruction.ToString()).Count();
+				var isChecked = itemsWithInstructionCount > 0;
+				var menuHeader = Attributes.GetDescription(instruction);
+				if (itemsWithInstructionCount > 0)
+					menuHeader += $" ({itemsWithInstructionCount})";
+				var menuItem = new MenuItem { Header = menuHeader, IsCheckable = true, IsChecked = isChecked };
+				menuItem.Checked += (s, e) =>
+				{
+					// Process each path.
+					foreach (var path in paths)
+					{
+						var resetItem = resetItems.FirstOrDefault(x => x.Key == path);
+						// Add or update instruction.
+						if (resetItem != null)
+						{
+							if (instruction == Settings.UpdateInstruction.None)
+							{
+								allResetItems.Remove(resetItem);
+							}
+							else
+							{
+								resetItem.Value = instruction.ToString();
+							}
+						}
+						else if (instruction != Settings.UpdateInstruction.None)
+						{
+							resetItem = new ListItem { Key = path, Value = instruction.ToString() };
+							allResetItems.Add(resetItem);
+						}
+					}
+
+				};
+				menuItem.Unchecked += (s, e) =>
+				{
+					foreach (var item in resetItems)
+						allResetItems.Remove(item);
+				};
+				presetMenuItem.Items.Add(menuItem);
+			}
+			return contextMenu;
 		}
 
 		#endregion
