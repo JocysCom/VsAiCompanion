@@ -777,7 +777,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				modelName.Contains("gemini") ||
 				(modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1000;
-			if (modelName.Contains("-64k"))
+			if (modelName.Contains("-64k") || modelName.Contains("deepseek"))
 				return 64 * 1024;
 			if (modelName.Contains("-32k") || modelName.Contains("text-moderation"))
 				return 32 * 1024;
@@ -797,7 +797,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 2049; // Default for ada, babbage, curie, davinci
 			if (modelName.Contains("code-cushman-001"))
 				return 2048;
-			return 2048; // Default for other models
+			return 128 * 1000; // Default for other models
 		}
 
 		public static void SetModelFeatures(AiModel item)
