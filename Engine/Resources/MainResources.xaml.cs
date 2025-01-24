@@ -210,6 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_List_IsReadOnly => FindResource(nameof(main_List_IsReadOnly));
         public static string main_Lists_Feature_Description => FindResource(nameof(main_Lists_Feature_Description));
         public static string main_ReadOnly => FindResource(nameof(main_ReadOnly));
+        public static string main_AcceptsReturn => FindResource(nameof(main_AcceptsReturn));
         public static string main_Task_Path => FindResource(nameof(main_Task_Path));
         public static string main_Disable_All => FindResource(nameof(main_Disable_All));
         public static string main_Enable_All => FindResource(nameof(main_Enable_All));

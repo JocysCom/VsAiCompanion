@@ -4,13 +4,11 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-using SharpVectors.Dom;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {

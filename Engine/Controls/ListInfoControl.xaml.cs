@@ -486,9 +486,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Commit manually and supress selection of next row.
 				if (isEditMode)
 				{
-					e.Handled = true;
-					grid.CommitEdit(DataGridEditingUnit.Cell, true);
-					grid.CommitEdit(DataGridEditingUnit.Row, true);
+					// Check if SHIFT+ENTER is pressed within a TextBox being edited
+					if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+					{
+						if (e.OriginalSource is TextBox textBox)
+						{
+							// Insert newline at the cursor
+							int caretIndex = textBox.CaretIndex;
+							textBox.Text = textBox.Text.Insert(caretIndex, Environment.NewLine);
+							textBox.CaretIndex = caretIndex + Environment.NewLine.Length;
+							e.Handled = true; // Prevent DataGrid from committing the edit
+						}
+					}
+					else
+					{
+						e.Handled = true;
+						grid.CommitEdit(DataGridEditingUnit.Cell, true);
+						grid.CommitEdit(DataGridEditingUnit.Row, true);
+					}
 				}
 			}
 			if (!isEditMode && e.Key == Key.Delete)
@@ -626,6 +641,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void MainDataGrid_PreparingCellForEdit_1(object sender, DataGridPreparingCellForEditEventArgs e)
+		{
+
+		}
+
+		private void MainDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+		{
+
+		}
 	}
 
 }

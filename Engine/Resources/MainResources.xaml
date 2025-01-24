@@ -214,6 +214,7 @@
 	<sys:String x:Key="main_List_IsReadOnly">Prevent AI from modifying this list.</sys:String>
 	<sys:String x:Key="main_Lists_Feature_Description">Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</sys:String>
 	<sys:String x:Key="main_ReadOnly">Read-Only</sys:String>
+	<sys:String x:Key="main_AcceptsReturn">Accepts Return</sys:String>
 	<sys:String x:Key="main_Task_Path">Task / Path</sys:String>
 
 	<!--  Plugins  -->
