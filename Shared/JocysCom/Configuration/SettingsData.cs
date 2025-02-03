@@ -671,7 +671,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				}
 				else if (Directory.Exists(newPath))
 				{
-					return "File with the same name already exists.";
+					return "Folder with the same name already exists.";
 				}
 				directoryInfo.MoveTo(newPath);
 			}
@@ -699,15 +699,15 @@ namespace JocysCom.ClassLibrary.Configuration
 			lock (saveReadFileLock)
 			{
 				var oldName = RemoveInvalidFileNameChars(fileItem.BaseName);
-				// Case sensitive comparison.
+				// If the names are exactly the same (case sensitive comparison), no renaming is needed.
 				if (string.Equals(oldName, newName, StringComparison.Ordinal))
 					return null;
 				if (string.IsNullOrEmpty(newName))
-					return "File name cannot be empty.";
+					return "The file name cannot be empty. Please provide a valid name.";
 				//newName = RemoveInvalidFileNameChars(newName);
 				var invalidChars = newName.Intersect(Path.GetInvalidFileNameChars());
 				if (invalidChars.Any())
-					return $"File name cannot contain invalid characters: {string.Join("", invalidChars)}";
+					return $"The file name contains invalid character(s): {string.Join("", invalidChars)}";
 				var oldPath = GetFileItemFullName(fileItem, oldName);
 				var file = new FileInfo(oldPath);
 				var newPath = GetFileItemFullName(fileItem, newName);
@@ -728,9 +728,10 @@ namespace JocysCom.ClassLibrary.Configuration
 						var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
 						file.MoveTo(tempFilePath);
 					}
-					else if (File.Exists(newPath))
+					if (File.Exists(newPath))
 					{
-						return "File with the same name already exists.";
+						var fi = new FileInfo(newPath);
+						return $"A file named '{fi.Name}' ({fi.Length} bytes) already exists. Please remove or rename the existing file and try again.";
 					}
 					if (file.Exists)
 					{
