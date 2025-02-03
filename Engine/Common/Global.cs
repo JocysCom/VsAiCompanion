@@ -8,6 +8,7 @@ using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
 using JocysCom.VS.AiCompanion.Engine.Security;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
@@ -650,11 +651,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
 			// If old settings version then reset templates.
+			var settingsUpdate = false;
 			if (AppData.Version < 2 && !ResetSettings)
 			{
 				AppData.Version = 2;
-				SettingsSourceManager.ResetTemplates();
+				settingsUpdate = true;
 			}
+			SettingsSourceManager.ResetWithInstructions(false, false, settingsUpdate);
 			// Enable logging.
 			AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			LogHelper.LogHttp = AppSettings.LogHttp;
@@ -1008,17 +1011,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 						e.Items.Add(item);
 					if (items.Count > 0)
 						Templates.IsSavePending = true;
-				}
-			}
-			else
-			{
-				// Check for missing templates only.
-				var itemsAdded = SettingsSourceManager.CheckRequiredTemplates(e.Items);
-				if (itemsAdded > 0)
-				{
-					// Reorder and save.
-					Templates.SortList(e.Items);
-					Templates.IsSavePending = true;
 				}
 			}
 			data.IsSavePending |= FixTempalteItems(e.Items);

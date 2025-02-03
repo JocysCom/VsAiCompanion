@@ -12,7 +12,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 		None = 0,
 		RestoreIfNotExists = 1 << 0,
 		RestoreIfNotExistsOnAppUpdate = 1 << 1,
-		RestoreIfNotDeleted = 1 << 2,
+		RestoreIfNotExistsOnSettingsUpdate = 1 << 2,
+		RestoreIfNotDeleted = 1 << 3,
 
 		///// <summary>
 		///// Always reset this setting block to default values on app update.

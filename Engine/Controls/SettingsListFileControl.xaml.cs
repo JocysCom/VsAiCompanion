@@ -6,6 +6,7 @@ using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;

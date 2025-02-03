@@ -46,8 +46,8 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>454</Left>
-        <Top>135.33333333333331</Top>
+        <Left>1270.6666666666665</Left>
+        <Top>412.66666666666663</Top>
         <Width>1033.3333333333333</Width>
         <Height>816</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -148,7 +148,6 @@
           <UserGroups />
         </UserProfile>
       </UserProfiles>
-      <UiPresetName>Simple</UiPresetName>
       <ContextFunctionResponseInstructions>To call a function, Provide the function call as JSON that strictly adheres to the JSON schema for function calls, which is supplied below.&#xD;
 Enclose the JSON code in triple backticks with "JSON" after the opening backticks, like this:&#xD;
 ```JSON&#xD;

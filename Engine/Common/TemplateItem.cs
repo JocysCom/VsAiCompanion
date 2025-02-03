@@ -1,6 +1,7 @@
 ﻿using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
@@ -137,8 +138,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		ContextType _AttachContext;
 
+		[DefaultValue(null)]
 		public ChatSettings Settings { get => _Settings; set => SetProperty(ref _Settings, value); }
 		ChatSettings _Settings;
+
+		public bool ShouldSerializeSettings() => Settings?.IsEmpty == false;
 
 		public BindingList<MessageItem> Messages
 		{

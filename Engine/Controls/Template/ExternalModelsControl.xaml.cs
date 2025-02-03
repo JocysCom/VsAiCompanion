@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;

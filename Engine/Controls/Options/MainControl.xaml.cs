@@ -1,6 +1,7 @@
 ﻿using Hompus.VideoInputDevices;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;

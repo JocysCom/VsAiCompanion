@@ -29,5 +29,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			return HashCode.Combine(ScrollPosition);
 		}
 
+		public bool IsEmpty
+		{
+			get
+			{
+				return ScrollPosition == null;
+			}
+		}
+
 	}
 }

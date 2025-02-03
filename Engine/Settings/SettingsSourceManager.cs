@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
-using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
@@ -10,16 +9,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.Settings
 {
 	public static class SettingsSourceManager
 	{
 
 		#region Required System Templates
-
-		public const string TempalteListsUpdateUserProfile = "Lists - Update User Profile";
-		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
-		public const string TemplateAIComputerUse = "AI - Computer Use";
 
 		public const string TemplateAiWindowTaskName = "® System - AI Window";
 		public const string TemplateFormatMessageTaskName = "® System - Format Message";
@@ -33,56 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public const string TemplatePlugin_Model_TextToVideo = "® System - Text-To-Video";
 		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";
 		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
-
-		public static string[] GetRequiredTemplates()
-		{
-			return new string[] {
-
-				TempalteListsUpdateUserProfile,
-				TemplateAIChatPersonalized,
-				TemplateAIComputerUse,
-				"® System - AI Window.xml",
-				"® System - Audio-To-Text.xml",
-				"® System - Create Image - Google.xml",
-				"® System - Create Image - xAI.xml",
-				"® System - Format Message.xml",
-				"® System - Generate Icon.xml",
-				"® System - Generate Image.xml",
-				"® System - Generate Title - Google.xml",
-				"® System - Generate Title - xAI.xml",
-				"® System - Generate Title.xml",
-				"® System - Modify Image.xml",
-				"® System - Plugin Approval.xml",
-				"® System - Text-To-Audio.xml",
-				"® System - Text-To-Video.xml",
-				"® System - Video-To-Text - Google.xml",
-				"® System - Video-To-Text - xAI.xml",
-				"® System - Video-To-Text.xml",
-			};
-		}
-
-		public static int CheckRequiredTemplates(IList<TemplateItem> items, ZipStorer zip = null)
-		{
-			bool closeZip;
-			if (closeZip = zip == null)
-				zip = GetSettingsZip();
-			if (zip == null)
-				return 0;
-			// ---
-			var required = GetRequiredTemplates();
-			var current = items.Select(x => x.Name).ToArray();
-			var missing = required.Except(current).ToArray();
-			// If all templates exist then return.
-			if (missing.Length == 0)
-				return 0;
-			var zipItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates, missing);
-			foreach (var zipItem in zipItems)
-				items.Add(zipItem);
-			// ---
-			if (closeZip)
-				zip.Close();
-			return missing.Length;
-		}
 
 		/// <summary>
 		/// Get items from the zip. entry pattern: filenameInZipStartsWith*.xml
@@ -121,7 +66,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var items = Global.AppSettings.PanelSettingsList.ToArray();
 			foreach (var item in items)
-				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
+				Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
 		}
 
 		public static void ResetUI()
@@ -182,7 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (value % perfectDivisor == 0)
 				return value;
 			// Calculate the nearest higher multiple of 60
-			int adjustedValue = ((value / perfectDivisor) + 1) * perfectDivisor;
+			int adjustedValue = (value / perfectDivisor + 1) * perfectDivisor;
 			return adjustedValue;
 		}
 
@@ -283,7 +228,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			var zipAppSettings = zipAppDataItems[0];
 			// Reset all app settings except of services, list of models and other reference types.
-			JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyProperties(zipAppSettings, Global.AppSettings, true);
+			RuntimeHelper.CopyProperties(zipAppSettings, Global.AppSettings, true);
 			// Close zip.
 			if (closeZip)
 				zip.Close();
@@ -549,7 +494,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		/// <summary>Reset Resets</summary>
-		public static void ResetWithInstructions(bool confirm = false)
+		public static void ResetWithInstructions(bool confirm = false, bool appUpdate = false, bool settingsUpdate = false)
 		{
 			if (confirm && !AppHelper.AllowReset("Settings with Instructions", "Please note that this will override some data!"))
 				return;
@@ -558,36 +503,47 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var zip = GetSettingsZip();
 				var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
 				var zipItems = GetItemsFromZip(zip, zipAppDataItems[0]);
-				var resetItems = zipItems[ItemType.ResetItem].Cast<ListItem>().ToArray();
-				if (resetItems?.Any() != true)
-					return;
-				foreach (var resetItem in resetItems)
+				var resetLists = zipItems[ItemType.ResetItem].Cast<ListInfo>().ToArray();
+				for (var i = 0; i < resetLists.Length; i++)
 				{
-					var typeAndName = resetItem.Key?.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-					if (typeAndName.Length != 2)
-						continue;
-					ItemType itemType;
-					if (!Enum.TryParse(typeAndName[0], out itemType))
-						continue;
-					var itemName = typeAndName[1];
-					UpdateInstruction instruction;
-					if (!Enum.TryParse(resetItem.Value, out instruction))
-						continue;
-					var source = zipItems[itemType];
-					var target = Global.GetSettingItems(itemType);
-					if (instruction == UpdateInstruction.RestoreIfNotExists)
+					var resetItems = resetLists[i].Items;
+					if (resetItems?.Any() != true)
+						return;
+					foreach (var resetItem in resetItems)
 					{
-						var sourceItem = source?.FirstOrDefault(x => x.Name == itemName);
-						if (sourceItem == null)
+						var typeAndName = resetItem.Key?.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+						if (typeAndName.Length != 2)
 							continue;
-						if (target != null && !target.Cast<ISettingsFileItem>().Any(x => x.Name == itemName))
-							target.Add(sourceItem);
+						ItemType itemType;
+						if (!Enum.TryParse(typeAndName[0], out itemType))
+							continue;
+						var itemName = typeAndName[1];
+						UpdateInstruction instruction;
+						if (!Enum.TryParse(resetItem.Value, out instruction))
+							continue;
+						var source = zipItems[itemType];
+						var target = Global.GetSettingItems(itemType);
+						var addItem = false;
+						if (instruction == UpdateInstruction.RestoreIfNotExists)
+							addItem = true;
+						if (appUpdate && instruction == UpdateInstruction.RestoreIfNotExistsOnAppUpdate)
+							addItem = true;
+						if (settingsUpdate && instruction == UpdateInstruction.RestoreIfNotExistsOnSettingsUpdate)
+							addItem = true;
+						if (addItem)
+						{
+							var sourceItem = source?.FirstOrDefault(x => x.Name == itemName);
+							if (sourceItem == null)
+								continue;
+							if (target != null && !target.Cast<ISettingsFileItem>().Any(x => x.Name == itemName))
+								target.Add(sourceItem);
+						}
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				Global.ShowError("ResetWithInstructions() error: " + ex.Message);
+				Global.ShowError("ResetWithInstructions() error: " + ex.ToString());
 			}
 		}
 
@@ -612,7 +568,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// ------------------------------------------------
 			// Parse command line arguments and override default settings file location.
 			var args = Environment.GetCommandLineArgs();
-			var ic = new JocysCom.ClassLibrary.Configuration.Arguments(args);
+			var ic = new Arguments(args);
 			if (ic.ContainsKey("SettingsFile"))
 			{
 				var argValue = ic["SettingsFile"];
@@ -632,7 +588,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			else if (Global.AppSettings.IsEnterprise)
 			{
 				// Use external URL or local file specified by the user.
-				var path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
+				var path = AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
 				var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
 				if (isUrl)
 					zip = GetZipFromUrl(path);

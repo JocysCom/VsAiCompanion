@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UglyToad.PdfPig.Graphics.Operations.TextObjects;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -28,6 +27,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			WebBrowserHostObject = new BrowserHostObject();
+			Application.Current.MainWindow.Closing += MainWindow_Closing;
+		}
+
+		private void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			// Dispose WebView2 control or it will crash on exit.
+			if (_WebView2 != null)
+			{
+				// Unsubscribe from events
+				_WebView2.NavigationStarting -= WebView2_NavigationStarting;
+				if (_WebView2.CoreWebView2 != null)
+				{
+					_WebView2.CoreWebView2.WebResourceRequested -= CoreWebView2_WebResourceRequested;
+					// Optionally, stop any ongoing navigation or tasks.
+					_WebView2.Stop();
+				}
+				// Dispose of the control to release all resources
+				_WebView2.Dispose();
+				_WebView2 = null;
+			}
 		}
 
 		public void SetDataItems(TemplateItem item)
