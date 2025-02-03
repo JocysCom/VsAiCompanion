@@ -93,17 +93,47 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Writes the specified byte array to a file at the given path if the current content of the file is different from the byte array. This comparison takes into account file size and checksum.
+		/// Writes the specified byte array to a file at the given path if the current content of the file
+		/// is different from the byte array. This comparison takes into account file size and checksum.
+		/// To avoid truncating the file when the disk is full (or other IO errors occur), writes to a
+		/// temporary file first and then moves it to the final destination.
 		/// </summary>
 		/// <param name="path">The path where the file will be written.</param>
 		/// <param name="bytes">The byte array to write.</param>
 		/// <returns>True if the file was written; false if the contents were the same and no write occurred.</returns>
 		public static bool WriteIfDifferent(string path, byte[] bytes)
 		{
-			var isDifferent = IsDifferent(path, bytes);
-			if (isDifferent)
+			if (!IsDifferent(path, bytes))
+				return false;
+			if (IsEnoughSpaceAvailable(path, bytes.Length))
+			{
 				File.WriteAllBytes(path, bytes);
-			return isDifferent;
+				return true;
+			}
+			// Generate a temporary filename in the same directory for an atomic-like replacement.
+			// Writing to the same directory helps avoid cross-volume moves.
+			var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Directory not found.");
+			var tempFileName = Path.Combine(directory, Path.GetRandomFileName());
+			try
+			{
+				// Write all bytes to the temporary file first.
+				File.WriteAllBytes(tempFileName, bytes);
+				// If we have .NET 6 or later, we could do: File.Move(tempFileName, path, overwrite: true);
+				// Otherwise, we can delete the existing file (if any) and then rename the temp file.
+				if (File.Exists(path))
+					File.Delete(path);
+				// Rename the temp file to the final path (nearly atomic on Windows).
+				File.Move(tempFileName, path);
+				return true;
+			}
+			catch
+			{
+				// Clean up the temp file if something goes wrong.
+				if (File.Exists(tempFileName))
+					File.Delete(tempFileName);
+				// Rethrow the exception or handle it as needed.
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -137,6 +167,24 @@ namespace JocysCom.ClassLibrary.Configuration
 			var bytes = ms.ToArray();
 			sw.Dispose();
 			return bytes;
+		}
+
+		/// <summary>
+		/// Can be used to check if it is save to write the file.
+		/// </summary>
+		public static bool IsEnoughSpaceAvailable(string path, long requiredBytes)
+		{
+			// Convert a relative path to an absolute path
+			var fullPath = Path.GetFullPath(path);
+			// Extract the drive from the full path
+			var driveRoot = Path.GetPathRoot(fullPath);
+			if (string.IsNullOrEmpty(driveRoot))
+				return false;
+			var drive = new DriveInfo(driveRoot);
+			// A rule of thumb buffer: 10 MB or 5% of file size, whichever is greater.
+			long buffer = Math.Max(10 * 1024 * 1024, (long)(requiredBytes * 0.05));
+			long totalNeeded = requiredBytes + buffer;
+			return drive.AvailableFreeSpace > totalNeeded;
 		}
 
 		#endregion
