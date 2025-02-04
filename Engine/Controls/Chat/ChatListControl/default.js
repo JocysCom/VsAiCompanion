@@ -768,13 +768,13 @@ function SimulateStreaming() {
 	// Simulate streaming by appending text over time
 	var streamedText = [
 		"<think>",
-		"I", " am", " thinking", ".", "Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"I", " am", " thinking", ".", "Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"I", " am", " thinking", ".", "Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text.",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text.",
 		"</think>",
-		"Hello", " world", "!", "Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"Hello", " world", "!", "Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"Hello", " world", "!", "Here", " is", " some", " streamed", " text."
+		"Hello", " world", "!", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"Hello", " world", "!", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"Hello", " world", "!", " Here", " is", " some", " streamed", " text."
 	];
 	var index = 0;
 
