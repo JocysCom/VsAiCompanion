@@ -9,6 +9,15 @@ html, body {
 	font-size: 0.9em;
 }
 
+think {
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.5em;
+  border: 2px dotted #add8e6; /* Pastel blue dotted border */
+  background-color: rgba(255, 255, 255, 0.1); /* 10% white background */
+  border-radius: 0.5em;
+}
+
 /* Information (system message) */
 .color-Information {
 	background-color: #f0f0f0;
