@@ -152,7 +152,7 @@ The formula must be applied to each affected entity separately, accounting for t
    Suppose uncertain if VSA should be 0.5 or 0.6. Record: “VSA: 0.5–0.6 (Confidence: Medium).” For calculation, use 0.55. If subsequent analysis or consensus improves, later evaluations might fix VSA at 0.55 (High Confidence) or select a narrower range.&#xD;
 &#xD;
 Adopting these measures can help produce more reliable, transparent, and mutually acceptable moral evaluations under the UMQF.&#xD;
-&#xD;
+After completing the detailed UMQF calculations, output a final summary headline that succinctly states the action’s source, the action itself, and the target, including only minimal clarifiers as necessary to signal the moral score's context.&#xD;
 &#xD;
 **Example and Results Using UMQF:**&#xD;
 &#xD;
@@ -334,7 +334,6 @@ Steve's action of stealing the horse has a **highly immoral** moral value, with 
 9. Orion, an advanced alien being with intelligence vastly greater than humans, relocated 2 billion people to another planet to prevent an ecological collapse on Earth that would have killed them.</Text>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
   <Messages>
     <MessageItem>
       <Id>43b122a6b9254e54991007dad1ceceb5</Id>
@@ -1602,8 +1601,8 @@ Orion's action of relocating 2 billion people is **extremely moral**, with a tot
     <TextBoxData>
       <Name>DataInstructionsTextBox</Name>
       <SelectionStart>0</SelectionStart>
-      <SelectionLength>22090</SelectionLength>
-      <TextLength>22090</TextLength>
+      <SelectionLength>22333</SelectionLength>
+      <TextLength>22333</TextLength>
     </TextBoxData>
   </UiSelections>
 </TemplateItem>

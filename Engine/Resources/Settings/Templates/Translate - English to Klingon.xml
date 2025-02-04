@@ -41,7 +41,6 @@ EQAA</IconData>
 Text to translate:</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

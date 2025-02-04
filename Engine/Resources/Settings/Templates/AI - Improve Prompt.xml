@@ -27,7 +27,6 @@ Data for processing:</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>[insert original prompt here]</Text>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

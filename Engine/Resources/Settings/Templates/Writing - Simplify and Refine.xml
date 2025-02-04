@@ -55,7 +55,6 @@ Important:  Always wrap `fully corrected text` in the Markdown code block like t
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

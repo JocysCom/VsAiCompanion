@@ -35,7 +35,6 @@ EgAA</IconData>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>[insert dietary restriction or ingredient here]</Text>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

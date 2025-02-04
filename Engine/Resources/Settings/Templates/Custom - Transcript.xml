@@ -33,7 +33,6 @@ The analysis should be clear and concise, structured for easy readability and qu
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>
