@@ -1,3 +1,7 @@
+2025-02-04 v1.17.6
+
+- Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
+
 2025-01-19 v1.16.28
 
 - Fix: PDF to Image converter (SkiaSharp package version).

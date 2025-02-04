@@ -219,7 +219,7 @@ function CreateMessageHtml(message) {
 			if ((a.Instructions) && ("" + a.Instructions).length > 0) {
 				aInstructions = a.Instructions;
 				aInstructions = ConvertForDisplayAsHtml(aInstructions);
-				aInstructions = aInstructions + "</ br>";
+				aInstructions = aInstructions + "<br/>";
 			}
 			var aTitle = a.Title;
 			if (a.SendType === AttachmentSendType.Temp) {
@@ -350,7 +350,7 @@ function ConvertForDisplayAsHtml(input) {
 	if (!input)
 		return input;
 	var lines = input.split(/\r?\n|\r/);
-	var rx = new RegExp(/^\s*[`]{3}[a-z0-9\-]*\s*$/gmi);
+	var rx = new RegExp(/^\s*[`]{3,}[a-z0-9\-]*\s*$/gmi);
 	var insideBlock = false;
 	for (var i = 0; i < lines.length; i++) {
 		var line = lines[i];
@@ -358,7 +358,7 @@ function ConvertForDisplayAsHtml(input) {
 		if (isMark) {
 			// If block ends then...
 			if (insideBlock)
-				lines[i] = lines[i] + "\r\n<br />";
+				lines[i] = lines[i] + "\r\n<br/>";
 			insideBlock = !insideBlock;
 			continue;
 		}
@@ -372,7 +372,7 @@ function ConvertForDisplayAsHtml(input) {
 				parts[p] = EscapeHtml(parts[p]);
 			}
 		}
-		// Add extra new line for markdown to add `<br />` correcly.
+		// Add extra new line for markdown to add `<br/>` correcly.
 		lines[i] = parts.join('`') + "\r\n";
 	}
 	var processedText = lines.join("\r\n");
@@ -381,9 +381,13 @@ function ConvertForDisplayAsHtml(input) {
 
 function EscapeHtml(unsafe) {
 	return unsafe
-		.replace(/&/g, "&amp;")
+		.replace(/<think>/g, "##THINK_START##")
+		.replace(/<\/think>/g, "##THINK_END##")
 		.replace(/</g, "&lt;")
 		.replace(/>/g, "&gt;")
+		.replace(/##THINK_START##/g, "<think>")
+		.replace(/##THINK_END##/g, "</think>")
+		.replace(/&/g, "&amp;")
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#039;");
 }
@@ -602,6 +606,13 @@ function MessageAction(button, id, action) {
 
 function parseMarkdown(body, boxedCode) {
 
+	// Process <think> blocks by replacing double (or more) newlines with a line break tag.
+	body = body.replace(/^(<think>)([\s\S]*?)(<\/think>|$)/gi, function(match, start, content, end) {
+	  // Replace 2+ newlines with a literal line break tag.
+	  var cleaned = content.replace(/(?:[ \t]*\r?\n){2,}/g, "<br/>\r\n");
+	  return start + cleaned + end;
+	});
+
 	// Update rendered to convert language to lowercase for Prism.js.
 	var renderer = new marked.Renderer();
 	var originalCodeFunction = renderer.code;
@@ -768,12 +779,12 @@ function SimulateStreaming() {
 	// Simulate streaming by appending text over time
 	var streamedText = [
 		"<think>",
-		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text.",
-		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text.",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text. ",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text. ", "\r\n\r\n",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text. ",
 		"</think>",
 		"Hello", " world", "!", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"Hello", " world", "!", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"<think>", "Hello", " world", "!", "</think>", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
 		"Hello", " world", "!", " Here", " is", " some", " streamed", " text."
 	];
 	var index = 0;
