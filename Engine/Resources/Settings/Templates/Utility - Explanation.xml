@@ -22,7 +22,6 @@ ac+lCrEFAAA=</IconData>
   <TextInstructions>Can you explain in simple terms this complex topic:</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

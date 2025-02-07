@@ -62,7 +62,6 @@ Expected answer is this:&#xD;
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>This reserved task using AI to process messages for fine-tuning an AI model.</Text>
   <Attachments />
-  <Settings />
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>

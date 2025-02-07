@@ -12,7 +12,6 @@ LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
   <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>

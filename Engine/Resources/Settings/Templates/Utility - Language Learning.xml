@@ -61,7 +61,6 @@ u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
   <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>
