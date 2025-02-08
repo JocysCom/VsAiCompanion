@@ -32,9 +32,6 @@ $imageName = "ghcr.io/open-webui/open-webui:main"
 $containerName = "open-webui"
 $dockerStaticUrl  = "https://download.docker.com/win/static/stable/x86_64/docker-27.5.1.zip"
 
-# Define Docker network for container intercommunication.
-$networkName = "my-docker-network"
-
 # Pipelines container settings.
 $pipelineContainerName = "pipelines"
 # Default official pipelines image (will be overwritten if local custom pipelines are used)
@@ -83,11 +80,17 @@ Set-Location $scriptPath
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Host "Git command not found in PATH. Attempting to locate Git via common installation paths..."
-    $possibleGitPath = "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
+    $possibleGitPath = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
     if (Test-Path $possibleGitPath) {
         $env:Path += ";" + $possibleGitPath
         Write-Host "Added Git path: $possibleGitPath"
-    }
+    } else {
+		$possibleGitPath = "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
+		if (Test-Path $possibleGitPath) {
+			$env:Path += ";" + $possibleGitPath
+			Write-Host "Added Git path: $possibleGitPath"
+		}
+	}
 }
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Error "Git command not found. Please install Git and ensure it's in your PATH."
@@ -123,29 +126,6 @@ function Check-WSLStatus {
     }
     $wslVersionInfo = wsl --version 2>&1
     Write-Host "WSL Version Info:`n$wslVersionInfo"
-    
-    $lxssManager = Get-Service -Name LxssManager -ErrorAction SilentlyContinue
-    if (!$lxssManager) {
-        Write-Error "LxssManager service not found. Please ensure WSL is installed properly."
-        exit 1
-    }
-    if ($lxssManager.Status -ne 'Running') {
-        Write-Host "LxssManager service is not running. Attempting to start LxssManager..."
-        try {
-            Start-Service LxssManager
-            Start-Sleep -Seconds 5
-            $lxssManager = Get-Service -Name LxssManager
-            if ($lxssManager.Status -ne 'Running') {
-                Write-Error "Failed to start LxssManager service. Please start it manually."
-                exit 1
-            }
-        }
-        catch {
-            Write-Error "Error starting LxssManager service: $_"
-            exit 1
-        }
-    }
-    Write-Host "LxssManager service is running."
     
     $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
     if ($wslFeature.State -ne "Enabled") {
@@ -281,25 +261,37 @@ function Test-DockerWorking {
     }
     Write-Host "Verifying Docker installation with hello-world image..."
     $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
-
-    # Use existing hello-world image if present.
+    
+    # Ensure the hello-world image is available (only pull if not already present)
     $existingHelloWorld = &$dockerExe images --filter "reference=hello-world" --format "{{.Repository}}"
     if (-not $existingHelloWorld) {
         Write-Host "hello-world image not found locally. Pulling hello-world image..."
         &$dockerExe pull hello-world | Out-Null
     }
-    $output = &$dockerExe run --platform linux/amd64 hello-world 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        if ($output -match "The request is not supported") {
-            Write-Host "Encountered 'The request is not supported'. Docker service appears to be running, but the container test is not supported in this environment."
-            Write-Host "Skipping container test verification."
-            return
-        }
-        else {
-            Write-Error "Docker Engine installation verification failed. Output:`n$output"
-            exit 1
+    
+    # Define a fixed container name to identify the hello-world test container
+    $helloWorldContainerName = "hello-world-test"
+    $existingContainer = &$dockerExe ps -a --filter "name=^$helloWorldContainerName$" --format "{{.ID}}"
+    
+    if (-not $existingContainer) {
+        Write-Host "No existing hello-world container found. Running a new one..."
+        $output = &$dockerExe run --name $helloWorldContainerName --platform linux/amd64 hello-world 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            if ($output -match "The request is not supported") {
+                Write-Host "Encountered 'The request is not supported'. Docker service appears to be running, but the container test is not supported in this environment."
+                Write-Host "Skipping container test verification."
+                return
+            }
+            else {
+                Write-Error "Docker Engine installation verification failed. Output:`n$output"
+                exit 1
+            }
         }
     }
+    else {
+        Write-Host "hello-world container already exists. Skipping container creation."
+    }
+    
     Write-Host "Docker Engine is working successfully."
 }
 
@@ -365,23 +357,6 @@ Ensure-DockerInstalledAndWorking
 Ensure-DockerDaemonRunning
 
 $dockerPath = Get-DockerPath
-
-#############################################
-# Setup Docker Network
-#############################################
-
-$existingNetwork = &$dockerPath network ls --filter "name=$networkName" --format "{{.Name}}"
-if (-not $existingNetwork) {
-    Write-Host "Creating Docker network '$networkName'..."
-    &$dockerPath network create $networkName | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-         Write-Error "Failed to create Docker network '$networkName'."
-         exit 1
-    }
-}
-else {
-    Write-Host "Docker network '$networkName' already exists."
-}
 
 #############################################
 # Setup Custom Pipelines Container
@@ -461,7 +436,7 @@ if ($recreatePipelines -and $existingPipelineContainer) {
 
 if (-not $existingPipelineContainer) {
     Write-Host "Running custom pipelines container using image '$pipelineImage'..."
-    &$dockerPath run -d --add-host=host.docker.internal:host-gateway -v pipelines:/app/pipelines --restart always --network $networkName --name $pipelineContainerName -p 9099:9099 $pipelineImage
+    &$dockerPath run -d --add-host=host.docker.internal:host-gateway -v pipelines:/app/pipelines --restart always --name $pipelineContainerName -p 9099:9099 $pipelineImage
     if ($LASTEXITCODE -ne 0) {
          Write-Error "Failed to run the pipelines container."
          exit 1
@@ -490,7 +465,7 @@ if ($existingContainer) {
 }
 
 Write-Host "Running Docker container '$containerName'..."
-& $dockerPath run --platform linux/amd64 -d -p 3000:8080 -v open-webui:/app/backend/data --network $networkName --name $containerName $imageName
+& $dockerPath run --platform linux/amd64 -d -p 3000:8080 -v open-webui:/app/backend/data --name $containerName $imageName
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to run the Docker container."
     exit 1
