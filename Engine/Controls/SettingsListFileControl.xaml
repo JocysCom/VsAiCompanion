@@ -9,7 +9,7 @@
 	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 	x:Name="This"
 	d:DesignHeight="270"
-	d:DesignWidth="480"
+	d:DesignWidth="280"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -131,10 +131,12 @@
 		</StackPanel>
 		<Border Grid.Row="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,1">
 			<Grid Background="White">
+
+				<!--  Main search input with extra right padding for the clear button  -->
 				<TextBox
 					x:Name="SearchTextBox"
 					Margin="0,0,0,0"
-					Padding="24,0,4,0"
+					Padding="28,0,28,0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Center"
@@ -146,20 +148,37 @@
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
 					TextChanged="SearchTextBox_TextChanged"
 					TextWrapping="Wrap" />
+
+				<!--  Filter button on the left side  -->
 				<Button
 					Name="FilterButton"
-					Margin="0"
+					Margin="2"
 					Padding="0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Stretch"
 					Background="Transparent"
 					Click="FilterButton_Click"
 					Opacity="0.5">
-					<ContentControl Content="{StaticResource Icon_find_gray}" Focusable="False" />
+					<ContentControl Margin="-1,0,0,0" Content="{StaticResource Icon_find_gray}" Focusable="False" />
 				</Button>
+
+				<!--  Clear button (X) on the right side  -->
+				<Button
+					x:Name="ClearButton"
+					Margin="2"
+					Padding="0,0,0,0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Stretch"
+					Background="Transparent"
+					Click="ClearButton_Click"
+					Opacity="0.5">
+					<ContentControl Content="{StaticResource Icon_cancel_gray}" Focusable="False" />
+				</Button>
+
+				<!--  Placeholder text: visible only when the textbox is empty and not focused  -->
 				<TextBlock
 					Margin="0"
-					Padding="26,0,5,0"
+					Padding="28,0,5,0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Center"
 					IsHitTestVisible="False"
@@ -167,7 +186,7 @@
 					Text="{StaticResource main_Search_the_list}">
 					<TextBlock.Style>
 						<Style TargetType="TextBlock">
-							<Setter Property="Padding" Value="26,0,5,0" />
+							<Setter Property="Padding" Value="28,0,5,0" />
 							<Setter Property="VerticalAlignment" Value="Stretch" />
 							<Setter Property="Visibility" Value="Collapsed" />
 							<Style.Triggers>
