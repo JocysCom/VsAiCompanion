@@ -858,6 +858,11 @@
             It encourages to infer potential statuses or metadata that could enhance data handling or task management strategies creatively.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Tags">
+            <summary>
+            Words or phrases that facilitate searching or categorization.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity">
             <summary>
             Connection security.

@@ -493,17 +493,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 			return null;
 		}
 
+		static int NewAppDataVersion = 3;
+
 		/// <summary>Reset Resets</summary>
-		public static void ResetWithInstructions(bool confirm = false, bool appUpdate = false, bool settingsUpdate = false)
+		public static void ResetWithInstructions(bool confirm = false, bool appUpdate = false, bool checkVersion = false)
 		{
 			if (confirm && !AppHelper.AllowReset("Settings with Instructions", "Please note that this will override some data!"))
 				return;
+
 			try
 			{
 				var zip = GetSettingsZip();
 				var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
 				var zipItems = GetItemsFromZip(zip, zipAppDataItems[0]);
 				var resetLists = zipItems[ItemType.ResetItem].Cast<ListInfo>().ToArray();
+
 				for (var i = 0; i < resetLists.Length; i++)
 				{
 					var resetItems = resetLists[i].Items;
@@ -511,25 +515,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 						return;
 					foreach (var resetItem in resetItems)
 					{
-						var typeAndName = resetItem.Key?.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+						var typeAndName = resetItem.Key?.Split('/')
+											 .Where(x => !string.IsNullOrWhiteSpace(x))
+											 .ToArray();
 						if (typeAndName.Length != 2)
 							continue;
-						ItemType itemType;
-						if (!Enum.TryParse(typeAndName[0], out itemType))
+
+						if (!Enum.TryParse(typeAndName[0], out ItemType itemType))
 							continue;
+
 						var itemName = typeAndName[1];
-						UpdateInstruction instruction;
-						if (!Enum.TryParse(resetItem.Value, out instruction))
+
+						// Get the update instruction.
+						if (!Enum.TryParse(resetItem.Value, out UpdateInstruction instruction))
 							continue;
+
 						var source = zipItems[itemType];
 						var target = Global.GetSettingItems(itemType);
-						var addItem = false;
-						if (instruction == UpdateInstruction.RestoreIfNotExists)
+						bool addItem = false;
+
+						var settingsUpdate = false;
+						// if must check version and the version is lower than the new version.
+						if (checkVersion && Global.AppData.Version < NewAppDataVersion)
+						{
+							// Update if item version is higher than the current version and lower or equal than the new version.
+							if (!int.TryParse(resetItem.Tags, out var itemVersion))
+								settingsUpdate = itemVersion > Global.AppData.Version && itemVersion <= NewAppDataVersion;
+						}
+
+						// Using HasFlag to allow combining instructions if needed.
+						if (instruction.HasFlag(UpdateInstruction.RestoreIfNotExists))
 							addItem = true;
-						if (appUpdate && instruction == UpdateInstruction.RestoreIfNotExistsOnAppUpdate)
+						if (appUpdate && instruction.HasFlag(UpdateInstruction.RestoreIfNotExistsOnAppUpdate))
 							addItem = true;
-						if (settingsUpdate && instruction == UpdateInstruction.RestoreIfNotExistsOnSettingsUpdate)
+						if (settingsUpdate && instruction.HasFlag(UpdateInstruction.RestoreIfNotExistsOnSettingsUpdate))
 							addItem = true;
+
 						if (addItem)
 						{
 							var sourceItem = source?.FirstOrDefault(x => x.Name == itemName);
@@ -540,6 +561,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 						}
 					}
 				}
+				// Set app data to the new version.
+				Global.AppData.Version = NewAppDataVersion;
 			}
 			catch (Exception ex)
 			{

@@ -650,14 +650,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
-			// If old settings version then reset templates.
-			var settingsUpdate = false;
-			if (AppData.Version < 2 && !ResetSettings)
-			{
-				AppData.Version = 2;
-				settingsUpdate = true;
-			}
-			SettingsSourceManager.ResetWithInstructions(false, false, settingsUpdate);
+			SettingsSourceManager.ResetWithInstructions(false, false, true);
 			// Enable logging.
 			AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			LogHelper.LogHttp = AppSettings.LogHttp;
