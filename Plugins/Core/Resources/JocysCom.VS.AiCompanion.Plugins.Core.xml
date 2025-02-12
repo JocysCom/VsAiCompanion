@@ -318,25 +318,36 @@
             Get the current system information: Current Date, OS Version, Architecture, Locale, Time Zone and GPS Geo Location.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ExecuteCommand(System.String,System.String,System.String,System.Boolean)">
             <summary>
-            Execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
+            Executes an external command with the option to run it either as a regular process or via PowerShell.
+            Use runPowerShell = true when the command requires PowerShell-specific syntax (e.g., command substitution with $("…")).
             </summary>
-            <param name="fileName">Application or document to start.</param>
-            <param name="arguments">Command-line arguments to use when starting the application.</param>
-            <param name="workingDirectory">The working directory for the process to be started. Default is empty string.</param>
-            <returns>The output of the started process.</returns>
-            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
-            <remarks>Be cautious with executing process requesys received via API due to security risks.</remarks>
+            <param name="command">
+            When runPowerShell is false, this should be the executable name (e.g., "git", "notepad.exe").
+            When runPowerShell is true, this is interpreted as the script or command to execute by PowerShell.
+            </param>
+            <param name="arguments">
+            The command-line arguments to pass. For PowerShell execution, these arguments will be appended to the script, so ensure proper formatting.
+            </param>
+            <param name="workingDirectory">
+            The directory in which the command should be executed.
+            </param>
+            <param name="runPowerShell">
+            Set to true to execute the command using PowerShell (with -NoProfile and -ExecutionPolicy Bypass).
+            This should be chosen if the command string contains PowerShell-specific syntax, such as command substitution ($(…)).
+            If the command is a simple executable call without such syntax, use false.
+            </param>
+            <returns>
+            The standard output or error output of the executed process.
+            </returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ExecuteProcess(System.Diagnostics.ProcessStartInfo)">
             <summary>
-            Execute a PowerShell script on user computer.
+            Internal helper method to execute a process with the specified ProcessStartInfo.
             </summary>
-            <param name="script">The PowerShell script to be executed.</param>
-            <returns>The output of the executed PowerShell script.</returns>
-            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
-            <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
+            <param name="startInfo">The ProcessStartInfo with configuration for the process.</param>
+            <returns>The combined output (or error output if present) from the process.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertFile(System.String,System.String)">
             <summary>
@@ -798,6 +809,26 @@
             Gets or sets the date the item was last accessed.
             </summary>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListErrorCode">
+            <summary>
+            Represents error codes for list operations.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.ListErrorCode.Success">
+            <summary>Operation successful</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.ListErrorCode.ListNotFound">
+            <summary>List not found</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.ListErrorCode.ListReadOnly">
+            <summary>List is read-only</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.ListErrorCode.ListAlreadyExists">
+            <summary>List already exists</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.ListErrorCode.ListItemNotFound">
+            <summary>List item not found</summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
             List Info.
@@ -1211,7 +1242,7 @@
             <param name="statusColumn">Optional. Use csv column for the Status property.</param>
             <param name="valueColumn">Optional. Use csv column for the Value property.</param>
             <param name="commentColumn">Optional. Use csv column for the Comment property.</param>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Lists.FilterPath">
             <summary>
@@ -1225,7 +1256,7 @@
             <param name="listName">Name of the list</param>
             <param name="description">Description provides user-facing details of the list.</param>
             <param name="instructions"> Instructions, outline how AI should operate based on the list's content.</param>
-            <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList(System.String,System.String,System.String)">
             <summary>
@@ -1234,28 +1265,28 @@
             <param name="listName">Name of the list</param>
             <param name="description">Optional. Description provides user-facing details of the list.</param>
             <param name="instructions">Optional. Instructions, outline how AI should operate based on the list's content.</param>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList(System.String)">
             <summary>
             Deletes an existing list.
             </summary>
             <param name="listName">Name of the list</param>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList(System.String)">
             <summary>
             Clears all items from a list.
             </summary>
             <param name="listName">Name of the list</param>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SortList(System.String)">
             <summary>
             Sort items by key.
             </summary>
             <param name="listName">Name of the list</param>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.Nullable{JocysCom.ClassLibrary.ProgressStatus},System.String,System.Nullable{System.Int32})">
             <summary>
@@ -1267,8 +1298,7 @@
             <param name="value">Item value.</param>
             <param name="comment">Item comment.</param>
             <param name="index">Optional. The zero-based index at which item should be inserted.</param>
-            <returns>True if the item is set or added successfully.</returns>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItemStatus(System.String,System.String,System.Nullable{JocysCom.ClassLibrary.ProgressStatus})">
             <summary>
@@ -1277,8 +1307,7 @@
             <param name="listName">Name of the list</param>
             <param name="key">Item key.</param>
             <param name="status">Item progress status.</param>
-            <returns>True if the item is set or added successfully.</returns>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly, -4 item not found.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem(System.String,System.String)">
             <summary>
@@ -1289,7 +1318,7 @@
             <summary>
             Deletes an item from a list.
             </summary>
-            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+            <returns>OperationResult with Success or a corresponding error code.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems(System.String)">
             <summary>

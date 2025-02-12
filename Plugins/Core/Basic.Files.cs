@@ -96,7 +96,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				if (!fi.Directory.Exists)
 					fi.Directory.Create();
 				System.IO.File.WriteAllText(path, text);
-				return new OperationResult<bool>(true);
+				return new OperationResult<bool>(true, 0, $"File Created: '{path}'");
 			}
 			catch (System.Exception ex)
 			{
