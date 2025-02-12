@@ -71,6 +71,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public string Comment { get => _Comment; set => SetProperty(ref _Comment, value); }
 		string _Comment;
 
+		/// <summary>
+		/// Words or phrases that facilitate searching or categorization.
+		/// </summary>
+		[DefaultValue(null)]
+		public string Tags { get => _Tags; set => SetProperty(ref _Tags, value); }
+		string _Tags;
 
 		/*
 		/// <summary>
@@ -78,12 +84,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		[DefaultValue(null)]
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Words or phrases that facilitate searching or categorization.
-		/// </summary>
-		[DefaultValue(null)]
-		public string Tags { get; set; }
 
 		/// <summary>
 		/// Indicates whether the item is active or being utilized.

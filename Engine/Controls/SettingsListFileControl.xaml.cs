@@ -6,8 +6,10 @@ using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using Microsoft.Graph.Applications.GetAvailableExtensionProperties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -290,6 +292,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			DeleteButton.IsEnabled = isSelected;
 			CreateNewTaskButton.IsEnabled = isSelected;
 			GenerateTitleButton.IsEnabled = isSelected;
+			ControlsHelper.SetVisible(ClearButton, !string.IsNullOrEmpty(SearchTextBox.Text));
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
@@ -559,27 +562,149 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void InitSearch()
 		{
-			_SearchHelper = new SearchHelper<ISettingsListFileItem>((x) =>
+			// Helper functions to extract token content from parent and child items.
+			// For a parent TemplateItem.
+			Func<TemplateItem, (string name, string body, DateTime? date)> GetTemplateTokenContent = (x) =>
+				(x.Name, string.Join(" ", x.Text, x.TextInstructions), x.Modified);
+			// For a child MessageItem.
+			Func<MessageItem, (string name, string body, DateTime? date)> GetMessageTokenContent = (x) =>
+				("", string.Join(" ", x.Body, x.User, x.BodyInstructions), x.Date);
+
+			// For a parent ListInfo.
+			Func<ListInfo, (string name, string body, DateTime? date)> GetListInfoTokenContent = (x) =>
+				(x.Name, string.Join(" ", x.Description, x.Instructions), x.Modified);
+
+			Func<ListItem, (string name, string body, DateTime? date)> GetListItemTokenContent = (x) =>
+				("", string.Join(" ", x.Key, x.Value, x.Comment), null);
+
+			_SearchHelper = new SearchHelper<ISettingsListFileItem>(item =>
 			{
-				var s = SearchTextBox.Text;
-				// Item type specific code.
-				if (x is TemplateItem ti)
+				// Retrieve the search query from the textbox.
+				string query = SearchTextBox.Text;
+				if (string.IsNullOrWhiteSpace(query))
+					return true;
+
+				// Tokenize the query.
+				var tokens = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+				// Variables for specific filters.
+				string nameFilter = null;
+				string bodyFilter = null;
+				DateTime? dateFilter = null;
+				var defaultTerms = new List<string>();
+
+				// Process each token and extract known prefixes.
+				foreach (var token in tokens)
 				{
-					return string.IsNullOrEmpty(s) ||
-						(ti.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1 ||
-						(ti.Text ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+					if (token.StartsWith("body:", StringComparison.OrdinalIgnoreCase))
+					{
+						bodyFilter = token.Substring("body:".Length).Trim();
+					}
+					else if (token.StartsWith("name:", StringComparison.OrdinalIgnoreCase))
+					{
+						nameFilter = token.Substring("name:".Length).Trim();
+					}
+					else if (token.StartsWith("date:", StringComparison.OrdinalIgnoreCase))
+					{
+						var dateStr = token.Substring("date:".Length).Trim();
+						if (DateTime.TryParse(dateStr, out DateTime parsedDate))
+							dateFilter = parsedDate;
+					}
+					else
+					{
+						defaultTerms.Add(token);
+					}
+				}
+
+				// Build a unified collection of token records with the same signature.
+				IEnumerable<(string name, string body, DateTime? date)> tokenRecords;
+
+				if (item is TemplateItem ti)
+				{
+					// For TemplateItem, include the parent's token and all child MessageItem tokens.
+					var parentToken = GetTemplateTokenContent(ti);
+					var childTokens = ti.Messages.Select(m => GetMessageTokenContent(m));
+					tokenRecords = new[] { parentToken }.Concat(childTokens);
+				}
+				else if (item is ListInfo li)
+				{
+					// For ListInfo, include the parent's token and all child ListItem tokens.
+					var parentToken = GetListInfoTokenContent(li);
+					var childTokens = li.Items.Select(i => GetListItemTokenContent(i));
+					tokenRecords = new[] { parentToken }.Concat(childTokens);
 				}
 				else
 				{
-					return string.IsNullOrEmpty(s) ||
-						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+					// Fallback for other types: use the Name property.
+					tokenRecords = new[] { (item.Name, item.Name, item.Modified) };
 				}
-			}, null, new ObservableCollection<ISettingsListFileItem>());
+
+				// Return the overall match result using the unified matching function.
+				return MatchTokens(tokenRecords, nameFilter, bodyFilter, dateFilter, defaultTerms);
+			},
+			null,
+			new ObservableCollection<ISettingsListFileItem>());
+
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			FilteredList = _SearchHelper.FilteredList;
 			FilteredList.CollectionChanged += FilteredList_CollectionChanged;
 			OnPropertyChanged(nameof(FilteredList));
+		}
+
+		/// <summary>
+		/// Generalized matching function that checks a collection of token records against the provided filters.
+		/// </summary>
+		private bool MatchTokens(
+			IEnumerable<(string name, string body, DateTime? date)> records,
+			string nameFilter,
+			string bodyFilter,
+			DateTime? dateFilter,
+			List<string> defaultTerms)
+		{
+			bool hasName = !string.IsNullOrWhiteSpace(nameFilter);
+			bool hasBody = !string.IsNullOrWhiteSpace(bodyFilter);
+			bool hasDate = dateFilter.HasValue;
+			bool hasDefault = defaultTerms != null && defaultTerms.Any();
+
+			// Check the name filter against the name field.
+			if (hasName && !records.Any(r => !string.IsNullOrWhiteSpace(r.name) &&
+											   r.name.IndexOf(nameFilter, StringComparison.OrdinalIgnoreCase) >= 0))
+				return false;
+
+			// Check the body filter (also validating the date if provided).
+			if (hasBody && !records.Any(r => !string.IsNullOrWhiteSpace(r.body) &&
+											   r.body.IndexOf(bodyFilter, StringComparison.OrdinalIgnoreCase) >= 0 &&
+											   (!hasDate || (r.date.HasValue && r.date.Value.Date == dateFilter.Value.Date))))
+				return false;
+
+			// For cases where only a date filter is provided (or along with a name filter), 
+			// ensure at least one record has the matching date.
+			if (hasDate && !hasBody && !records.Any(r => r.date.HasValue &&
+														  r.date.Value.Date == dateFilter.Value.Date))
+				return false;
+
+			// Process free-text default terms.
+			if (hasDefault)
+			{
+				// When no explicit filters are provided, check only the parent's (first record's) name.
+				if (!hasName && !hasBody && !hasDate)
+				{
+					var parentToken = records.First();
+					if (!defaultTerms.All(term => !string.IsNullOrWhiteSpace(parentToken.name) &&
+													parentToken.name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))
+						return false;
+				}
+				else // If any prefixed filter exists, search across all token records.
+				{
+					if (!defaultTerms.All(term => records.Any(r =>
+							(!string.IsNullOrWhiteSpace(r.name) && r.name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0) ||
+							(!string.IsNullOrWhiteSpace(r.body) && r.body.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))))
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		private void FilteredList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -615,9 +740,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
+			var text = SearchTextBox.Text;
 			_SearchHelper.Filter();
-			if (PanelSettings.SearchText != SearchTextBox.Text)
-				PanelSettings.SearchText = SearchTextBox.Text;
+			if (PanelSettings.SearchText != text)
+				PanelSettings.SearchText = text;
+			ControlsHelper.SetVisible(ClearButton, !string.IsNullOrEmpty(text));
+		}
+
+		private void ClearButton_Click(object sender, RoutedEventArgs e)
+		{
+			SearchTextBox.Clear();
 		}
 
 		#endregion
@@ -874,6 +1006,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
+
 	}
 
 }
