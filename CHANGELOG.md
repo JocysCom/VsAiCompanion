@@ -3,6 +3,7 @@
 - Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
 - New: Clear Search Button.
 - Update: Improved list search using the `name:`, `body:`, and `date:` tokens.
+- Update: List and process plugin functions.
 
 2025-01-19 v1.16.28
 

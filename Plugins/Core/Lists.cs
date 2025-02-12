@@ -32,7 +32,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		#region List Manipulation
 
-
 		private IEnumerable<ListInfo> GetEnabledLists()
 		{
 			return AllLists
@@ -60,7 +59,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				.Where(x => x.Name.Equals(listName, System.StringComparison.OrdinalIgnoreCase))
 				.FirstOrDefault();
 		}
-
 
 		/// <summary>
 		/// Get list information
@@ -125,36 +123,42 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="statusColumn">Optional. Use csv column for the Status property.</param>
 		/// <param name="valueColumn">Optional. Use csv column for the Value property.</param>
 		/// <param name="commentColumn">Optional. Use csv column for the Comment property.</param>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		public int LoadListFromCsv(
+		public OperationResult<string> LoadListFromCsv(
 			string listName,
 			string path,
 			string keyColumn = null, string statusColumn = null,
 			string valueColumn = null, string commentColumn = null)
 		{
-			var li = GetFilteredListInfo(listName);
-			// List don't exists
-			if (li == null)
-				return -1;
-			if (li.IsReadOnly)
-				return -2;
-			var table = JocysCom.ClassLibrary.Files.CsvHelper.Read(path, true, true);
-			foreach (DataRow row in table.Rows)
+			try
 			{
-				var item = new ListItem();
-				if (!string.IsNullOrWhiteSpace(keyColumn))
-					item.Key = (string)row[keyColumn];
-				ProgressStatus status;
-				if (!string.IsNullOrWhiteSpace(statusColumn) && Enum.TryParse((string)row[statusColumn], out status))
-					item.Status = status;
-				if (!string.IsNullOrWhiteSpace(valueColumn))
-					item.Value = (string)row[valueColumn];
-				if (!string.IsNullOrWhiteSpace(commentColumn))
-					item.Comment = (string)row[commentColumn];
-				li.Items.Add(item);
+				var li = GetFilteredListInfo(listName);
+				if (li == null)
+					return GetStatus(ListErrorCode.ListNotFound);
+				if (li.IsReadOnly)
+					return GetStatus(ListErrorCode.ListReadOnly);
+				var table = JocysCom.ClassLibrary.Files.CsvHelper.Read(path, true, true);
+				foreach (DataRow row in table.Rows)
+				{
+					var item = new ListItem();
+					if (!string.IsNullOrWhiteSpace(keyColumn))
+						item.Key = (string)row[keyColumn];
+					ProgressStatus status;
+					if (!string.IsNullOrWhiteSpace(statusColumn) && Enum.TryParse((string)row[statusColumn], out status))
+						item.Status = status;
+					if (!string.IsNullOrWhiteSpace(valueColumn))
+						item.Value = (string)row[valueColumn];
+					if (!string.IsNullOrWhiteSpace(commentColumn))
+						item.Comment = (string)row[commentColumn];
+					li.Items.Add(item);
+				}
+				return GetStatus(ListErrorCode.Success, $"CSV loaded into list '{listName}' successfully.");
 			}
-			return 0;
+			catch (Exception ex)
+			{
+				return new OperationResult<string>(ex);
+			}
 		}
 
 		/// <summary>
@@ -168,14 +172,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="listName">Name of the list</param>
 		/// <param name="description">Description provides user-facing details of the list.</param>
 		/// <param name="instructions"> Instructions, outline how AI should operate based on the list's content.</param>
-		/// <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int CreateList(string listName, string description, string instructions)
+		public OperationResult<string> CreateList(string listName, string description, string instructions)
 		{
 			var li = GetFilteredListInfo(listName);
 			// List already exists.
 			if (li != null)
-				return -3;
+				return GetStatus(ListErrorCode.ListAlreadyExists);
 			li = new ListInfo();
 			li.Path = FilterPath;
 			li.Name = listName;
@@ -183,7 +187,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			li.Instructions = instructions;
 			li.Items = new BindingList<ListItem>();
 			_AllLists.Add(li);
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"List '{li.Name}' was successfully created");
 		}
 
 		/// <summary>
@@ -192,80 +196,80 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="listName">Name of the list</param>
 		/// <param name="description">Optional. Description provides user-facing details of the list.</param>
 		/// <param name="instructions">Optional. Instructions, outline how AI should operate based on the list's content.</param>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int UpdateList(string listName, string description = null, string instructions = null)
+		public OperationResult<string> UpdateList(string listName, string description = null, string instructions = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListNotFound);
 			if (li.IsReadOnly)
-				return -2;
+				return GetStatus(ListErrorCode.ListReadOnly);
 			if (description != null)
 				li.Description = description;
 			if (instructions != null)
 				li.Instructions = instructions;
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"List '{listName}' updated successfully.");
 		}
 
 		/// <summary>
 		/// Deletes an existing list.
 		/// </summary>
 		/// <param name="listName">Name of the list</param>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int DeleteList(string listName)
+		public OperationResult<string> DeleteList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListNotFound);
 			if (li.IsReadOnly)
-				return -2;
-			return _AllLists.Remove(li) ? 0 : -1;
+				return GetStatus(ListErrorCode.ListReadOnly);
+			bool removed = _AllLists.Remove(li);
+			if (removed)
+				return GetStatus(ListErrorCode.Success, $"List '{listName}' deleted successfully.");
+			else
+				return GetStatus(ListErrorCode.ListNotFound, $"List '{listName}' could not be deleted.");
 		}
 
 		/// <summary>
 		/// Clears all items from a list.
 		/// </summary>
 		/// <param name="listName">Name of the list</param>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int ClearList(string listName)
+		public OperationResult<string> ClearList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListNotFound);
 			if (li.IsReadOnly)
-				return -2;
+				return GetStatus(ListErrorCode.ListReadOnly);
 			li.Items.Clear();
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"List '{listName}' cleared successfully.");
 		}
 
 		/// <summary>
 		/// Sort items by key.
 		/// </summary>
 		/// <param name="listName">Name of the list</param>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int SortList(string listName)
+		public OperationResult<string> SortList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListNotFound);
 			if (li.IsReadOnly)
-				return -2;
+				return GetStatus(ListErrorCode.ListReadOnly);
 			var allVersion = li.Items.All(x => System.Version.TryParse(x.Key, out _));
 			List<ListItem> sortedList;
 			if (allVersion)
-			{
 				sortedList = li.Items.OrderBy(x => System.Version.Parse(x.Key)).ToList();
-			}
 			else
-			{
 				sortedList = li.Items.OrderBy(x => x.Key).ToList();
-			}
 			CollectionsHelper.Synchronize(sortedList, li.Items);
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"List '{listName}' sorted successfully.");
 		}
 
 		#endregion
@@ -281,16 +285,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="value">Item value.</param>
 		/// <param name="comment">Item comment.</param>
 		/// <param name="index">Optional. The zero-based index at which item should be inserted.</param>
-		/// <returns>True if the item is set or added successfully.</returns>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int UpdateListItem(string listName, string key, string value, ProgressStatus? status = null, string comment = "", int? index = null)
+		public OperationResult<string> UpdateListItem(string listName, string key, string value, ProgressStatus? status = null, string comment = "", int? index = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListNotFound);
 			if (li.IsReadOnly)
-				return -2;
+				return GetStatus(ListErrorCode.ListReadOnly);
 			var item = li.Items.FirstOrDefault(i => i.Key == key);
 			if (item == null)
 			{
@@ -312,7 +315,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				item.Comment = comment;
 				item.Status = status;
 			}
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"Item '{key}' updated successfully in list '{listName}'.");
 		}
 
 		/// <summary>
@@ -321,20 +324,19 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="listName">Name of the list</param>
 		/// <param name="key">Item key.</param>
 		/// <param name="status">Item progress status.</param>
-		/// <returns>True if the item is set or added successfully.</returns>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly, -4 item not found.</returns>
-		public int SetListItemStatus(string listName, string key, ProgressStatus? status = null)
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
+		public OperationResult<string> SetListItemStatus(string listName, string key, ProgressStatus? status = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListNotFound);
 			if (li.IsReadOnly)
-				return -2;
+				return GetStatus(ListErrorCode.ListReadOnly);
 			var item = li.Items.FirstOrDefault(i => i.Key == key);
 			if (item == null)
-				return -4;
+				return GetStatus(ListErrorCode.ListItemNotFound);
 			item.Status = status;
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"Status for item '{key}' updated successfully in list '{listName}'.");
 		}
 
 		/// <summary>
@@ -350,18 +352,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Deletes an item from a list.
 		/// </summary>
-		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		/// <returns>OperationResult with Success or a corresponding error code.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int DeleteListItem(string listName, string key)
+		public OperationResult<string> DeleteListItem(string listName, string key)
 		{
 			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
-			var item = li?.Items.FirstOrDefault(i => i.Key == key);
+			if (li == null)
+				return GetStatus(ListErrorCode.ListNotFound);
+			var item = li.Items.FirstOrDefault(i => i.Key == key);
 			if (item == null)
-				return -1;
+				return GetStatus(ListErrorCode.ListItemNotFound);
 			if (li.IsReadOnly)
-				return -2;
+				return GetStatus(ListErrorCode.ListReadOnly);
 			li.Items.Remove(item);
-			return 0;
+			return GetStatus(ListErrorCode.Success, $"Item '{key}' deleted successfully from list '{listName}'.");
 		}
 
 		/// <summary>
@@ -372,6 +376,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
 			return li?.Items.ToList() ?? new List<ListItem>();
+		}
+
+		private OperationResult<string> GetStatus(ListErrorCode statusCode, string message = null)
+		{
+			var statusText = Attributes.GetDescription(statusCode);
+			if (!string.IsNullOrWhiteSpace(message))
+				statusText += $". {message}";
+			return new OperationResult<string>(null, (int)statusCode, statusText);
 		}
 
 		#endregion
