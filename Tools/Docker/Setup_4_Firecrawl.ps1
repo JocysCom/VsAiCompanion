@@ -14,12 +14,13 @@ Set-ScriptLocation
 # This script installs and runs a self-hosted instance of Firecrawl with a dedicated Redis container.
 # It performs the following steps:
 # 1. Creates (if necessary) a dedicated Docker network.
-# 2. Runs a Redis container (using the "redis:alpine" image) on that network.
-# 3. Pulls the Firecrawl Docker image.
-# 4. Runs the Firecrawl container with environment variables to override its Redis connection settings.
+# 2. Runs a Redis container (using the "redis:alpine" image) on that network with a network alias.
+# 3. Checks connectivity to Redis before installing Firecrawl.
+# 4. Pulls the Firecrawl Docker image.
+# 5. Runs the Firecrawl container with environment variables to override its Redis connection settings.
 #
 # The additional environment variables REDIS_HOST, REDIS_PORT, and REDIS_RATE_LIMIT_URL
-# are set to ensure Firecrawl connects to the Redis container rather than trying 127.0.0.1.
+# are set to ensure Firecrawl connects to the Redis container rather than attempting localhost.
 #
 # Firecrawl will be accessible at: http://localhost:3002
 #
@@ -47,17 +48,28 @@ if ($existingNetwork -ne $networkName) {
 }
 
 #############################################
-# Step 2: Run the Redis Container
+# Step 2: Run the Redis Container with a Network Alias
 #############################################
 $existingRedis = & $dockerPath ps -a --filter "name=^$redisContainerName$" --format "{{.ID}}"
 if ($existingRedis) {
     Write-Host "Removing existing Redis container '$redisContainerName'..."
     & $dockerPath rm -f $redisContainerName
 }
-Write-Host "Starting Redis container '$redisContainerName' on network '$networkName'..."
-& $dockerPath run -d --name $redisContainerName --network $networkName -p 6379:6379 $redisImage
+Write-Host "Starting Redis container '$redisContainerName' on network '$networkName' with alias 'redis'..."
+& $dockerPath run -d --name $redisContainerName --network $networkName --network-alias redis -p 6379:6379 $redisImage
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to start Redis container."
+    exit 1
+}
+
+# Wait for Redis to initialize before testing connectivity.
+Write-Host "Waiting 10 seconds for Redis container to initialize..."
+Start-Sleep -Seconds 10
+
+# Check Redis connectivity before proceeding to install Firecrawl.
+Write-Host "Testing Redis container connectivity on port 6379 before installing Firecrawl..."
+if (-not (Test-TCPPort -ComputerName "localhost" -Port 6379 -serviceName "Firecrawl Redis")) {
+    Write-Error "Redis connectivity test failed. Aborting Firecrawl installation."
     exit 1
 }
 
@@ -84,13 +96,15 @@ if ($existingFirecrawl) {
 # Step 5: Run the Firecrawl Container with Overridden Redis Settings
 #############################################
 # Provide a dummy OPENAI_API_KEY and override both the REDIS_URL and related settings.
+# Notice that we now use the alias 'redis' so that the container can resolve the dedicated Redis container.
 Write-Host "Starting Firecrawl container '$firecrawlName'..."
 & $dockerPath run -d -p 3002:3002 --restart always --network $networkName --name $firecrawlName `
     -e OPENAI_API_KEY=dummy `
-    -e REDIS_URL=redis://$redisContainerName:6379 `
-    -e REDIS_RATE_LIMIT_URL=redis://$redisContainerName:6379 `
-    -e REDIS_HOST=$redisContainerName `
+    -e REDIS_URL=redis://redis:6379 `
+    -e REDIS_RATE_LIMIT_URL=redis://redis:6379 `
+    -e REDIS_HOST=redis `
     -e REDIS_PORT=6379 `
+    -e POSTHOG_API_KEY="" `
     $imageName
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to run Firecrawl container '$firecrawlName'."
