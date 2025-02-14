@@ -1,3 +1,16 @@
+################################################################################
+# File         : Setup_1b_BackupRestore.ps1
+# Description  : Script to backup and restore container images using Docker or Podman.
+#                Provides a menu-driven interface for backup and restore operations.
+# Usage        : Run with appropriate privileges.
+################################################################################
+
+using namespace System
+using namespace System.IO
+
+# Dot-source the common functions file.
+. "$PSScriptRoot\Setup_0.ps1"
+
 # Setup_1b_BackupRestore.ps1
 # This script provides a menu to backup or restore container images using Docker or Podman.
 # Backups are stored as tar files in the Backup folder.

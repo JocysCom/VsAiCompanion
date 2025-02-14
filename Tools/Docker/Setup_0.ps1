@@ -1,8 +1,12 @@
-# Setup_0.ps1 - Basic and Generic Functions for Setup Scripts
-# This file contains helper functions for Git checks, Docker path lookup,
-# HTTP/TCP port testing, and verifying administrator privileges.
-# Dot-source this file in your other setup scripts using:
-#    . "$PSScriptRoot\Setup_0.ps1"
+################################################################################
+# File         : Setup_0.ps1
+# Description  : Contains basic and generic helper functions for setup scripts.
+#                Functions include administrator privilege verification, setting the
+#                script location, Git command lookup, container engine path lookup,
+#                network port testing, and backup restoration.
+# Usage        : Dot-source this script in your other setup scripts:
+#                . "$PSScriptRoot\Setup_0.ps1"
+################################################################################
 
 #------------------------------
 # Function: Ensure-Elevated
@@ -221,6 +225,63 @@ function Test-HTTPPort {
     }
     catch {
         Write-Error "$serviceName HTTP test failed at $Uri. Error details: $_"
+        return $false
+    }
+}
+
+#------------------------------
+# Function: Check-AndRestoreBackup
+#
+# Determines whether a backup file exists for the specified image in the Backup folder.
+# If a backup is found, it offers the choice to restore it using the provided container engine.
+# The backup file is expected to follow the naming convention where any ':' or '/' in the image name 
+# is replaced with '_' and appended with a .tar extension.
+#
+# Parameters:
+#   - Engine: The container engine command (e.g., "docker" or "podman").
+#   - ImageName: The full image name (repository:tag) for which a backup may exist.
+#   - BackupFolder (optional): The folder where backup tar files are stored (default ".\Backup").
+#
+# Returns:
+#   $true if a backup was restored successfully, or $false otherwise.
+#------------------------------
+function Check-AndRestoreBackup {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Engine,      # container engine command ("docker" or "podman")
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ImageName,   # full image name, e.g. "open-webui/pipelines:custom"
+        
+        [string]$BackupFolder = ".\Backup"
+    )
+    
+    # Compute the safe backup file name by replacing ':' and '/' with '_'
+    $safeName = $ImageName -replace "[:/]", "_"
+    $backupFile = Join-Path $BackupFolder "$safeName.tar"
+    
+    if (-not (Test-Path $backupFile)) {
+        Write-Host "No backup file found for image '$ImageName' in folder '$BackupFolder'."
+        return $false
+    }
+    
+    Write-Host "Backup file found for image '$ImageName': $backupFile"
+    $choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
+    if ($choice -and $choice.ToUpper() -eq "Y") {
+        Write-Host "Restoring backup from $backupFile..."
+        & $Engine load -i $backupFile
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Successfully restored backup for image '$ImageName'."
+            return $true
+        }
+        else {
+            Write-Error "Failed to restore backup for image '$ImageName'."
+            return $false
+        }
+    }
+    else {
+        Write-Host "User opted not to restore backup for image '$ImageName'."
         return $false
     }
 }

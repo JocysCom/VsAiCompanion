@@ -1,3 +1,11 @@
+################################################################################
+# File         : Setup_6_Embedding.ps1
+# Description  : Script to build and run the Embedding API container using Podman.
+#                Sets up the build context including Dockerfile, requirements, and API code,
+#                builds the container image, runs it on port 8000, and tests connectivity.
+# Usage        : Run the script to build and launch the Embedding API container.
+################################################################################
+
 # Dot-source the common functions file.
 . "$PSScriptRoot\Setup_0.ps1"
 

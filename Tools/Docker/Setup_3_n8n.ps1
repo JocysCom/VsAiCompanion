@@ -1,3 +1,11 @@
+################################################################################
+# File         : Setup_3_n8n.ps1
+# Description  : Script to set up and run the n8n container using Docker/Podman.
+#                Verifies volume presence, pulls the n8n image if necessary,
+#                and runs the container with port and volume mappings.
+# Usage        : Run as Administrator if using Docker.
+################################################################################
+
 using namespace System
 using namespace System.IO
 
@@ -13,7 +21,7 @@ Set-ScriptLocation
 $containerEngine = Select-ContainerEngine
 
 if ($containerEngine -eq "docker") {
-	Ensure-Elevated
+    Ensure-Elevated
     $enginePath = Get-DockerPath
     $pullOptions = @()  # No extra options needed for Docker.
     $imageName = "docker.n8n.io/n8nio/n8n:latest"
@@ -36,12 +44,16 @@ if ([string]::IsNullOrWhiteSpace($existingVolume)) {
 # Check if the n8n image is already available.
 $existingImage = & $enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -match "n8n" }
 if (-not $existingImage) {
-    Write-Host "Pulling n8n image '$imageName'..."
-    $pullCmd = @("pull") + $pullOptions + $imageName
-    & $enginePath @pullCmd
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Image pull failed. Exiting..."
-        exit 1
+    if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
+         Write-Host "No backup restored. Pulling n8n image '$imageName'..."
+         $pullCmd = @("pull") + $pullOptions + $imageName
+         & $enginePath @pullCmd
+         if ($LASTEXITCODE -ne 0) {
+              Write-Error "Image pull failed. Exiting..."
+              exit 1
+         }
+    } else {
+         Write-Host "Using restored backup image '$imageName'."
     }
 } else {
     Write-Host "n8n image already exists. Skipping pull."

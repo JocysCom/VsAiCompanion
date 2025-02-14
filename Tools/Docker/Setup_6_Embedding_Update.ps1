@@ -1,3 +1,11 @@
+################################################################################
+# File         : Setup_6_Embedding_Update.ps1
+# Description  : Script to update the Embedding API container with new API code.
+#                Rebuilds the container image using Podman, stops and removes the current
+#                container, and then runs a new container with the updated image.
+# Usage        : Modify the API code in the build context directory and run this script.
+################################################################################
+
 # Dot-source the common functions file.
 . "$PSScriptRoot\Setup_0.ps1"
 

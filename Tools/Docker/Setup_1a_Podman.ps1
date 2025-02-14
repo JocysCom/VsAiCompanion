@@ -1,12 +1,15 @@
-# Setup_1a_Podman.ps1 - Install Podman on Windows
-# This script ensures that non-desktop Podman is installed and that Podman Desktop (GUI) is installed.
-# It uses the Test-ApplicationInstalled function (which checks the registry for installed programs)
-# to determine if Podman is already installed before prompting for installation.
-#
+################################################################################
+# File         : Setup_1a_Podman.ps1
+# Description  : Script to install Podman on Windows.
+#                Provides options for installing Podman Desktop (setup executable)
+#                or Podman Remote client (ZIP package).
+# Usage        : Run the script; ensure proper administrator privileges where needed.
+################################################################################
+
 # Dot-source shared helper functions from Setup_0.ps1:
 . "$PSScriptRoot\Setup_0.ps1"
 
-# Ensure the script is running as Administrator and set the working directory.
+# Ensure the script is running as Administrator (if needed) and set the working directory.
 #Ensure-Elevated
 Set-ScriptLocation
 
@@ -151,22 +154,22 @@ function Ensure-PodmanDesktopInstalled {
          Write-Host "Podman is registered as installed in Windows. Skipping installation."
          return
     }
-	Write-Host "Podman Desktop is not installed. Installing Podman Desktop..."
-	$desktopInstallerUrl = "https://github.com/podman-desktop/podman-desktop/releases/download/v1.16.2/podman-desktop-1.16.2-setup-x64.exe"
-	$downloadFolder = ".\downloads"
-	if (-not (Test-Path $downloadFolder)) {
-		Write-Host "Creating downloads folder at $downloadFolder..."
-		New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
-	}
-	$installerPath = Join-Path $downloadFolder "podman-desktop-1.16.2-setup-x64.exe"
-	Download-File -url $desktopInstallerUrl -destinationPath $installerPath
-	Write-Host "Launching Podman Desktop installer..."
-	Start-Process -FilePath $installerPath -Wait
-	if (-not (Test-ApplicationInstalled "Podman Desktop")) {
-		Write-Error "Podman Desktop installation failed. Please install manually."
-		exit 1
-	}
-	Write-Host "Podman Desktop installed successfully."
+    Write-Host "Podman Desktop is not installed. Installing Podman Desktop..."
+    $desktopInstallerUrl = "https://github.com/podman-desktop/podman-desktop/releases/download/v1.16.2/podman-desktop-1.16.2-setup-x64.exe"
+    $downloadFolder = ".\downloads"
+    if (-not (Test-Path $downloadFolder)) {
+        Write-Host "Creating downloads folder at $downloadFolder..."
+        New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
+    }
+    $installerPath = Join-Path $downloadFolder "podman-desktop-1.16.2-setup-x64.exe"
+    Download-File -url $desktopInstallerUrl -destinationPath $installerPath
+    Write-Host "Launching Podman Desktop installer..."
+    Start-Process -FilePath $installerPath -Wait
+    if (-not (Test-ApplicationInstalled "Podman Desktop")) {
+        Write-Error "Podman Desktop installation failed. Please install manually."
+        exit 1
+    }
+    Write-Host "Podman Desktop installed successfully."
 }
 
 #############################################

@@ -1,3 +1,11 @@
+################################################################################
+# File         : Setup_5_Qdrant.ps1
+# Description  : Script to set up and run the Qdrant container with Docker/Podman support.
+#                Validates backup, pulls the Qdrant image if necessary, removes existing containers,
+#                and runs Qdrant with proper port mapping.
+# Usage        : Run as Administrator if necessary.
+################################################################################
+
 using namespace System
 using namespace System.IO
 
@@ -17,7 +25,7 @@ $containerName = "qdrant"
 # Prompt user to choose container engine (Docker or Podman)
 $containerEngine = Select-ContainerEngine
 if ($containerEngine -eq "docker") {
-	Ensure-Elevated
+    Ensure-Elevated
     $enginePath = Get-DockerPath
     Write-Host "Using Docker with executable: $enginePath"
     # For Docker, set DOCKER_HOST pointing to the Docker service pipe.
@@ -29,11 +37,15 @@ else {
     # If additional Podman-specific environment settings are needed, add them here.
 }
 
-Write-Host "Pulling Qdrant image '$imageName' using $containerEngine..."
-& $enginePath pull $imageName
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "$containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
-    exit 1
+if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
+    Write-Host "No backup restored. Pulling Qdrant image '$imageName' using $containerEngine..."
+    & $enginePath pull $imageName
+    if ($LASTEXITCODE -ne 0) {
+         Write-Error "$containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
+         exit 1
+    }
+} else {
+    Write-Host "Using restored backup image '$imageName'."
 }
 
 # Check if a container with the same name already exists

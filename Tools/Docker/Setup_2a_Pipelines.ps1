@@ -1,3 +1,11 @@
+################################################################################
+# File         : Setup_2a_Pipelines.ps1
+# Description  : Script to set up and run a Pipelines container using Docker/Podman.
+#                Clones the pipelines repository, modifies the Dockerfile, builds a custom
+#                pipelines image, and runs a container.
+# Usage        : Run as Administrator if using Docker.
+################################################################################
+
 using namespace System
 using namespace System.IO
 
@@ -14,7 +22,7 @@ Set-ScriptLocation
 # Prompt for container engine selection.
 $containerEngine = Select-ContainerEngine
 if ($containerEngine -eq "docker") {
-	Ensure-Elevated
+    Ensure-Elevated
     $enginePath = Get-DockerPath
 } else {
     $enginePath = Get-PodmanPath
@@ -79,11 +87,15 @@ CMD ["sh", "./start.sh"]
 
 # Build a custom pipelines image from the local repository.
 $customPipelineImageTag = "open-webui/pipelines:custom"
-Write-Host "Building custom pipelines image from $pipelinesFolder..."
-& $enginePath build -t $customPipelineImageTag $pipelinesFolder
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Build failed for custom pipelines image."
-    exit 1
+if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $customPipelineImageTag)) {
+    Write-Host "No backup restored. Building custom pipelines image from $pipelinesFolder..."
+    & $enginePath build -t $customPipelineImageTag $pipelinesFolder
+    if ($LASTEXITCODE -ne 0) {
+         Write-Error "Build failed for custom pipelines image."
+         exit 1
+    }
+} else {
+    Write-Host "Using restored backup image '$customPipelineImageTag'."
 }
 
 # Remove any existing pipelines container.

@@ -1,3 +1,11 @@
+################################################################################
+# File         : Setup_4_Firecrawl.ps1
+# Description  : Script to set up and run a Firecrawl container with a dedicated Redis container.
+#                Creates a Docker network, launches Redis, pulls Firecrawl image, and runs Firecrawl
+#                with environment variable overrides directing it to use the dedicated Redis.
+# Usage        : Run as Administrator.
+################################################################################
+
 using namespace System
 using namespace System.IO
 
@@ -76,11 +84,15 @@ if (-not (Test-TCPPort -ComputerName "localhost" -Port 6379 -serviceName "Firecr
 #############################################
 # Step 3: Pull the Firecrawl Docker Image
 #############################################
-Write-Host "Pulling Firecrawl Docker image '$imageName'..."
-& $dockerPath pull $imageName
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Docker pull failed for image '$imageName'."
-    exit 1
+if (-not (Check-AndRestoreBackup -Engine $dockerPath -ImageName $imageName)) {
+    Write-Host "No backup restored. Pulling Firecrawl Docker image '$imageName'..."
+    & $dockerPath pull $imageName
+    if ($LASTEXITCODE -ne 0) {
+         Write-Error "Docker pull failed for image '$imageName'."
+         exit 1
+    }
+} else {
+    Write-Host "Using restored backup image '$imageName'."
 }
 
 #############################################
@@ -98,13 +110,13 @@ if ($existingFirecrawl) {
 # Provide a dummy OPENAI_API_KEY and override both the REDIS_URL and related settings.
 # Notice that we now use the alias 'redis' so that the container can resolve the dedicated Redis container.
 Write-Host "Starting Firecrawl container '$firecrawlName'..."
-& $dockerPath run -d -p 3002:3002 --restart always --network $networkName --name $firecrawlName `
-    -e OPENAI_API_KEY=dummy `
-    -e REDIS_URL=redis://redis:6379 `
-    -e REDIS_RATE_LIMIT_URL=redis://redis:6379 `
-    -e REDIS_HOST=redis `
-    -e REDIS_PORT=6379 `
-    -e POSTHOG_API_KEY="" `
+& $dockerPath run -d -p 3002:3002 --restart always --network $networkName --name $firecrawlName ` 
+    -e OPENAI_API_KEY=dummy ` 
+    -e REDIS_URL=redis://redis:6379 ` 
+    -e REDIS_RATE_LIMIT_URL=redis://redis:6379 ` 
+    -e REDIS_HOST=redis ` 
+    -e REDIS_PORT=6379 ` 
+    -e POSTHOG_API_KEY="" ` 
     $imageName
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to run Firecrawl container '$firecrawlName'."

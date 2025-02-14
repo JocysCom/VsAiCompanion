@@ -1,3 +1,10 @@
+################################################################################
+# File         : Setup_2b_OpenWebUI.ps1
+# Description  : Script to set up and run the Open WebUI container with Docker/Podman support.
+#                Pulls or restores the container image and runs the container with required port mapping.
+# Usage        : Run as Administrator if using Docker.
+################################################################################
+
 using namespace System
 using namespace System.IO
 
@@ -13,7 +20,7 @@ Set-ScriptLocation
 
 $containerEngine = Select-ContainerEngine
 if ($containerEngine -eq "docker") {
-	Ensure-Elevated
+    Ensure-Elevated
     $enginePath = Get-DockerPath
 } else {
     $enginePath = Get-PodmanPath
@@ -22,11 +29,15 @@ if ($containerEngine -eq "docker") {
 $imageName = "ghcr.io/open-webui/open-webui:main"
 $containerName = "open-webui"
 
-Write-Host "Pulling Open WebUI image '$imageName'..."
-& $enginePath pull --platform linux/amd64 $imageName
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Pull failed. Check internet connection or image URL."
-    exit 1
+if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
+    Write-Host "No backup restored. Pulling Open WebUI image '$imageName'..."
+    & $enginePath pull --platform linux/amd64 $imageName
+    if ($LASTEXITCODE -ne 0) {
+         Write-Error "Pull failed. Check internet connection or image URL."
+         exit 1
+    }
+} else {
+    Write-Host "Using restored backup image '$imageName'."
 }
 
 $existingContainer = & $enginePath ps -a --filter "name=$containerName" --format "{{.ID}}"

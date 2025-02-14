@@ -1,3 +1,12 @@
+################################################################################
+# File         : Setup_6_Embedding_Test.ps1
+# Description  : Script to test the Embedding API.
+#                Calls the API with sample text lines, decodes the base64 embeddings,
+#                compares repeated lines for high similarity, and checks that distinct
+#                lines show lower similarity. Outputs "TEST PASS" or "TEST FAIL".
+# Usage        : Run after the Embedding API container is running.
+################################################################################
+
 ##############################################################################
 # Purpose:
 #   This script calls the local Embedding API multiple times with several lines
@@ -121,6 +130,7 @@ try {
 
     # Hashtable to store embeddings keyed by "text|index" to differentiate duplicates.
     $embeddings = @{}
+
 
     ############################################################################
     # 4) Request embeddings for each test line.
