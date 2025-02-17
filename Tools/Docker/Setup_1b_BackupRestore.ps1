@@ -53,11 +53,33 @@ function Backup-ContainerImages {
     }
 }
 
-# Function: Restore-ContainerImages
+function Run-RestoredContainer {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Engine,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ImageName
+    )
+    
+    # Generate a container name by replacing ':' and '/' with underscores.
+    $containerName = ($ImageName -replace "[:/]", "_") + "_container"
+    
+    Write-Host "Starting container from image '$ImageName' with container name '$containerName'..."
+    & $Engine run -d --name $containerName $ImageName
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Container '$containerName' started successfully."
+    }
+    else {
+        Write-Error "Failed to start container from image '$ImageName'."
+    }
+}
+
 function Restore-ContainerImages {
     param (
         [Parameter(Mandatory = $true)]
-        [string] $Engine
+        [string]$Engine
     )
 
     $backupFolder = ".\Backup"
@@ -69,18 +91,35 @@ function Restore-ContainerImages {
 
     $tarFiles = Get-ChildItem -Path $backupFolder -Filter *.tar
     if (-not $tarFiles) {
-        Write-Host "No backup tar files found in '$backupFolder'"
+        Write-Host "No backup tar files found in '$backupFolder'."
         return
     }
 
     foreach ($file in $tarFiles) {
         Write-Host "Restoring image from '$($file.FullName)'..."
-        & $Engine load -i $file.FullName
+        $output = & $Engine load -i $file.FullName
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "Successfully restored image from '$($file.Name)'"
+            Write-Host "Successfully restored image from '$($file.Name)'."
+            # Attempt to parse the image name from the load output.
+            # Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
+            if ($output -match "Loaded image:\s*(\S+)") {
+                $imageName = $matches[1].Trim()
+                Write-Host "Parsed image name: $imageName"
+                
+                $runResponse = Read-Host "Do you want to run a container using image '$imageName'? (Y/N, default Y)"
+                if ([string]::IsNullOrWhiteSpace($runResponse) -or $runResponse.ToUpper() -eq "Y") {
+                    Run-RestoredContainer -Engine $Engine -ImageName $imageName
+                }
+                else {
+                    Write-Host "Skipping running container for image '$imageName'."
+                }
+            }
+            else {
+                Write-Host "Could not parse image name from the load output. Please manually start the container if needed."
+            }
         }
         else {
-            Write-Error "Failed to restore image from '$($file.Name)'"
+            Write-Error "Failed to restore image from '$($file.Name)'."
         }
     }
 }
@@ -90,7 +129,7 @@ function Show-MainMenu {
     Write-Host "Container Images Backup and Restore Menu"
     Write-Host "------------------------------------------"
     Write-Host "1) Backup all images"
-    Write-Host "2) Restore all images from backup"
+    Write-Host "2) Restore all images from backup and run"
     Write-Host "3) Exit"
 }
 
