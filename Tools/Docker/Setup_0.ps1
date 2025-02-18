@@ -302,7 +302,10 @@ function Check-AndRestoreBackup {
     $choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
     if ($choice -and $choice.ToUpper() -eq "Y") {
         Write-Host "Restoring backup from $backupFile..."
-        & $Engine load -i $backupFile
+        # podman load [options]
+        # load      Load an image from a tar archive into the container engine.
+        # --input string   Specify the input file containing the saved image.
+        & $Engine load --input $backupFile
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Successfully restored backup for image '$ImageName'."
             return $true
@@ -401,6 +404,8 @@ function Backup-ContainerState {
     # Commit the container to an image with tag "backup-<ContainerName>:latest"
     $backupImageTag = "backup-$ContainerName:latest"
     Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
+    # podman commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+    # commit    Create a new image from a container's changes.
     & $Engine commit $ContainerName $backupImageTag
     if ($LASTEXITCODE -ne 0) {
          Write-Error "Failed to commit container '$ContainerName'."
@@ -412,7 +417,10 @@ function Backup-ContainerState {
     $backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
     
     Write-Host "Saving backup image '$backupImageTag' to '$backupFile'..."
-    & $Engine save -o $backupFile $backupImageTag
+    # podman save [options] IMAGE
+    # save      Save an image to a tar archive.
+    # --output string   Specify the output file for saving the image.
+    & $Engine save --output $backupFile $backupImageTag
     if ($LASTEXITCODE -eq 0) {
          Write-Host "Backup successfully saved to '$backupFile'."
          return $true
@@ -449,7 +457,10 @@ function Restore-ContainerState {
     }
     
     Write-Host "Loading backup image from '$backupFile'..."
-    & $Engine load -i $backupFile
+    # podman load [options]
+    # load      Load an image from a tar archive.
+    # --input string   Specify the input file containing the saved image.
+    & $Engine load --input $backupFile
     if ($LASTEXITCODE -ne 0) {
          Write-Error "Failed to load backup image from '$backupFile'."
          return $false
@@ -462,7 +473,10 @@ function Restore-ContainerState {
     $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
     if ($existingContainer) {
          Write-Host "Stopping and removing existing container '$ContainerName'..."
-         & $Engine rm -f $ContainerName
+         # podman rm [options] CONTAINER [CONTAINER...]
+         # rm        Remove one or more containers.
+         # --force   Force removal of a running container.
+         & $Engine rm --force $ContainerName
          if ($LASTEXITCODE -ne 0) {
               Write-Error "Failed to remove existing container '$ContainerName'."
               return $false
@@ -470,7 +484,10 @@ function Restore-ContainerState {
     }
     
     Write-Host "Starting container '$ContainerName' from backup image '$backupImageTag'..."
-    & $Engine run -d --name $ContainerName $backupImageTag
+    # podman run [options] IMAGE [COMMAND [ARG...]]
+    # run         Run a command in a new container.
+    # --detach    Run container in background and print container ID.
+    & $Engine run --detach --name $ContainerName $backupImageTag
     if ($LASTEXITCODE -eq 0) {
          Write-Host "Container '$ContainerName' restored and running."
          return $true

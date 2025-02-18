@@ -39,6 +39,8 @@ else {
 
 if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
     Write-Host "No backup restored. Pulling Qdrant image '$imageName' using $containerEngine..."
+    # Command: pull
+    #   pull: downloads the specified image from the registry.
     & $enginePath pull $imageName
     if ($LASTEXITCODE -ne 0) {
          Write-Error "$containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
@@ -48,16 +50,26 @@ if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
     Write-Host "Using restored backup image '$imageName'."
 }
 
-# Check if a container with the same name already exists
-$existingContainer = & $enginePath ps -a --filter "name=$containerName" --format "{{.ID}}"
+# Check if a container with the same name already exists.
+# Command: ps
+#   --all: lists all containers.
+#   --filter "name=$containerName": filters for the container by name.
+#   --format "{{.ID}}": outputs only the container ID.
+$existingContainer = & $enginePath ps --all --filter "name=$containerName" --format "{{.ID}}"
 if ($existingContainer) {
     Write-Host "Removing existing container '$containerName'..."
-    & $enginePath rm -f $containerName
+    # Command: rm
+    #   --force: forces removal of the container.
+    & $enginePath rm --force $containerName
 }
 
 # Run the Qdrant container with port mapping.
 Write-Host "Starting Qdrant container..."
-& $enginePath run -d --name $containerName -p 6333:6333 $imageName
+# Command: run
+#   --detach: run container in background.
+#   --name: assign the container a name.
+#   --publish: map host port 6333 to container port 6333.
+& $enginePath run --detach --name $containerName --publish 6333:6333 $imageName
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to start the Qdrant container."
     exit 1

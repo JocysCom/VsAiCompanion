@@ -181,6 +181,10 @@ function Test-DockerWorking {
     
     if (-not $existingContainer) {
         Write-Host "No existing hello-world container found. Running a new one..."
+        # docker run [options] IMAGE [COMMAND [ARG...]]
+        # run         Run a command in a new container.
+        # --name      Assign a name to the container.
+        # --platform  Specify the platform for image selection.
         $output = &$dockerExe run --name $helloWorldContainerName --platform linux/amd64 hello-world 2>&1
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Docker Engine installation verification failed. Output:`n$output"

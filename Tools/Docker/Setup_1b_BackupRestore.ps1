@@ -43,7 +43,10 @@ function Backup-ContainerImages {
         $safeName = $image -replace "[:/]", "_"
         $backupFile = Join-Path $backupFolder "$safeName.tar"
         Write-Host "Backing up image '$image' to '$backupFile'..."
-        & $Engine save -o $backupFile $image
+        # podman save [options] IMAGE
+        # save      Save an image to a tar archive.
+        # --output string   Specify the output file for saving the image.
+        & $Engine save --output $backupFile $image
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Successfully backed up image '$image'"
         }
@@ -66,7 +69,11 @@ function Run-RestoredContainer {
     $containerName = ($ImageName -replace "[:/]", "_") + "_container"
     
     Write-Host "Starting container from image '$ImageName' with container name '$containerName'..."
-    & $Engine run -d --name $containerName $ImageName
+    # podman run [options] IMAGE [COMMAND [ARG...]]
+    # run         Run a command in a new container.
+    # --detach    Run container in background and print container ID.
+    # --name      Assign a name to the container.
+    & $Engine run --detach --name $containerName $ImageName
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host "Container '$containerName' started successfully."
@@ -97,7 +104,10 @@ function Restore-ContainerImages {
 
     foreach ($file in $tarFiles) {
         Write-Host "Restoring image from '$($file.FullName)'..."
-        $output = & $Engine load -i $file.FullName
+        # podman load [options]
+        # load       Load an image from a tar archive.
+        # --input string   Specify the input file containing the saved image.
+        $output = & $Engine load --input $file.FullName
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Successfully restored image from '$($file.Name)'."
             # Attempt to parse the image name from the load output.

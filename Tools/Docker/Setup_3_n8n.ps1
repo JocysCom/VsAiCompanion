@@ -33,19 +33,29 @@ if ($containerEngine -eq "docker") {
 }
 
 # Check if volume 'n8n_data' already exists; if not, create it.
+# Command: volume ls
+#   --filter "name=n8n_data": filters volumes whose name matches “n8n_data”.
+#   --format "{{.Name}}": outputs only the volume names.
 $existingVolume = & $enginePath volume ls --filter "name=n8n_data" --format "{{.Name}}"
 if ([string]::IsNullOrWhiteSpace($existingVolume)) {
     Write-Host "Creating volume 'n8n_data'..."
+    # Command: volume create
+    #   n8n_data: the name of the volume to create.
     & $enginePath volume create n8n_data
 } else {
     Write-Host "Volume 'n8n_data' already exists. Skipping creation."
 }
 
 # Check if the n8n image is already available.
+# Command: images
+#   --format "{{.Repository}}:{{.Tag}}": prints the repository and tag of each image.
 $existingImage = & $enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -match "n8n" }
 if (-not $existingImage) {
     if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
          Write-Host "No backup restored. Pulling n8n image '$imageName'..."
+         # Command: pull
+         #   pull: downloads the specified image from the registry.
+         #   Additional options (if any) are appended from $pullOptions.
          $pullCmd = @("pull") + $pullOptions + $imageName
          & $enginePath @pullCmd
          if ($LASTEXITCODE -ne 0) {
@@ -59,20 +69,31 @@ if (-not $existingImage) {
     Write-Host "n8n image already exists. Skipping pull."
 }
 
-$existingContainer = & $enginePath ps -a --filter "name=n8n" --format "{{.ID}}"
+# Check if a container with the name "n8n" already exists.
+# Command: ps
+#   --all: lists all containers (running and stopped).
+#   --filter "name=n8n": filters for containers with the name “n8n”.
+#   --format "{{.ID}}": outputs only the container ID.
+$existingContainer = & $enginePath ps --all --filter "name=n8n" --format "{{.ID}}"
 if ($existingContainer) {
     Write-Host "Removing existing container 'n8n'..."
-    & $enginePath rm -f n8n
+    # Command: rm
+    #   --force: forces removal of the container.
+    & $enginePath rm --force n8n
 }
 
+# Define run options for starting the container using longer argument variants.
 $runOptions = @(
-    "-d",                                  # Run in detached mode.
-    "-p", "5678:5678",                     # Map host port 5678 to container port 5678.
-    "-v", "n8n_data:/home/node/.n8n",       # Mount volume to persist data.
-    "--name", "n8n"                        # Container name.
+    "--detach",                            # --detach: run container in background and print container ID.
+    "--publish", "5678:5678",              # --publish: map host port 5678 to container port 5678.
+    "--volume", "n8n_data:/home/node/.n8n",  # --volume: bind mount volume "n8n_data" to "/home/node/.n8n" in the container.
+    "--name", "n8n"                        # --name: assign the container the name "n8n".
 )
 
 Write-Host "Starting n8n container..."
+# Command: run
+#   run [OPTIONS] IMAGE
+#   The options provided include --detach, --publish, --volume, and --name.
 & $enginePath run $runOptions $imageName
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to run n8n container. Exiting..."
@@ -82,6 +103,7 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "Waiting 20 seconds for container startup..."
 Start-Sleep -Seconds 20
 
+# Test connectivity: check TCP and HTTP availability on port 5678.
 Test-TCPPort -ComputerName "localhost" -Port 5678 -serviceName "n8n"
 Test-HTTPPort -Uri "http://localhost:5678" -serviceName "n8n"
 

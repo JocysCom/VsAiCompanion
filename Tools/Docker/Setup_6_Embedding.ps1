@@ -123,17 +123,25 @@ async def options_handler(path: str):
 $tempDir = Join-Path $PSScriptRoot "embedding_api"
 New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
+# Create the build context files.
 Set-Content -Path (Join-Path $tempDir "Dockerfile") -Value $dockerfileContent
 Set-Content -Path (Join-Path $tempDir "requirements.txt") -Value $requirementsTxtContent
 Set-Content -Path (Join-Path $tempDir "embedding_api.py") -Value $embeddingApiContent
 
 # Build the container image using Podman.
 Write-Host "Building the Embedding API container image..."
-Invoke-Expression "podman build -t embedding-api `"$tempDir`""
+# Command: build
+#   --tag: assigns a name (and optionally a tag) to the built image.
+#   The build context ($tempDir) contains the Dockerfile and related files.
+Invoke-Expression "podman build --tag embedding-api `"$tempDir`""
 
 # Run the container on port 8000.
 Write-Host "Running the Embedding API container..."
-Invoke-Expression "podman run -d --name embedding-api -p 8000:8000 embedding-api"
+# Command: run
+#   --detach: runs the container in background.
+#   --name: assigns the container the name "embedding-api".
+#   --publish: maps host port 8000 to container port 8000.
+Invoke-Expression "podman run --detach --name embedding-api --publish 8000:8000 embedding-api"
 
 # Allow some time for the container to initialize.
 Start-Sleep -Seconds 10

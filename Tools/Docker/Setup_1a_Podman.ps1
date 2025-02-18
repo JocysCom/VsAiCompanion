@@ -40,6 +40,9 @@ function Ensure-And-Start-PodmanMachine {
     }
 
     Write-Host "Checking for an existing Podman machine..."
+    # podman machine ls [options]
+    # ls          List Podman virtual machines.
+    # --format string  Format the output using a Go template (e.g., "json").
     $machineListJson = & podman machine ls --format json 2>&1
 
     # If the output mentions wsl.exe usage errors, output a friendly message.
@@ -58,6 +61,9 @@ function Ensure-And-Start-PodmanMachine {
     
     if (($machines -eq $null) -or ($machines.Count -eq 0)) {
          Write-Host "No Podman machine detected (empty array). Initializing a default machine..."
+         # podman machine init [options] MACHINE_NAME
+         # init   Initialize a Podman virtual machine.
+         # 'default' is the name that will be assigned to the new machine.
          $initOutput = & podman machine init default 2>&1
          if ($LASTEXITCODE -ne 0) {
               Write-Error "Failed to initialize Podman machine. Output: $initOutput"
@@ -65,6 +71,9 @@ function Ensure-And-Start-PodmanMachine {
          }
          Write-Host "Podman machine initialized successfully."
          Start-Sleep -Seconds 2
+         # podman machine start [options] MACHINE_NAME
+         # start    Start a Podman virtual machine.
+         # 'default' specifies the machine name.
          $startOutput = & podman machine start default 2>&1
          if ($LASTEXITCODE -ne 0) {
               Write-Error "Failed to start Podman machine after initialization. Output: $startOutput"
@@ -77,6 +86,8 @@ function Ensure-And-Start-PodmanMachine {
          $machine = $machines[0]
          if ($machine.State -ne "Running") {
               Write-Host "Podman machine '$($machine.Name)' is not running. Starting it..."
+              # podman machine start [options] MACHINE_NAME
+              # start    Starts the specified Podman virtual machine.
               $startOutput = & podman machine start $machine.Name 2>&1
               if ($LASTEXITCODE -ne 0) {
                    Write-Error "Failed to start Podman machine '$($machine.Name)'. Output: $startOutput"
@@ -172,15 +183,20 @@ function Install-PodmanService {
          Start-Sleep -Seconds 5
     }
 
-    # Write a batch file that verifies if the machine is running.
+    # Add comment: This batch file uses the following Podman commands:
+    # podman machine ls [options] -> List virtual machines in JSON format.
+    # podman machine start [MACHINE_NAME] -> Start the Podman machine if not running.
     $batchFilePath = Join-Path $destinationFolder "start-podman.bat"
     $batchContent = @"
 @echo off
+REM Wait for 10 seconds before checking machine status.
 timeout /t 10
+REM List Podman machines in JSON format.
 podman machine ls --format json | findstr /C:""Running"" >nul 2>&1
 if %errorlevel%==0 (
     exit 0
 ) else (
+    REM Start Podman machine.
     podman machine start
     exit %errorlevel%
 )

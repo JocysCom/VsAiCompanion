@@ -77,9 +77,12 @@ try {
         } | ConvertTo-Json
 
         # Send POST request to the API.
+        # -Method: specifies the HTTP method (POST).
+        # -Uri: the API endpoint.
+        # -Headers: includes the Content-Type header.
+        # -Body: contains the JSON payload.
         $headers = @{ "Content-Type" = "application/json" }
-        $response = Invoke-RestMethod -Method Post -Uri "http://localhost:8000/v1/embeddings" `
-            -Body $requestJson -Headers $headers
+        $response = Invoke-RestMethod -Method Post -Uri "http://localhost:8000/v1/embeddings" -Body $requestJson -Headers $headers
 
         # Validate basic structure.
         if ($response.object -ne "list") {
@@ -131,7 +134,6 @@ try {
     # Hashtable to store embeddings keyed by "text|index" to differentiate duplicates.
     $embeddings = @{}
 
-
     ############################################################################
     # 4) Request embeddings for each test line.
     ############################################################################
@@ -148,7 +150,7 @@ try {
             Write-Error "Embedding for '$text' is empty."
             $testPass = $false
         }
-        $embeddings[$text + "|" + $i] = $floats
+        $embeddings["$text|$i"] = $floats
     }
 
     ############################################################################

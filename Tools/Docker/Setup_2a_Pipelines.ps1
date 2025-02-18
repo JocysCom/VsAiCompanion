@@ -92,7 +92,10 @@ CMD ["sh", "./start.sh"]
     # Try to restore a backup. If no backup is restored, build the image.
     if (-not (Check-AndRestoreBackup -Engine $global:enginePath -ImageName $customPipelineImageTag)) {
         Write-Host "No backup restored. Building custom pipelines image from $global:pipelinesFolder..."
-        & $global:enginePath build -t $customPipelineImageTag $global:pipelinesFolder
+        # podman build [options] PATH | URL | -
+        # build      Build an image from a Dockerfile.
+        # --tag string   Name and optionally a tag in the 'name:tag' format.
+        & $global:enginePath build --tag $customPipelineImageTag $global:pipelinesFolder
         if ($LASTEXITCODE -ne 0) {
              Write-Error "Build failed for custom pipelines image. Installation aborted."
              return
@@ -105,12 +108,23 @@ CMD ["sh", "./start.sh"]
     $existingPipelineContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
     if ($existingPipelineContainer) {
         Write-Host "Pipelines container already exists. Removing it..."
-        & $global:enginePath rm -f $global:containerName
+        # podman rm [options] CONTAINER [CONTAINER...]
+        # rm        Remove container.
+        # --force   Force removal of a running container.
+        & $global:enginePath rm --force $global:containerName
     }
 
     # Run the pipelines container.
     Write-Host "Running pipelines container using image '$customPipelineImageTag'..."
-    & $global:enginePath run -d --add-host=host.docker.internal:host-gateway -v pipelines:/app/pipelines --restart always --name $global:containerName -p 9099:9099 $customPipelineImageTag
+    # podman run [options] IMAGE [COMMAND [ARG...]]
+    # run           Run a command in a new container.
+    # --detach      Run container in the background and print container ID.
+    # --add-host    Add a custom host-to-IP mapping.
+    # --volume      Bind mount a volume into the container.
+    # --restart     Specify the restart policy for the container.
+    # --name        Assign a name to the container.
+    # --publish     Publish a container's port to the host.
+    & $global:enginePath run --detach --add-host host.docker.internal:host-gateway --volume pipelines:/app/pipelines --restart always --name $global:containerName --publish 9099:9099 $customPipelineImageTag
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to run the pipelines container."
         return
@@ -159,7 +173,7 @@ function Uninstall-PipelinesContainer {
     $existingPipelineContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
     if ($existingPipelineContainer) {
         Write-Host "Removing pipelines container '$global:containerName'..."
-        & $global:enginePath rm -f $global:containerName
+        & $global:enginePath rm --force $global:containerName
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Pipelines container removed successfully."
         } else {
