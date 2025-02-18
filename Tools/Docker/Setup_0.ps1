@@ -38,6 +38,38 @@ function Set-ScriptLocation {
 }
 
 #------------------------------
+# Function: Download-File
+# Generic download function using Start-BitsTransfer (provides a fast download with a progress bar).
+# Supports both -SourceUrl and -url as parameter aliases.
+#------------------------------
+function Download-File {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [Alias("url")]
+        [string]$SourceUrl,
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+        [switch]$ForceDownload  # Optional switch to force re-download
+    )
+    
+    if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
+        Write-Host "File already exists at $DestinationPath. Skipping download."
+        return
+    }
+    Write-Host "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+    try {
+        Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
+        Write-Host "Download succeeded: $DestinationPath"
+    }
+    catch {
+        Write-Error "Failed to download file from $SourceUrl. Error details: $_"
+        exit 1
+    }
+}
+
+
+#------------------------------
 # Function: Check-Git
 #------------------------------
 function Check-Git {
@@ -283,5 +315,167 @@ function Check-AndRestoreBackup {
     else {
         Write-Host "User opted not to restore backup for image '$ImageName'."
         return $false
+    }
+}
+
+#############################################
+# WSL and Service Health Functions
+#############################################
+
+function Check-WSLStatus {
+    Write-Host "Verifying WSL installation and required service status..."
+    
+    # Check if the wsl command is available
+    if (!(Get-Command wsl -ErrorAction SilentlyContinue)) {
+         Write-Error "WSL (wsl.exe) is not available. Please install Windows Subsystem for Linux."
+         exit 1
+    }
+    
+    $wslVersionInfo = wsl --version 2>&1
+    Write-Host "WSL Version Info:`n$wslVersionInfo"
+    
+    # Check if the Windows Subsystem for Linux feature is enabled
+    $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+    if ($wslFeature.State -ne "Enabled") {
+         Write-Warning "The Microsoft-Windows-Subsystem-Linux feature is not enabled."
+         $choice = Read-Host "Do you want to enable it automatically? (Y/N)"
+         if ($choice -and $choice.ToUpper() -eq "Y") {
+             Write-Host "Enabling WSL feature..."
+             dism.exe /Online /Enable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /All /NoRestart | Out-Null
+             Write-Host "WSL feature enabled. A system restart may be required to activate changes."
+         } else {
+             Write-Error "The Microsoft-Windows-Subsystem-Linux feature is required. Exiting."
+             exit 1
+         }
+    }
+    
+    # Check if the Virtual Machine Platform feature is enabled
+    $vmFeature = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
+    if ($vmFeature.State -ne "Enabled") {
+         Write-Warning "The VirtualMachinePlatform feature is not enabled."
+         $choice = Read-Host "Do you want to enable it automatically? (Y/N)"
+         if ($choice -and $choice.ToUpper() -eq "Y") {
+             Write-Host "Enabling VirtualMachinePlatform feature..."
+             dism.exe /Online /Enable-Feature /FeatureName:VirtualMachinePlatform /All /NoRestart | Out-Null
+             Write-Host "VirtualMachinePlatform feature enabled. A system restart may be required to activate changes."
+         } else {
+             Write-Error "The VirtualMachinePlatform feature is required. Exiting."
+             exit 1
+         }
+    }
+    
+    Write-Host "WSL and required Windows features are enabled."
+}
+
+
+#--------------------------------------
+# Function: Backup-ContainerState
+# Description: Creates a backup of a live running container by committing its state 
+#              to an image and saving that image as a tar file.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -ContainerName: Name of the container to backup
+#   -BackupFolder: Folder to store the backup file (default ".\Backup")
+#--------------------------------------
+function Backup-ContainerState {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        [Parameter(Mandatory=$true)]
+        [string]$ContainerName,
+        [string]$BackupFolder = ".\Backup"
+    )
+    
+    if (-not (Test-Path $BackupFolder)) {
+         New-Item -ItemType Directory -Path $BackupFolder -Force | Out-Null
+         Write-Host "Created backup folder: $BackupFolder"
+    }
+    
+    # Check if the container exists.
+    $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
+    if (-not $existingContainer) {
+         Write-Error "Container '$ContainerName' does not exist. Cannot backup."
+         return $false
+    }
+    
+    # Commit the container to an image with tag "backup-<ContainerName>:latest"
+    $backupImageTag = "backup-$ContainerName:latest"
+    Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
+    & $Engine commit $ContainerName $backupImageTag
+    if ($LASTEXITCODE -ne 0) {
+         Write-Error "Failed to commit container '$ContainerName'."
+         return $false
+    }
+    
+    # Build backup tar file name.
+    $safeName = $ContainerName -replace "[:/]", "_"
+    $backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
+    
+    Write-Host "Saving backup image '$backupImageTag' to '$backupFile'..."
+    & $Engine save -o $backupFile $backupImageTag
+    if ($LASTEXITCODE -eq 0) {
+         Write-Host "Backup successfully saved to '$backupFile'."
+         return $true
+    } else {
+         Write-Error "Failed to save backup image to '$backupFile'."
+         return $false
+    }
+}
+
+#--------------------------------------
+# Function: Restore-ContainerState
+# Description: Restores a container from a previously saved backup tar file.
+#              Loads the backup image and runs a new container from it.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -ContainerName: Name of the container to restore
+#   -BackupFolder: Folder where the backup file is located (default ".\Backup")
+#--------------------------------------
+function Restore-ContainerState {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        [Parameter(Mandatory=$true)]
+        [string]$ContainerName,
+        [string]$BackupFolder = ".\Backup"
+    )
+    
+    $safeName = $ContainerName -replace "[:/]", "_"
+    $backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
+    
+    if (-not (Test-Path $backupFile)) {
+         Write-Host "Backup file '$backupFile' not found for container '$ContainerName'."
+         return $false
+    }
+    
+    Write-Host "Loading backup image from '$backupFile'..."
+    & $Engine load -i $backupFile
+    if ($LASTEXITCODE -ne 0) {
+         Write-Error "Failed to load backup image from '$backupFile'."
+         return $false
+    }
+    
+    # Assume the backup image tag is "backup-<ContainerName>:latest"
+    $backupImageTag = "backup-$ContainerName:latest"
+    
+    # Stop and remove the existing container if it exists.
+    $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
+    if ($existingContainer) {
+         Write-Host "Stopping and removing existing container '$ContainerName'..."
+         & $Engine rm -f $ContainerName
+         if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to remove existing container '$ContainerName'."
+              return $false
+         }
+    }
+    
+    Write-Host "Starting container '$ContainerName' from backup image '$backupImageTag'..."
+    & $Engine run -d --name $ContainerName $backupImageTag
+    if ($LASTEXITCODE -eq 0) {
+         Write-Host "Container '$ContainerName' restored and running."
+         return $true
+    } else {
+         Write-Error "Failed to start container from backup image."
+         return $false
     }
 }

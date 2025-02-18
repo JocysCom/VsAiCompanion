@@ -48,32 +48,6 @@ Set-ScriptLocation
 $dockerStaticUrl  = "https://download.docker.com/win/static/stable/x86_64/docker-27.5.1.zip"
 
 #############################################
-# WSL and Service Health Functions
-#############################################
-
-function Check-WSLStatus {
-    Write-Host "Verifying WSL installation and required service status..."
-    if (!(Get-Command wsl -ErrorAction SilentlyContinue)) {
-        Write-Error "WSL (wsl.exe) is not available. Please install Windows Subsystem for Linux."
-        exit 1
-    }
-    $wslVersionInfo = wsl --version 2>&1
-    Write-Host "WSL Version Info:`n$wslVersionInfo"
-    
-    $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
-    if ($wslFeature.State -ne "Enabled") {
-        Write-Error "The Microsoft-Windows-Subsystem-Linux feature is not enabled. Please enable it via DISM or Windows Features."
-        exit 1
-    }
-    $vmFeature = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-    if ($vmFeature.State -ne "Enabled") {
-        Write-Error "The VirtualMachinePlatform feature is not enabled. Please enable it via DISM or Windows Features."
-        exit 1
-    }
-    Write-Host "WSL and required Windows features are enabled."
-}
-
-#############################################
 # Docker Installation Functions
 #############################################
 
@@ -93,10 +67,11 @@ function Download-DockerEngine {
     else {
         Write-Host "Downloading Docker static binary archive from $dockerStaticUrl..."
         try {
-            Invoke-WebRequest -Uri $dockerStaticUrl -OutFile $zipPath -UseBasicParsing
+            # Use Start-BitsTransfer for faster download with progress.
+            Start-BitsTransfer -Source $dockerStaticUrl -Destination $zipPath
         }
         catch {
-            Write-Error "Failed to download Docker static binary archive. Please check your internet connection or URL."
+            Write-Error "Failed to download Docker static binary archive. Please check your internet connection or URL. Error details: $_"
             exit 1
         }
     }

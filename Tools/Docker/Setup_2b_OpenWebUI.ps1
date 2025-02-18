@@ -2,6 +2,7 @@
 # File         : Setup_2b_OpenWebUI.ps1
 # Description  : Script to set up and run the Open WebUI container with Docker/Podman support.
 #                Pulls or restores the container image and runs the container with required port mapping.
+#                Now includes a menu to backup and restore the live container.
 # Usage        : Run as Administrator if using Docker.
 ################################################################################
 
@@ -61,3 +62,30 @@ Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
 
 Write-Host "Open WebUI is now running and accessible at http://localhost:3000"
 Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+
+#############################################
+# Live Container Backup/Restore Menu for Open WebUI
+#############################################
+
+function Show-ContainerBackupMenu {
+    Write-Host "`nContainer Backup/Restore Menu for '$containerName'"
+    Write-Host "1) Backup live container"
+    Write-Host "2) Restore container from backup"
+    Write-Host "3) Exit menu"
+}
+
+do {
+    Show-ContainerBackupMenu
+    $choice = Read-Host "Enter your choice (1, 2, or 3)"
+    switch ($choice) {
+        "1" { Backup-ContainerState -Engine $enginePath -ContainerName $containerName }
+        "2" { Restore-ContainerState -Engine $enginePath -ContainerName $containerName }
+        "3" { Write-Host "Exiting backup/restore menu." }
+        default { Write-Host "Invalid option. Please select 1, 2, or 3." }
+    }
+    if ($choice -ne "3") {
+         Write-Host "Press any key to continue..."
+         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+         Clear-Host
+    }
+} while ($choice -ne "3")
