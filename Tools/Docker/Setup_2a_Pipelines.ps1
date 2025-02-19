@@ -1,15 +1,18 @@
 ################################################################################
 # File         : Setup_2a_Pipelines.ps1
 # Description  : Script to set up, back up, restore, and uninstall the Pipelines
-#                container using Docker/Podman. All installation steps have been
-#                moved into functions and a menu is presented with options.
+#                container using Docker or Podman. This version installs Pipelines
+#                from scratch by cloning the repository (without converting LF to CRLF)
+#                and running the container with the default configuration.
 # Usage        : Run as Administrator if using Docker.
 ################################################################################
 
 using namespace System
 using namespace System.IO
 
-# Dot-source the common functions file.
+# Dot-source the common functions file (assumed to provide functions like Check-Git, Set-ScriptLocation,
+# Select-ContainerEngine, Get-DockerPath, Get-PodmanPath, Backup-ContainerState, Restore-ContainerState,
+# Test-TCPPort, and Test-HTTPPort).
 . "$PSScriptRoot\Setup_0.ps1"
 
 # Ensure the working directory is set.
@@ -18,132 +21,64 @@ Set-ScriptLocation
 # Global variables used across functions.
 $global:containerName   = "pipelines"
 $global:pipelinesFolder = ".\pipelines"
+$global:downloadFolder = "./downloads"
 $global:enginePath      = $null
 $global:containerEngine = $null
 
 ################################################################################
 # Function: Install-PipelinesContainer
-# Description : Installs (or reinstalls) the Pipelines container.
-#               • Prompts for the container engine (Docker or Podman)
-#               • Verifies Git and clones the pipelines repository if not present
-#               • Modifies the Dockerfile as required
-#               • Builds the custom image (or uses a restored backup if available)
-#               • Removes any existing container and runs a new one
-#               • Tests container connectivity via TCP and HTTP ports
+# Description : Installs (or reinstalls) the Pipelines container from scratch.
+# Steps include:
+#  - Checking for Git and cloning the repository with LF line endings preserved.
+#  - Using the existing Dockerfile with default configuration, or creating one if missing.
+#  - Building the custom image.
+#  - Running the container with the appropriate environment variables.
 ################################################################################
 function Install-PipelinesContainer {
-    # Verify Git is available.
-    Check-Git
+    Write-Host "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
 
-    # Clone the pipelines repository if the folder does not exist.
-    if (-not (Test-Path $global:pipelinesFolder)) {
-        Write-Host "Pipelines folder not found. Cloning official pipelines repository with LF line endings..."
-        git -c core.autocrlf=false clone https://github.com/open-webui/pipelines.git $global:pipelinesFolder
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Git clone failed for pipelines repository. Aborting installation."
-            return
-        }
-    } else {
-        Write-Host "Pipelines folder found at $global:pipelinesFolder."
-    }
+    # Set the custom image tag to the official pre-built image
+    $customPipelineImageTag = "ghcr.io/open-webui/pipelines:main"
 
-    # Modify the Dockerfile in the pipelines folder.
-    $dockerfilePath = Join-Path $global:pipelinesFolder "Dockerfile"
-    if (Test-Path $dockerfilePath) {
-        Write-Host "Found Dockerfile in pipelines folder. Applying modifications..."
-        $content = Get-Content $dockerfilePath -Raw
-        $modified = $false
-        if ($content -notmatch "ENV MINIMUM_BUILD") {
-             $content = $content -replace "(FROM\s+\S+)", "`$1`nENV MINIMUM_BUILD true"
-             $modified = $true
-             Write-Host "Inserted 'ENV MINIMUM_BUILD true' into Dockerfile."
-        }
-        if ($content -match '--index-url https://download.pytorch.org/whl/cpu') {
-             $content = $content -replace '--index-url https://download.pytorch.org/whl/cpu', '--index-url https://download.pytorch.org/whl/cpu --trusted-host download.pytorch.org'
-             $modified = $true
-             Write-Host "Modified CPU torch install command with --trusted-host."
-        }
-        if ($content -match '--index-url https://download.pytorch.org/whl/\$USE_CUDA_DOCKER_VER') {
-             $content = $content -replace '--index-url https://download.pytorch.org/whl/\$USE_CUDA_DOCKER_VER', '--index-url https://download.pytorch.org/whl/$USE_CUDA_DOCKER_VER --trusted-host download.pytorch.org'
-             $modified = $true
-             Write-Host "Modified CUDA torch install command with --trusted-host."
-        }
-        if ($modified) {
-             $content | Out-File -FilePath $dockerfilePath -Encoding utf8
-        }
-    }
-    else {
-        Write-Host "Dockerfile not found in pipelines folder. Creating a default Dockerfile..."
-        $dockerfileContent = @"
-FROM python:3.11-slim
-WORKDIR /app/pipelines
-COPY . /app/pipelines
-ENV MINIMUM_BUILD true
-RUN pip install --no-cache-dir -r requirements.txt
-EXPOSE 9099
-CMD ["sh", "./start.sh"]
-"@
-        $dockerfileContent | Out-File -FilePath $dockerfilePath -Encoding utf8
-    }
-
-    # Define the custom image tag.
-    $customPipelineImageTag = "open-webui/pipelines:custom"
-
-    # Try to restore a backup. If no backup is restored, build the image.
-    if (-not (Check-AndRestoreBackup -Engine $global:enginePath -ImageName $customPipelineImageTag)) {
-        Write-Host "No backup restored. Building custom pipelines image from $global:pipelinesFolder..."
-        # podman build [options] PATH | URL | -
-        # build      Build an image from a Dockerfile.
-        # --tag string   Name and optionally a tag in the 'name:tag' format.
-        & $global:enginePath build --tag $customPipelineImageTag $global:pipelinesFolder
-        if ($LASTEXITCODE -ne 0) {
-             Write-Error "Build failed for custom pipelines image. Installation aborted."
-             return
-        }
-    } else {
-        Write-Host "Using restored backup image '$customPipelineImageTag'."
-    }
-
-    # Remove any existing pipelines container.
-    $existingPipelineContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
-    if ($existingPipelineContainer) {
+    # (Optional) Remove any existing container with the same name
+    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    if ($existingContainer) {
         Write-Host "Pipelines container already exists. Removing it..."
-        # podman rm [options] CONTAINER [CONTAINER...]
-        # rm        Remove container.
-        # --force   Force removal of a running container.
         & $global:enginePath rm --force $global:containerName
     }
-
-    # Run the pipelines container.
-    Write-Host "Running pipelines container using image '$customPipelineImageTag'..."
-    # podman run [options] IMAGE [COMMAND [ARG...]]
-    # run           Run a command in a new container.
-    # --detach      Run container in the background and print container ID.
-    # --add-host    Add a custom host-to-IP mapping.
-    # --volume      Bind mount a volume into the container.
-    # --restart     Specify the restart policy for the container.
-    # --name        Assign a name to the container.
-    # --publish     Publish a container's port to the host.
-    & $global:enginePath run --detach --add-host host.docker.internal:host-gateway --volume pipelines:/app/pipelines --restart always --name $global:containerName --publish 9099:9099 $customPipelineImageTag
+	
+    Write-Host "Running Pipelines container..."
+	$runArgs = @(
+        '--detach',                                           # -d : run in background
+        '--publish', '9099:9099',                             # -p 9099:9099 : port mapping
+        '--add-host', 'host.docker.internal:host-gateway',    # add host mapping for networking
+        '--volume', 'pipelines:/app/pipelines',               # volume mapping for persistent data
+        '--restart', 'always',                                # restart policy
+        '--name', $global:containerName,                      # container name (e.g. "pipelines")
+        $customPipelineImageTag                               # official image tag
+    )
+	
+    & $global:enginePath run @runArgs
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to run the pipelines container."
+        Write-Error "Failed to run the Pipelines container."
         return
     }
     Write-Host "Pipelines container is now running."
 
-    # Wait for the container to start and test connectivity.
+    # Wait for the container to initialize, then test connectivity
     Start-Sleep -Seconds 20
     Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $global:containerName
     Test-HTTPPort -Uri "http://localhost:9099" -serviceName $global:containerName
 }
 
+
 ################################################################################
 # Function: Backup-PipelinesContainer
-# Description : Backs up the live pipelines container.
+# Description : Backs up the live Pipelines container.
 ################################################################################
 function Backup-PipelinesContainer {
     if (-not $global:enginePath) {
-        Write-Error "Engine path not set. Please install the pipelines container first."
+        Write-Error "Engine path not set. Please install the Pipelines container first."
         return
     }
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
@@ -151,11 +86,11 @@ function Backup-PipelinesContainer {
 
 ################################################################################
 # Function: Restore-PipelinesContainer
-# Description : Restores the pipelines container from a backup.
+# Description : Restores the Pipelines container from backup.
 ################################################################################
 function Restore-PipelinesContainer {
     if (-not $global:enginePath) {
-        Write-Error "Engine path not set. Please install the pipelines container first."
+        Write-Error "Engine path not set. Please install the Pipelines container first."
         return
     }
     Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
@@ -163,43 +98,96 @@ function Restore-PipelinesContainer {
 
 ################################################################################
 # Function: Uninstall-PipelinesContainer
-# Description : Uninstalls (removes) the pipelines container.
+# Description : Uninstalls (removes) the Pipelines container.
 ################################################################################
 function Uninstall-PipelinesContainer {
     if (-not $global:enginePath) {
         Write-Error "Engine path not set. Nothing to uninstall."
         return
     }
-    $existingPipelineContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
-    if ($existingPipelineContainer) {
-        Write-Host "Removing pipelines container '$global:containerName'..."
+    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    if ($existingContainer) {
+        Write-Host "Removing Pipelines container '$global:containerName'..."
         & $global:enginePath rm --force $global:containerName
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Pipelines container removed successfully."
         } else {
-            Write-Error "Failed to remove pipelines container."
+            Write-Error "Failed to remove Pipelines container."
         }
     }
     else {
-        Write-Host "No pipelines container found to remove."
+        Write-Host "No Pipelines container found to remove."
     }
 }
 
 ################################################################################
-# Pick Container Engine BEFORE showing container menu
+# Function: Add-PipelineToContainer
+# Description : Add azure_openai_pipeline.py to container.
 ################################################################################
-$global:containerEngine = Select-ContainerEngine
-if ($global:containerEngine -eq "docker") {
-    Ensure-Elevated
-    $global:enginePath = Get-DockerPath
+function Add-PipelineToContainer {
+    param(
+        # URL of the pipeline file (use the raw URL)
+        [string]$PipelineUrl = "https://raw.githubusercontent.com/open-webui/pipelines/main/examples/pipelines/providers/azure_openai_pipeline.py",
+        # Destination directory inside the container
+        [string]$DestinationDir = "/app/pipelines",
+        # Container name (defaults to the global container name)
+        [string]$ContainerName = $global:containerName
+    )
+
+    $fileName = "azure_openai_pipeline.py"
+    # Create a temporary file path for the download (assume $global:downloadFolder is a Windows path)
+    $tempFile = Join-Path $global:downloadFolder $fileName
+    Write-Host "Downloading pipeline from $PipelineUrl to $tempFile..."
+    Invoke-WebRequest -Uri $PipelineUrl -OutFile $tempFile -UseBasicParsing
+
+    # If using Podman, convert the Windows path to WSL path
+    if ($global:containerEngine -eq "podman") {
+        $hostPath = ConvertTo-WSLPath -winPath $tempFile
+    }
+    else {
+        $hostPath = $tempFile
+    }
+
+    Write-Host "Host Path: $hostPath"
+
+    #Write-Host "Removing any existing copy of $fileName in container '$ContainerName'..."
+    #& $global:enginePath exec $ContainerName rm -f "$DestinationDir/$fileName"
+
+    Write-Host "Copying downloaded pipeline into container '$ContainerName' at '$DestinationDir'..."
+    & $global:enginePath machine ssh "podman cp '$hostPath' '$($ContainerName):$DestinationDir'"
+
+    Write-Host "Restarting container '$ContainerName' to load the new pipeline..."
+    & $global:enginePath restart $ContainerName
+
+    # Clean up the temporary file
+    Remove-Item $tempFile -Force
+    Write-Host "Pipeline added successfully."
 }
-else {
-    $global:enginePath = Get-PodmanPath
+
+# Helper function to convert a Windows absolute path to a WSL path
+function ConvertTo-WSLPath {
+    param(
+        [string]$winPath
+    )
+    # Ensure the path is absolute using Resolve-Path
+    $absPath = (Resolve-Path $winPath).Path
+    if ($absPath -match '^([A-Z]):\\(.*)$') {
+        $drive = $matches[1].ToLower()
+        $pathWithoutDrive = $matches[2]
+        # Replace backslashes with forward slashes
+        $unixPath = $pathWithoutDrive -replace '\\', '/'
+        # Prepend the /mnt/<drive> directory
+        return "/mnt/$drive/$unixPath"
+    }
+    else {
+        Write-Warning "Path '$winPath' does not match the expected Windows absolute path format."
+        return $absPath
+    }
 }
 
 ################################################################################
 # Function: Show-ContainerMenu
-# Description : Displays the main menu for Pipelines container options.
+# Description : Displays the main menu for Pipelines container operations.
 ################################################################################
 function Show-ContainerMenu {
     Write-Host "==========================================="
@@ -209,22 +197,35 @@ function Show-ContainerMenu {
     Write-Host "2) Backup live container"
     Write-Host "3) Restore container from backup"
     Write-Host "4) Uninstall Container"
-    Write-Host "5) Exit menu"
+    Write-Host "5) Add Azure Pipeline to Container"
+    Write-Host "6) Exit menu"
 }
 
 ################################################################################
-# Main Script Execution - Menu Option Loop
+# Pick Container Engine BEFORE showing the menu.
+################################################################################
+$global:containerEngine = Select-ContainerEngine
+if ($global:containerEngine -eq "docker") {
+    Ensure-Elevated
+    $global:enginePath = Get-DockerPath
+} else {
+    $global:enginePath = Get-PodmanPath
+}
+
+################################################################################
+# Main Script Execution - Menu Option Loop.
 ################################################################################
 do {
     Show-ContainerMenu
-    $choice = Read-Host "Enter your choice (1, 2, 3, 4, or 5)"
+    $choice = Read-Host "Enter your choice (1, 2, 3, 4, 5, or 6)"
     switch ($choice) {
         "1" { Install-PipelinesContainer }
         "2" { Backup-PipelinesContainer }
         "3" { Restore-PipelinesContainer }
         "4" { Uninstall-PipelinesContainer }
-        "5" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Please enter 1, 2, 3, 4, or 5." }
+		"5" { Add-PipelineToContainer }
+        "6" { Write-Host "Exiting menu." }
+        default { Write-Host "Invalid selection. Enter 1, 2, 3, 4, 5, or 6." }
     }
     if ($choice -ne "5") {
          Write-Host "`nPress any key to continue..."

@@ -33,6 +33,44 @@ $imageName     = "ghcr.io/open-webui/open-webui:main"
 $containerName = "open-webui"
 
 #############################################
+# Function: Run-Container
+# Description: Runs the container using the provided container engine and parameters.
+#              This function encapsulates the duplicated code to run, wait, and test 
+#              the container startup.
+# Parameters:
+#   - action: A message prefix indicating the action (e.g. "Running container" or "Starting updated container").
+#   - successMessage: The message to print on successful startup.
+#############################################
+function Run-Container {
+    param (
+        [string]$action,
+        [string]$successMessage
+    )
+    Write-Host "$action '$containerName'..."
+    # Run the container.
+    # run         Run a command in a new container.
+    # --platform string    Specify the platform for selecting the image.
+    # --detach             Run the container in the background and print its container ID.
+    # --publish strings    Map a container's port to the host (3000:8080).
+    # --volume string      Bind mount volume named 'open-webui' at /app/backend/data.
+    # --name string        Assign a name to the container.
+    & $enginePath run --platform linux/amd64 --detach --publish 3000:8080 --volume open-webui:/app/backend/data --name $containerName $imageName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to run container."
+        return $false
+    }
+
+    Write-Host "Waiting 20 seconds for container startup..."
+    Start-Sleep -Seconds 20
+
+    Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
+    Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
+
+    Write-Host $successMessage
+    return $true
+}
+
+#############################################
 # Function: Install-OpenWebUIContainer
 # Description: Pulls (or restores) the OpenWebUI image and runs the container using 
 #              the appropriate port and volume mappings.
@@ -64,28 +102,10 @@ function Install-OpenWebUIContainer {
         & $enginePath rm --force $containerName
     }
 
-    # Run the container.
-    Write-Host "Running container '$containerName'..."
-    # run         Run a command in a new container.
-    # --platform string    Specify the platform for selecting the image.
-    # --detach             Run the container in the background and print container ID.
-    # --publish strings    Map a container's port to the host (3000:8080).
-    # --volume string      Bind mount volume named 'open-webui' at /app/backend/data.
-    # --name string        Assign a name to the container.
-    & $enginePath run --platform linux/amd64 --detach --publish 3000:8080 --volume open-webui:/app/backend/data --name $containerName $imageName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to run container."
+    # Run the container using the new helper function.
+    if (-not (Run-Container -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines.")) {
         return
     }
-
-    Write-Host "Waiting 20 seconds for container startup..."
-    Start-Sleep -Seconds 20
-
-    Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
-    Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-
-    Write-Host "Open WebUI is now running and accessible at http://localhost:3000"
-    Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
 #############################################
@@ -121,27 +141,10 @@ function Update-OpenWebUIContainer {
         return
     }
     
-    # Run the updated container.
-    Write-Host "Starting updated container '$containerName'..."
-    # run         Run a command in a new container.
-    # --platform string    Specify the platform for the image.
-    # --detach             Run container in the background.
-    # --publish strings    Map container port 8080 to host port 3000.
-    # --volume string      Bind mount volume 'open-webui' at /app/backend/data.
-    # --name string        Assign a name to the container.
-    & $enginePath run --platform linux/amd64 --detach --publish 3000:8080 --volume open-webui:/app/backend/data --name $containerName $imageName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to start the updated container."
+    # Run the updated container using the helper function.
+    if (-not (Run-Container -action "Starting updated container" -successMessage "Open WebUI container has been successfully updated and is running at http://localhost:3000")) {
         return
     }
-    
-    Write-Host "Waiting 20 seconds for the updated container to initialize..."
-    Start-Sleep -Seconds 20
-
-    Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
-    Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-
-    Write-Host "Open WebUI container has been successfully updated and is running at http://localhost:3000"
 }
 
 #############################################
