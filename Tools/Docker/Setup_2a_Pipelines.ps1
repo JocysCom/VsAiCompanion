@@ -46,18 +46,29 @@ function Install-PipelinesContainer {
         Write-Host "Pipelines container already exists. Removing it..."
         & $global:enginePath rm --force $global:containerName
     }
-	
+    
     Write-Host "Running Pipelines container..."
-	$runArgs = @(
-        '--detach',                                           # -d : run in background
-        '--publish', '9099:9099',                             # -p 9099:9099 : port mapping
-        '--add-host', 'host.docker.internal:host-gateway',    # add host mapping for networking
-        '--volume', 'pipelines:/app/pipelines',               # volume mapping for persistent data
-        '--restart', 'always',                                # restart policy
-        '--name', $global:containerName,                      # container name (e.g. "pipelines")
-        $customPipelineImageTag                               # official image tag
+
+    # Conditionally set the --add-host parameter if using Docker
+    if ($global:containerEngine -eq "docker") {
+        $addHostParams = @('--add-host', 'host.docker.internal:host-gateway')
+    }
+    else {
+        # For Podman, skip the --add-host parameter (or add an alternative if required)
+        $addHostParams = @()
+    }
+
+    # Build the run arguments array
+    $runArgs = @(
+        '--detach',                                      # run in background
+        '--publish', '9099:9099'                          # port mapping
+    ) + $addHostParams + @(
+        '--volume', 'pipelines:/app/pipelines',          # volume mapping for persistent data
+        '--restart', 'always',                           # restart policy
+        '--name', $global:containerName,                 # container name
+        $customPipelineImageTag                          # pre-built image tag
     )
-	
+    
     & $global:enginePath run @runArgs
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to run the Pipelines container."
