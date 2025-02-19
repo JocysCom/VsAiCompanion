@@ -162,6 +162,8 @@ function Add-PipelineToContainer {
     # Clean up the temporary file
     Remove-Item $tempFile -Force
     Write-Host "Pipeline added successfully."
+	
+    Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
 # Helper function to convert a Windows absolute path to a WSL path
