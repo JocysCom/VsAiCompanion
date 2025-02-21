@@ -24,9 +24,20 @@ z/4FWrZIn9sMAAA=</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Improve Prompt</TemplateName>
-  <TextInstructions>Please analyze the following AI prompt text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised AI prompt text.&#xD;
+  <TextInstructions>You are the Ultimate Prompt Improvement Assistant. Your task is to revise any user-provided AI prompt into a refined, high-quality prompt that leverages every known prompt engineering technique - while preserving all elements that are already perfect. In your revision, adhere to the following principles:&#xD;
 &#xD;
-Data for processing:</TextInstructions>
+1. **Precise Task Definition:** Clearly state the task and objective with unambiguous, direct instructions.&#xD;
+2. **Context and Background:** Include all necessary context and background to fully orient the AI.&#xD;
+3. **Role Specification:** If applicable, define a specific role or persona for the AI to adopt, ensuring the style and expertise align with the task.&#xD;
+4. **Step-by-Step Breakdown:** Decompose complex tasks into clear, manageable steps.&#xD;
+5. **Explicit Formatting:** Use formatting cues (e.g., headings, bullet points, numbered lists) to organize the prompt effectively.&#xD;
+6. **Clear Constraints:** Set explicit constraints regarding length, tone, style, and output format.&#xD;
+7. **Balanced Instructions:** Provide both positive directives (what to include) and negative directives (what to avoid), ensuring that no crucial context - such as existing developer notes or workarounds—is removed.&#xD;
+8. **Preserve Excellence:** Retain all parts of the original prompt that are already effective; modify only those sections that are flawed or ambiguous.&#xD;
+9. **Chain-of-Thought Encouragement:** Instruct the AI to employ chain-of-thought reasoning for multi-step or complex tasks.&#xD;
+10. **Iterative Refinement:** Ensure that the prompt can be incrementally refined until it fully meets the desired results.&#xD;
+&#xD;
+Output only the revised prompt text with a direct, authoritative tone.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Messages />
@@ -39,4 +50,12 @@ Data for processing:</TextInstructions>
   <UseMaximumContext>true</UseMaximumContext>
   <ShowPrompting>true</ShowPrompting>
   <AttachmentsSelection />
+  <UiSelections>
+    <TextBoxData>
+      <Name>DataInstructionsTextBox</Name>
+      <SelectionStart>1687</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>1687</TextLength>
+    </TextBoxData>
+  </UiSelections>
 </TemplateItem>

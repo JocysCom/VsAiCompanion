@@ -1,4 +1,4 @@
-﻿<Data Version="2">
+﻿<Data Version="3">
   <Items>
     <AppData>
       <AiAvatar>
@@ -46,11 +46,11 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>643.3333333333333</Left>
-        <Top>371.3333333333333</Top>
-        <Width>1033.3333333333333</Width>
-        <Height>816</Height>
-        <ScreenName>\\.\DISPLAY2</ScreenName>
+        <Left>406</Left>
+        <Top>110</Top>
+        <Width>1179</Width>
+        <Height>894</Height>
+        <ScreenName>\\.\DISPLAY1</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
@@ -67,16 +67,17 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.21810971579643093</GridSplitterPosition>
+          <GridSplitterPosition>0.21856027753686036</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
-            <string>AI - Chat (GPT-4o)</string>
+            <string>AI - Improve Prompt</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
+          <FocusedControl>ChatInstructionsTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.21348314606741575</GridSplitterPosition>
+          <GridSplitterPosition>0.18647007805724197</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -96,7 +97,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.24455445544554455</GridSplitterPosition>
+          <GridSplitterPosition>0.2445793581960104</GridSplitterPosition>
           <ListSelection>
             <string>Prompts</string>
           </ListSelection>
@@ -946,12 +947,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo</Id>
         </PluginItem>
         <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ExecuteCommand</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

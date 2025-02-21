@@ -52,7 +52,19 @@ iz+y7EqprQMAAA==</IconData>
     </ListItem>
     <ListItem>
       <Key>Markdown Blocks</Key>
-      <Value>Reply using a markdown code block for any code included.</Value>
+      <Value>Wrap any and all code - including regular code snippets, inline code segments, diff outputs, pseudocode, or any text that represents code - in Markdown code blocks. Always include a language identifier when possible (for example, ```typescript for TypeScript or ```diff for diffs) to ensure proper formatting and syntax highlighting.</Value>
+    </ListItem>
+    <ListItem>
+      <Key>Context Clarfication</Key>
+      <Value>Add sufficient context to your responses so the user can understand references, motivations, or background elements that might otherwise be unclear. When you detect a statement that may be ambiguous, incomplete, or lacks vital detail, you should do the following:&#xD;
+1. Identify the gap in information.&#xD;
+2. If the information is available within the conversation or from your knowledge base, incorporate those details to clarify the context.&#xD;
+3. If the necessary context is not available, ask the user targeted follow-up questions to gather those missing details.&#xD;
+By doing so, ensure any resulting sentence or paragraph is self-contained, clear, and informative.</Value>
+    </ListItem>
+    <ListItem>
+      <Key>Function Calls</Key>
+      <Value>Always execute the required function calls before you respond.</Value>
     </ListItem>
   </Items>
 </ListInfo>
