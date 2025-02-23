@@ -1,6 +1,6 @@
 ################################################################################
 # File         : Setup_2a_Pipelines.ps1
-# Description  : Script to set up, back up, restore, and uninstall the Pipelines
+# Description  : Script to set up, update, backup, restore, uninstall the Pipelines
 #                container using Docker or Podman. This version installs Pipelines
 #                from scratch by cloning the repository (without converting LF to CRLF)
 #                and running the container with the default configuration.
@@ -21,19 +21,48 @@ Set-ScriptLocation
 # Global variables used across functions.
 $global:containerName   = "pipelines"
 $global:pipelinesFolder = ".\pipelines"
-$global:downloadFolder = "./downloads"
+$global:downloadFolder  = "./downloads"
 $global:enginePath      = $null
 $global:containerEngine = $null
 
-################################################################################
-# Function: Install-PipelinesContainer
-# Description : Installs (or reinstalls) the Pipelines container from scratch.
-# Steps include:
-#  - Checking for Git and cloning the repository with LF line endings preserved.
-#  - Using the existing Dockerfile with default configuration, or creating one if missing.
-#  - Building the custom image.
-#  - Running the container with the appropriate environment variables.
-################################################################################
+<#
+.SYNOPSIS
+   Converts a Windows path into a WSL (Linux) path.
+.DESCRIPTION
+   This function takes an absolute Windows path and converts it to the corresponding WSL
+   path by replacing the drive letter and backslashes with the Linux mount point format.
+   IMPORTANT: This workaround is CRUCIAL for successfully copying a file from the local 
+   machine to Podman.
+.PARAMETER winPath
+   The Windows path to convert.
+#>
+function ConvertTo-WSLPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$winPath
+    )
+    $absPath = (Resolve-Path $winPath).Path
+    if ($absPath -match '^([A-Z]):\\(.*)$') {
+        $drive = $matches[1].ToLower()
+        $pathWithoutDrive = $matches[2]
+        $unixPath = $pathWithoutDrive -replace '\\', '/'
+        return "/mnt/$drive/$unixPath"
+    }
+    else {
+        Write-Warning "Path '$winPath' does not match the expected Windows absolute path format."
+        return $absPath
+    }
+}
+
+<#
+.SYNOPSIS
+    Installs (or reinstalls) the Pipelines container from scratch.
+.DESCRIPTION
+    Installs Pipelines using the pre-built image from ghcr.io/open-webui/pipelines:main.
+    Optionally removes any existing container with the same name.
+    If running Docker, adds the '--add-host' parameter for host resolution; for Podman, skips it.
+    After running the container, waits for startup and tests connectivity.
+#>
 function Install-PipelinesContainer {
     Write-Host "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
 
@@ -82,11 +111,13 @@ function Install-PipelinesContainer {
     Test-HTTPPort -Uri "http://localhost:9099" -serviceName $global:containerName
 }
 
-
-################################################################################
-# Function: Backup-PipelinesContainer
-# Description : Backs up the live Pipelines container.
-################################################################################
+<#
+.SYNOPSIS
+    Backs up the live Pipelines container.
+.DESCRIPTION
+    Uses the Backup-ContainerState helper function to backup the container.
+    Aborts if the engine path has not been set.
+#>
 function Backup-PipelinesContainer {
     if (-not $global:enginePath) {
         Write-Error "Engine path not set. Please install the Pipelines container first."
@@ -95,10 +126,13 @@ function Backup-PipelinesContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
-################################################################################
-# Function: Restore-PipelinesContainer
-# Description : Restores the Pipelines container from backup.
-################################################################################
+<#
+.SYNOPSIS
+    Restores the Pipelines container from backup.
+.DESCRIPTION
+    Uses the Restore-ContainerState helper function to restore the container.
+    Aborts if the engine path has not been set.
+#>
 function Restore-PipelinesContainer {
     if (-not $global:enginePath) {
         Write-Error "Engine path not set. Please install the Pipelines container first."
@@ -107,10 +141,12 @@ function Restore-PipelinesContainer {
     Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
-################################################################################
-# Function: Uninstall-PipelinesContainer
-# Description : Uninstalls (removes) the Pipelines container.
-################################################################################
+<#
+.SYNOPSIS
+    Uninstalls (removes) the Pipelines container.
+.DESCRIPTION
+    Checks if the engine path is set and removes the container if it exists.
+#>
 function Uninstall-PipelinesContainer {
     if (-not $global:enginePath) {
         Write-Error "Engine path not set. Nothing to uninstall."
@@ -131,10 +167,20 @@ function Uninstall-PipelinesContainer {
     }
 }
 
-################################################################################
-# Function: Add-PipelineToContainer
-# Description : Add azure_openai_pipeline.py to container.
-################################################################################
+<#
+.SYNOPSIS
+    Adds the Azure pipeline file to the container.
+.PARAMETER PipelineUrl
+    URL of the pipeline file (use the raw URL).
+.PARAMETER DestinationDir
+    Destination directory inside the container.
+.PARAMETER ContainerName
+    Container name. Defaults to the global container name.
+.DESCRIPTION
+    Downloads the azure_openai_pipeline.py file, converts the Windows path to a WSL path when using Podman,
+    copies the file into the container, restarts the container, and cleans up the temporary file.
+    IMPORTANT: Workaround for copying file to Podman is preserved.
+#>
 function Add-PipelineToContainer {
     param(
         # URL of the pipeline file (use the raw URL)
@@ -173,76 +219,94 @@ function Add-PipelineToContainer {
     # Clean up the temporary file
     Remove-Item $tempFile -Force
     Write-Host "Pipeline added successfully."
-	
+    
     Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
-# Helper function to convert a Windows absolute path to a WSL path
-function ConvertTo-WSLPath {
-    param(
-        [string]$winPath
-    )
-    # Ensure the path is absolute using Resolve-Path
-    $absPath = (Resolve-Path $winPath).Path
-    if ($absPath -match '^([A-Z]):\\(.*)$') {
-        $drive = $matches[1].ToLower()
-        $pathWithoutDrive = $matches[2]
-        # Replace backslashes with forward slashes
-        $unixPath = $pathWithoutDrive -replace '\\', '/'
-        # Prepend the /mnt/<drive> directory
-        return "/mnt/$drive/$unixPath"
+<#
+.SYNOPSIS
+    Updates the Pipelines container.
+.DESCRIPTION
+    Stops and removes any existing container, pulls the latest image from ghcr.io/open-webui/pipelines:main,
+    and then reinstalls the container.
+#>
+function Update-PipelinesContainer {
+    Write-Host "Initiating update for Pipelines container..."
+
+    # Check and remove any current running instance of the container.
+    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    if ($existingContainer) {
+        Write-Host "Removing existing container '$global:containerName' as part of the update..."
+        # Remove container command:
+        # rm         Remove one or more containers.
+        # --force    Force removal of a running container.
+        & $global:enginePath rm --force $global:containerName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to remove container '$global:containerName'. Update aborted."
+            return
+        }
     }
-    else {
-        Write-Warning "Path '$winPath' does not match the expected Windows absolute path format."
-        return $absPath
+    
+    Write-Host "Pulling the latest image..."
+    & $global:enginePath pull ghcr.io/open-webui/pipelines:main
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to pull the latest Pipelines image. Update aborted."
+        return
     }
+    
+    Install-PipelinesContainer
 }
 
-################################################################################
-# Function: Show-ContainerMenu
-# Description : Displays the main menu for Pipelines container operations.
-################################################################################
+<#
+.SYNOPSIS
+    Updates the user data for the Pipelines container.
+.DESCRIPTION
+    This functionality is not implemented.
+#>
+function Update-PipelinesUserData {
+    Write-Host "Update User Data functionality is not implemented for Pipelines container."
+}
+
+<#
+.SYNOPSIS
+    Displays the main menu for container operations.
+.DESCRIPTION
+    Shows required menu items (1 to 4) and optional items (A, B, C), plus an exit option (0).
+#>
 function Show-ContainerMenu {
     Write-Host "==========================================="
-    Write-Host "Pipelines Container Menu"
+    Write-Host "Container Menu"
     Write-Host "==========================================="
-    Write-Host "1) Install Container"
-    Write-Host "2) Backup live container"
-    Write-Host "3) Restore container from backup"
-    Write-Host "4) Uninstall Container"
-    Write-Host "5) Add Azure Pipeline to Container"
-    Write-Host "6) Exit menu"
+    Write-Host "1. Install container"
+    Write-Host "2. Uninstall container"
+    Write-Host "3. Backup Live container"
+    Write-Host "4. Restore Live container"
+    Write-Host "A. Add Azure Pipeline to Container"
+    Write-Host "B. Update System"
+    Write-Host "C. Update User Data"
+    Write-Host "0. Exit menu"
 }
 
 ################################################################################
-# Pick Container Engine BEFORE showing the menu.
-################################################################################
-$global:containerEngine = Select-ContainerEngine
-if ($global:containerEngine -eq "docker") {
-    Ensure-Elevated
-    $global:enginePath = Get-DockerPath
-} else {
-    $global:enginePath = Get-PodmanPath
-}
-
-################################################################################
-# Main Script Execution - Menu Option Loop.
+# Main Menu Loop for Pipelines Container Management
 ################################################################################
 do {
     Show-ContainerMenu
     $choice = Read-Host "Enter your choice (1, 2, 3, 4, 5, or 6)"
     switch ($choice) {
         "1" { Install-PipelinesContainer }
-        "2" { Backup-PipelinesContainer }
-        "3" { Restore-PipelinesContainer }
-        "4" { Uninstall-PipelinesContainer }
-		"5" { Add-PipelineToContainer }
-        "6" { Write-Host "Exiting menu." }
+        "2" { Uninstall-PipelinesContainer }
+        "3" { Backup-PipelinesContainer }
+        "4" { Restore-PipelinesContainer }
+        "A" { Add-PipelineToContainer }
+        "B" { Update-PipelinesContainer }
+        "C" { Update-PipelinesUserData }
+        "0" { Write-Host "Exiting menu." }
         default { Write-Host "Invalid selection. Enter 1, 2, 3, 4, 5, or 6." }
     }
-    if ($choice -ne "5") {
+    if ($choice -ne "0") {
          Write-Host "`nPress any key to continue..."
          $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
          Clear-Host
     }
-} while ($choice -ne "5")
+} while ($choice -ne "0")

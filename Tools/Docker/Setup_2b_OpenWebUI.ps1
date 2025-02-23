@@ -27,20 +27,20 @@ if ($containerEngine -eq "docker") {
 else {
     $enginePath = Get-PodmanPath
 }
-
-# Define the image and container names.
 $imageName     = "ghcr.io/open-webui/open-webui:main"
 $containerName = "open-webui"
 
-#############################################
-# Function: Run-Container
-# Description: Runs the container using the provided container engine and parameters.
-#              This function encapsulates the duplicated code to run, wait, and test 
-#              the container startup.
-# Parameters:
-#   - action: A message prefix indicating the action (e.g. "Running container" or "Starting updated container").
-#   - successMessage: The message to print on successful startup.
-#############################################
+<#
+.SYNOPSIS
+    Runs the container using the provided container engine and parameters.
+.DESCRIPTION
+    This function encapsulates the duplicated code to run, wait, and test the 
+    container startup.
+.PARAMETER action
+    A message prefix indicating the action (e.g. "Running container" or "Starting updated container").
+.PARAMETER successMessage
+    The message to print on successful startup.
+#>
 function Run-Container {
     param (
         [string]$action,
@@ -59,29 +59,29 @@ function Run-Container {
         Write-Error "Failed to run container."
         return $false
     }
-
     Write-Host "Waiting 20 seconds for container startup..."
     Start-Sleep -Seconds 20
-
     Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
     Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-
     Write-Host $successMessage
     return $true
 }
 
-#############################################
-# Function: Install-OpenWebUIContainer
-# Description: Pulls (or restores) the OpenWebUI image and runs the container using 
-#              the appropriate port and volume mappings.
-#############################################
+<#
+.SYNOPSIS
+    Installs the Open WebUI container.
+.DESCRIPTION
+    Attempts to restore a backup image; if not available, pulls the latest image,
+    removes any existing container, and then runs the container. A reminder regarding
+    Open WebUI settings is printed after the container is running.
+#>
 function Install-OpenWebUIContainer {
-    # Attempt to restore backup image first.
+    # Attempt to restore backup image; if not, pull latest image.
     if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
         Write-Host "No backup restored. Pulling Open WebUI image '$imageName'..."
         # Pull command:
-        # pull       Pull an image or a repository from a registry.
-        # --platform string Specify the platform in use.
+        # pull       Pull an image from a registry.
+        # --platform string Specify the platform to pull the image for.
         & $enginePath pull --platform linux/amd64 $imageName
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Pull failed. Check internet connection or image URL."
@@ -91,29 +91,72 @@ function Install-OpenWebUIContainer {
     else {
         Write-Host "Using restored backup image '$imageName'."
     }
-
     # Remove any existing container.
-    $existingContainer = & $enginePath ps -a --filter "name=$containerName" --format "{{.ID}}"
+    $existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
     if ($existingContainer) {
         Write-Host "Removing existing container '$containerName'..."
         # Remove container:
-        # rm         Remove container(s).
+        # rm         Remove one or more containers.
         # --force    Force removal of a running container.
         & $enginePath rm --force $containerName
     }
+    Run-Container -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+}
 
-    # Run the container using the new helper function.
-    if (-not (Run-Container -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines.")) {
-        return
+<#
+.SYNOPSIS
+    Uninstalls the Open WebUI container.
+.DESCRIPTION
+    Checks for the existence of the container and removes it using the engine's rm command.
+#>
+function Uninstall-OpenWebUIContainer {
+    $existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
+    if ($existingContainer) {
+        Write-Host "Removing container '$containerName'..."
+        & $enginePath rm --force $containerName
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Container removed successfully."
+        }
+        else {
+            Write-Error "Failed to remove container."
+        }
+    }
+    else {
+        Write-Host "No container found to remove."
     }
 }
 
+<#
+.SYNOPSIS
+    Backs up the live Open WebUI container.
+.DESCRIPTION
+    Uses the Backup-ContainerState helper function to back up the container.
+#>
+function Backup-OpenWebUIContainer {
+    Backup-ContainerState -Engine $enginePath -ContainerName $containerName
+}
+
+<#
+.SYNOPSIS
+    Restores the Open WebUI container from backup.
+.DESCRIPTION
+    Uses the Restore-ContainerState helper function to restore the container.
+#>
+function Restore-OpenWebUIContainer {
+    Restore-ContainerState -Engine $enginePath -ContainerName $containerName
+}
+
 #############################################
-# Function: Update-OpenWebUIContainer
-# Description: Updates the OpenWebUI container by stopping and removing any existing 
-#              container, pulling the latest image, and starting a new container with 
-#              the existing volume attached.
+# Optional Functions
 #############################################
+
+<#
+.SYNOPSIS
+    Updates the Open WebUI container.
+.DESCRIPTION
+    Stops and removes any current container instance, pulls the latest image,
+    and then starts the container using the Run-Container helper.
+#>
 function Update-OpenWebUIContainer {
     Write-Host "Initiating update for OpenWebUI container..."
 
@@ -131,7 +174,6 @@ function Update-OpenWebUIContainer {
         }
     }
     
-    # Pull the latest image.
     Write-Host "Pulling latest image '$imageName'..."
     # pull       Pull an image from a registry.
     # --platform string    Specify the platform to pull the image for.
@@ -141,78 +183,40 @@ function Update-OpenWebUIContainer {
         return
     }
     
-    # Run the updated container using the helper function.
-    if (-not (Run-Container -action "Starting updated container" -successMessage "Open WebUI container has been successfully updated and is running at http://localhost:3000")) {
-        return
-    }
+    Run-Container -action "Starting updated container" -successMessage "OpenWebUI container has been successfully updated and is running at http://localhost:3000"
 }
 
-#############################################
-# Function: Backup-OpenWebUIContainer
-# Description: Backs up the live OpenWebUI container.
-#############################################
-function Backup-OpenWebUIContainer {
-    Backup-ContainerState -Engine $enginePath -ContainerName $containerName
-}
-
-#############################################
-# Function: Restore-OpenWebUIContainer
-# Description: Restores the OpenWebUI container from a backup.
-#############################################
-function Restore-OpenWebUIContainer {
-    Restore-ContainerState -Engine $enginePath -ContainerName $containerName
-}
-
-#############################################
-# Function: Uninstall-OpenWebUIContainer
-# Description: Uninstalls (removes) the OpenWebUI container.
-#############################################
-function Uninstall-OpenWebUIContainer {
-    $existingContainer = & $enginePath ps -a --filter "name=$containerName" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing container '$containerName'..."
-        & $enginePath rm --force $containerName
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "Container removed successfully."
-        }
-        else {
-            Write-Error "Failed to remove container."
-        }
-    }
-    else {
-        Write-Host "No container found to remove."
-    }
-}
-
-#############################################
-# Function: Show-ContainerMenu
-# Description: Displays the main menu for container options.
-#############################################
-function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1) Install Container"
-    Write-Host "2) Backup live container"
-    Write-Host "3) Restore container from backup"
-    Write-Host "4) Uninstall Container"
-    Write-Host "5) Update Container"
-    Write-Host "6) Exit menu"
+<#
+.SYNOPSIS
+    Updates the user data for the Open WebUI container.
+.DESCRIPTION
+    This functionality is not implemented.
+#>
+function Update-OpenWebUIUserData {
+    Write-Host "Update User Data functionality is not implemented for OpenWebUI container."
 }
 
 #############################################
 # Main Menu Loop for OpenWebUI Container Management
 #############################################
 do {
-    Show-ContainerMenu
+    Write-Host "==========================================="
+    Write-Host "Container Menu"
+    Write-Host "==========================================="
+    Write-Host "1. Install container"
+    Write-Host "2. Uninstall container"
+    Write-Host "3. Backup Live container"
+    Write-Host "4. Restore Live container"
+    Write-Host "5. Update System"
+    Write-Host "6. Update User Data"
     $choice = Read-Host "Enter your choice (1, 2, 3, 4, 5, or 6)"
     switch ($choice) {
         "1" { Install-OpenWebUIContainer }
-        "2" { Backup-OpenWebUIContainer }
-        "3" { Restore-OpenWebUIContainer }
-        "4" { Uninstall-OpenWebUIContainer }
+        "2" { Uninstall-OpenWebUIContainer }
+        "3" { Backup-OpenWebUIContainer }
+        "4" { Restore-OpenWebUIContainer }
         "5" { Update-OpenWebUIContainer }
-        "6" { Write-Host "Exiting menu." }
+        "6" { Update-OpenWebUIUserData }
         default { Write-Host "Invalid selection. Please enter 1, 2, 3, 4, 5, or 6." }
     }
     if ($choice -ne "6") {
