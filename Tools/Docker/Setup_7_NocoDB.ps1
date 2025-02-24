@@ -102,6 +102,7 @@ function Install-NocoDBContainer {
     Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $global:containerName
     Test-HTTPPort -Uri "http://localhost:8570" -serviceName $global:containerName
     Write-Host "NocoDB is now running and accessible at http://localhost:8570"
+    Write-Host "If accessing NocoDB from another container (e.g. from n8n), use 'http://host.docker.internal:8570' as the URL."
 }
 
 #############################################

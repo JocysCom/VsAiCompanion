@@ -113,6 +113,8 @@ function Install-n8nContainer {
     Test-TCPPort -ComputerName "localhost" -Port 5678 -serviceName "n8n"
     Test-HTTPPort -Uri "http://localhost:5678" -serviceName "n8n"
     Write-Host "n8n is now running and accessible at http://localhost:5678"
+    Write-Host "If accessing from another container, use 'http://host.docker.internal:5678' as the URL."
+
 }
 
 <#
