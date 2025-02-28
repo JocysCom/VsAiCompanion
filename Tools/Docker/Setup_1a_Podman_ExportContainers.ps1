@@ -96,7 +96,8 @@ if (-not $isMounted) {
     if (-not $isMounted) {
         Write-Host "[ERROR: MANUAL MOUNT FAILED]" -ForegroundColor Red
         Write-Host "Could not mount XFS partition. Please check dmesg:" -ForegroundColor Red
-        wsl dmesg | Select-String -Pattern "xfs|mount" -Last 10
+		$dmesgOutput = wsl dmesg | Select-String -Pattern "xfs|mount"
+		$dmesgOutput | Select-Object -Last 10
         Write-Host "Cleaning up..." -ForegroundColor Yellow
         wsl --unmount $physicalDrive
         Dismount-VHD -Path $VhdxPath
