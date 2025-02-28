@@ -26,7 +26,7 @@ if (!(Test-Path $VhdxPath)) {
 Write-Host "VHDX image found at: $VhdxPath" -ForegroundColor Green
 
 # Define backup directory and file - using the current script directory
-$backupDir = $(Get-Location).Path
+$backupDir = Join-Path $(Get-Location).Path "Backup"
 Write-Host "Using current directory for backup: $backupDir" -ForegroundColor Green
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $backupFile = "$backupDir\podman_containers_$timestamp.tar.gz"
