@@ -671,10 +671,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var language in languages)
 				{
 					// The Uri points to the.lex file in the application root.
-					var uri = new Uri($"pack://application:,,,/Dictionary.{language}.lex");
+					var uri = AppHelper.GetResourceUri($"Dictionary.{language}.lex");
 					box.SpellCheck.CustomDictionaries.Add(uri);
 				}
 			}
+		}
+
+		public static Uri GetResourceUri(string path, Assembly assembly = null)
+		{
+			assembly = assembly ?? Assembly.GetExecutingAssembly();
+			// Local Assembly Resource File
+			var resourcePath = $"pack://application:,,,/{assembly.GetName().Name};component/{path}";
+			var uri = new Uri(resourcePath, UriKind.RelativeOrAbsolute);
+			return uri; 
 		}
 
 		public static void AddHelp(Control control, string head, string body)

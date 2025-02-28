@@ -35,69 +35,7 @@
 				ToolTip="Custom">
 				<ContentControl Content="{StaticResource Icon_code_custom}" Focusable="False" />
 			</Button>
-			<Button
-				x:Name="SqlButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="SQL"
-				ToolTip="SQL">
-				<ContentControl Content="{StaticResource Icon_code_sql}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="XmlButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="XML"
-				ToolTip="XML">
-				<ContentControl Content="{StaticResource Icon_code_xml}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="CsButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="CSharp"
-				ToolTip="C#">
-				<ContentControl Content="{StaticResource Icon_code_csharp}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="PsButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="PowerShell"
-				ToolTip="PowerShell">
-				<ContentControl Content="{StaticResource Icon_code_powershell}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="TsButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="TypeScript"
-				ToolTip="TypeScript">
-				<ContentControl Content="{StaticResource Icon_code_typescript}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="JsButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="JavaScript"
-				ToolTip="JavaScript">
-				<ContentControl Content="{StaticResource Icon_code_javascript}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="LogButton"
-				Margin="3,3,0,3"
-				Click="CodeButton_Click"
-				Tag="Log"
-				ToolTip="Log">
-				<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
-			</Button>
-			<Button
-				x:Name="TxtButton"
-				Click="CodeButton_Click"
-				Tag="Text"
-				ToolTip="Text">
-				<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
-			</Button>
+			<StackPanel x:Name="ExtraButtonsPanel" Margin="0,0,3,0" Orientation="Horizontal" />
 		</StackPanel>
 	</Border>
 </UserControl>

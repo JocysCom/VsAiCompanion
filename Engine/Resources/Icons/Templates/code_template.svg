@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!--
-  @templateConfig:
-  Template Properties:
-    background: Background color for the template box. Default: #60AF1F
-    templateText: Text content to display. Default: C#
--->
 <svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1"
      xmlns="http://www.w3.org/2000/svg" 
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -39,24 +33,23 @@
     </g>
   </g>
   
-  <!--
-    @doc TemplateBox:
-    This group defines the container for the template background and text.
-    The background rectangle uses the CSS custom property for the fill color (default: #60AF1F)
-    and spans x=0, y=128, width=512, height=256.
-    The text element is centered via percentage coordinates and alignment attributes, ensuring it fills
-    the vertical space without relying on fixed positioning.
-  -->
+  <!-- Green background with 8px margins -->
   <g id="TemplateBox">
-    <!-- Background rectangle using correct hex color and custom property -->
-    <rect id="templateBackground" x="0" y="128" width="512" height="256"
+    <rect id="templateBackground" x="8" y="136" width="496" height="240"
           style="fill: var(--background, #60AF1F);" />
-    
-    <!-- Template text centered in the background; x="50%" and y="50%" align relative to the overall viewBox -->
-    <text id="templateText" x="50%" y="50%" dominant-baseline="central" text-anchor="middle"
-          fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="256px">
-      C#
-    </text>
+  </g>
+  
+  <!-- WPF-friendly technique: use a transformed group with a text object -->
+  <g transform="translate(256, 256)">
+    <!-- The text at (0,0) will be positioned at the transform's center -->
+    <text id="templateText"
+          x="0" y="0"
+          text-anchor="middle"
+          dy="0.35em" 
+          fill="white"
+          font-family="Arial, sans-serif"
+          font-weight="bold"
+          font-size="224px">C#</text>
   </g>
   
   <!-- Definitions for gradients -->
@@ -73,7 +66,6 @@
       <stop offset="0" style="stop-color:#8795A5;stop-opacity:1"/>
       <stop offset="1" style="stop-color:#738191;stop-opacity:1"/>
     </linearGradient>
-    <!-- Other gradient definitions remain unchanged -->
     <linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0"
                     gradientUnits="userSpaceOnUse"
                     gradientTransform="matrix(225.819,432.001,-432.001,225.819,112,48)">
@@ -105,23 +97,4 @@
       <stop offset="1" style="stop-color:#738191;stop-opacity:1"/>
     </linearGradient>
   </defs>
-  
-  <!-- Script to update text content with the CSS variable -->
-  <script type="application/ecmascript">
-  <![CDATA[
-    // When the SVG is loaded, update the text content based on the CSS variable --templateText
-    (function(){
-      // Get the SVG's computed style
-      var svgElement = document.documentElement;
-      var computedStyle = getComputedStyle(svgElement);
-      var textValue = computedStyle.getPropertyValue('--templateText').trim() || "C#";
-      
-      // Set the text element's content to the value from the CSS custom property
-      var textElement = document.getElementById('templateText');
-      if (textElement) {
-        textElement.textContent = textValue;
-      }
-    })();
-  ]]>
-  </script>
 </svg>

@@ -140,9 +140,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
+
+
 			// Set the base image for the MaskDrawingControl
-			//var imageUri = new Uri("pack://application:,,,/path_to_your_image.png", UriKind.Absolute);
-			//BaseImageSource = new BitmapImage(imageUri);
+			//var uri = AppHelper.GetResourceUri("Images/path_to_your_image.png");
+			//BaseImageSource = new BitmapImage(uri);
 		}
 	}
 }
