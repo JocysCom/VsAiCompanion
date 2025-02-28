@@ -70,10 +70,10 @@
           <GridSplitterPosition>0.21856027753686036</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
-            <string>AI - Improve Prompt</string>
+            <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
-          <ListSelectedIndex>1</ListSelectedIndex>
-          <FocusedControl>ChatInstructionsTabItem</FocusedControl>
+          <ListSelectedIndex>0</ListSelectedIndex>
+          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
