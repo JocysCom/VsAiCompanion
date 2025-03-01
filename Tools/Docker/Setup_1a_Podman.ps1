@@ -29,6 +29,14 @@ Set-ScriptLocation
 # not running, it starts the machine.
 #############################################
 function Ensure-And-Start-PodmanMachine {
+    param(
+        [Parameter(Mandatory=$false)]
+        [string]$FileSystem = "xfs",  # Default to xfs, can be changed to ext4 or other compatible fs
+        
+        [Parameter(Mandatory=$false)]
+        [string]$DiskLocation = ""    # Empty string means use default location
+    )
+    
     # Ensure that WSL and required Windows features are enabled.
     Check-WSLStatus
 
@@ -60,17 +68,46 @@ function Ensure-And-Start-PodmanMachine {
     }
     
     if (($machines -eq $null) -or ($machines.Count -eq 0)) {
-         Write-Host "No Podman machine detected (empty array). Initializing a default machine..."
-         # podman machine init [options] MACHINE_NAME
-         # init   Initialize a Podman virtual machine.
-         # 'default' is the name that will be assigned to the new machine.
-         $initOutput = & podman machine init default 2>&1
+         Write-Host "No Podman machine detected (empty array). Initializing a default machine with $FileSystem filesystem..."
+         
+         # Build the init command with required parameters
+         $initCmd = "podman machine init --filesystem $FileSystem"
+         
+         # Add disk location if specified
+         if (-not [string]::IsNullOrWhiteSpace($DiskLocation)) {
+             # Ensure the directory exists
+             if (-not (Test-Path $DiskLocation)) {
+                 try {
+                     New-Item -ItemType Directory -Path $DiskLocation -Force | Out-Null
+                     Write-Host "Created disk location directory: $DiskLocation"
+                 } catch {
+                     Write-Error "Failed to create disk location directory: $DiskLocation. Error: $_"
+                     return $false
+                 }
+             }
+             
+             # Add the image-path option to the command
+             $initCmd += " --image-path `"$DiskLocation`""
+             Write-Host "Using custom disk location: $DiskLocation"
+         } else {
+             Write-Host "Using default disk location"
+         }
+         
+         # Add the machine name to the command
+         $initCmd += " default"
+         
+         # Execute the command
+         Write-Host "Executing: $initCmd"
+         $initOutput = Invoke-Expression $initCmd 2>&1
+         
          if ($LASTEXITCODE -ne 0) {
               Write-Error "Failed to initialize Podman machine. Output: $initOutput"
               return $false
          }
-         Write-Host "Podman machine initialized successfully."
+         
+         Write-Host "Podman machine initialized successfully with $FileSystem filesystem."
          Start-Sleep -Seconds 2
+         
          # podman machine start [options] MACHINE_NAME
          # start    Start a Podman virtual machine.
          # 'default' specifies the machine name.
@@ -103,24 +140,56 @@ function Ensure-And-Start-PodmanMachine {
 }
 
 #############################################
-# Function: Install-PodmanRemote
-# Installs the Podman Program (CLI) by running the remote installer package.
+# Function: Select-DiskLocation
+# Prompts the user to select a custom disk location for Podman machine or use default
 #############################################
-function Install-PodmanRemote {
-    param(
-        [string]$setupExeUrl = "https://github.com/containers/podman/releases/download/v5.4.0/podman-5.4.0-setup.exe",
-        [string]$downloadFolder = ".\downloads"
-    )
-    if (-not (Test-Path $downloadFolder)) {
-        Write-Host "Creating downloads folder at $downloadFolder..."
-        New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
-    }
+function Select-DiskLocation {
+    Write-Host "Select disk location for Podman machine virtual disk:"
+    Write-Host "1) Default location (user profile)"
+    Write-Host "2) Custom location"
+    $locationChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
     
-    $exePath = Join-Path $downloadFolder "podman-5.4.0-setup.exe"
-    Download-File -url $setupExeUrl -destinationPath $exePath
-
-    Write-Host "Launching Podman installer..."
-    Start-Process -FilePath $exePath -Wait
+    if ([string]::IsNullOrWhiteSpace($locationChoice) -or $locationChoice -eq "1") {
+        Write-Host "Using default disk location"
+        return ""  # Return empty string to use default location
+    }
+    elseif ($locationChoice -eq "2") {
+        $customPath = Read-Host "Enter custom disk location path (e.g., D:\VM\Disks)"
+        
+        # Validate the path format
+        if ([string]::IsNullOrWhiteSpace($customPath)) {
+            Write-Host "No path provided. Using default location."
+            return ""
+        }
+        
+        # Check if the path is valid
+        try {
+            # Test if path is in valid format
+            $null = [System.IO.Path]::GetFullPath($customPath)
+            
+            # If drive doesn't exist, inform the user but continue (we'll create the directory later)
+            $drive = [System.IO.Path]::GetPathRoot($customPath)
+            if (-not [System.IO.Directory]::Exists($drive)) {
+                Write-Warning "Drive $drive does not exist. Please ensure it's available before continuing."
+                $confirm = Read-Host "Continue with this path anyway? (Y/N, default is N)"
+                if ($confirm -ne "Y") {
+                    Write-Host "Using default disk location instead."
+                    return ""
+                }
+            }
+            
+            Write-Host "Custom disk location selected: $customPath"
+            return $customPath
+        }
+        catch {
+            Wrhite-Error "Invalid path format: $customPath. Using default location."
+            return ""
+        }
+    }
+    else {
+        Write-Host "Invalid selection. Using default disk location."
+        return ""
+    }
 }
 
 #############################################
@@ -154,7 +223,9 @@ function Install-PodmanDesktop {
 #############################################
 function Install-PodmanService {
     param(
-        [string]$downloadFolder = ".\downloads"
+        [string]$downloadFolder = ".\downloads",
+        [string]$FileSystem = "xfs",  # Default to xfs
+        [string]$DiskLocation = ""    # Empty string means use default location
     )
 
     # Ensure Podman CLI is installed.
@@ -165,7 +236,7 @@ function Install-PodmanService {
     }
 
     # Ensure a Podman machine exists and is running.
-    if (-not (Ensure-And-Start-PodmanMachine)) {
+    if (-not (Ensure-And-Start-PodmanMachine -FileSystem $FileSystem -DiskLocation $DiskLocation)) {
          Write-Error "Podman machine is not available; service installation aborted."
          return
     }
@@ -274,6 +345,28 @@ function Ensure-PodmanDesktopInstalled {
 }
 
 #############################################
+# Function: Select-FileSystem
+# Prompts the user to select a file system for Podman machine
+#############################################
+function Select-FileSystem {
+    Write-Host "Select file system for Podman machine:"
+    Write-Host "1) XFS (default, better performance but less compatible for recovery)"
+    Write-Host "2) EXT4 (more compatible for mounting and container recovery)"
+    $fsChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
+    
+    if ([string]::IsNullOrWhiteSpace($fsChoice) -or $fsChoice -eq "1") {
+        return "xfs"
+    }
+    elseif ($fsChoice -eq "2") {
+        return "ext4"
+    }
+    else {
+        Write-Host "Invalid selection. Using default (xfs)."
+        return "xfs"
+    }
+}
+
+#############################################
 # Main Script Execution - Logical Menu
 #############################################
 Write-Host "=================================================="
@@ -290,10 +383,18 @@ Write-Host "   - Stops and removes the Podman service if it exists."
 $installOption = Read-Host "Enter your choice (1, 2, 3, or 4). Default is 1 if empty."
 if ([string]::IsNullOrEmpty($installOption)) { $installOption = "1" }
 
+# Define default values at script scope
+$fileSystem = "xfs"     # Default file system
+$diskLocation = ""      # Default disk location (empty means use default)
+
 switch ($installOption) {
     "1" {
          if (-not (Get-Command podman -ErrorAction SilentlyContinue)) {
+              $fileSystem = Select-FileSystem
+              $diskLocation = Select-DiskLocation
               Install-PodmanRemote
+              # After installation, ensure machine is initialized with selected filesystem and disk location
+              Ensure-And-Start-PodmanMachine -FileSystem $fileSystem -DiskLocation $diskLocation
          }
          else {
             Write-Host "Podman Program (CLI) is already installed. Skipping installation."
@@ -301,16 +402,30 @@ switch ($installOption) {
     }
     "2" {
          if (Get-Command podman -ErrorAction SilentlyContinue) {
-            Ensure-PodmanDesktopInstalled
+            $fileSystem = Select-FileSystem
+            $diskLocation = Select-DiskLocation
+            # When ensuring Podman Desktop installation, use the selected filesystem and disk location
+            # Update the machine if needed with the selected configuration
+            if (-not (Ensure-And-Start-PodmanMachine -FileSystem $fileSystem -DiskLocation $diskLocation)) {
+                Write-Error "Podman machine initialization failed."
+            } else {
+                Ensure-PodmanDesktopInstalled
+            }
          }
          else {
             Write-Host "Podman CLI is required for the UI. Installing Podman Program first."
+            $fileSystem = Select-FileSystem
+            $diskLocation = Select-DiskLocation
             Install-PodmanRemote
+            # After installation, ensure machine is initialized with selected filesystem and disk location
+            Ensure-And-Start-PodmanMachine -FileSystem $fileSystem -DiskLocation $diskLocation
          }
     }
     "3" {
          if (Get-Command podman -ErrorAction SilentlyContinue) {
-            Install-PodmanService
+            $fileSystem = Select-FileSystem
+            $diskLocation = Select-DiskLocation
+            Install-PodmanService -FileSystem $fileSystem -DiskLocation $diskLocation
          }
          else {
            Write-Error "Podman CLI is required for service registration. Exiting."

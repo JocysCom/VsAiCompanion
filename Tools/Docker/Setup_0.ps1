@@ -261,6 +261,46 @@ function Test-HTTPPort {
     }
 }
 
+
+#------------------------------
+# Function: Test-WebSocketPort
+#------------------------------
+function Test-WebSocketPort {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Uri,
+        [Parameter(Mandatory=$true)]
+        [string] $serviceName
+    )
+    try {
+        # Check if .NET Core WebSocket client is available
+        if (-not ([System.Management.Automation.PSTypeName]'System.Net.WebSockets.ClientWebSocket').Type) {
+            Write-Warning "WebSocket client not available in this PowerShell version. Falling back to HTTP check."
+            return Test-HTTPPort -Uri $Uri.Replace("ws:", "http:").Replace("wss:", "https:") -serviceName $serviceName
+        }
+        
+        $client = New-Object System.Net.WebSockets.ClientWebSocket
+        $ct = New-Object System.Threading.CancellationTokenSource 5000
+        $task = $client.ConnectAsync($Uri, $ct.Token)
+        
+        # Wait for 5 seconds max
+        if ([System.Threading.Tasks.Task]::WaitAll(@($task), 5000)) {
+            Write-Host "$serviceName WebSocket test succeeded at $Uri."
+            $client.Dispose()
+            return $true
+        }
+        else {
+            Write-Error "$serviceName WebSocket test timed out at $Uri."
+            $client.Dispose()
+            return $false
+        }
+    }
+    catch {
+        Write-Error "$serviceName WebSocket test failed at $Uri. Error details: $_"
+        return $false
+    }
+}
+
 #------------------------------
 # Function: Check-AndRestoreBackup
 #

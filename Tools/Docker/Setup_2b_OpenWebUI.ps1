@@ -54,7 +54,12 @@ function Run-Container {
     # --publish strings    Map a container's port to the host (3000:8080).
     # --volume string      Bind mount volume named 'open-webui' at /app/backend/data.
     # --name string        Assign a name to the container.
+	# --add-host host.docker.internal:host-gateway  enables communication between the container and the host machine.
+	# --restart always     The container will automatically restart under any circumstance.
     & $enginePath run --platform linux/amd64 --detach --publish 3000:8080 --volume open-webui:/app/backend/data --name $containerName $imageName
+    & $enginePath run --platform linux/amd64 --detach --publish 3000:8080 --add-host host.docker.internal:host-gateway --restart always --volume open-webui:/app/backend/data --name $containerName $imageName
+	
+	
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to run container."
         return $false
@@ -63,6 +68,8 @@ function Run-Container {
     Start-Sleep -Seconds 20
     Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
     Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
+	Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
+	New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow
     Write-Host $successMessage
     return $true
 }
