@@ -424,6 +424,8 @@
 	<sys:String x:Key="main_Service">Service</sys:String>
 	<sys:String x:Key="main_Status">Status</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
+	<sys:String x:Key="main_Sort_Ascending">Sort Ascending</sys:String>
+	<sys:String x:Key="main_Sort_Descending">Sort Descending</sys:String>
 	<sys:String x:Key="main_Task">Task</sys:String>
 	<sys:String x:Key="main_Title">Title</sys:String>
 	<sys:String x:Key="main_Test">Test</sys:String>

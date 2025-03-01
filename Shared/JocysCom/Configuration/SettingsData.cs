@@ -589,6 +589,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		/// <summary>Sort the list with the fewest UI changes.</summary>
 		public void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
 		{
 			// Move works with special characters to the end.

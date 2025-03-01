@@ -46,11 +46,11 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>406</Left>
-        <Top>110</Top>
-        <Width>1179</Width>
+        <Left>807.3333333333333</Left>
+        <Top>166</Top>
+        <Width>1179.3333333333333</Width>
         <Height>894</Height>
-        <ScreenName>\\.\DISPLAY1</ScreenName>
+        <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
@@ -67,7 +67,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.21856027753686036</GridSplitterPosition>
+          <GridSplitterPosition>0.2188221709006928</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
@@ -97,7 +97,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.2445793581960104</GridSplitterPosition>
+          <GridSplitterPosition>0.24480369515011546</GridSplitterPosition>
           <ListSelection>
             <string>Prompts</string>
           </ListSelection>

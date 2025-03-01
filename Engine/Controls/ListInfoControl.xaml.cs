@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
@@ -522,7 +523,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Delete()
 		{
-			var items = MainDataGrid.SelectedItems.Cast<ListItem>().ToList();
+			var items = MainDataGrid.SelectedItems.OfType<ListItem>().ToList();
 			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.Key).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
@@ -649,6 +650,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void MainDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
 		{
 
+		}
+
+		private void SortAscendingButton_Click(object sender, RoutedEventArgs e)
+		{
+			Sort(true);
+		}
+
+		private void SortDescendingButton_Click(object sender, RoutedEventArgs e)
+		{
+
+			Sort(false);
+		}
+
+		/// <summary>
+		/// Sorts the Items list that is bound to the grid, synchronizes the sorted list with the original collection,
+		/// and reapplies the previously selected items to the grid.
+		/// </summary>
+		void Sort(bool ascending)
+		{
+			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToList();
+			var newItems = ascending
+				? Item.Items.OrderBy(x => x.Key).ToList()
+				: Item.Items.OrderByDescending(x => x.Key).ToList();
+			CollectionsHelper.Synchronize(newItems, Item.Items);
+			ControlsHelper.BeginInvoke(() =>
+			{
+				// Clear the grid selection before reapplying the selected items.
+				MainDataGrid.SelectedItems.Clear();
+				// Re-add each previously selected item if present after sorting.
+				foreach (var item in selectedItems)
+				{
+					if (MainDataGrid.Items.Contains(item))
+						MainDataGrid.SelectedItems.Add(item);
+				}
+			});
 		}
 	}
 

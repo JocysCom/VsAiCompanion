@@ -60,7 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateButtons()
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<fine_tuning_job>();
+			var selecetedItems = MainDataGrid.SelectedItems.OfType<fine_tuning_job>();
 			var isSelected = selecetedItems.Count() > 0;
 			var endStates = new List<string> { "failed", "succeeded" };
 			var containsNonEndStateItems = selecetedItems
@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public List<fine_tuning_job> GetWithAllow(AllowAction action)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<fine_tuning_job>().ToList();
+			var items = MainDataGrid.SelectedItems.OfType<fine_tuning_job>().ToList();
 			if (items.Count == 0)
 				return null;
 			if (!Global.ValidateServiceAndModel(Data))

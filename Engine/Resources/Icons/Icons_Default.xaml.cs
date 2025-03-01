@@ -134,6 +134,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_screen = nameof(Icon_screen);
 		public const string Icon_settings = nameof(Icon_settings);
 		public const string Icon_shield = nameof(Icon_shield);
+		public const string Icon_sort_az_ascending = nameof(Icon_sort_az_ascending);
+		public const string Icon_sort_za_descending = nameof(Icon_sort_za_descending);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
 		public const string Icon_target = nameof(Icon_target);
 		public const string Icon_target_disabled = nameof(Icon_target_disabled);
