@@ -470,6 +470,25 @@ function Backup-ContainerState {
     }
 }
 
+#############################################
+# Function: Refresh-EnvironmentVariables
+#############################################
+function Refresh-EnvironmentVariables {
+    <#
+    .SYNOPSIS
+      Refreshes the current session's environment variables.
+      
+    .DESCRIPTION
+      Re-reads the machine and user PATH from the registry and updates the current session.
+      This allows newly installed executables (such as podman) to be found without restarting PowerShell.
+    #>
+    $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
+    $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
+    $env:PATH = "$machinePath;$userPath"
+    Write-Host "Environment variables refreshed. Current PATH:" 
+    Write-Host $env:PATH
+}
+
 #--------------------------------------
 # Function: Restore-ContainerState
 # Description: Restores a container from a previously saved backup tar file.
