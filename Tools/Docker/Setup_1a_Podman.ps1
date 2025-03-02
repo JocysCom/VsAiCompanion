@@ -1,7 +1,7 @@
 ################################################################################
 # File         : Setup_1a_Podman.ps1
 # Description  : Script to manage Podman installation on Windows.
-#                Dependencies: 
+#                Dependencies hierarchy: 
 #                - CLI required for Machine
 #                - CLI required for Desktop
 #                - Machine required for Service
@@ -10,8 +10,7 @@
 ################################################################################
 
 # Define default values at script scope
-$fileSystem = "xfs"     # Default file system
-$diskLocation = ""      # Default disk location (empty means use default)
+$diskLocation = ""      # Default disk location (empty means use default user profile location)
 
 # Dot-source shared helper functions from Setup_0.ps1:
 . "$PSScriptRoot\Setup_0.ps1"
@@ -36,6 +35,7 @@ function Check-PodmanCliAvailable {
 #############################################
 # Function: Check-PodmanServiceAvailable
 # Checks if the Podman Service is installed and available.
+# The service automatically starts the Podman machine on system boot.
 # Returns: $true if Podman Service is installed, $false otherwise.
 #############################################
 function Check-PodmanServiceAvailable {
@@ -47,6 +47,7 @@ function Check-PodmanServiceAvailable {
 #############################################
 # Function: Check-PodmanMachineAvailable
 # Checks if a Podman machine exists and is accessible.
+# The Podman machine is the WSL2-based virtual environment where containers run.
 # Returns: $true if a Podman machine exists, $false otherwise.
 #############################################
 function Check-PodmanMachineAvailable {
@@ -55,7 +56,7 @@ function Check-PodmanMachineAvailable {
         return $false
     }
     
-    # Check if any Podman machines exist
+    # Check if any Podman machines exist by querying for their status
     try {
         $machineListJson = & podman machine ls --format json 2>&1
         $machines = $machineListJson | ConvertFrom-Json
@@ -70,6 +71,7 @@ function Check-PodmanMachineAvailable {
 #############################################
 # Function: Check-PodmanMachineRunning
 # Checks if any Podman machine is actually running.
+# A running machine has booted its Linux OS and is ready to run containers.
 # Returns: $true if a Podman machine is running, $false otherwise.
 #############################################
 function Check-PodmanMachineRunning {
@@ -93,6 +95,7 @@ function Check-PodmanMachineRunning {
 #############################################
 # Function: Check-PodmanDesktopInstalled
 # Checks if Podman Desktop is installed.
+# Podman Desktop is the GUI management tool for Podman.
 # Returns: $true if Podman Desktop is installed, $false otherwise.
 #############################################
 function Check-PodmanDesktopInstalled {
@@ -172,6 +175,7 @@ function Display-PodmanStatus {
 #############################################
 # Function: Install-PodmanCLI
 # Installs the Podman Program (CLI) by running the remote installer package.
+# The CLI is the core component that provides the 'podman' command.
 #############################################
 function Install-PodmanCLI {
     param(
@@ -224,30 +228,9 @@ function Install-PodmanCLI {
 }
 
 #############################################
-# Function: Select-FileSystem
-# Prompts the user to select a file system for Podman machine
-#############################################
-function Select-FileSystem {
-    Write-Host "Select file system for Podman machine:"
-    Write-Host "1) XFS (default, better performance but less compatible for recovery)"
-    Write-Host "2) EXT4 (more compatible for mounting and container recovery)"
-    $fsChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
-    
-    if ([string]::IsNullOrWhiteSpace($fsChoice) -or $fsChoice -eq "1") {
-        return "xfs"
-    }
-    elseif ($fsChoice -eq "2") {
-        return "ext4"
-    }
-    else {
-        Write-Host "Invalid selection. Using default (xfs)."
-        return "xfs"
-    }
-}
-
-#############################################
 # Function: Select-DiskLocation
 # Prompts the user to select a custom disk location for Podman machine or use default
+# This determines where the VHDX (virtual disk) file will be stored
 #############################################
 function Select-DiskLocation {
     Write-Host "Select disk location for Podman machine virtual disk:"
@@ -300,16 +283,13 @@ function Select-DiskLocation {
 
 #############################################
 # Function: Initialize-PodmanMachine
-# Creates and initializes a new Podman machine.
-# Separated from the Start function for clarity.
+# Creates and initializes a new Podman machine with default options
+# then offers to move the machine image to another location using WSL commands.
 #############################################
 function Initialize-PodmanMachine {
     param(
         [Parameter(Mandatory = $false)]
-        [string]$FileSystem = "xfs",
-        
-        [Parameter(Mandatory = $false)]
-        [string]$DiskLocation = ""
+        [string]$DiskLocation = ""    # Location to move the VHDX file after creation
     )
     
     # Ensure that WSL and required Windows features are enabled
@@ -329,6 +309,12 @@ function Initialize-PodmanMachine {
         $replace = Read-Host "Replace existing machine? (Y/N, default is N)"
         if ($replace -ne "Y") {
             Write-Host "Using existing Podman machine."
+            
+            # If we're keeping the existing machine but want to move it
+            if (-not [string]::IsNullOrWhiteSpace($DiskLocation)) {
+                return Move-PodmanMachineImage -DestinationPath $DiskLocation
+            }
+            
             return $true
         }
         
@@ -349,35 +335,11 @@ function Initialize-PodmanMachine {
         }
     }
     
-    # Build the init command with required parameters
-    $initCmd = "podman machine init --filesystem $FileSystem"
+    # Initialize the machine with default settings first
+    Write-Host "Initializing Podman machine with default settings..."
+    $initCmd = "podman machine init default"
     
-    # Add disk location if specified
-    if (-not [string]::IsNullOrWhiteSpace($DiskLocation)) {
-        # Ensure the directory exists
-        if (-not (Test-Path $DiskLocation)) {
-            try {
-                New-Item -ItemType Directory -Path $DiskLocation -Force | Out-Null
-                Write-Host "Created disk location directory: $DiskLocation"
-            }
-            catch {
-                Write-Error "Failed to create disk location directory: $DiskLocation. Error: $_"
-                return $false
-            }
-        }
-        
-        # Add the image-path option to the command
-        $initCmd += " --image-path `"$DiskLocation`""
-        Write-Host "Using custom disk location: $DiskLocation"
-    }
-    else {
-        Write-Host "Using default disk location"
-    }
-    
-    # Add the machine name to the command
-    $initCmd += " default"
-    
-    # Execute the command
+    # Execute the command to create the machine
     Write-Host "Executing: $initCmd"
     $initOutput = Invoke-Expression $initCmd 2>&1
     
@@ -386,24 +348,158 @@ function Initialize-PodmanMachine {
         return $false
     }
     
-    Write-Host "Podman machine initialized successfully with $FileSystem filesystem."
+    # Start the machine to ensure everything is properly set up
+    Write-Host "Starting the Podman machine to complete initialization..."
+    & podman machine start default
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to start Podman machine after initialization."
+        return $false
+    }
+    
+    Write-Host "Podman machine initialized and started successfully with default settings." -ForegroundColor Green
+    
+    # Show the current location of the machine's disk
+    $userProfile = $env:USERPROFILE
+    $podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\podman-machine-default"
+    Write-Host "Current machine location: $podmanFolder"
+    
+    # If a disk location was specified, move the machine image
+    if (-not [string]::IsNullOrWhiteSpace($DiskLocation)) {
+        Write-Host "Moving Podman machine image to custom location..."
+        return Move-PodmanMachineImage -DestinationPath $DiskLocation
+    }
+    
+    return $true
+}
+
+#############################################
+# Function: Move-PodmanMachineImage
+# Moves a Podman machine image to a new location using WSL commands.
+# Follows the procedure:
+# 1. Stop Podman machine
+# 2. Copy the VHDX folder to the new location
+# 3. Unregister the WSL distribution
+# 4. Import the copied VHDX in-place
+# 5. Start the Podman machine
+#############################################
+function Move-PodmanMachineImage {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationPath,
+        [string]$MachineName = "default"
+    )
+    
+    $wslDistName = "podman-machine-$MachineName"
+    
+    # Step 1: Stop the Podman machine if it's running
+    Write-Host "Stopping Podman machine..."
+    & podman machine stop $MachineName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to stop Podman machine. Aborting move operation."
+        return $false
+    }
+    
+    # Verify the machine is stopped by checking WSL status
+    Write-Host "Verifying machine is stopped using 'wsl -l -v'..."
+    $wslStatus = & wsl -l -v 2>&1
+    Write-Host $wslStatus
+    
+    # Check if the machine is actually stopped
+    $machineStatus = $wslStatus | Select-String -Pattern $wslDistName -SimpleMatch
+    if ($machineStatus -match "Running") {
+        Write-Error "Podman machine is still running. Please stop it manually using 'wsl --terminate $wslDistName'."
+        return $false
+    }
+    
+    # Step 2: Locate the VHDX folder and copy it to the new location
+    $userProfile = $env:USERPROFILE
+    $podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\$wslDistName"
+    
+    if (-not (Test-Path $podmanFolder)) {
+        Write-Error "Podman machine folder not found at: $podmanFolder"
+        return $false
+    }
+    
+    # Create destination directory if it doesn't exist
+    $destinationFolder = Join-Path $DestinationPath $wslDistName
+    if (-not (Test-Path $destinationFolder)) {
+        Write-Host "Creating destination directory: $destinationFolder"
+        New-Item -ItemType Directory -Path $destinationFolder -Force | Out-Null
+    }
+    
+    # Copy the entire folder (not just VHDX)
+    Write-Host "Copying Podman machine folder to new location..."
+    Write-Host "From: $podmanFolder"
+    Write-Host "To: $destinationFolder"
+    
+    try {
+        Copy-Item -Path "$podmanFolder\*" -Destination $destinationFolder -Recurse -Force
+        Write-Host "Folder copied successfully."
+    }
+    catch {
+        Write-Error "Failed to copy Podman machine folder: $_"
+        return $false
+    }
+    
+    # Verify the VHDX file was copied
+    $vhdxPath = Join-Path $destinationFolder "ext4.vhdx"
+    if (-not (Test-Path $vhdxPath)) {
+        Write-Error "VHDX file not found after copy at: $vhdxPath"
+        return $false
+    }
+    
+    # Step 3: Unregister the WSL distribution
+    Write-Host "Unregistering WSL distribution: $wslDistName"
+    Write-Host "This will remove the original VHDX file."
+    $confirm = Read-Host "Continue? (Y/N, default is N)"
+    if ($confirm -ne "Y") {
+        Write-Host "Operation cancelled. The copied files remain at: $destinationFolder"
+        Write-Host "Original Podman machine is untouched."
+        return $false
+    }
+    
+    & wsl --unregister $wslDistName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to unregister WSL distribution. Please check if it exists using 'wsl -l -v'."
+        return $false
+    }
+    
+    # Step 4: Import the copied VHDX file in-place
+    Write-Host "Importing VHDX in-place..."
+    & wsl --import-in-place $wslDistName $vhdxPath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to import VHDX in-place. Check if the path is correct and try again."
+        Write-Host "VHDX path: $vhdxPath"
+        return $false
+    }
+    
+    # Step 5: Start the Podman machine
+    Write-Host "Starting Podman machine..."
+    & podman machine start $MachineName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to start Podman machine after move. Check if the import was successful using 'wsl -l -v'."
+        return $false
+    }
+    
+    Write-Host "Podman machine image successfully moved to: $destinationFolder" -ForegroundColor Green
     return $true
 }
 
 #############################################
 # Function: Start-PodmanMachine
 # Starts an existing Podman machine.
+# This boots the Linux OS in the VHDX file using WSL2.
 #############################################
 function Start-PodmanMachine {
     param(
         [string]$MachineName = "default"
     )
 	
-        # Initialize and start Podman Machine
-        if (-not (Check-PodmanCliAvailable)) {
-            Write-Error "Podman CLI is not installed. Please install it first using option 1."
-            exit 1
-        }
+    # Initialize and start Podman Machine
+    if (-not (Check-PodmanCliAvailable)) {
+        Write-Error "Podman CLI is not installed. Please install it first using option 1."
+        exit 1
+    }
     
     # Check if machine exists
     if (-not (Check-PodmanMachineAvailable)) {
@@ -418,6 +514,7 @@ function Start-PodmanMachine {
     }
     
     try {
+        # Start the Podman machine (boots the Linux OS in WSL2)
         Write-Host "Starting Podman machine '$MachineName'..."
         $startOutput = & podman machine start $MachineName 2>&1
         if ($LASTEXITCODE -ne 0) {
@@ -436,6 +533,7 @@ function Start-PodmanMachine {
 #############################################
 # Function: Install-PodmanService
 # Registers Podman as a Windows service that ensures the machine is running.
+# This service will automatically start the Podman machine on system boot.
 #############################################
 function Install-PodmanService {
     param(
@@ -473,7 +571,8 @@ function Install-PodmanService {
         Start-Sleep -Seconds 5
     }
     
-    # Create startup batch file
+    # Create startup batch file that will be executed by the service
+    # This script checks if Podman machine is running and starts it if needed
     $batchFilePath = Join-Path $destinationFolder "start-podman.bat"
     $batchContent = @"
 @echo off
@@ -497,6 +596,7 @@ if %errorlevel%==0 (
     Write-Host "Batch file created at: $batchFilePath"
     
     # Create the service via sc.exe
+    # This registers a Windows service that runs the batch file on system startup
     $argsCreate = "create $ServiceName binPath= `"$batchFilePath`" start= auto"
     Write-Host "Creating service using: sc.exe $argsCreate"
     $svcCreateProcess = Start-Process -FilePath "sc.exe" -ArgumentList $argsCreate -Wait -NoNewWindow -PassThru
@@ -638,6 +738,9 @@ function Remove-PodmanComponents {
                 
                 foreach ($machine in $machines) {
                     Write-Host "Removing machine: $($machine.Name)..."
+                    # podman machine rm [options] [MACHINE]
+                    # rm     Remove an existing machine
+                    # -f     Force the removal if the machine is running
                     & podman machine rm -f $machine.Name
                     if ($LASTEXITCODE -eq 0) {
                         Write-Host "Machine '$($machine.Name)' removed successfully." -ForegroundColor Green
@@ -679,6 +782,7 @@ Write-Host "3) Install Podman Desktop (UI)"
 Write-Host "   - Installs the Podman Desktop manager (Requires only CLI)"
 Write-Host "4) Initialize Podman Machine"
 Write-Host "   - Creates and starts a Podman machine (Requires CLI)"
+Write-Host "   - This creates a VHDX file with Linux + Podman inside"
 Write-Host "5) Register Podman Service"
 Write-Host "   - Creates a Windows service to auto-start Podman (Requires Machine)"
 Write-Host "6) Remove Podman Components"
@@ -703,14 +807,15 @@ switch ($installOption) {
     }
     "4" {
         # Initialize and start Podman Machine
-        $fileSystem = Select-FileSystem
+        # This creates a VHDX file with Linux + Podman and registers it with WSL2
         $diskLocation = Select-DiskLocation
-        if (Initialize-PodmanMachine -FileSystem $fileSystem -DiskLocation $diskLocation) {
+        if (Initialize-PodmanMachine -DiskLocation $diskLocation) {
             Start-PodmanMachine
         }
     }
     "5" {
         # Install Podman Service
+        # This creates a Windows service that starts the Podman machine on boot
         Install-PodmanService
     }
     "6" {
