@@ -21,9 +21,26 @@ Set-ScriptLocation
 # Global variables used across functions.
 $global:containerName   = "pipelines"
 $global:pipelinesFolder = ".\pipelines"
-$global:downloadFolder  = "./downloads"
+$global:downloadFolder  = ".\downloads"
 $global:enginePath      = $null
 $global:containerEngine = $null
+
+# After the dot-sourcing of Setup_0.ps1, add this code to ensure the engine is selected:
+$global:containerEngine = Select-ContainerEngine
+if ($global:containerEngine -eq "docker") {
+    $global:enginePath = Get-DockerPath
+} elseif ($global:containerEngine -eq "podman") {
+    $global:enginePath = Get-PodmanPath
+} else {
+    Write-Error "No container engine (Docker or Podman) found. Please install one before running this script."
+    exit 1
+}
+
+# Validate that we have a valid engine path
+if (-not $global:enginePath) {
+    Write-Error "Failed to get path to container engine executable. Exiting."
+    exit 1
+}
 
 <#
 .SYNOPSIS
@@ -70,7 +87,7 @@ function Install-PipelinesContainer {
     $customPipelineImageTag = "ghcr.io/open-webui/pipelines:main"
 
     # (Optional) Remove any existing container with the same name
-    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
     if ($existingContainer) {
         Write-Host "Pipelines container already exists. Removing it..."
         & $global:enginePath rm --force $global:containerName
@@ -152,9 +169,9 @@ function Uninstall-PipelinesContainer {
         Write-Error "Engine path not set. Nothing to uninstall."
         return
     }
-    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing Pipelines container '$global:containerName'..."
+        Write-Host "Removing Pipelines container '$($global:containerName)'..."
         & $global:enginePath rm --force $global:containerName
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Pipelines container removed successfully."
@@ -234,15 +251,15 @@ function Update-PipelinesContainer {
     Write-Host "Initiating update for Pipelines container..."
 
     # Check and remove any current running instance of the container.
-    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing existing container '$global:containerName' as part of the update..."
+        Write-Host "Removing existing container '$($global:containerName)' as part of the update..."
         # Remove container command:
         # rm         Remove one or more containers.
         # --force    Force removal of a running container.
         & $global:enginePath rm --force $global:containerName
         if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to remove container '$global:containerName'. Update aborted."
+            Write-Error "Failed to remove container '$($global:containerName)'. Update aborted."
             return
         }
     }
