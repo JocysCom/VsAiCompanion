@@ -160,37 +160,44 @@ function Select-ContainerEngine {
 function Test-ApplicationInstalled {
     <#
     .SYNOPSIS
-        Determines whether a specified application appears in Windows installed programs (registry-based).
-
+        Determines whether a specified application is installed.
     .PARAMETER AppName
-        The partial or full name of the application to look for in registry DisplayName entries.
+        The application name to search for (supports wildcards).
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
         [string]$AppName
     )
-    # Registry paths for standard 64-bit and 32-bit uninstall keys.
+    
+    # First check registry for performance
     $uninstallPaths = @(
         "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
     )
+    
     foreach ($path in $uninstallPaths) {
         try {
-            # Get installed programs from the registry path, filter by partial display name.
             $apps = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue |
                     Where-Object { $_.DisplayName -like "*$AppName*" }
-            if ($apps) {
-                # If at least one match was found, return $true.
-                return $true
-            }
+            if ($apps) { return $true }
         }
-        catch {
-            # Ignore any access or other errors; proceed to next path.
-            continue
+        catch { continue }
+    }
+    
+    # Only if registry check fails, try Get-Package as fallback
+    try {
+        $package = Get-Package -Name "$AppName*" -ErrorAction SilentlyContinue
+        if ($package) {
+            return $true
         }
     }
-    # If we reach here, no match was found.
+    catch {
+        # Ignore errors with Get-Package
+    }
+    
+    # Not found by any method
     return $false
 }
 
