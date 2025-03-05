@@ -2,6 +2,10 @@
 
 This solution uses containerization to simplify the installation, integration, and management of several AI and automation tools on Windows. The provided PowerShell scripts work with Docker or Podman to deploy containerized applications that are easy to install, update, and maintain. These tools eliminate complex manual configurations and dependency issues by isolating each service in its own container, allowing you to focus on solving business problems instead of technical setup.
 
+## Containerized AI Tools Architecture
+
+  <img alt="Podman Desktop" src="Images/Diagram.svg" width="640" height="360">
+
 ## Tools Provided
 
 - **Docker / Podman Setup**  
