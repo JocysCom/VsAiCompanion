@@ -50,24 +50,41 @@ function Download-File {
         [string]$SourceUrl,
         [Parameter(Mandatory=$true)]
         [string]$DestinationPath,
-        [switch]$ForceDownload  # Optional switch to force re-download
+        [switch]$ForceDownload,  # Optional switch to force re-download
+        [switch]$UseFallback     # New parameter to force fallback method
     )
     
     if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
         Write-Host "File already exists at $DestinationPath. Skipping download."
         return
     }
-    Write-Host "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+    
+    # Check if BITS is available or if fallback is requested
+    if ((Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) -and (-not $UseFallback)) {
+        Write-Host "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+        try {
+            Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
+            Write-Host "Download succeeded: $DestinationPath" -ForegroundColor Green
+            return
+        }
+        catch {
+            Write-Warning "BITS transfer failed: $_. Trying fallback method..."
+        }
+    }
+    
+    # Fallback to Invoke-WebRequest
     try {
-        Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
-        Write-Host "Download succeeded: $DestinationPath"
+        Write-Host "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
+        $ProgressPreference = 'SilentlyContinue'  # Speeds up Invoke-WebRequest significantly
+        Invoke-WebRequest -Uri $SourceUrl -OutFile $DestinationPath -UseBasicParsing
+        $ProgressPreference = 'Continue'  # Restore default
+        Write-Host "Download succeeded: $DestinationPath" -ForegroundColor Green
     }
     catch {
         Write-Error "Failed to download file from $SourceUrl. Error details: $_"
         exit 1
     }
 }
-
 
 #------------------------------
 # Function: Check-Git
@@ -160,37 +177,44 @@ function Select-ContainerEngine {
 function Test-ApplicationInstalled {
     <#
     .SYNOPSIS
-        Determines whether a specified application appears in Windows installed programs (registry-based).
-
+        Determines whether a specified application is installed.
     .PARAMETER AppName
-        The partial or full name of the application to look for in registry DisplayName entries.
+        The application name to search for (supports wildcards).
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
         [string]$AppName
     )
-    # Registry paths for standard 64-bit and 32-bit uninstall keys.
+    
+    # First check registry for performance
     $uninstallPaths = @(
         "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
     )
+    
     foreach ($path in $uninstallPaths) {
         try {
-            # Get installed programs from the registry path, filter by partial display name.
             $apps = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue |
                     Where-Object { $_.DisplayName -like "*$AppName*" }
-            if ($apps) {
-                # If at least one match was found, return $true.
-                return $true
-            }
+            if ($apps) { return $true }
         }
-        catch {
-            # Ignore any access or other errors; proceed to next path.
-            continue
+        catch { continue }
+    }
+    
+    # Only if registry check fails, try Get-Package as fallback
+    try {
+        $package = Get-Package -Name "$AppName*" -ErrorAction SilentlyContinue
+        if ($package) {
+            return $true
         }
     }
-    # If we reach here, no match was found.
+    catch {
+        # Ignore errors with Get-Package
+    }
+    
+    # Not found by any method
     return $false
 }
 
@@ -204,26 +228,34 @@ function Test-TCPPort {
         [Parameter(Mandatory=$true)]
         [int] $Port,
         [Parameter(Mandatory=$true)]
-        [string] $serviceName
+        [string] $serviceName,
+        [int] $TimeoutMilliseconds = 5000  # Added configurable timeout
     )
 
     try {
-        # Resolve only IPv4 addresses.
-        $ip = [System.Net.Dns]::GetHostAddresses($ComputerName) | Where-Object { $_.AddressFamily -eq 'InterNetwork' } | Select-Object -First 1
+        # Try to resolve both IPv4 and IPv6 addresses but prioritize IPv4
+        $ipAddresses = [System.Net.Dns]::GetHostAddresses($ComputerName)
+        $ip = $ipAddresses | Where-Object { $_.AddressFamily -eq 'InterNetwork' } | Select-Object -First 1
+        
+        # Fallback to IPv6 if no IPv4 is available
         if (-not $ip) {
-            throw "No IPv4 address found for $ComputerName."
+            $ip = $ipAddresses | Select-Object -First 1
+            if (-not $ip) {
+                throw "No IP address could be found for $ComputerName."
+            }
+            Write-Host "Using IPv6 address for connection test: $ip" -ForegroundColor Yellow
         }
         
         $client = New-Object System.Net.Sockets.TcpClient
         $async = $client.BeginConnect($ip.ToString(), $Port, $null, $null)
-        # Wait up to 5 seconds for connection.
-        $connected = $async.AsyncWaitHandle.WaitOne(5000, $false)
+        $connected = $async.AsyncWaitHandle.WaitOne($TimeoutMilliseconds, $false)
+        
         if ($connected -and $client.Connected) {
-            Write-Host "$serviceName TCP test succeeded on port $Port at $ComputerName (IPv4: $ip)."
+            Write-Host "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
             $client.Close()
             return $true
         } else {
-            Write-Error "$serviceName TCP test failed on port $Port at $ComputerName (IPv4: $ip)."
+            Write-Error "$serviceName TCP test failed on port $Port at $ComputerName (IP: $ip)."
             $client.Close()
             return $false
         }
@@ -257,6 +289,46 @@ function Test-HTTPPort {
     }
     catch {
         Write-Error "$serviceName HTTP test failed at $Uri. Error details: $_"
+        return $false
+    }
+}
+
+
+#------------------------------
+# Function: Test-WebSocketPort
+#------------------------------
+function Test-WebSocketPort {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Uri,
+        [Parameter(Mandatory=$true)]
+        [string] $serviceName
+    )
+    try {
+        # Check if .NET Core WebSocket client is available
+        if (-not ([System.Management.Automation.PSTypeName]'System.Net.WebSockets.ClientWebSocket').Type) {
+            Write-Warning "WebSocket client not available in this PowerShell version. Falling back to HTTP check."
+            return Test-HTTPPort -Uri $Uri.Replace("ws:", "http:").Replace("wss:", "https:") -serviceName $serviceName
+        }
+        
+        $client = New-Object System.Net.WebSockets.ClientWebSocket
+        $ct = New-Object System.Threading.CancellationTokenSource 5000
+        $task = $client.ConnectAsync($Uri, $ct.Token)
+        
+        # Wait for 5 seconds max
+        if ([System.Threading.Tasks.Task]::WaitAll(@($task), 5000)) {
+            Write-Host "$serviceName WebSocket test succeeded at $Uri."
+            $client.Dispose()
+            return $true
+        }
+        else {
+            Write-Error "$serviceName WebSocket test timed out at $Uri."
+            $client.Dispose()
+            return $false
+        }
+    }
+    catch {
+        Write-Error "$serviceName WebSocket test failed at $Uri. Error details: $_"
         return $false
     }
 }
@@ -334,9 +406,29 @@ function Check-WSLStatus {
          exit 1
     }
     
+    # Check WSL version - we need WSL2
     $wslVersionInfo = wsl --version 2>&1
     Write-Host "WSL Version Info:`n$wslVersionInfo"
     
+    # Check if running WSL 2
+    $wslVersion = wsl --status | Select-String -Pattern "Default Version: (\d+)" | ForEach-Object { $_.Matches.Groups[1].Value }
+    if ($wslVersion -ne "2") {
+        Write-Warning "WSL seems to be running version $wslVersion but WSL 2 is required."
+        Write-Warning "Please run 'wsl --set-default-version 2' as Administrator to set WSL 2 as default."
+        $setWsl2 = Read-Host "Would you like to set WSL 2 as default now? (Y/N, default is Y)"
+        if ($setWsl2 -ne "N") {
+            wsl --set-default-version 2
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Failed to set WSL 2 as default. Please do this manually."
+                exit 1
+            }
+            Write-Host "WSL 2 has been set as the default." -ForegroundColor Green
+        } else {
+            Write-Error "WSL 2 is required but not set as default. Exiting."
+            exit 1
+        }
+    }
+   
     # Check if the Windows Subsystem for Linux feature is enabled
     $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
     if ($wslFeature.State -ne "Enabled") {
@@ -428,6 +520,25 @@ function Backup-ContainerState {
          Write-Error "Failed to save backup image to '$backupFile'."
          return $false
     }
+}
+
+#############################################
+# Function: Refresh-EnvironmentVariables
+#############################################
+function Refresh-EnvironmentVariables {
+    <#
+    .SYNOPSIS
+      Refreshes the current session's environment variables.
+      
+    .DESCRIPTION
+      Re-reads the machine and user PATH from the registry and updates the current session.
+      This allows newly installed executables (such as podman) to be found without restarting PowerShell.
+    #>
+    $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
+    $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
+    $env:PATH = "$machinePath;$userPath"
+    Write-Host "Environment variables refreshed. Current PATH:" 
+    Write-Host $env:PATH
 }
 
 #--------------------------------------

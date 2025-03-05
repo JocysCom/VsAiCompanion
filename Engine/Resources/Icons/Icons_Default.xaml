@@ -6,8 +6,9 @@
 	x:ClassModifier="public">
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_AiCompanion"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_AiCompanion"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_52ACDC35B20C27F13358749AA13636E88CEBE3A8E322D862B18A30BA412D22D9">
 		<Canvas Width="512" Height="512">
@@ -153,8 +154,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_arrow_barrier_bottom"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_arrow_barrier_bottom"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_8CEC2E2244200A33A14BFD739F0B534AC94C8A15237120B2B2F1A3CF8322EAC6">
 		<Canvas Width="512" Height="512">
@@ -203,8 +205,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_arrow_barrier_top"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_arrow_barrier_top"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_12D9943836A481EE9D8C83295C361585B1D02F0C8E617685EAB8BC2F2DB93305">
 		<Canvas Width="512" Height="512">
@@ -327,8 +330,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_blackboard"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_blackboard"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_A9C81888D94ACA5FC37956560ED2BD2F0F426D946DF34CDAB45E2DE1D70E73EB">
 		<Canvas Width="512" Height="512">
@@ -429,8 +433,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_book_open"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_book_open"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7CFB582515DC0DE81FC87CD395BBB338C5993ACF612E5CF7BA3C70778F623EF4">
 		<Canvas Width="512" Height="512">
@@ -574,8 +579,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_brain"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_brain"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_5FE134E3CDDB558BA949374CEF0474FE031CDD620894B7E0422AEA1365D15D9D">
 		<Canvas Width="512" Height="512">
@@ -655,8 +661,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_broom"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_broom"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_E240788A3F3CDF7E4A14DFF195174FEBF4796884BF9E4865E0E498AEE577623E">
 		<Canvas Width="512" Height="512">
@@ -801,8 +808,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_businessman"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_businessman"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_CB64B999F4E5F02D8D0F298A4ED11107F589CC8CB094707CA43D270D3BBF4F88">
 		<Canvas Width="512" Height="512">
@@ -1508,8 +1516,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_button_error"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_button_error"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_FBD7BB34D040FDDE3508929876F06D90FEBED5CCEEA79B969CE5AA4393CD43F8">
 		<Canvas
@@ -1624,8 +1633,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_cancel_gray"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_cancel_gray"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_1A37CAFCEB74CDAF56688DE098C3D0B4FDD4ADA0C6E746F6DE333AEF8D2C081E">
 		<Canvas
@@ -1753,8 +1763,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_chat"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_chat"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_034B636663D79A7C685EAC30C101C7B434D78A97F7F840119E2A7362F5448971">
 		<Canvas
@@ -2501,8 +2512,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_clipboard_checks"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_clipboard_checks"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_B5C64CB43B6CD59C137B2B122C989CDB1BCBACB9CC447F634A66A2786AAC2076">
 		<Canvas Width="512" Height="512">
@@ -2648,8 +2660,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_clipboard_check_edit"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_clipboard_check_edit"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_DA48FF691C1EB80847DBD850A4A29885E5EB188E70A5102B6817A509CBF70A83">
 		<Canvas Width="512" Height="512">
@@ -2995,8 +3008,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_clipboard_paste"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_clipboard_paste"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_56DC7D2D0CD55B166ABCC7A590513532E131B5CB5F2BDB6A9DF8A55096F6EB26">
 		<Canvas Width="512" Height="512">
@@ -3122,8 +3136,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_cloud"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_cloud"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_1AFAFDB7A1F98213CBC4274E270BD3BD341EBF0831C0C432FFDD716CD9F24410">
 		<Canvas
@@ -3153,8 +3168,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_cloud_download"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_cloud_download"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_EEA28A2AF3BC8E7F1B0964E617FE1FBAF6199F90DEC0A148F0603CD2440A498C">
 		<Canvas
@@ -3189,8 +3205,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_cloud_folder"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_cloud_folder"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_29FB1CED3924D327E7A93DA002F51D6D88FEA72115048CF616AA0AC6E04403F7">
 		<Canvas
@@ -3239,8 +3256,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_cloud_gear"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_cloud_gear"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_D33F07A0FCE1FF3E94C68A728937513AB27EEA5A3201B4F6E72C89CB0B120F9B">
 		<Canvas
@@ -3289,8 +3307,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_cloud_upload"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_cloud_upload"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7E2F01F822BB3EEF459618C7112CD886CF9ED5E5C43CAE88FCCD49B594C67C7C">
 		<Canvas
@@ -3325,8 +3344,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_D11AC5F7E07A56A7CA0B0ED5FDF32ECF5EB4BBE1E1F56C59643510B245F71A69">
 		<Canvas Width="512" Height="512">
@@ -3385,8 +3405,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_csharp"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_csharp"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_983E1510C16209E31C8E123FA093D2098565045A689E64F91377CE5032BE735C">
 		<Canvas Width="512" Height="512">
@@ -3622,8 +3643,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_custom"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_custom"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_8CB3F5851DE83DD298A3E27CFA5072B86E9A16EB651F77E93645C3387EF326A7">
 		<Canvas Width="512" Height="512">
@@ -3873,8 +3895,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_javascript"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_javascript"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_A0F4C361EA0B8477FD175ED26A109991BD5026C2E3DE4680187D851608145866">
 		<Canvas Width="512" Height="512">
@@ -4110,8 +4133,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_log"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_log"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_0BC93E81AA34A7D17056FDE206D9B99FA4E429B39A8DAA0EF8205014B1149AEF">
 		<Canvas Width="512" Height="512">
@@ -4550,8 +4574,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_sql"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_sql"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_CBBD098A69AAC23490010985BA413EDB214E25F78809031B2DCADCD39448DC21">
 		<Canvas Width="512" Height="512">
@@ -4801,8 +4826,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_text"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_text"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_8EA41FF12C46A656F4201AD2EE38949CA178A0C07AB4710593DD1AFC78AE4F6C">
 		<Canvas Width="512" Height="512">
@@ -5052,8 +5078,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_typescript"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_typescript"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_827D98DBB06368D5AEB9826C1CF716E6F1006C1FD6A514A0613951669E9997E9">
 		<Canvas Width="512" Height="512">
@@ -5289,8 +5316,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_code_xml"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_code_xml"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_340888EFA21F1CAE8FA82BD1A4EF7BC598ADB80C64AABBCA0F77736E398AA46C">
 		<Canvas Width="512" Height="512">
@@ -5655,8 +5683,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_contract"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_contract"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_A9DE80729C4524BF7C89520CD24D9A563EC963E9F198B7E2E8BA9DF084CFD65C">
 		<Canvas Width="512" Height="512">
@@ -5897,8 +5926,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_control_panel"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_control_panel"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_C39D3BBAD7FF7675A97A1DAF6259A10C85DE93C74981C03012ACEC365E221791">
 		<Canvas Width="512" Height="512">
@@ -6201,8 +6231,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_copy"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_copy"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_8C6872F5F5DD476023DC38B8C8E7A22B08639AF21885CD20752FA78836B53467">
 		<Canvas Width="512" Height="512">
@@ -6397,8 +6428,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_debug"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_debug"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_08EC0202C47761DF3A46EFC98C0A82E1231B66128448CE262EB6E1B2859EECA5">
 		<Canvas Width="512" Height="512">
@@ -6577,8 +6609,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_dictionary"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_dictionary"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_0833F2F97A52F5DAAC8533CE99C6F160CBB5C4B554384667CF666AE466A9E543">
 		<Canvas Width="512" Height="512">
@@ -6736,8 +6769,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_document_checks"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_document_checks"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_B9BDAD039606E4D4B144FF2549442C3BA617ACC173152DC9E5337B2EA7C38F52">
 		<Canvas Width="512" Height="512">
@@ -6838,8 +6872,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_document_gear"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_document_gear"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_00B249D28D3C17DD2C69407469BCD3C10F9FDDD043136731518F2AD81556FC7F">
 		<Canvas Width="512" Height="512">
@@ -6940,8 +6975,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_document_header"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_document_header"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_865BF53EBE9A9351852802EC1E4108D984673A7EE2EFFD3D48BA904920CF182B">
 		<Canvas Width="512" Height="512">
@@ -7190,8 +7226,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_document_title_refresh"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_document_title_refresh"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_802BD2912D9CF7393B96EB66807FD7838AB7530897ADF13C088ABE76F39DB2AD">
 		<Canvas Width="512" Height="512">
@@ -7297,8 +7334,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_dude3"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_dude3"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7336672FA1541A4F7A1DAE01FE421A48F1B93072BFBA835844C704A2E8B7A1CD">
 		<Canvas Width="512" Height="512">
@@ -7483,8 +7521,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_elements_branch2"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_elements_branch2"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_A91911F3919B673E62F395DF544476ECA2AB4FDD0A0D7D917A93B9460A4E3EA1">
 		<Canvas Width="512" Height="512">
@@ -7585,8 +7624,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_elements_tree"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_elements_tree"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_8194A54A3C3FB4F3BE5188364D6B1DF7D850DCCA818D20522BD58027CB726E37">
 		<Canvas Width="512" Height="512">
@@ -7794,8 +7834,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_eyeglasses"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_eyeglasses"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_5B9D4AE62E3B696B8F56B91B18153CDC2DF02CCD9B352ECF8C50A34A3050F6A6">
 		<Canvas Width="512" Height="512">
@@ -8067,8 +8108,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_face_scan"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_face_scan"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_F1308B4ADBD520C69594B3103942E3EC06EC94C8F5FBB1925FC1936B2DAB049F">
 		<Canvas Width="512" Height="512">
@@ -8240,8 +8282,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_find"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_find"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_40577C5DC0253EAD6256D4114B259EA1BC54E92DBF2BFED97A80DEA06980E21D">
 		<Canvas
@@ -8298,8 +8341,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_find_gray"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_find_gray"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_6EBB581D83C04B2C7E0FE48FB74C40D14B50B4885265AEEAD8EE52FB675143FF">
 		<Canvas Width="24" Height="24">
@@ -8378,8 +8422,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_find_text"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_find_text"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_D9DD916701EDFE9716ECBC76A373CB06CA6D37C577C804BC235E97FD875BB9B2">
 		<Canvas Width="512" Height="512">
@@ -8619,8 +8664,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_first_aid_box"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_first_aid_box"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_591274C211AB6ECB741613CF37A7362A03501395BB5A1B8D4B1CD22C23C612CC">
 		<Canvas Width="512" Height="512">
@@ -8764,8 +8810,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_folder3_document"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_folder3_document"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_85F21E0EECA36E25530FDB1D90853409F8BCCFD8E574779689A9FCBC36CFF2C4">
 		<Canvas Width="512" Height="512">
@@ -8889,8 +8936,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_folders"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_folders"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_5C77F417166BD5DBCD087382E2625A88F54EE7C0F6F65412524C1FCDC3B21CC8">
 		<Canvas Width="512" Height="512">
@@ -9017,8 +9065,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_folder_network"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_folder_network"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_DE182747F1E751846D3DD49D646F35DED4699D7209B6DCBED36D663AAB97E28A">
 		<Canvas Width="512" Height="512">
@@ -9134,8 +9183,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_folder_open_doc"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_folder_open_doc"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_830112E328B51142A63362759FE93382B7745B513AFE0A482DAC8C7D3F1B0C39">
 		<Canvas
@@ -9177,8 +9227,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_folder_open_doc_settings"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_folder_open_doc_settings"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_EC6A7039FD627BC33AAEE0A6BEDA1DCEFC7FDD4532581DC387CE9006FB623F47">
 		<Canvas
@@ -9242,8 +9293,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_font_decrease"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_font_decrease"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_B77C5661F1D275D061E625217B0878027D8E255977520C3B09A67223D1C05484">
 		<Canvas
@@ -9273,8 +9325,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_font_increase"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_font_increase"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_A212D9292388473C771D86AF6F720FA86CE375C06C37E434733C90659E1D62BC">
 		<Canvas
@@ -9304,8 +9357,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_fried_egg_bacon"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_fried_egg_bacon"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_DBC8150BB4CB733BCA8B5E5B58C3791FB26D0524C44DA06D86324BCD4C45AED0">
 		<Canvas Width="512" Height="512">
@@ -9515,8 +9569,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_gearwheel"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_gearwheel"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_267B537BCD1ACF6609E9044385A02E77027F50F126B0EA9F79867AC608D4926F">
 		<Canvas Width="512" Height="512">
@@ -9628,8 +9683,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_graduate"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_graduate"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_999BD2C4623BF84EC3A7DFC1F832A5ACFAC773707825429D8D829FB4B1B3D16D">
 		<Canvas Width="512" Height="512">
@@ -9887,8 +9943,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_hamburger"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_hamburger"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_1D704C92B3CF5B79AE2644625132F040D6C9E69692C58E69FD3456665F5C4691">
 		<Canvas Width="512" Height="512">
@@ -10200,8 +10257,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_Information_Grey"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_Information_Grey"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_0DE51757DD8F0CA962BB1460C6B2E6436AB967B301715FFAADA6F0EC4103C57D">
 		<Canvas Width="512" Height="512">
@@ -10345,8 +10403,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_list_style_numbered"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_list_style_numbered"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_E563929766C5A344E39DC28D6FCAD8DE8DA30557D0879D473BBCF2F0567DB617">
 		<Canvas Width="512" Height="512">
@@ -10478,8 +10537,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_magnifying_glass"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_magnifying_glass"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_CA97C14AE76BCC1BD5D8A442DAB7F05F5609713830C8F16217899D001AA25383">
 		<Canvas Width="512" Height="512">
@@ -10622,8 +10682,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_map_location2"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_map_location2"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_AB2D8C3AF38DC4D290D7DE877B43AE1C5F6DB6764CFA73ECCC40C8FBA08CACA6">
 		<Canvas Width="512" Height="512">
@@ -11154,8 +11215,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_navigate_left2"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_navigate_left2"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_395CF710D9CCF711E2B5B7E18F0A3CEE3334CB9C4A6F6E56468852D51FF28B88">
 		<Canvas Width="512" Height="512">
@@ -11216,8 +11278,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_navigate_right2"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_navigate_right2"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_ED7D0C307CD88D60262273AB68E337629632CE6B1A96E023B4705CA09A31CF48">
 		<Canvas Width="512" Height="512">
@@ -11278,8 +11341,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_nav_plain"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_nav_plain"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_9940E28370CE32450D1965DF8C855B204FB102140828DCBD7D9F99384D2D5DCC">
 		<Canvas Width="512" Height="512">
@@ -11308,8 +11372,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_objects"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_objects"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_AF988FE2D424E84333FAC7FB5FE98851765D9D8EC397E519D3FAA605CC9DCB6C">
 		<Canvas Width="512" Height="512">
@@ -11454,8 +11519,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_objects_exchange"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_objects_exchange"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_201C09D34F648B5FBF5BF694C92ADA9CEA58943929B5FB4F731DA5955C611326">
 		<Canvas Width="512" Height="512">
@@ -11914,8 +11980,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_painters_palette"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_painters_palette"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_44C0E31B071E3FAC087B73A1F9519C5DFFBC9CE1C8EA6E1D7FDBC7E67636B791">
 		<Canvas Width="512" Height="512">
@@ -12106,8 +12173,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_photo_portrait"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_photo_portrait"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_F9B922AB1B2A5D8E6A48D2F085BD13BC6EBE69C4D11786C7B19000C541946FFA">
 		<Canvas Width="512" Height="512">
@@ -12776,8 +12844,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_radar"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_radar"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_B14C21B57937084D51604A177C60525F2094A6BF3A574AC466ECC459F498E330">
 		<Canvas Width="512" Height="512">
@@ -12982,8 +13051,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_reticle"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_reticle"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_35F542335CF25841469BAA04DE3E12A6EF975162FAD9F7351D09E13ACA1D466F">
 		<Canvas Width="512" Height="512">
@@ -13272,8 +13342,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_settings"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_settings"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_EE1D82E67BF8CE5C7D35B0880FE214BC9010D1F24BF7F9C363E023F2233D65ED">
 		<Canvas
@@ -13313,8 +13384,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_shield"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_shield"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_48C9C9ADAB3218E1C6388202C33258781E7D115BD6AD11D28CC7363632495A5F">
 		<Canvas Width="512" Height="512">
@@ -13375,8 +13447,113 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_spellcheck"
+		x:Key="Icon_sort_az_ascending"
 		x:Shared="False"
+		Stretch="Uniform"
+		Tag="SHA256_3828767E0E96E9A1D070E24DCC987AEC0CB050728B00123B06750D3472CFBFCB">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="16,0" EndPoint="208,448">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#0E76B2" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-1}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M16 384l80 0l0 -384l96 0l0 384l80 0l-128 128z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="#FF51616F"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M415 198l-67.5 0l-12 38l-52.5 0l75 -204l46 0l75.5 204l-53 0z M359 160l44 0l-22 -71z M366 442l97.5 0l0 38l-159 0l0 -26l98.5 -138l-98 0l0 -38l158.5 0l0 25z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		x:Key="Icon_sort_za_descending"
+		x:Shared="False"
+		Stretch="Uniform"
+		Tag="SHA256_F2126186EE1A37F12148443E2E75246B62F4E74FD31B1D275BD456FF85A71BA0">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="16,0" EndPoint="208,448">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#0E76B2" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-1}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M16 384l80 0l0 -384l96 0l0 384l80 0l-128 128z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="#FF51616F"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M415 442l-67.5 0l-12 38l-52.5 0l75 -204l46 0l75.5 204l-53 0z M366 196l97.5 0l0 38l-159 0l0 -26l98.5 -138l-98 0l0 -38l158.5 0l0 25z M359 404l44 0l-22 -71z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_spellcheck"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_003638D462492135D8ACA1078C27D85DE851158BB3973EDE84ACD3BF8F25C198">
 		<Canvas Width="512" Height="512">
@@ -13608,8 +13785,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_task"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_task"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_6C9DEC0BBBEDC9D28D11690D277C20CEB9DB3097D72D40219B4287FF707B4055">
 		<Canvas
@@ -13661,8 +13839,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_task_add"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_task_add"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_F8481CF9EC2ADFCAB217DDCAF39DCCC99D970A25B04C3817B59641970AB200BB">
 		<Canvas
@@ -13733,8 +13912,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_teacher"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_teacher"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_32EA8205F304B702958EB571AC286C3BFD2F7E9DC138FFED6CC05628794D15E0">
 		<Canvas Width="512" Height="512">
@@ -13963,8 +14143,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_Template"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_Template"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_C242211068B0A0C66AEF948743ADDD31B4FD058F0F98DF5C5241DCFF8D1BABCD">
 		<Canvas
@@ -14023,8 +14204,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_todo_list"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_todo_list"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_ACEC40B844B77CCD18F1416647EF735DA1EEF2D52EBDC476F42A74FDA3AE08FC">
 		<Canvas
@@ -14089,8 +14271,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_todo_list_add"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_todo_list_add"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_C71B4EDDD7A6BD2B33994E7EFA49BF8AE6DF357D9E365224A410EA45190ADB3B">
 		<Canvas
@@ -14238,8 +14421,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_todo_list_time"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_todo_list_time"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7BF2D4FB50538611129D6DBCB0E0A99C665FBEF1E7EFFBFF6874A40D62F46FBD">
 		<Canvas
@@ -14417,8 +14601,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_translate"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_translate"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7D65CC63F2542DDF8C7D95FCB2B0CDA6AF7DCD61296CA2C1DAA11BD23C21C6DE">
 		<Canvas Width="512" Height="512">
@@ -14519,8 +14704,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_user"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_user"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_313FF0F3A838BE1784D02533CCAF2C1C5DBC5DBA38ADF950AFB9FD74EB70AFDC">
 		<Canvas Width="512" Height="512">
@@ -15520,8 +15706,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_user_add"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_user_add"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_C18F137344C5CEDDC49DCFD94CBA9DC1DA4421BE77D842D7C0180A341B3B9C7A">
 		<Canvas
@@ -15769,8 +15956,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_user_group"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_user_group"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_F789819644CCFD14648C32DB3E208460414583081A93A51CE75516CBE619A8FD">
 		<Canvas
@@ -15805,8 +15993,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_user_group_emoticon"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_user_group_emoticon"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_E91EC221351DD14D24F4D53122CA61EEF305375086725EEB214A7DA6B0EFE8CF">
 		<Canvas
@@ -16043,8 +16232,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_warning"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_warning"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_81D2BCD822AC4E451038CDD83E28081D175D0C25763E7A2FC02C1D5496D1755A">
 		<Canvas
@@ -16079,8 +16269,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_window"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_window"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_A827A34EDD148638167FCF41DE6BF3437AA84223D65767FA8A8A7B0BE32F1623">
 		<Canvas Width="512" Height="512">
@@ -16152,8 +16343,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_windows"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_windows"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7E59E09004899A70E019803524BA9D762257494FEA2AFA8ACA7B5B3CACB17FFE">
 		<Canvas Width="512" Height="512">
@@ -16301,8 +16493,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_window_panel_left"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_window_panel_left"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_DDE6F0008083B6C0E72096CC1E889C04CB40C90E6317C38D9EC84E959300C6C4">
 		<Canvas
@@ -16347,8 +16540,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_window_panel_top"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_window_panel_top"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_0E6CFAD4F9DD54CD1D598A4057157B13B426EFCB813417BE581EB479686E2DA5">
 		<Canvas
@@ -16452,8 +16646,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_window_split_hor"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_window_split_hor"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_7A2DA74DE2C3584BC56BB4060C96EDBEC8B59118C00F4632039817616FB02F9C">
 		<Canvas Width="512" Height="512">

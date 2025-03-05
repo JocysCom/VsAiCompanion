@@ -59,11 +59,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 		MediaPlayer mediaPlayer = new MediaPlayer();
 		// Spark images.
-		BitmapImage bitmapImageYellow = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/SparkYellow.png"));
-		BitmapImage bitmapImageBrown = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/SparkBrown.png"));
-		BitmapImage bitmapImageBlue = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/SparkBlue.png"));
-		BitmapImage bitmapImageLip0 = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/LipTop0.png"));
-		BitmapImage bitmapImageLip1 = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/LipTop1.png"));
+		BitmapImage bitmapImageYellow = new BitmapImage(AppHelper.GetResourceUri("Resources/Images/SparkYellow.png"));
+		BitmapImage bitmapImageBrown = new BitmapImage(AppHelper.GetResourceUri("Resources/Images/SparkBrown.png"));
+		BitmapImage bitmapImageBlue = new BitmapImage(AppHelper.GetResourceUri("Resources/Images/SparkBlue.png"));
+		BitmapImage bitmapImageLip0 = new BitmapImage(AppHelper.GetResourceUri("Resources/Images/LipTop0.png"));
+		BitmapImage bitmapImageLip1 = new BitmapImage(AppHelper.GetResourceUri("Resources/Images/LipTop1.png"));
 		// Animations.
 		StringAnimationUsingKeyFrames animation_TXT = new StringAnimationUsingKeyFrames();
 		StringAnimationUsingKeyFrames animation_PTH = new StringAnimationUsingKeyFrames();

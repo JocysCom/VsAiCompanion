@@ -1,7 +1,8 @@
-2025-02-10 v1.17.8
+2025-03-01 v1.17.9
 
 - Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
 - New: Clear Search Button.
+- New: Buttons to sort the lists.
 - Update: Improved list search using the `name:`, `body:`, and `date:` tokens.
 - Update: List and process plugin functions.
 
