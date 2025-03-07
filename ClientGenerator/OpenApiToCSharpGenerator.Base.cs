@@ -36,26 +36,32 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Exclude all aliases.
 			FoundClasses = FoundClasses.Except(schemaAliasMapping.Keys).ToList();
 			PopulateBaseProperties();
+			var enumsPath = Path.Combine(outputDirectory, "Enums");
+			var modelsPath = Path.Combine(outputDirectory, "Models");
+			if (!Directory.Exists(enumsPath))
+				Directory.CreateDirectory(enumsPath);
+			if (!Directory.Exists(modelsPath))
+				Directory.CreateDirectory(modelsPath);
 			// Iterate through enums
-			FilesBefore = Directory.GetFiles(outputDirectory + "\\Enums", "*.cs").ToList();
+			FilesBefore = Directory.GetFiles(enumsPath, "*.cs").ToList();
 			foreach (var schema in FoundEnums)
 			{
 				var id = schema.Reference.Id;
 				var csharpClassContent = GenerateEnum(schema);
-				string filePath = Path.Combine(outputDirectory + "\\Enums", GetCSharpClassName(id) + ".cs");
-				WriteHelper.SaveToFile(filePath, csharpClassContent);
+				string filePath = Path.Combine(enumsPath, GetCSharpClassName(id) + ".cs");
+				WriteHelper.SaveToFile(filePath, csharpClassContent, true);
 			}
-			CleanupFiles(outputDirectory + "\\Enums");
+			CleanupFiles(enumsPath);
 			// Iterate through classes, noting aliases and generating classes
-			FilesBefore = Directory.GetFiles(outputDirectory + "\\Models", "*.cs").ToList();
+			FilesBefore = Directory.GetFiles(modelsPath, "*.cs").ToList();
 			foreach (var schema in FoundClasses)
 			{
 				var id = schema.Reference.Id;
 				var csharpClassContent = GenerateClass(schema);
-				string filePath = Path.Combine(outputDirectory + "\\Models", GetCSharpClassName(id) + ".cs");
-				WriteHelper.SaveToFile(filePath, csharpClassContent);
+				string filePath = Path.Combine(modelsPath, GetCSharpClassName(id) + ".cs");
+				WriteHelper.SaveToFile(filePath, csharpClassContent, true);
 			}
-			CleanupFiles(outputDirectory + "\\Models");
+			CleanupFiles(modelsPath);
 		}
 
 		public List<string> FilesBefore = new List<string>();
@@ -305,7 +311,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			"case", "catch", "char", "checked", "class", "const",
 			"continue", "decimal", "default", "delegate", "do", "double",
 			"else", "enum", "event", "explicit", "extern", "false",
-			"finally", "fixed", "float", "for", "foreach", "goto",
+			"file", "finally", "fixed", "float", "for", "foreach", "goto",
 			"if", "implicit", "in", "int", "interface", "internal",
 			"is", "lock", "long", "namespace", "new", "null",
 			"object", "operator", "out", "override", "params", "private",
