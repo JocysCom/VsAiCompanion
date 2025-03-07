@@ -78,6 +78,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Margin = new Thickness(3, 3, 0, 3)
 					};
 					button.Click += CodeButton_Click;
+					var grid = new Grid();
+					button.Content = grid;
 
 					var iconText = languageItem.Value.Split(';')[0];
 					var iconBack = languageItem.Value.Split(';')[1];
@@ -86,10 +88,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					{
 						Margin = new Thickness(0, 0, 0, 0),
 						Focusable = false,
-						Content = CreateSvgIcon(iconText, iconBack)
+						Content = CreateSvgIcon(text: "", iconBack)
 					};
-					button.Content = iconControl;
-
+					grid.Children.Add(iconControl);
+					var textBlock = new TextBlock
+					{
+						Text = iconText,
+						Foreground = Brushes.White,
+						FontWeight = FontWeights.Bold,
+						FontSize = 6,
+						TextAlignment = TextAlignment.Center,
+						VerticalAlignment = VerticalAlignment.Center,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Padding = new Thickness(0),
+						Margin = new Thickness(0, 0, 0, 1),
+					};
+					grid.Children.Add(textBlock);
 					// Add context help for the button.
 					AppHelper.AddHelp(button, $"Wrap selection into `{iconText}` code block. Hold CTRL to paste from your clipboard as an `{iconBack}` code block.");
 					ExtraButtonsPanel.Children.Add(button);
@@ -134,8 +148,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var text = $"{prefix}{block}{suffix}";
 			AppHelper.InsertText(box, text, true, false);
 			var newIndex = string.IsNullOrEmpty(clipboardText)
-			? caretIndex + prefix.Length
-			: caretIndex + text.Length;
+				? caretIndex + prefix.Length
+				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
 		}
 

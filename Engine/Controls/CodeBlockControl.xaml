@@ -33,7 +33,19 @@
 				Click="CodeButton_Click"
 				Tag="Custom"
 				ToolTip="Custom">
-				<ContentControl Content="{StaticResource Icon_code_custom}" Focusable="False" />
+				<Grid>
+					<ContentControl Content="{StaticResource Icon_code_custom}" Focusable="False" />
+					<TextBlock
+						x:Name="CustomTextBlock"
+						Margin="0,0,0,1"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						FontSize="6"
+						FontWeight="Bold"
+						Foreground="White"
+						Text="" />
+				</Grid>
+
 			</Button>
 			<StackPanel x:Name="ExtraButtonsPanel" Margin="0,0,3,0" Orientation="Horizontal" />
 		</StackPanel>
