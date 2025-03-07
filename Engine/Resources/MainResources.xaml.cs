@@ -140,6 +140,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Use_Maximum_Context_Name => FindResource(nameof(main_Use_Maximum_Context_Name));
         public static string main_Use_System_Message_Help => FindResource(nameof(main_Use_System_Message_Help));
         public static string main_Use_System_Message_Name => FindResource(nameof(main_Use_System_Message_Name));
+        public static string main_Use_Monotype_Font => FindResource(nameof(main_Use_Monotype_Font));
+        public static string main_Use_Monotype_Font_Help => FindResource(nameof(main_Use_Monotype_Font_Help));
         public static string main_Text_Placeholder => FindResource(nameof(main_Text_Placeholder));
         public static string main_Placeholder => FindResource(nameof(main_Placeholder));
         public static string main_Temperature_Creativity => FindResource(nameof(main_Temperature_Creativity));

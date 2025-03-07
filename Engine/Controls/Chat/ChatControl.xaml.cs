@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
@@ -297,6 +298,40 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		}
 
 		#region RISEN Framework
+
+		/// <summary>
+		/// Updates a set of text boxes to use either a monospaced font or the system default font.
+		/// </summary>
+		/// <param name="enable">
+		/// If true, text boxes will use the monospaced font "Consolas"; otherwise, they revert to the system default font.
+		/// </param>
+		public void EnableMonotypeFont(bool enable)
+		{
+			// Define the fonts.
+			FontFamily monotypeFont = new FontFamily("Consolas");
+			FontFamily defaultFont = SystemFonts.MessageFontFamily;
+			FontFamily targetFont = enable ? monotypeFont : defaultFont;
+			// Array of text boxes to update.
+			TextBox[] boxes = new[]
+			{
+				DataTextBox.PART_ContentTextBox,
+				DataInstructionsTextBox.PART_ContentTextBox,
+				RisenRoleTextBox.PART_ContentTextBox,
+				RisenInstructionsTextBox.PART_ContentTextBox,
+				RisenStepsTextBox.PART_ContentTextBox,
+				RisenEndGoalTextBox.PART_ContentTextBox,
+				RisenNarrowingTextBox.PART_ContentTextBox,
+			};
+			foreach (TextBox box in boxes)
+			{
+				if (box == null)
+					continue;
+				// Only update if the current font is different.
+				if (!string.Equals(box.FontFamily?.Source, targetFont.Source, StringComparison.OrdinalIgnoreCase))
+					// Use SetCurrentValue to update without interfering with bindings.
+					box.SetCurrentValue(Control.FontFamilyProperty, targetFont);
+			}
+		}
 
 		void EnableRisen(bool enable)
 		{

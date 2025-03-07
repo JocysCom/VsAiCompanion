@@ -234,6 +234,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseAvatarVoice { get => _UseAvatarVoice; set => SetProperty(ref _UseAvatarVoice, value); }
 		bool _UseAvatarVoice;
 
+		/// <summary>Show Avatar</summary>
+		[DefaultValue(false)]
+		public bool UseMonotypeFont { get => _UseMonotypeFont; set => SetProperty(ref _UseMonotypeFont, value); }
+		bool _UseMonotypeFont;
+
 		#region Plugins
 
 		[DefaultValue(false)]

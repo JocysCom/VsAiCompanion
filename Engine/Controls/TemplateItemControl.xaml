@@ -327,6 +327,12 @@
 					Content="{StaticResource main_RISEN}"
 					IsChecked="{Binding ShowRisen}" />
 				<CheckBox
+					Name="MonoFontCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Use_Monotype_Font_Help}"
+					AutomationProperties.Name="{StaticResource main_Use_Monotype_Font}"
+					Content="{StaticResource main_Use_Monotype_Font}"
+					IsChecked="{Binding UseMonotypeFont}" />
+				<CheckBox
 					Name="ShowPromptingCheckBox"
 					AutomationProperties.HelpText="{StaticResource main_Show_Prompting_Toolbar_Help}"
 					AutomationProperties.Name="{StaticResource main_Show_Prompting_Toolbar_Name}"

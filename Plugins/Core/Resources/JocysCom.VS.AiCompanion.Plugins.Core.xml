@@ -365,12 +365,16 @@
             </summary>
             <param name="paths">List of files to read from.</param>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles(System.String[],System.Boolean)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles(System.String[],System.Boolean,System.Boolean)">
             <summary>
             Read information and contents of files.
             </summary>
-            <param name="paths">The list of files to read from.</param>
-            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time); `false` for metadata only.</param>
+            <param name="paths">The list of files or folders to read from. If a path points to a folder, 
+            all files within that folder will be processed.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time); 
+            `false` for metadata only.</param>
+            <param name="recursive">When true, process subdirectories recursively when a folder is provided.</param>
+            <returns>A list of DocItem objects containing the requested file information.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileText(System.String,System.String)">
             <summary>
@@ -502,6 +506,14 @@
             Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, .pdf, .htm, .html and .pdf.
             </summary>
             <param name="path">The path of the file to be read.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.ExpandPathsToFiles(System.String[],System.Boolean)">
+            <summary>
+            Expands a list of paths (files or folders) to a list of file paths.
+            </summary>
+            <param name="paths">Paths to files or folders. Folder paths will be expanded to include all contained files.</param>
+            <param name="recursive">When true, include files in subdirectories of any folder paths.</param>
+            <returns>A list of file paths.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.FunctionInvocationContext">
             <summary>

@@ -96,6 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			UpdateAvatarControl();
+			UpdateMonotypeFont();
 		}
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)
@@ -412,6 +413,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				RestoreTabSelection();
 			ChatPanel.MonitorTextBoxSelections(true);
 			UpdateAvatarControl();
+			UpdateMonotypeFont();
 		}
 
 		#endregion
@@ -444,6 +446,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				case nameof(TemplateItem.ShowAvatar):
 					UpdateAvatarControl();
 					break;
+				case nameof(TemplateItem.UseMonotypeFont):
+					UpdateMonotypeFont();
+					break;
 				default:
 					break;
 			}
@@ -452,6 +457,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void UpdateAvatarControl()
 		{
 			Global.UpdateAvatarControl(ChatPanel.AvatarPanelBorder, Item?.ShowAvatar == true);
+		}
+
+		public void UpdateMonotypeFont()
+		{
+			ChatPanel.EnableMonotypeFont(Item?.UseMonotypeFont == true);
 		}
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
@@ -478,6 +488,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			RestoreTabSelection();
 			UpdateAvatarControl();
+			UpdateMonotypeFont();
 			// Workaround after resetting settings.
 			if (RebindItemOnLoad)
 			{
