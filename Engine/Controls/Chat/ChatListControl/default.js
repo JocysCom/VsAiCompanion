@@ -698,25 +698,65 @@ function parseMarkdown(body, boxedCode) {
 	// Create a custom renderer
 	const renderer = new marked.Renderer();
 
-	// Store the original code function
-	const originalCodeFunction = renderer.code;
+	// Override code rendering function for marked v13+
+	renderer.code = function (code, infostring, escaped) {
+		// Extract the actual code content
+		let codeText;
+		let language = '';
 
-	// Override code rendering function
-	renderer.code = function (code, language, isEscaped) {
-		// Convert language to lowercase if it exists
-		language = language ? language.toLowerCase() : '';
+		// Handle the code parameter based on its type
+		if (typeof code === 'string') {
+			codeText = code;
+			language = infostring || '';
+		} else if (typeof code === 'object' && code !== null) {
+			// Extract language from the code object if available
+			language = (code.lang || infostring || '').toLowerCase();
+
+			// Extract text from the token object
+			if (typeof code.text === 'string') {
+				codeText = code.text;
+			} else if (typeof code.raw === 'string') {
+				// Remove code fence markers if present
+				const rawText = code.raw;
+				const fenceMatch = /^```.*?\n([\s\S]*?)```$/m.exec(rawText);
+				if (fenceMatch) {
+					codeText = fenceMatch[1];
+				} else {
+					codeText = rawText;
+				}
+			} else {
+				// Last resort: convert to string
+				codeText = JSON.stringify(code);
+				console.warn("Code block content had to be stringified:", codeText.substring(0, 100));
+			}
+		} else {
+			codeText = String(code || '');
+			language = infostring || '';
+		}
+
+		// Convert language to lowercase
+		language = language.toLowerCase();
 
 		// Remove trailing spaces from the code
-		code = code.replace(spacesRx, "");
+		const cleanedCode = codeText.replace(spacesRx, "");
+
+		console.log("Processing code block:", {
+			language: language,
+			codePreview: cleanedCode.substring(0, 50),
+			hasPrismLanguage: language && Prism.languages[language] ? true : false
+		});
 
 		// Apply syntax highlighting with Prism if language is specified
-		let highlightedCode = code;
+		let highlightedCode = cleanedCode;
 		if (language && Prism.languages[language]) {
 			try {
-				highlightedCode = Prism.highlight(code, Prism.languages[language], language);
+				highlightedCode = Prism.highlight(cleanedCode, Prism.languages[language], language);
+				console.log("Highlighting successful for language:", language);
 			} catch (e) {
 				console.error("Prism highlighting error:", e);
 			}
+		} else {
+			console.log("No syntax highlighting applied - language not supported or not specified");
 		}
 
 		// Create HTML for the code block
@@ -739,24 +779,69 @@ function parseMarkdown(body, boxedCode) {
 	// Set marked options
 	marked.setOptions({
 		renderer: renderer,
-		// Tell marked not to use its built-in highlight function
-		highlight: null,
-		// Other options that might be helpful
+		highlight: null, // Disable built-in highlighting
 		gfm: true,
 		breaks: true,
 		pedantic: false,
-		sanitize: false,
+		xhtml: false,
 		smartLists: true,
 		smartypants: false
 	});
 
 	// Parse the markdown and return the HTML
-	return marked.parse(body);
+	try {
+		return marked.parse(body);
+	} catch (e) {
+		console.error("Marked parsing error:", e);
+		return "<p>" + body.replace(/\n/g, "<br/>") + "</p>";
+	}
 }
+
+// Separate debugging function that doesn't reference external variables
+function debugMarkedTokens() {
+	console.log("Running marked debug...");
+
+	// Create a test case
+	const testMarkdown = "```javascript\nconst x = 1;\n```";
+
+	// Create a new renderer for debugging
+	const debugRenderer = new marked.Renderer();
+
+	// Override the code method for debugging
+	debugRenderer.code = function (code, infostring, escaped) {
+		console.log("Debug - Code block received:");
+		console.log("Type:", typeof code);
+		console.log("Value:", code);
+		if (typeof code === 'object') {
+			console.log("Properties:", Object.keys(code));
+		}
+		console.log("Infostring:", infostring);
+		console.log("Escaped:", escaped);
+
+		// Return simple HTML
+		return '<pre><code>' + (typeof code === 'string' ? code : JSON.stringify(code)) + '</code></pre>';
+	};
+
+	// Parse with debug renderer
+	const originalOptions = marked.getDefaults();
+	marked.setOptions({ renderer: debugRenderer });
+	marked.parse(testMarkdown);
+
+	// Restore original options
+	marked.setOptions(originalOptions);
+
+	console.log("Debug complete");
+}
+
+// Add this to your window.onload function
+window.addEventListener('DOMContentLoaded', function () {
+	// Wait a moment for everything to initialize
+	setTimeout(debugMarkedTokens, 1000);
+});
 
 var isInsideApp = false;
 
-window.onload = function () {
+window.addEventListener('load', function () {
 	console.log("window.onload");
 	if (
 		typeof window.chrome !== 'undefined' &&
@@ -787,7 +872,7 @@ window.onload = function () {
 
 	SimulateMessages();
 	SimulateStreaming();
-}
+});
 
 //#region Examples
 
