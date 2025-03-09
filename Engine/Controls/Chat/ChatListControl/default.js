@@ -84,6 +84,8 @@ function UpdateMessageStatus(messageId, status) {
 	statusTextEl.textContent = status;
 	// Show/Hide the status element
 	SetVisible(statusEl, !isEmpty(status));
+	// After updating the message, render any math expressions
+	renderMathExpressions();
 }
 
 function DeleteMessage(messageId) {
@@ -678,7 +680,7 @@ function MessageAction(button, id, action) {
 }
 
 /**
- * Parses markdown text and converts it to HTML with syntax highlighting
+ * Parses markdown text and converts it to HTML with syntax highlighting and math support
  * @param {string} body - The markdown text to parse
  * @param {boolean} [boxedCode=false] - Whether to place code blocks in expandable boxes
  * @returns {string} The HTML representation of the markdown
@@ -695,11 +697,23 @@ function parseMarkdown(body, boxedCode) {
 	var spacesRx = new RegExp("\\s+$", "g");
 	body = body.replace(spacesRx, "");
 
+	// Process inline math expressions ($...$) before markdown parsing
+	// We'll replace them with placeholders and restore later
+	let mathExpressions = [];
+	body = body.replace(/\$([^\$]+?)\$/g, function (match, expression) {
+		const id = mathExpressions.length;
+		mathExpressions.push(expression);
+		return `MATH_EXPRESSION_${id}_PLACEHOLDER`;
+	});
+
 	// Create a custom renderer
 	const renderer = new marked.Renderer();
 
 	// Override code rendering function for marked v13+
 	renderer.code = function (code, infostring, escaped) {
+		// Existing code rendering logic...
+		// [Keep your existing implementation here]
+
 		// Extract the actual code content
 		let codeText;
 		let language = '';
@@ -790,7 +804,16 @@ function parseMarkdown(body, boxedCode) {
 
 	// Parse the markdown and return the HTML
 	try {
-		return marked.parse(body);
+		let html = marked.parse(body);
+
+		// Restore math expressions with rendered KaTeX/MathJax
+		html = html.replace(/MATH_EXPRESSION_(\d+)_PLACEHOLDER/g, function (match, id) {
+			const expression = mathExpressions[parseInt(id)];
+			// This will be replaced with actual rendering once KaTeX/MathJax is loaded
+			return `<span class="math-inline" data-math="${EscapeHtml(expression)}">$${expression}$</span>`;
+		});
+
+		return html;
 	} catch (e) {
 		console.error("Marked parsing error:", e);
 		return "<p>" + body.replace(/\n/g, "<br/>") + "</p>";
@@ -832,12 +855,6 @@ function debugMarkedTokens() {
 
 	console.log("Debug complete");
 }
-
-// Add this to your window.onload function
-window.addEventListener('DOMContentLoaded', function () {
-	// Wait a moment for everything to initialize
-	setTimeout(debugMarkedTokens, 1000);
-});
 
 var isInsideApp = false;
 
@@ -1022,6 +1039,8 @@ function AppendMessageBody(messageId, newText, autoScroll) {
 	var currentMessageTextBody = currentMessageBodies[messageId];
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
+	// After appending content, render any math expressions
+	renderMathExpressions();
 	// Scroll if needed
 	if (autoScroll !== true || autoScroll !== false)
 		autoScroll = true;
@@ -1061,3 +1080,49 @@ function ApplyDiffference(el, newHtml) {
 }
 
 // #endregion
+
+//#region KaText
+
+/**
+ * Renders all math expressions on the page using KaTeX
+ */
+function renderMathExpressions() {
+	return; // Disable KaTeX rendering for now
+	if (typeof katex === 'undefined') {
+		console.warn('KaTeX library not loaded yet. Math expressions will not be rendered.');
+		return;
+	}
+
+	const mathElements = document.querySelectorAll('.math-inline');
+	mathElements.forEach(element => {
+		try {
+			const expression = element.getAttribute('data-math');
+			katex.render(expression, element, {
+				throwOnError: false,
+				displayMode: false
+			});
+		} catch (e) {
+			console.error('KaTeX rendering error:', e);
+			// Keep the original format if rendering fails
+			element.textContent = '$' + element.getAttribute('data-math') + '$';
+		}
+	});
+}
+
+// Add this to your window.onload function
+window.addEventListener('DOMContentLoaded', function () {
+	// Wait a moment for everything to initialize
+	setTimeout(debugMarkedTokens, 1000);
+	// Add a listener to render math when KaTeX is loaded
+	if (typeof katex !== 'undefined') {
+		renderMathExpressions();
+	} else {
+		// If KaTeX isn't loaded yet, wait for it
+		window.addEventListener('load', function () {
+			setTimeout(renderMathExpressions, 500); // Give KaTeX time to initialize
+		});
+	}
+});
+
+
+//#endregion

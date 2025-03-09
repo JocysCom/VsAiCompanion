@@ -10,26 +10,24 @@ html, body {
 }
 
 .chat-message-body > think:first-of-type,
-.chat-message-body > p:first-child > think:first-of-type
- {
-  display: block;
-  margin: 0.5em 0;
-  padding: 0.5em 0.5em 0.5em 2em; /* extra left padding to leave space for the icon */
-  border: 2px dotted #add8e6; /* Pastel blue dotted border */
-  background-color: rgba(255, 255, 255, 0.1); /* 10% white background */
-  border-radius: 0.5em;
-  position: relative;
+.chat-message-body > p:first-child > think:first-of-type {
+	display: block;
+	margin: 0.5em 0;
+	padding: 0.5em 0.5em 0.5em 2em; /* extra left padding to leave space for the icon */
+	border: 2px dotted #add8e6; /* Pastel blue dotted border */
+	background-color: rgba(255, 255, 255, 0.1); /* 10% white background */
+	border-radius: 0.5em;
+	position: relative;
 }
 
-.chat-message-body > think:first-of-type::before,
-.chat-message-body > p:first-child > think:first-of-type::before
- {
-  content: "💭"; /* thinking bubble emoji as an indicator */
-  position: absolute;
-  left: 0.3em;
-  top: 0.2em;
-  font-size: 1.2em;
-}
+	.chat-message-body > think:first-of-type::before,
+	.chat-message-body > p:first-child > think:first-of-type::before {
+		content: "💭"; /* thinking bubble emoji as an indicator */
+		position: absolute;
+		left: 0.3em;
+		top: 0.2em;
+		font-size: 1.2em;
+	}
 
 /* Information (system message) */
 .color-Information {
@@ -167,26 +165,28 @@ html, body {
 }
 
 .chat-message-status {
-    margin-left: 0.5em;
-    color: gray;
-    animation: opacitySlide 1.5s infinite linear;
+	margin-left: 0.5em;
+	color: gray;
+	animation: opacitySlide 1.5s infinite linear;
 }
 
 .status-text {
-    color: gray;
-    animation: opacitySlide 1.5s infinite linear;
+	color: gray;
+	animation: opacitySlide 1.5s infinite linear;
 }
 
 @keyframes opacitySlide {
-    0% {
-        opacity: 0.3;
-    }
-    50% {
-        opacity: 0.8;
-    }
-    100% {
-        opacity: 0.3;
-    }
+	0% {
+		opacity: 0.3;
+	}
+
+	50% {
+		opacity: 0.8;
+	}
+
+	100% {
+		opacity: 0.3;
+	}
 }
 
 code {
@@ -325,3 +325,29 @@ p {
 		padding: 0;
 		margin: 0;
 	}
+
+/* Styling for math expressions */
+.math-display {
+	display: block;
+	text-align: center;
+	margin: 1em 0;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.math-inline {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+/* Ensure KaTeX renders properly within our UI */
+.katex-display {
+	margin: 0.5em 0;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+/* Prevent layout shifts during KaTeX rendering */
+.katex-html {
+	display: none;
+}
