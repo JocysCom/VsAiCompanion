@@ -62,10 +62,12 @@ function InsertMessage(message, autoScroll) {
 	var chatLog = document.getElementById('chatLog');
 	var messageHTML = CreateMessageHtml(message)
 	chatLog.insertAdjacentHTML('beforeend', messageHTML);
+	UpdateRegenerateButtons();
+	// After appending content, render any math expressions
+	renderMathExpressions();
 	// Scroll to the bottom of the chatLog div.
 	if (autoScroll && keepScrollOnTheBottom)
 		ScrollToBottom();
-	UpdateRegenerateButtons();
 }
 
 function isEmpty(s) {
@@ -84,8 +86,6 @@ function UpdateMessageStatus(messageId, status) {
 	statusTextEl.textContent = status;
 	// Show/Hide the status element
 	SetVisible(statusEl, !isEmpty(status));
-	// After updating the message, render any math expressions
-	renderMathExpressions();
 }
 
 function DeleteMessage(messageId) {
@@ -121,6 +121,8 @@ function UpdateMessage(message, autoScroll) {
 		chatLog.insertAdjacentHTML('beforeend', messageHTML);
 	}
 	UpdateRegenerateButtons();
+	// After appending content, render any math expressions
+	renderMathExpressions();
 	// Scroll if needed
 	if (autoScroll === undefined)
 		autoScroll = true;
@@ -481,6 +483,8 @@ function UpdateMessageDiff(messageId, responseDiff) {
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
 	previousMessageTextBody = currentMessageTextBody;
+	// Render math expressions after updating content
+	renderMathExpressions();
 }
 
 function ApplyDiffference(el, newHtml) {
@@ -697,13 +701,56 @@ function parseMarkdown(body, boxedCode) {
 	var spacesRx = new RegExp("\\s+$", "g");
 	body = body.replace(spacesRx, "");
 
-	// Process inline math expressions ($...$) before markdown parsing
-	// We'll replace them with placeholders and restore later
+	// First, identify and protect code blocks from math processing
+	let codeBlocks = [];
+	let processedBody = body.replace(/```([\s\S]*?)```/g, function (match) {
+		const id = codeBlocks.length;
+		codeBlocks.push(match);
+		return `CODE_BLOCK_PLACEHOLDER_${id}`;
+	});
+
+	// Also protect inline code
+	let inlineCode = [];
+	processedBody = processedBody.replace(/`([^`]+)`/g, function (match) {
+		const id = inlineCode.length;
+		inlineCode.push(match);
+		return `INLINE_CODE_PLACEHOLDER_${id}`;
+	});
+
+	// Now process math expressions on the protected text
 	let mathExpressions = [];
-	body = body.replace(/\$([^\$]+?)\$/g, function (match, expression) {
+
+	// Process display math expressions ($$...$$) first
+	processedBody = processedBody.replace(/\$\$([^\$]+?)\$\$/g, function (match, expression) {
 		const id = mathExpressions.length;
-		mathExpressions.push(expression);
-		return `MATH_EXPRESSION_${id}_PLACEHOLDER`;
+		mathExpressions.push({
+			expression: expression.trim(),
+			display: true
+		});
+		return `MATH_PLACEHOLDER_${id}`;
+	});
+
+	// Then process inline math expressions ($...$)
+	processedBody = processedBody.replace(/\$([^\$\n]+?)\$/g, function (match, expression) {
+		// Skip if it looks like currency
+		if (/^\s*\d+([,.]\d+)?\s*$/.test(expression)) {
+			return match;
+		}
+		const id = mathExpressions.length;
+		mathExpressions.push({
+			expression: expression.trim(),
+			display: false
+		});
+		return `MATH_PLACEHOLDER_${id}`;
+	});
+
+	// Restore code blocks before markdown parsing
+	processedBody = processedBody.replace(/CODE_BLOCK_PLACEHOLDER_(\d+)/g, function (match, id) {
+		return codeBlocks[parseInt(id)];
+	});
+
+	processedBody = processedBody.replace(/INLINE_CODE_PLACEHOLDER_(\d+)/g, function (match, id) {
+		return inlineCode[parseInt(id)];
 	});
 
 	// Create a custom renderer
@@ -711,9 +758,6 @@ function parseMarkdown(body, boxedCode) {
 
 	// Override code rendering function for marked v13+
 	renderer.code = function (code, infostring, escaped) {
-		// Existing code rendering logic...
-		// [Keep your existing implementation here]
-
 		// Extract the actual code content
 		let codeText;
 		let language = '';
@@ -804,13 +848,20 @@ function parseMarkdown(body, boxedCode) {
 
 	// Parse the markdown and return the HTML
 	try {
-		let html = marked.parse(body);
+		let html = marked.parse(processedBody);
 
-		// Restore math expressions with rendered KaTeX/MathJax
-		html = html.replace(/MATH_EXPRESSION_(\d+)_PLACEHOLDER/g, function (match, id) {
-			const expression = mathExpressions[parseInt(id)];
-			// This will be replaced with actual rendering once KaTeX/MathJax is loaded
-			return `<span class="math-inline" data-math="${EscapeHtml(expression)}">$${expression}$</span>`;
+		// Restore math expressions with placeholders for KaTeX rendering
+		html = html.replace(/MATH_PLACEHOLDER_(\d+)/g, function (match, id) {
+			const item = mathExpressions[parseInt(id)];
+			const escapedExpression = EscapeHtml(item.expression);
+
+			if (item.display) {
+				// Display math (centered, larger)
+				return `<div class="math-display" data-math="${escapedExpression}">$$${item.expression}$$</div>`;
+			} else {
+				// Inline math
+				return `<span class="math-inline" data-math="${escapedExpression}">$${item.expression}$</span>`;
+			}
 		});
 
 		return html;
@@ -919,7 +970,13 @@ function SimulateMessages() {
 		// Add CSS code block to test.
 		"```css\r\n" +
 		"p { color: red }\r\n" +
-		"```\r\n";
+		"```\r\n" +
+		"\r\n" +
+		// Add mathematical expression.
+		"**The Cauchy-Schwarz Inequality**\r\n" +
+		"$$\\left(\\sum_{ k=1 } ^ n a_k b_k \\right) ^ 2 \\leq \\left(\\sum_{ k=1 } ^ n a_k ^ 2 \\right) \\left(\\sum_{ k=1 } ^ n b_k ^ 2 \\right)$$\r\n"+
+		"\r\n";
+
 	for (var i = 0; i < 6; i++) {
 		var message = {
 			Type: i % 6,
@@ -958,7 +1015,6 @@ function SimulateMessages() {
 		}
 		InsertMessage(message);
 	}
-	ScrollToBottom();
 }
 
 function SimulateStreaming() {
@@ -983,7 +1039,7 @@ function SimulateStreaming() {
 		"</think>",
 		"Hello", " world", "!", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
 		"<think>", "Hello", " world", "!", "</think>", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"Hello", " world", "!", " Here", " is", " some", " streamed", " text."
+		"$$\\left(\\sum_{ k=1 } ^ n a_k b_k \\right) ^ 2 \\leq \\left(\\sum_{ k=1 } ^ n a_k ^ 2 \\right) \\left(\\sum_{ k=1 } ^ n b_k ^ 2 \\right)$$\r\n"
 	];
 	var index = 0;
 
@@ -1085,44 +1141,147 @@ function ApplyDiffference(el, newHtml) {
 
 /**
  * Renders all math expressions on the page using KaTeX
+ * @param {boolean} [retryOnFailure=true] - Whether to retry if KaTeX isn't loaded yet
  */
-function renderMathExpressions() {
-	return; // Disable KaTeX rendering for now
+function renderMathExpressions(retryOnFailure = true) {
 	if (typeof katex === 'undefined') {
 		console.warn('KaTeX library not loaded yet. Math expressions will not be rendered.');
+		if (retryOnFailure) {
+			// Retry after a short delay
+			setTimeout(() => renderMathExpressions(false), 500);
+		}
 		return;
 	}
 
-	const mathElements = document.querySelectorAll('.math-inline');
+	// Find all unrendered math elements
+	const mathElements = document.querySelectorAll('.math-inline:not(.katex-rendered), .math-display:not(.katex-rendered)');
+
+	if (mathElements.length > 0) {
+		console.log(`Rendering ${mathElements.length} math expressions`);
+	}
+
 	mathElements.forEach(element => {
+		// Skip if element is inside a code block
+		if (isElementInCodeBlock(element)) {
+			// Mark as processed to avoid future attempts
+			element.classList.add('katex-rendered');
+			element.classList.add('in-code-block');
+			return;
+		}
+
 		try {
 			const expression = element.getAttribute('data-math');
+			const isDisplay = element.classList.contains('math-display');
+
 			katex.render(expression, element, {
 				throwOnError: false,
-				displayMode: false
+				displayMode: isDisplay,
+				strict: "ignore"  // Use "ignore" to suppress warnings
 			});
+
+			// Mark as rendered to avoid re-processing
+			element.classList.add('katex-rendered');
 		} catch (e) {
 			console.error('KaTeX rendering error:', e);
 			// Keep the original format if rendering fails
-			element.textContent = '$' + element.getAttribute('data-math') + '$';
+			const mathDelimiter = element.classList.contains('math-display') ? '$$' : '$';
+			element.textContent = mathDelimiter + element.getAttribute('data-math') + mathDelimiter;
 		}
 	});
+
+	// Call layout fix after rendering
+	fixLayoutIssues();
 }
 
-// Add this to your window.onload function
+/**
+ * Checks if an element is inside a code block
+ * @param {Element} element - The element to check
+ * @returns {boolean} - True if the element is inside a code block
+ */
+function isElementInCodeBlock(element) {
+	let current = element;
+	while (current) {
+		// Check if element is inside a code tag, pre tag, or has a language class
+		if (current.tagName === 'CODE' ||
+			current.tagName === 'PRE' ||
+			(current.className &&
+				(current.className.includes('language-') ||
+					current.className.includes('expandable-data')))) {
+			return true;
+		}
+
+		// Also check parent element's class for code-related classes
+		if (current.parentElement &&
+			current.parentElement.className &&
+			(current.parentElement.className.includes('language-') ||
+				current.parentElement.className.includes('expandable-data'))) {
+			return true;
+		}
+
+		current = current.parentElement;
+	}
+	return false;
+}
+
+// Add robust event listeners for initialization
 window.addEventListener('DOMContentLoaded', function () {
 	// Wait a moment for everything to initialize
 	setTimeout(debugMarkedTokens, 1000);
-	// Add a listener to render math when KaTeX is loaded
-	if (typeof katex !== 'undefined') {
-		renderMathExpressions();
-	} else {
-		// If KaTeX isn't loaded yet, wait for it
-		window.addEventListener('load', function () {
-			setTimeout(renderMathExpressions, 500); // Give KaTeX time to initialize
-		});
+
+	console.log("DOM content loaded, initializing KaTeX support");
+
+	// Function to check if KaTeX is loaded and render math
+	function checkKatexAndRender() {
+		if (typeof katex !== 'undefined') {
+			console.log("KaTeX is loaded, rendering math expressions");
+			renderMathExpressions(false);
+			return true;
+		}
+		return false;
 	}
+
+	// Try immediately
+	if (!checkKatexAndRender()) {
+		// If not loaded, set up a polling mechanism
+		console.log("KaTeX not immediately available, setting up polling");
+		let attempts = 0;
+		const maxAttempts = 50; // 5 seconds max
+
+		const katexCheckInterval = setInterval(function () {
+			attempts++;
+			if (checkKatexAndRender() || attempts >= maxAttempts) {
+				clearInterval(katexCheckInterval);
+				if (attempts >= maxAttempts) {
+					console.error("Failed to load KaTeX after multiple attempts");
+				}
+			}
+		}, 100);
+	}
+
+	// Add layout fix handler
+	window.addEventListener('resize', fixLayoutIssues);
+	fixLayoutIssues();
 });
 
+/**
+ * Fixes any layout issues and excessive space
+ */
+function fixLayoutIssues() {
+	// Fix excessive space at the bottom
+	const chatLog = document.getElementById('chatLog');
+	const body = document.body;
+
+	// Reset any extreme height values
+	if (chatLog.style.height === 'auto') {
+		chatLog.style.height = '';
+	}
+
+	// Clean up any inline styles that might be causing issues
+	if (body.scrollHeight > window.innerHeight * 2) {
+		console.log("Detected potential excessive space, applying fix");
+		body.style.paddingBottom = '0';
+		chatLog.style.marginBottom = '0';
+	}
+}
 
 //#endregion

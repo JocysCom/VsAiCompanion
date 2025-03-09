@@ -345,12 +345,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				var tempFolderPath = AppHelper.GetTempFolderPath();
 				// Set initial source after initialization
 				_WebView2.CoreWebView2.Navigate($"http://{appAssetsHost}/ChatListControl.html");
+#if DEBUG
+				MakeWebBrowserVisible();
+#endif
 			}
 			catch (Exception ex)
 			{
 				Global.MainControl.InfoPanel.SetBodyError("WebView2 initialization failed: " + ex.Message);
 				Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString());
 			}
+		}
+
+		private void MakeWebBrowserVisible()
+		{
+			LoadingLabel.Visibility = Visibility.Collapsed;
+			_WebView2.Visibility = Visibility.Visible;
+			WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
+			ScriptHandlerInitialized = true;
+			// If messages set but messages are not loaded yet.
+			if (IsResetMessgesPending)
+				_ = Helper.Debounce(ResetWebMessages);
+			if (Global.IsVsExtension)
+				Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
 		}
 
 		private void WebBrowserHostObject_OnMessageAction(object sender, (string id, string action, string data) e)
@@ -360,15 +376,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e.action);
 			if (action == MessageAction.Loaded)
 			{
-				LoadingLabel.Visibility = Visibility.Collapsed;
-				_WebView2.Visibility = Visibility.Visible;
-				WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
-				ScriptHandlerInitialized = true;
-				// If messages set but messages are not loaded yet.
-				if (IsResetMessgesPending)
-					_ = Helper.Debounce(ResetWebMessages);
-				if (Global.IsVsExtension)
-					Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
+				MakeWebBrowserVisible();
 				return;
 			}
 			var ids = (e.id ?? "").Split('_');

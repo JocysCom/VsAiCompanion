@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
 		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
@@ -142,6 +142,7 @@
 	<ItemGroup>
 		<None Remove="AiCompanion.svg" />
 		<None Remove="App.ico" />
+		<None Remove="Controls\Chat\ChatListControl.html" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Add.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Cancel.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Delete.svg" />
@@ -240,6 +241,8 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<EmbeddedResource Include="Controls\Chat\ChatListControl\**\*.*" />
+		<EmbeddedResource Include="Controls\Chat\ChatListControl.html" />
 		<EmbeddedResource Include="Resources\AI Service - DeepSeek.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Google Gemini.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Open AI.rtf" />
@@ -256,13 +259,9 @@
 		<Content Include="Resources\MainWindowCommand.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\*.*" />
 		<Page Remove="Resources\Embeddings\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="Controls\Chat\ChatListControl.html" />
-		<EmbeddedResource Include="Controls\Chat\ChatListControl\*.*" />
 		<EmbeddedResource Include="Resources\BuildDate.*" />
 		<EmbeddedResource Include="Resources\Settings\Templates\*.xml" />
 	</ItemGroup>
