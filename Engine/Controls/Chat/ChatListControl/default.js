@@ -234,19 +234,13 @@ function CreateMessageHtml(message) {
 		}
 	}
 	var bodyContents = "" + messageInstructionsHTML + body;
-	// Replace all placeholders with actual values from the message.
-	var messageTemplate = document.getElementById('messageTemplate').innerHTML;
-	var messageHTML = messageTemplate
-		.replace(/{Type}/g, messageType[message.Type])
-		.replace(/{Automated}/g, message.IsAutomated ? "Automated" : "Normal")
-		.replace(/{Id}/g, idPrefix + message.Id)
-		.replace(/{User}/g, message.User)
-		.replace(/{Date}/g, FormatDateTime(message.Date))
-		.replace(/{Body}/g, bodyContents)
-		.replace(/{BodyHide}/g, isEmpty(bodyContents) ? "display-none" : "")
-		.replace(/{Data}/g, data)
-		.replace(/{DataHide}/g, isEmpty(data) ? "display-none" : "")
-		.replace(/{Buttons}/g, buttons);
+	var messageHTML = createMessageHTML(
+		idPrefix + message.Id,
+		messageType[message.Type],
+		message.IsAutomated ? "Automated" : "Normal",
+		FormatDateTime(message.Date),
+		bodyContents, data,
+		buttons, !isEmpty(bodyContents), !isEmpty(data));
 	return messageHTML;
 }
 
@@ -275,6 +269,93 @@ function UpdateRegenerateButtons() {
 	}
 }
 
+/**
+ * Generates an expandable panel HTML based on the template
+ * @param {string} id - Unique identifier for the panel
+ * @param {string} title - Panel title text
+ * @param {string} buttonHTML - HTML for buttons in the title bar
+ * @param {string} instructions - Instructions content
+ * @param {string} codeHTML - Data/code content to display
+ * @param {boolean} [showData=true] - Whether to show the data section
+ * @param {boolean} [showInstructions=true] - Whether to show the instructions section
+ * @param {boolean} [showPanel=true] - Whether to show the entire panel
+ * @returns {string} The generated panel HTML
+ */
+function createExpandableBoxHTML(id, title, buttonHTML, instructions, codeHTML, showData = true, showInstructions = true, showPanel = true) {
+	// Create a temporary container to work with the template
+	const template = document.getElementById("expandableBoxPanelTemplate");
+	const tempContainer = document.createElement('div');
+	tempContainer.innerHTML = template.innerHTML;
+	// Get the main panel element and set its properties
+	const panel = tempContainer.querySelector('.expandable-box');
+	panel.id = `${id}_panel`;
+	SetVisible(panel, showPanel);
+	// Set the title
+	const titleElements = tempContainer.querySelectorAll('.expandable-head-text');
+	titleElements.forEach(el => {
+		el.textContent = title || "";
+		el.title = title || "";
+	});
+	// Set the buttons
+	const buttonsElement = tempContainer.querySelector('.expandable-head-buttons');
+	buttonsElement.innerHTML = buttonHTML;
+	// Set instructions and visibility
+	const instructionsElement = tempContainer.querySelector('.expandable-instructions');
+	instructionsElement.id = `${id}_instructions`;
+	instructionsElement.innerHTML = instructions;
+	SetVisible(instructionsElement, showInstructions);
+	// Set data content and visibility
+	const dataElement = tempContainer.querySelector('.expandable-data');
+	dataElement.id = `${id}_data`;
+	dataElement.innerHTML = codeHTML;
+	SetVisible(dataElement, showData);
+	// Return results.
+	return tempContainer.innerHTML;
+}
+
+
+/**
+ * Generates a chat message HTML based on the template
+ * @param {string} id - Unique identifier for the message
+ * @param {string} type - Message type (affects styling)
+ * @param {boolean} automated - Whether the message is automated
+ * @param {string} date - Date/time string for the message
+ * @param {string} body - Main message content
+ * @param {string} data - Additional data content
+ * @param {string} buttons - Additional button HTML
+ * @param {boolean} [showBody=true] - Whether to show the message body
+ * @param {boolean} [showData=false] - Whether to show the data section
+ * @returns {string} The generated message HTML
+ */
+function createMessageHTML(id, type, automated, date, body, data, buttons, showBody = true, showData = false) {
+	// Create a temporary container to work with the template
+	const template = document.getElementById("messageTemplate");
+	const tempContainer = document.createElement('div');
+	tempContainer.innerHTML = template.innerHTML;
+
+	// Replace all placeholders in the HTML except Body and Data
+	let html = tempContainer.innerHTML;
+	html = html.replace(/{Id}/g, id);
+	html = html.replace(/{Type}/g, type);
+	html = html.replace(/{Automated}/g, automated);
+	html = html.replace(/{Date}/g, date);
+	html = html.replace(/{Buttons}/g, buttons || "");
+
+	// Update the temporary container with the partially processed HTML
+	tempContainer.innerHTML = html;
+
+	// Handle body and data with DOM manipulation
+	const bodyElement = tempContainer.querySelector('.chat-message-body');
+	bodyElement.innerHTML = body;
+	SetVisible(bodyElement, showBody);
+
+	const dataElement = tempContainer.querySelector('.chat-message-data');
+	dataElement.innerHTML = data || "";
+	SetVisible(dataElement, showData);
+
+	return tempContainer.innerHTML;
+}
+
 /*
 	id = "{messageId}_{attachmentId}".
 */
@@ -294,15 +375,7 @@ function AddAttachmentBox(id, title, instructions, data, displayPanelContent, co
 		titleButtonsHTML = document.getElementById("expandableBoxImageButtonTemplate").innerHTML
 			.replace(/{Id}/g, id);
 	}
-	var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML
-		.replace(/{Id}/g, id)
-		.replace(/{Title}/g, title)
-		.replace(/{PanelClass}/g, displayPanelContent ? "" : "display-none")
-		.replace(/{Instructions}/g, instructions)
-		.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
-		.replace(/{Data}/g, data)
-		.replace(/{DataClass}/g, showData ? "" : "display-none")
-		.replace(/{TitleButtons}/g, titleButtonsHTML);
+	var panelHTML = createExpandableBoxHTML(id, title, titleButtonsHTML, instructions, data, showData, showInstructions, displayPanelContent);
 	return { buttonHTML: buttonHTML, panelHTML: panelHTML };
 }
 
@@ -330,7 +403,7 @@ function AttachmentButton_Click(sender, id) {
 
 function SetVisible(el, isVisible) {
 	var isControlVisible = !el.classList.contains("display-none");
-	console.log("SetVisible: " + isVisible + ", isControlVisible: " + isControlVisible);
+	//console.log("SetVisible: " + isVisible + ", isControlVisible: " + isControlVisible);
 	// if must show and is not visible then...
 	if (isVisible && !isControlVisible) {
 		el.classList.remove("display-none");
@@ -647,9 +720,9 @@ function parseMarkdown(body, boxedCode) {
 		}
 
 		// Create HTML for the code block
-		let codeHtml = '<pre><code' + (language ? ' class="language-' + language + '"' : '') + '>';
-		codeHtml += highlightedCode;
-		codeHtml += '</code></pre>';
+		let codeHTML = '<pre><code' + (language ? ' class="language-' + language + '"' : '') + '>';
+		codeHTML += highlightedCode;
+		codeHTML += '</code></pre>';
 
 		// If boxed code is requested, wrap the code in an expandable box
 		if (boxedCode) {
@@ -657,20 +730,10 @@ function parseMarkdown(body, boxedCode) {
 			var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
 			buttonHTML = buttonHTML
 				.replace(/{Id}/g, id);
-			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
-			panelHTML = panelHTML
-				.replace("display: none;", "")
-				.replace(/{Id}/g, id)
-				.replace(/{Title}/g, language || "")
-				.replace(/{Instructions}/g, "aaa")
-				.replace(/{InstructionsClass}/g, "display-none")
-				.replace(/{Data}/g, codeHtml)
-				.replace(/{DataClass}/g, "")
-				.replace(/{TitleButtons}/g, buttonHTML);
+			var panelHTML = createExpandableBoxHTML(id, language, buttonHTML, "", codeHTML);
 			return panelHTML;
 		}
-
-		return codeHtml;
+		return codeHTML;
 	};
 
 	// Set marked options
