@@ -604,28 +604,54 @@ function MessageAction(button, id, action) {
 	}
 }
 
+/**
+ * Parses markdown text and converts it to HTML with syntax highlighting
+ * @param {string} body - The markdown text to parse
+ * @param {boolean} [boxedCode=false] - Whether to place code blocks in expandable boxes
+ * @returns {string} The HTML representation of the markdown
+ */
 function parseMarkdown(body, boxedCode) {
-
 	// Process <think> blocks by replacing double (or more) newlines with a line break tag.
-	body = body.replace(/^(<think>)([\s\S]*?)(<\/think>|$)/gi, function(match, start, content, end) {
-	  // Replace 2+ newlines with a literal line break tag.
-	  var cleaned = content.replace(/(?:[ \t]*\r?\n){2,}/g, "<br/>\r\n");
-	  return start + cleaned + end;
+	body = body.replace(/^(<think>)([\s\S]*?)(<\/think>|$)/gi, function (match, start, content, end) {
+		// Replace 2+ newlines with a literal line break tag.
+		var cleaned = content.replace(/(?:[ \t]*\r?\n){2,}/g, "<br/>\r\n");
+		return start + cleaned + end;
 	});
 
-	// Update rendered to convert language to lowercase for Prism.js.
-	var renderer = new marked.Renderer();
-	var originalCodeFunction = renderer.code;
+	// Remove trailing spaces from the body
+	var spacesRx = new RegExp("\\s+$", "g");
+	body = body.replace(spacesRx, "");
 
-	renderer.code = function (code, lang, escaped) {
-		lang = lang ? lang.toLowerCase() : undefined;
-		// Remove trailing spaces from the code.
-		var spacesRx = new RegExp("\\s+$", "g")
+	// Create a custom renderer
+	const renderer = new marked.Renderer();
+
+	// Store the original code function
+	const originalCodeFunction = renderer.code;
+
+	// Override code rendering function
+	renderer.code = function (code, language, isEscaped) {
+		// Convert language to lowercase if it exists
+		language = language ? language.toLowerCase() : '';
+
+		// Remove trailing spaces from the code
 		code = code.replace(spacesRx, "");
-		// Remove trailing spaces from converted code.
-		var html = originalCodeFunction.call(this, code, lang, escaped);
-		spacesRx = new RegExp("\\s+</code>", "g")
-		html = html.replace(spacesRx, "</code>");
+
+		// Apply syntax highlighting with Prism if language is specified
+		let highlightedCode = code;
+		if (language && Prism.languages[language]) {
+			try {
+				highlightedCode = Prism.highlight(code, Prism.languages[language], language);
+			} catch (e) {
+				console.error("Prism highlighting error:", e);
+			}
+		}
+
+		// Create HTML for the code block
+		let codeHtml = '<pre><code' + (language ? ' class="language-' + language + '"' : '') + '>';
+		codeHtml += highlightedCode;
+		codeHtml += '</code></pre>';
+
+		// If boxed code is requested, wrap the code in an expandable box
 		if (boxedCode) {
 			var id = "rnd_" + generateGUID();
 			var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
@@ -635,26 +661,33 @@ function parseMarkdown(body, boxedCode) {
 			panelHTML = panelHTML
 				.replace("display: none;", "")
 				.replace(/{Id}/g, id)
-				.replace(/{Title}/g, lang)
+				.replace(/{Title}/g, language || "")
 				.replace(/{Instructions}/g, "aaa")
 				.replace(/{InstructionsClass}/g, "display-none")
-				.replace(/{Data}/g, html)
+				.replace(/{Data}/g, codeHtml)
 				.replace(/{DataClass}/g, "")
 				.replace(/{TitleButtons}/g, buttonHTML);
-			//console.log(panelHTML);
-			html = panelHTML;
+			return panelHTML;
 		}
-		return html;
+
+		return codeHtml;
 	};
 
+	// Set marked options
 	marked.setOptions({
-		// Enable for prism.
-		highlight: function (code, lang) {
-			return Prism.languages[lang] ? Prism.highlight(code, Prism.languages[lang], lang) : code;
-		},
-		renderer: renderer
+		renderer: renderer,
+		// Tell marked not to use its built-in highlight function
+		highlight: null,
+		// Other options that might be helpful
+		gfm: true,
+		breaks: true,
+		pedantic: false,
+		sanitize: false,
+		smartLists: true,
+		smartypants: false
 	});
-	// Parse the markdown with the modified renderer.
+
+	// Parse the markdown and return the HTML
 	return marked.parse(body);
 }
 
