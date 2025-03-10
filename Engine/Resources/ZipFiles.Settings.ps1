@@ -20,7 +20,7 @@ function ZipFiles {
     # [System.IO.File]::Delete($zipFile)
 	#}
 
-	..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\$name" $zipFile -LogPrefix $LogPrefix
+	..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\$name" $zipFile -excludePattern "Temp*" -LogPrefix $LogPrefix
 }
 
 ZipFiles "Settings"

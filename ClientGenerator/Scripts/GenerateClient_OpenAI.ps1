@@ -8,7 +8,7 @@ $clientsModelOutputDir = Join-Path $PSScriptRoot "..\..\Clients\OpenAI"
 
 # Ensure output directory exists
 if (-not (Test-Path $clientsModelOutputDir)) {
-    New-Item -ItemType Directory -Path $clientsModelOutputDir
+	New-Item -ItemType Directory -Path $clientsModelOutputDir
 }
 
 # Download the OpenAPI YAML specification
@@ -17,11 +17,12 @@ Invoke-WebRequest -Uri $yamlUrl -OutFile $yamlOutputFilePath
 
 # Check if the Client Generator executable exists
 if (Test-Path $clientGeneratorExePath) {
-    # Run the Client Generator exe with the YAML file and output directory specified
-    Write-Host "Generating client models..."
-    & $clientGeneratorExePath $yamlOutputFilePath $clientsModelOutputDir
-} else {
-    Write-Error "ClientGenerator executable not found at '$clientGeneratorExePath'. Please build the project first."
+	# Run the Client Generator exe with the YAML file and output directory specified
+	Write-Host "Generating client models..."
+	& $clientGeneratorExePath $yamlOutputFilePath $clientsModelOutputDir
+}
+else {
+	Write-Error "ClientGenerator executable not found at '$clientGeneratorExePath'. Please build the project first."
 }
 
 Write-Host "Client generation complete."

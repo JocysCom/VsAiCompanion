@@ -271,16 +271,18 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			if (schema.Reference != null)
 			{
 				var primarySchema = GetPrimarySchemaByAlias(schema);
-				var refId = GetCSharpClassName(primarySchema.Reference.Id);
+				var refId = primarySchema.Reference.Id;
+				var className = GetCSharpClassName(refId);
+
 				if (FoundEnums.Any(e => e.Reference?.Id == refId))
 				{
 					// It's an enum reference
-					csType = refId;
+					csType = className;
 				}
 				else
 				{
 					// It's a class reference
-					csType = refId;
+					csType = className;
 				}
 			}
 			// Determine if the type is a numeric value type
@@ -290,6 +292,20 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				csType += "?";
 
 			return csType;
+		}
+
+		/// <returns>C# class name with prefix `@` for reserved words.</returns>
+		private string GetCSharpTypeName(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				return input;
+			var pattern = @"(?<!^)([A-Z])"; // Negative lookbehind to avoid matching the start of the string
+			var result = Regex.Replace(input, pattern, m => "_" + m.Groups[1].Value).ToLower();
+			input = result.Trim('_');
+			var isCSharpKeyword = ReservedKeywords.Contains(input);
+			return isCSharpKeyword
+				? "@" + input
+				: input;
 		}
 
 		/// <summary>
@@ -334,21 +350,6 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			input = GetCSharpTypeName(input);
 			return !string.IsNullOrEmpty(input) && overideClassNames.ContainsKey(input)
 				? overideClassNames[input]
-				: input;
-		}
-
-
-		/// <returns>C# class name with prefix `@` for reserved words.</returns>
-		private string GetCSharpTypeName(string input)
-		{
-			if (string.IsNullOrEmpty(input))
-				return input;
-			var pattern = @"(?<!^)([A-Z])"; // Negative lookbehind to avoid matching the start of the string
-			var result = Regex.Replace(input, pattern, m => "_" + m.Groups[1].Value).ToLower();
-			input = result.Trim('_');
-			var isCSharpKeyword = ReservedKeywords.Contains(input);
-			return isCSharpKeyword
-				? "@" + input
 				: input;
 		}
 

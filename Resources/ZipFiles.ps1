@@ -9,12 +9,16 @@ param (
     [Parameter(Mandatory = $false, Position = 2)]
     [string] $searchPattern,
 
-    # Optional. Use shell zipper if this parameter is set to true.
+    # Optional. The pattern to exclude files from the zip.
     [Parameter(Mandatory = $false, Position = 3)]
+    [string] $excludePattern,
+
+    # Optional. Use shell zipper if this parameter is set to true.
+    [Parameter(Mandatory = $false, Position = 4)]
     [bool] $UseShellToZipFiles = $false,
 
     # Optional. Use comment for console.
-    [Parameter(Mandatory = $false, Position = 4)]
+    [Parameter(Mandatory = $false, Position = 5)]
     [string] $LogPrefix = ""
 )
 
@@ -52,11 +56,18 @@ function Get-FileChecksum {
 function Get-FileChecksums {
     param (
         [string] $directory,
-        [string] $searchPattern = "*"
+        [string] $searchPattern = "*",
+        [string] $excludePattern = ""
     )
     $checksums = @{}
-    Get-ChildItem -Path $directory -Recurse -File -Filter $searchPattern |
-    ForEach-Object {
+    $files = Get-ChildItem -Path $directory -Recurse -File -Filter $searchPattern
+    
+    # Apply exclude pattern if specified
+    if (![string]::IsNullOrEmpty($excludePattern)) {
+        $files = $files | Where-Object { $_.Name -notlike $excludePattern }
+    }
+    
+    $files | ForEach-Object {
         $checksum = Get-FileChecksum -filePath $_.FullName
         if ($checksum) {
             [string]$key = $_.FullName.Replace($directory, "").TrimStart("\")
@@ -69,14 +80,14 @@ function Get-FileChecksums {
 function CheckAndZipFiles {
 
     # Get file checksums...
-    $sourceChecksums = Get-FileChecksums -directory $sourceDir -searchPattern $searchPattern
+    $sourceChecksums = Get-FileChecksums -directory $sourceDir -searchPattern $searchPattern -excludePattern $excludePattern
 
     $tempDir = $null
     $destChecksums = @{}
     if (Test-Path -Path $destFile) {
         $tempDir = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName())
         [IO.Compression.ZipFile]::ExtractToDirectory($destFile, $tempDir)
-        $destChecksums = Get-FileChecksums -directory $tempDir -searchPattern $searchPattern
+        $destChecksums = Get-FileChecksums -directory $tempDir -searchPattern $searchPattern -excludePattern $excludePattern
     }
 
     $checksumsChanged = $false
@@ -134,9 +145,9 @@ function CheckAndZipFiles {
             Remove-Item -Path $destFile -Force
         }
         if ($UseShellToZipFiles) {
-            Compress-ZipFileUsingShell -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
+            Compress-ZipFileUsingShell -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern -excludePattern $excludePattern
         } else {
-            Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
+            Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern -excludePattern $excludePattern
         }
     } else {
         Write-Host "$($logPrefix)Source and destination checksums match. No update needed."
@@ -147,26 +158,48 @@ function Compress-ZipFileUsingCSharp {
     param (
         [string] $sourceDir,
         [string] $destFile,
-        [string] $searchPattern
+        [string] $searchPattern,
+        [string] $excludePattern
     )
-    # Handling optional search pattern for zipping files.
+    # Create a temporary directory
+    $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
+    
+    $files = Get-ChildItem -Path $sourceDir -Recurse -File
+    
+    # Apply search pattern if specified
     if (![string]::IsNullOrEmpty($searchPattern)) {
-        $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
-        Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern | Copy-Item -Destination {
-            Join-Path -Path $tempSourceDir -ChildPath ($_.FullName.Replace($sourceDir, "").TrimStart("\")) 
-        } -Container
-        [IO.Compression.ZipFile]::CreateFromDirectory($tempSourceDir.FullName, $destFile)
-        Remove-Item -Path $tempSourceDir -Recurse -Force
-    } else {
-        [IO.Compression.ZipFile]::CreateFromDirectory($sourceDir, $destFile)
+        $files = $files | Where-Object { $_.Name -like $searchPattern }
     }
+    
+    # Apply exclude pattern if specified
+    if (![string]::IsNullOrEmpty($excludePattern)) {
+        $files = $files | Where-Object { $_.FullName -notmatch "\\Temp\\|\\Temp$" }
+    }
+    
+    foreach ($file in $files) {
+        $relativePath = $file.FullName.Replace($sourceDir, "").TrimStart("\")
+        $targetPath = Join-Path -Path $tempSourceDir -ChildPath $relativePath
+        
+        # Ensure the directory structure exists
+        $targetDir = [System.IO.Path]::GetDirectoryName($targetPath)
+        if (!(Test-Path $targetDir)) {
+            New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+        }
+        
+        # Copy the file
+        Copy-Item -Path $file.FullName -Destination $targetPath -Force
+    }
+    
+    [IO.Compression.ZipFile]::CreateFromDirectory($tempSourceDir.FullName, $destFile)
+    Remove-Item -Path $tempSourceDir -Recurse -Force
 }
 
 function Compress-ZipFileUsingShell {
     param (
         [string] $sourceDir,
         [string] $destFile,
-        [string] $searchPattern
+        [string] $searchPattern,
+        [string] $excludePattern
     )
     
     # Ensure the destination directory exists
@@ -189,10 +222,16 @@ function Compress-ZipFileUsingShell {
         return
     }
 
+    $files = Get-ChildItem -Path $sourceDir -Recurse 
+    
+    # Apply search pattern if specified
     if (![string]::IsNullOrEmpty($searchPattern)) {
-        $files = Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern
-    } else {
-        $files = Get-ChildItem -Path $sourceDir -Recurse 
+        $files = $files | Where-Object { $_.Name -like $searchPattern }
+    }
+    
+    # Apply exclude pattern if specified
+    if (![string]::IsNullOrEmpty($excludePattern)) {
+        $files = $files | Where-Object { $_.Name -notlike $excludePattern }
     }
 
     foreach ($file in $files) {

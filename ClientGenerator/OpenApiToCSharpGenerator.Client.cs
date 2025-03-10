@@ -59,7 +59,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 
 			// Start building the method signature
 			var signatureBuilder = new StringBuilder();
-			signatureBuilder.Append($"    {returnType} {methodName}(");
+			signatureBuilder.Append($"\t{returnType} {methodName}(");
 
 			// Extract parameters from operation and add them to the method signature
 			foreach (var parameter in operation.Parameters)

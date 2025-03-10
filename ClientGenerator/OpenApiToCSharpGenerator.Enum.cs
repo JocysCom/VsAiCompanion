@@ -17,8 +17,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			sb.AppendLine();
 			sb.AppendLine($"namespace {BaseNamespace}");
 			sb.AppendLine("{");
-			sb.AppendLine($"    public enum {enumName}");
-			sb.AppendLine("    {");
+			sb.AppendLine($"\tpublic enum {enumName}");
+			sb.AppendLine("\t{");
 			// Assume that the enum values are strings; adjust as needed if enums are integers or other types
 			var enumValues = schema.Enum.OfType<OpenApiString>().Select(e => e.Value);
 			foreach (var value in enumValues)
@@ -27,12 +27,12 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				var enumMemberIdentifier = GetValidEnumMemberIdentifier(value);
 
 				// Append the enum value to the StringBuilder
-				sb.AppendLine($"        {enumMemberIdentifier},");
+				sb.AppendLine($"\t\t{enumMemberIdentifier},");
 			}
 			// Remove the trailing comma from the last enum member
 			if (sb.ToString().EndsWith(",\n", StringComparison.Ordinal))
 				sb.Remove(sb.Length - 2, 1);
-			sb.AppendLine("    }");
+			sb.AppendLine("\t}");
 			sb.AppendLine("}");
 			return sb.ToString();
 		}
