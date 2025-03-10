@@ -14,8 +14,54 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		{
 			// Initialize a string builder to construct the IClient interface
 			var sb = new StringBuilder();
+
+			// Check if any operations return or accept List<> types
+			bool needsGenericCollections = false;
+
+			foreach (var path in document.Paths)
+			{
+				foreach (var operation in path.Value.Operations)
+				{
+					// Check response types
+					if (operation.Value.Responses.Any(r => r.Value.Content.Any(c =>
+					{
+						var schema = c.Value.Schema;
+						return schema != null && (schema.Type == "array" ||
+							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+					})))
+					{
+						needsGenericCollections = true;
+					}
+
+					// Check parameter types
+					if (operation.Value.Parameters.Any(p =>
+					{
+						var schema = p.Schema;
+						return schema != null && (schema.Type == "array" ||
+							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+					}))
+					{
+						needsGenericCollections = true;
+					}
+
+					// Check request body
+					if (operation.Value.RequestBody?.Content.Any(c =>
+					{
+						var schema = c.Value.Schema;
+						return schema != null && (schema.Type == "array" ||
+							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+					}) == true)
+					{
+						needsGenericCollections = true;
+					}
+				}
+			}
+
 			sb.AppendLine($"using {BaseNamespace};");
-			sb.AppendLine($"using System.Collections.Generic;");
+			if (needsGenericCollections)
+			{
+				sb.AppendLine($"using System.Collections.Generic;");
+			}
 			sb.AppendLine();
 			sb.AppendLine("public interface IClient");
 			sb.AppendLine("{");

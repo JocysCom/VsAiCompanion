@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
 	public class completion_usage : run_step_completion_usage

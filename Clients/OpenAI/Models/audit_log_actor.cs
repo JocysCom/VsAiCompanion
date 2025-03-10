@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
 	public class audit_log_actor : assistant_tools_file_search

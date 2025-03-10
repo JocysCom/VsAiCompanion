@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
 	public class usage_images_result : usage_audio_speeches_result

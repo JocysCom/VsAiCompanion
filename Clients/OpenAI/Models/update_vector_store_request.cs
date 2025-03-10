@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
 	public class update_vector_store_request : modify_run_request

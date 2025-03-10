@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
 	public class usage_audio_transcriptions_result : costs_result

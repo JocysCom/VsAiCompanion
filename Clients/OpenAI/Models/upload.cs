@@ -1,6 +1,6 @@
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
-	public class @upload : file
+	public class @upload : @file
 	{
 		public int expires_at { get; set; }
 

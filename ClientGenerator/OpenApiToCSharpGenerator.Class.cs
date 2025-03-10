@@ -11,9 +11,27 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		{
 			var sb = new StringBuilder();
 			var className = GetCSharpClassName(schema.Reference.Id);
-			//sb.AppendLine("using System;");
-			sb.AppendLine("using System.Collections.Generic;");
-			//sb.AppendLine();
+
+			// Check if the class name is a C# reserved keyword and add @ prefix if needed
+			if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+			{
+				className = "@" + className;
+			}
+			// Add @ prefix to class names that contain only lowercase ASCII characters [a-z]+
+			else if (className.Length > 0 && className.All(c => c >= 'a' && c <= 'z'))
+			{
+				className = "@" + className;
+			}
+
+			// Check if any property uses List<> before adding the using statement
+			bool needsGenericCollections = schema.Properties.Values.Any(p =>
+				p.Type == "array" || (p.Reference != null && GetCSharpTypeName(p).Contains("List<")));
+
+			if (needsGenericCollections)
+			{
+				sb.AppendLine("using System.Collections.Generic;");
+			}
+
 			sb.AppendLine($"namespace {BaseNamespace}");
 			sb.AppendLine("{");
 
@@ -33,6 +51,13 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				// Normal class generation with properties.
 				var baseSchema = FindBaseSchema(schema);
 				var baseClassName = GetCSharpClassName(baseSchema?.Reference?.Id ?? base_class);
+
+				// Also check if base class name is a reserved keyword
+				if (ReservedKeywords.Contains(baseClassName) && !baseClassName.StartsWith("@"))
+				{
+					baseClassName = "@" + baseClassName;
+				}
+
 				sb.AppendLine($"\tpublic class {className}{(!string.IsNullOrEmpty(baseClassName) ? $" : {baseClassName}" : "")}");
 			}
 			sb.AppendLine("\t{");
