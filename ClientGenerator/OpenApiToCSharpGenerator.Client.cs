@@ -15,6 +15,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Initialize a string builder to construct the IClient interface
 			var sb = new StringBuilder();
 			sb.AppendLine($"using {BaseNamespace};");
+			sb.AppendLine($"using System.Collections.Generic;");
 			sb.AppendLine();
 			sb.AppendLine("public interface IClient");
 			sb.AppendLine("{");
@@ -36,9 +37,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			WriteHelper.WriteIfDifferent(interfaceFilePath, bytes);
 		}
 
-
 		/// <summary>
-		/// This method will need to be implemented to generate each method signature based on OpenAPI Operation
+		/// Generates method signature based on OpenAPI Operation
 		/// </summary>
 		private string GenerateMethodSignature(string path, OperationType operationType, OpenApiOperation operation, Func<OpenApiSchema, OpenApiSchema> getPrimarySchema)
 		{
@@ -53,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				var mediaType = response.Content.First().Value;
 				var schema = mediaType.Schema;
 				var primarySchema = getPrimarySchema(schema);
-				// Assume we have a way to convert the schema to a C# type name
+				// Get C# type name with proper handling of reserved keywords
 				returnType = GetCSharpTypeName(primarySchema);
 			}
 
@@ -64,19 +64,20 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Extract parameters from operation and add them to the method signature
 			foreach (var parameter in operation.Parameters)
 			{
-				string parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema));
+				// Properly handle parameter schema to ensure correct type generation
+				string parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema), true);
+				string parameterName = GetCSharpTypeName(parameter.Name);
 
 				if (parameter.In == ParameterLocation.Header)
 				{
 					// Headers might be optional and have default values, handle them accordingly
-					// Assuming there's a helper method to get default value as string representation for C# code
 					string defaultValue = parameter.Schema.Default != null ? $" = {GetDefaultValueAsString(parameter.Schema.Default)}" : string.Empty;
-					signatureBuilder.Append($"{parameterType} {parameter.Name}{defaultValue}, ");
+					signatureBuilder.Append($"{parameterType} {parameterName}{defaultValue}, ");
 				}
 				else if (parameter.In == ParameterLocation.Query || parameter.In == ParameterLocation.Path)
 				{
 					// Query and path parameters would be regular method parameters
-					signatureBuilder.Append($"{parameterType} {parameter.Name}, ");
+					signatureBuilder.Append($"{parameterType} {parameterName}, ");
 				}
 			}
 
@@ -84,7 +85,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			if (operation.RequestBody != null && operation.RequestBody.Content.Any())
 			{
 				var schema = getPrimarySchema(operation.RequestBody.Content.First().Value.Schema);
-				var requestBodyType = GetCSharpTypeName(schema);
+				var requestBodyType = GetCSharpTypeName(schema, true);
 				signatureBuilder.Append($"{requestBodyType} body, ");
 			}
 

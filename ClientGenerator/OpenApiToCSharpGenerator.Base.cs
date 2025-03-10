@@ -299,6 +299,9 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		{
 			if (string.IsNullOrEmpty(input))
 				return input;
+			// First, replace any non-alphanumeric characters (except underscores) with underscores
+			// This handles dashes, spaces, and other invalid characters
+			input = Regex.Replace(input, @"[^\w]", "_");
 			var pattern = @"(?<!^)([A-Z])"; // Negative lookbehind to avoid matching the start of the string
 			var result = Regex.Replace(input, pattern, m => "_" + m.Groups[1].Value).ToLower();
 			input = result.Trim('_');
