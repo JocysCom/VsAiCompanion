@@ -53,8 +53,28 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				var mediaType = response.Content.First().Value;
 				var schema = mediaType.Schema;
 				var primarySchema = getPrimarySchema(schema);
-				// Get C# type name with proper handling of reserved keywords
-				returnType = GetCSharpTypeName(primarySchema);
+
+				if (primarySchema.Reference != null)
+				{
+					// For referenced types, use the reference ID to get the class name
+					var refId = primarySchema.Reference.Id;
+					var className = GetCSharpClassName(refId);
+
+					// Explicitly check if the class name is a reserved keyword
+					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					{
+						returnType = "@" + className;
+					}
+					else
+					{
+						returnType = className;
+					}
+				}
+				else
+				{
+					// For non-reference types, use the regular type mapping
+					returnType = GetCSharpTypeName(primarySchema);
+				}
 			}
 
 			// Start building the method signature
@@ -64,28 +84,73 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Extract parameters from operation and add them to the method signature
 			foreach (var parameter in operation.Parameters)
 			{
-				// Properly handle parameter schema to ensure correct type generation
-				string parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema), true);
+				string parameterType;
+				if (parameter.Schema.Reference != null)
+				{
+					var refId = parameter.Schema.Reference.Id;
+					var className = GetCSharpClassName(refId);
+
+					// Explicitly check if the class name is a reserved keyword
+					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					{
+						parameterType = "@" + className;
+					}
+					else
+					{
+						parameterType = className;
+					}
+
+					if (parameter.Schema.Nullable)
+						parameterType += "?";
+				}
+				else
+				{
+					parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema), true);
+				}
+
 				string parameterName = GetCSharpTypeName(parameter.Name);
 
 				if (parameter.In == ParameterLocation.Header)
 				{
-					// Headers might be optional and have default values, handle them accordingly
 					string defaultValue = parameter.Schema.Default != null ? $" = {GetDefaultValueAsString(parameter.Schema.Default)}" : string.Empty;
 					signatureBuilder.Append($"{parameterType} {parameterName}{defaultValue}, ");
 				}
 				else if (parameter.In == ParameterLocation.Query || parameter.In == ParameterLocation.Path)
 				{
-					// Query and path parameters would be regular method parameters
 					signatureBuilder.Append($"{parameterType} {parameterName}, ");
 				}
 			}
 
-			// Check if there is a body parameter and add it, assuming only one body is allowed
+			// Check if there is a body parameter and add it
 			if (operation.RequestBody != null && operation.RequestBody.Content.Any())
 			{
-				var schema = getPrimarySchema(operation.RequestBody.Content.First().Value.Schema);
-				var requestBodyType = GetCSharpTypeName(schema, true);
+				var schema = operation.RequestBody.Content.First().Value.Schema;
+				string requestBodyType;
+
+				if (schema.Reference != null)
+				{
+					var primarySchema = getPrimarySchema(schema);
+					var refId = primarySchema.Reference.Id;
+					var className = GetCSharpClassName(refId);
+
+					// Explicitly check if the class name is a reserved keyword
+					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					{
+						requestBodyType = "@" + className;
+					}
+					else
+					{
+						requestBodyType = className;
+					}
+
+					if (schema.Nullable)
+						requestBodyType += "?";
+				}
+				else
+				{
+					requestBodyType = GetCSharpTypeName(getPrimarySchema(schema), true);
+				}
+
 				signatureBuilder.Append($"{requestBodyType} body, ");
 			}
 

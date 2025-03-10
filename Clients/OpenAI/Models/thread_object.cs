@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
-    public class thread_object : delete_assistant_file_response
-    {
-        public int created_at { get; set; }
+	public class thread_object : upload_part
+	{
+		public object tool_resources { get; set; }
 
-        public object metadata { get; set; }
+		public chat_completion_modalities metadata { get; set; }
 
-    }
+	}
 }

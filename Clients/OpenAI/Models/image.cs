@@ -1,6 +1,6 @@
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
-	public class @image : error_response
+	public class @image : add_upload_part_request
 	{
 		public string b64_json { get; set; }
 
