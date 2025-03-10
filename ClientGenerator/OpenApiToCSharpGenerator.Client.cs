@@ -151,7 +151,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				}
 				else
 				{
-					parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema), true);
+					parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema));
 				}
 
 				string parameterName = GetCSharpTypeName(parameter.Name);
@@ -194,7 +194,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				}
 				else
 				{
-					requestBodyType = GetCSharpTypeName(getPrimarySchema(schema), true);
+					requestBodyType = GetCSharpTypeName(getPrimarySchema(schema));
 				}
 
 				signatureBuilder.Append($"{requestBodyType} body, ");

@@ -5,6 +5,7 @@ $yamlUrl = "https://raw.githubusercontent.com/openai/openai-openapi/master/opena
 $yamlOutputFilePath = Join-Path $PSScriptRoot "..\..\Clients\OpenAI\openapi.yaml"
 $clientGeneratorExePath = Join-Path $PSScriptRoot "..\bin\Debug\net8.0\win-x64\JocysCom.VS.AiCompanion.ClientGenerator.exe"
 $clientsModelOutputDir = Join-Path $PSScriptRoot "..\..\Clients\OpenAI"
+$enableNullable = $false
 
 # Ensure output directory exists
 if (-not (Test-Path $clientsModelOutputDir)) {
@@ -19,7 +20,7 @@ Invoke-WebRequest -Uri $yamlUrl -OutFile $yamlOutputFilePath
 if (Test-Path $clientGeneratorExePath) {
 	# Run the Client Generator exe with the YAML file and output directory specified
 	Write-Host "Generating client models..."
-	& $clientGeneratorExePath $yamlOutputFilePath $clientsModelOutputDir
+	& $clientGeneratorExePath $yamlOutputFilePath $clientsModelOutputDir $enableNullable
 }
 else {
 	Write-Error "ClientGenerator executable not found at '$clientGeneratorExePath'. Please build the project first."

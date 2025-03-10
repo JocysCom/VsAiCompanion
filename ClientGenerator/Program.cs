@@ -11,6 +11,9 @@
 			}
 			string yamlFilePath = args[0];
 			string outputDirectory = args[1];
+			bool nullable = false;
+			if (args.Length > 2)
+				bool.TryParse(args[2], out nullable);
 
 			if (!File.Exists(yamlFilePath))
 			{
@@ -24,7 +27,7 @@
 				return;
 			}
 
-			var generator = new OpenApiToCSharpGenerator();
+			var generator = new OpenApiToCSharpGenerator(nullable);
 			Console.WriteLine($"Generating client models to {outputDirectory}");
 			var yamlContents = File.ReadAllText(yamlFilePath);
 			var document = YamlHelper.ConvertToDocument(yamlContents);

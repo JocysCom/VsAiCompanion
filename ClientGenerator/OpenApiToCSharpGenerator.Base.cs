@@ -9,6 +9,12 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 	/// </summary>
 	public partial class OpenApiToCSharpGenerator
 	{
+		public bool EnableNullable { get; set; }
+
+		public OpenApiToCSharpGenerator(bool enableNullable)
+		{
+			EnableNullable = enableNullable;
+		}
 
 		private const string BaseNamespace = "JocysCom.VS.AiCompanion.Clients.OpenAI.Models";
 
@@ -249,9 +255,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// Map OpenAPI schema types to C# types.
 		/// </summary>
 		/// <param name="schema">The schema to get the C# type for.</param>
-		/// <param name="enableNullable">Determines whether nullable suffix is allowed for value types.</param>
 		/// <returns>String representation of the corresponding C# type.</returns>
-		private string GetCSharpTypeName(OpenApiSchema schema, bool enableNullable = false)
+		private string GetCSharpTypeName(OpenApiSchema schema)
 		{
 			var csType = "object";
 			// Handle simple types
@@ -264,7 +269,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			else if (schema.Type == "number")
 				csType = schema.Format == "float" ? "float" : "double";
 			else if (schema.Type == "array" && schema.Items != null)
-				csType = $"List<{GetCSharpTypeName(schema.Items, enableNullable)}>";
+				csType = $"List<{GetCSharpTypeName(schema.Items)}>";
 
 			// Handle complex types
 			// Check if it is a reference to another complex type such as classes or enums
@@ -288,7 +293,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Determine if the type is a numeric value type
 			var isValueType = numericTypes.Contains(csType);
 			// Handle nullable types for value types
-			if (schema.Nullable && (enableNullable || isValueType))
+			if (schema.Nullable && (EnableNullable || isValueType))
 				csType += "?";
 
 			return csType;
