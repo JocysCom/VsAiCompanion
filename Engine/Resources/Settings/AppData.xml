@@ -1,4 +1,4 @@
-﻿<Data Version="2">
+﻿<Data Version="3">
   <Items>
     <AppData>
       <AiAvatar>
@@ -46,10 +46,10 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>454</Left>
-        <Top>135.33333333333331</Top>
-        <Width>1033.3333333333333</Width>
-        <Height>816</Height>
+        <Left>807.3333333333333</Left>
+        <Top>166</Top>
+        <Width>1179.3333333333333</Width>
+        <Height>894</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -67,16 +67,17 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.21810971579643093</GridSplitterPosition>
+          <GridSplitterPosition>0.2188221709006928</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
+          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.21348314606741575</GridSplitterPosition>
+          <GridSplitterPosition>0.18647007805724197</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -96,7 +97,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.24455445544554455</GridSplitterPosition>
+          <GridSplitterPosition>0.24480369515011546</GridSplitterPosition>
           <ListSelection>
             <string>Prompts</string>
           </ListSelection>
@@ -112,7 +113,7 @@
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>5</ListSelectedIndex>
+          <ListSelectedIndex>6</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -133,9 +134,9 @@
           <ItemType>AiModel</ItemType>
           <GridSplitterPosition>0.29973297730307075</GridSplitterPosition>
           <ListSelection>
-            <string>o1-2024-12-17</string>
+            <string>o1</string>
           </ListSelection>
-          <ListSelectedIndex>43</ListSelectedIndex>
+          <ListSelectedIndex>2</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
@@ -163,6 +164,17 @@ Maintain uniform terminology and capitalization for all extracted values.&#xD;
 Provide detailed and clear structures without ambiguity.&#xD;
 Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
+        <AiService>
+          <Path>OpenAI</Path>
+          <Name>DeepSeek</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <ServiceType>OpenAI</ServiceType>
+          <Id>5f6f224a-339b-495f-9850-b733530b858d</Id>
+          <ApiSecretKey />
+          <DefaultAiModel>deepseek-chat</DefaultAiModel>
+          <BaseUrl>https://api.deepseek.com</BaseUrl>
+        </AiService>
         <AiService>
           <Path>OpenAI</Path>
           <Name>Google Gemini</Name>
@@ -265,34 +277,28 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
       </AiServices>
       <AiModels>
         <AiModel>
-          <Path>Azure Open AI</Path>
-          <Name>gpt-4o</Name>
+          <Path>DeepSeek</Path>
+          <Name>deepseek-chat</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
-          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Id>81632b64-3ef5-3a83-20a4-8807adbe4ba8</Id>
           <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
+          <AiServiceId>5f6f224a-339b-495f-9850-b733530b858d</AiServiceId>
+          <MaxInputTokens>64000</MaxInputTokens>
+          <Features>Streaming ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
         </AiModel>
         <AiModel>
-          <Path>Azure Open AI</Path>
-          <Name>gpt-3.5-turbo-16k</Name>
+          <Path>DeepSeek</Path>
+          <Name>deepseek-reasoner</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Id>99c96d0e-e333-f54a-af13-161ab7b09376</Id>
           <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Path>Azure Open AI</Path>
-          <Name>text-embedding-ada-002</Name>
-          <Created>0001-01-01T00:00:00</Created>
-          <Modified>0001-01-01T00:00:00</Modified>
-          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
+          <AiServiceId>5f6f224a-339b-495f-9850-b733530b858d</AiServiceId>
+          <MaxInputTokens>64000</MaxInputTokens>
+          <Features>Streaming ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
         </AiModel>
         <AiModel>
           <Path>Google Gemini</Path>
@@ -719,6 +725,8 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <MaxInputTokens>200000</MaxInputTokens>
           <Features>SystemMessages FunctionCalling ChatSupport</Features>
           <IsFeaturesKnown>true</IsFeaturesKnown>
+          <Instructions>Use Markdown code blocks for any code in your responses.</Instructions>
+          <InstructionsEnabled>true</InstructionsEnabled>
         </AiModel>
         <AiModel>
           <Path>Open AI</Path>
@@ -880,6 +888,41 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>2048</MaxInputTokens>
         </AiModel>
+        <AiModel>
+          <Path>Azure Open AI</Path>
+          <Name>gpt-4o</Name>
+          <Id>dbfef577-aab0-6983-fd2c-5945619933cf</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Azure Open AI</Path>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <Id>88dc5d70-3214-9622-fd1b-a6183458c1ab</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Azure Open AI</Path>
+          <Name>text-embedding-ada-002</Name>
+          <Id>6b91be89-1bb0-0d87-312f-7ce291f2281c</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Azure Open AI</Path>
+          <Name>o1</Name>
+          <Id>eb6c34ae-7c87-80a7-af68-4d1e1495783f</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>200000</MaxInputTokens>
+          <Features>SystemMessages ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+          <Instructions>Reply using a markdown code block for any code included.</Instructions>
+        </AiModel>
       </AiModels>
       <MailAccounts />
       <Plugins>
@@ -904,12 +947,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo</Id>
         </PluginItem>
         <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ExecuteCommand</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -1135,6 +1173,10 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateQrCodeImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

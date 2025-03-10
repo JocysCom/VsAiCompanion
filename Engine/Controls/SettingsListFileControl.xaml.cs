@@ -3,8 +3,13 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Engine.Settings;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+using Microsoft.Graph.Applications.GetAvailableExtensionProperties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -287,6 +292,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			DeleteButton.IsEnabled = isSelected;
 			CreateNewTaskButton.IsEnabled = isSelected;
 			GenerateTitleButton.IsEnabled = isSelected;
+			ControlsHelper.SetVisible(ClearButton, !string.IsNullOrEmpty(SearchTextBox.Text));
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
@@ -476,6 +482,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#endregion
 
 		private void CopyButton_Click(object sender, RoutedEventArgs e)
+			=> CopySelectedItems();
+
+		private void PasteButton_Click(object sender, RoutedEventArgs e)
+		 => PasteItems();
+
+		public void CopySelectedItems()
 		{
 			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToArray();
 			if (!selectedItems.Any())
@@ -490,7 +502,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.ShowError(exception.Message);
 		}
 
-		private void PasteButton_Click(object sender, RoutedEventArgs e)
+		public void PasteItems()
 		{
 			try
 			{
@@ -515,6 +527,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			}
 		}
+
 
 		/// <summary>
 		///  Event is fired when the DataGrid is rendered and its items are loaded,
@@ -549,27 +562,149 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void InitSearch()
 		{
-			_SearchHelper = new SearchHelper<ISettingsListFileItem>((x) =>
+			// Helper functions to extract token content from parent and child items.
+			// For a parent TemplateItem.
+			Func<TemplateItem, (string name, string body, DateTime? date)> GetTemplateTokenContent = (x) =>
+				(x.Name, string.Join(" ", x.Text, x.TextInstructions), x.Modified);
+			// For a child MessageItem.
+			Func<MessageItem, (string name, string body, DateTime? date)> GetMessageTokenContent = (x) =>
+				("", string.Join(" ", x.Body, x.User, x.BodyInstructions), x.Date);
+
+			// For a parent ListInfo.
+			Func<ListInfo, (string name, string body, DateTime? date)> GetListInfoTokenContent = (x) =>
+				(x.Name, string.Join(" ", x.Description, x.Instructions), x.Modified);
+
+			Func<ListItem, (string name, string body, DateTime? date)> GetListItemTokenContent = (x) =>
+				("", string.Join(" ", x.Key, x.Value, x.Comment), null);
+
+			_SearchHelper = new SearchHelper<ISettingsListFileItem>(item =>
 			{
-				var s = SearchTextBox.Text;
-				// Item type specific code.
-				if (x is TemplateItem ti)
+				// Retrieve the search query from the textbox.
+				string query = SearchTextBox.Text;
+				if (string.IsNullOrWhiteSpace(query))
+					return true;
+
+				// Tokenize the query.
+				var tokens = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+				// Variables for specific filters.
+				string nameFilter = null;
+				string bodyFilter = null;
+				DateTime? dateFilter = null;
+				var defaultTerms = new List<string>();
+
+				// Process each token and extract known prefixes.
+				foreach (var token in tokens)
 				{
-					return string.IsNullOrEmpty(s) ||
-						(ti.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1 ||
-						(ti.Text ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+					if (token.StartsWith("body:", StringComparison.OrdinalIgnoreCase))
+					{
+						bodyFilter = token.Substring("body:".Length).Trim();
+					}
+					else if (token.StartsWith("name:", StringComparison.OrdinalIgnoreCase))
+					{
+						nameFilter = token.Substring("name:".Length).Trim();
+					}
+					else if (token.StartsWith("date:", StringComparison.OrdinalIgnoreCase))
+					{
+						var dateStr = token.Substring("date:".Length).Trim();
+						if (DateTime.TryParse(dateStr, out DateTime parsedDate))
+							dateFilter = parsedDate;
+					}
+					else
+					{
+						defaultTerms.Add(token);
+					}
+				}
+
+				// Build a unified collection of token records with the same signature.
+				IEnumerable<(string name, string body, DateTime? date)> tokenRecords;
+
+				if (item is TemplateItem ti)
+				{
+					// For TemplateItem, include the parent's token and all child MessageItem tokens.
+					var parentToken = GetTemplateTokenContent(ti);
+					var childTokens = ti.Messages.Select(m => GetMessageTokenContent(m));
+					tokenRecords = new[] { parentToken }.Concat(childTokens);
+				}
+				else if (item is ListInfo li)
+				{
+					// For ListInfo, include the parent's token and all child ListItem tokens.
+					var parentToken = GetListInfoTokenContent(li);
+					var childTokens = li.Items.Select(i => GetListItemTokenContent(i));
+					tokenRecords = new[] { parentToken }.Concat(childTokens);
 				}
 				else
 				{
-					return string.IsNullOrEmpty(s) ||
-						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+					// Fallback for other types: use the Name property.
+					tokenRecords = new[] { (item.Name, item.Name, item.Modified) };
 				}
-			}, null, new ObservableCollection<ISettingsListFileItem>());
+
+				// Return the overall match result using the unified matching function.
+				return MatchTokens(tokenRecords, nameFilter, bodyFilter, dateFilter, defaultTerms);
+			},
+			null,
+			new ObservableCollection<ISettingsListFileItem>());
+
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			FilteredList = _SearchHelper.FilteredList;
 			FilteredList.CollectionChanged += FilteredList_CollectionChanged;
 			OnPropertyChanged(nameof(FilteredList));
+		}
+
+		/// <summary>
+		/// Generalized matching function that checks a collection of token records against the provided filters.
+		/// </summary>
+		private bool MatchTokens(
+			IEnumerable<(string name, string body, DateTime? date)> records,
+			string nameFilter,
+			string bodyFilter,
+			DateTime? dateFilter,
+			List<string> defaultTerms)
+		{
+			bool hasName = !string.IsNullOrWhiteSpace(nameFilter);
+			bool hasBody = !string.IsNullOrWhiteSpace(bodyFilter);
+			bool hasDate = dateFilter.HasValue;
+			bool hasDefault = defaultTerms != null && defaultTerms.Any();
+
+			// Check the name filter against the name field.
+			if (hasName && !records.Any(r => !string.IsNullOrWhiteSpace(r.name) &&
+											   r.name.IndexOf(nameFilter, StringComparison.OrdinalIgnoreCase) >= 0))
+				return false;
+
+			// Check the body filter (also validating the date if provided).
+			if (hasBody && !records.Any(r => !string.IsNullOrWhiteSpace(r.body) &&
+											   r.body.IndexOf(bodyFilter, StringComparison.OrdinalIgnoreCase) >= 0 &&
+											   (!hasDate || (r.date.HasValue && r.date.Value.Date == dateFilter.Value.Date))))
+				return false;
+
+			// For cases where only a date filter is provided (or along with a name filter), 
+			// ensure at least one record has the matching date.
+			if (hasDate && !hasBody && !records.Any(r => r.date.HasValue &&
+														  r.date.Value.Date == dateFilter.Value.Date))
+				return false;
+
+			// Process free-text default terms.
+			if (hasDefault)
+			{
+				// When no explicit filters are provided, check only the parent's (first record's) name.
+				if (!hasName && !hasBody && !hasDate)
+				{
+					var parentToken = records.First();
+					if (!defaultTerms.All(term => !string.IsNullOrWhiteSpace(parentToken.name) &&
+													parentToken.name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))
+						return false;
+				}
+				else // If any prefixed filter exists, search across all token records.
+				{
+					if (!defaultTerms.All(term => records.Any(r =>
+							(!string.IsNullOrWhiteSpace(r.name) && r.name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0) ||
+							(!string.IsNullOrWhiteSpace(r.body) && r.body.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))))
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		private void FilteredList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -605,9 +740,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
+			var text = SearchTextBox.Text;
 			_SearchHelper.Filter();
-			if (PanelSettings.SearchText != SearchTextBox.Text)
-				PanelSettings.SearchText = SearchTextBox.Text;
+			if (PanelSettings.SearchText != text)
+				PanelSettings.SearchText = text;
+			ControlsHelper.SetVisible(ClearButton, !string.IsNullOrEmpty(text));
+		}
+
+		private void ClearButton_Click(object sender, RoutedEventArgs e)
+		{
+			SearchTextBox.Clear();
 		}
 
 		#endregion
@@ -700,6 +842,106 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.EnsureTabItemSelected(this);
 		}
 
+
+		#region Context Menu
+
+		private void MainDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToArray();
+			var items = selectedItems.Cast<ISettingsListFileItem>().ToArray();
+			if (!items.Any())
+				return;
+			// If you only want the context menu when a row is clicked:
+			var dataGrid = (DataGrid)sender;
+			// Build your dynamic menu:
+			var menu = CreateContextMenuForElement(DataType, items);
+			// Assign it to the DataGrid.
+			dataGrid.ContextMenu = menu;
+			// Force it to open right now:
+			menu.PlacementTarget = dataGrid; // or row, whichever you prefer
+			menu.IsOpen = true;
+			// Mark as handled so WPF does not try to open any other context menus.
+			e.Handled = true;
+		}
+
+		public ContextMenu CreateContextMenuForElement(ItemType itemType, params ISettingsFileItem[] items)
+		{
+			var contextMenu = new ContextMenu();
+			// Create head item.
+			var header = items.Length > 1 ? $"{items.Length} {DataType} Items" : items[0].Name;
+			var head = new MenuItem() { Header = header, IsEnabled = false };
+			contextMenu.Items.Add(head);
+			// Copy
+			var copyMenuItem = new MenuItem { Header = "Copy" };
+			copyMenuItem.Click += (s, e)
+				=> CopySelectedItems();
+			contextMenu.Items.Add(copyMenuItem);
+			// Paste
+			var pasteMenuItem = new MenuItem { Header = "Paste" };
+			pasteMenuItem.Click += (s, e)
+				=> PasteItems();
+			contextMenu.Items.Add(pasteMenuItem);
+			// Add "Copy Path(s)" menu item:
+			var copyPathMenuItem = new MenuItem { Header = items.Length > 1 ? "Copy Paths" : "Copy Path" };
+			var paths = items.Select(x => $"/{itemType}/{x.Name}");
+			copyPathMenuItem.Click += (s, e) =>
+				System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, paths));
+			contextMenu.Items.Add(copyPathMenuItem);
+			// Add reset menus if available.
+			var allResetItems = Global.Resets.Items.FirstOrDefault()?.Items;
+			if (allResetItems == null)
+				return contextMenu;
+			var presetMenuItem = new MenuItem { Header = "Update Instructions" };
+			contextMenu.Items.Add(presetMenuItem);
+			var instructions = (Settings.UpdateInstruction[])Enum.GetValues(typeof(Settings.UpdateInstruction));
+			var resetItems = allResetItems.Where(x => paths.Contains(x.Key)).ToArray();
+			foreach (var instruction in instructions)
+			{
+				// Check if item have this instruction.
+				var itemsWithInstructionCount = resetItems.Where(x => x.Value == instruction.ToString()).Count();
+				var isChecked = itemsWithInstructionCount > 0;
+				var menuHeader = Attributes.GetDescription(instruction);
+				if (itemsWithInstructionCount > 0)
+					menuHeader += $" ({itemsWithInstructionCount})";
+				var menuItem = new MenuItem { Header = menuHeader, IsCheckable = true, IsChecked = isChecked };
+				menuItem.Checked += (s, e) =>
+				{
+					// Process each path.
+					foreach (var path in paths)
+					{
+						var resetItem = resetItems.FirstOrDefault(x => x.Key == path);
+						// Add or update instruction.
+						if (resetItem != null)
+						{
+							if (instruction == Settings.UpdateInstruction.None)
+							{
+								allResetItems.Remove(resetItem);
+							}
+							else
+							{
+								resetItem.Value = instruction.ToString();
+							}
+						}
+						else if (instruction != Settings.UpdateInstruction.None)
+						{
+							resetItem = new ListItem { Key = path, Value = instruction.ToString() };
+							allResetItems.Add(resetItem);
+						}
+					}
+
+				};
+				menuItem.Unchecked += (s, e) =>
+				{
+					foreach (var item in resetItems)
+						allResetItems.Remove(item);
+				};
+				presetMenuItem.Items.Add(menuItem);
+			}
+			return contextMenu;
+		}
+
+		#endregion
+
 		#region Grouping
 
 		private string _GroupingProperty;
@@ -764,15 +1006,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
-
-		private void MainDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
-		{
-		}
-
-		private void MainDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-		{
-
-		}
 
 	}
 

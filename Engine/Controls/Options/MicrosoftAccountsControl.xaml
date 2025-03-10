@@ -35,11 +35,7 @@
 		</Grid.ColumnDefinitions>
 		<StackPanel Grid.Row="0" Grid.ColumnSpan="2">
 			<Border Margin="3,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
-				<TextBlock
-					Name="FeatureDescriptionLabel"
-					Margin="4"
-					Text="{StaticResource main_Vaults_Feature_Description}"
-					TextWrapping="Wrap" />
+				<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Vaults_Feature_Description}" TextWrapping="Wrap" />
 			</Border>
 			<GroupBox
 				x:Name="MicrosoftAccountGroupBox"

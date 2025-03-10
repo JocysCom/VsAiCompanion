@@ -28,7 +28,6 @@ Code feature to find:</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>Multiplication</Text>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ResetMessage</MessageBoxOperation>

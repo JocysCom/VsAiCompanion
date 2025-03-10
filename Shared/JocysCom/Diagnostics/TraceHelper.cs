@@ -91,7 +91,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 						if (encoding == "base64")
 						{
 							var base64Content = reader.ReadElementContentAsString();
-							byte[] bytes = Convert.FromBase64String(base64Content);
+							byte[] bytes = System.Convert.FromBase64String(base64Content);
 							value = Encoding.UTF8.GetString(bytes);
 						}
 						else

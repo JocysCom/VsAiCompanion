@@ -130,7 +130,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			file.State = (int)ProgressStatus.Completed;
 			await db.SaveChangesAsync();
 			// Process parts.
-			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 
 			FilePart[] parts = null;
 			var sourceFilePartHashes = new List<byte[]>();

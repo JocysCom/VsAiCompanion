@@ -61,7 +61,6 @@ Extract and analyze the plain text content from the following files:&#xD;
 </Text>
   <Attachments />
   <AttachContext>ActiveDocument</AttachContext>
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ResetMessage</MessageBoxOperation>

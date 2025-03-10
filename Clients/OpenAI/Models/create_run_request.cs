@@ -1,15 +1,11 @@
 using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
-    public class create_run_request : create_moderation_request
-    {
-        public string assistant_id { get; set; }
+	public class create_run_request : create_thread_and_run_request
+	{
+		public string additional_instructions { get; set; }
 
-        public string instructions { get; set; }
+		public List<create_message_request> additional_messages { get; set; }
 
-        public List<object> tools { get; set; }
-
-        public object metadata { get; set; }
-
-    }
+	}
 }

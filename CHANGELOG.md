@@ -1,3 +1,15 @@
+2025-03-10 v1.17.16
+
+- Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
+- Fix: Resolved an issue with how code and HTML display within a markdown block.
+- New: Clear Search Button.
+- New: Buttons to sort the lists.
+- New: Support for the KaTeX math rendering library.
+- Update: Improved list search using the `name:`, `body:`, and `date:` tokens.
+- Update: List and process plugin functions.
+- Update: Upgraded to Marked version 15.0.6.
+- Update: The `ReadFiles` function now reads all files from specified folders.
+
 2025-01-19 v1.16.28
 
 - Fix: PDF to Image converter (SkiaSharp package version).

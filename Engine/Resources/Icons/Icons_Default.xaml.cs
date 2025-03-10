@@ -27,6 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_button_error = nameof(Icon_button_error);
 		public const string Icon_button_ok = nameof(Icon_button_ok);
 		public const string Icon_button_trend_up = nameof(Icon_button_trend_up);
+		public const string Icon_cancel_gray = nameof(Icon_cancel_gray);
 		public const string Icon_chart_radar = nameof(Icon_chart_radar);
 		public const string Icon_chat = nameof(Icon_chat);
 		public const string Icon_chat_personalized = nameof(Icon_chat_personalized);
@@ -133,6 +134,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_screen = nameof(Icon_screen);
 		public const string Icon_settings = nameof(Icon_settings);
 		public const string Icon_shield = nameof(Icon_shield);
+		public const string Icon_sort_az_ascending = nameof(Icon_sort_az_ascending);
+		public const string Icon_sort_za_descending = nameof(Icon_sort_za_descending);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
 		public const string Icon_target = nameof(Icon_target);
 		public const string Icon_target_disabled = nameof(Icon_target_disabled);

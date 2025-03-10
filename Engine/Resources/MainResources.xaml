@@ -14,6 +14,7 @@
 	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
 	<sys:String x:Key="main_Copy">Copy</sys:String>
 	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
+	<sys:String x:Key="main_Copy_Path">Copy Path</sys:String>
 	<sys:String x:Key="main_Creativity">Creativity</sys:String>
 	<sys:String x:Key="main_Enable_Spell_Check_Help">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
 	<sys:String x:Key="main_Enable_Spell_Check_Name">Spell Check</sys:String>
@@ -113,6 +114,8 @@
 	<sys:String x:Key="main_Use_Maximum_Context_Name">Use Maximum Context</sys:String>
 	<sys:String x:Key="main_Use_System_Message_Help">If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.</sys:String>
 	<sys:String x:Key="main_Use_System_Message_Name">Use System Messages</sys:String>
+	<sys:String x:Key="main_Use_Monotype_Font">Mono</sys:String>
+	<sys:String x:Key="main_Use_Monotype_Font_Help">Use montype font</sys:String>
 	<sys:String x:Key="main_Text_Placeholder">Type a message</sys:String>
 	<sys:String x:Key="main_Placeholder">Placeholder</sys:String>
 	<sys:String x:Key="main_Temperature_Creativity">Temperature / Creativity</sys:String>
@@ -213,6 +216,7 @@
 	<sys:String x:Key="main_List_IsReadOnly">Prevent AI from modifying this list.</sys:String>
 	<sys:String x:Key="main_Lists_Feature_Description">Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</sys:String>
 	<sys:String x:Key="main_ReadOnly">Read-Only</sys:String>
+	<sys:String x:Key="main_AcceptsReturn">Accepts Return</sys:String>
 	<sys:String x:Key="main_Task_Path">Task / Path</sys:String>
 
 	<!--  Plugins  -->
@@ -282,6 +286,7 @@
 	<sys:String x:Key="main_Response_Timeout">Response Timeout</sys:String>
 	<sys:String x:Key="main_ServiceType">ServiceType</sys:String>
 	<sys:String x:Key="main_RequestOverrides">Request Overrides</sys:String>
+	<sys:String x:Key="main_ExternalLinks">External Links</sys:String>
 	<sys:String x:Key="main_Override_API_version">Override API version.</sys:String>
 	<sys:String x:Key="main_Override_API_version_Help">Enable the override of the API version.</sys:String>
 
@@ -355,6 +360,7 @@
 	</sys:String>
 
 	<!--  Options → Reset Settings  -->
+	<sys:String x:Key="main_Reset_Settings_with_Instructions">Reset Settings with Instructions</sys:String>
 	<sys:String x:Key="main_Reset_All_Settings">Reset All Settings</sys:String>
 	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>
@@ -373,6 +379,9 @@
 	<sys:String x:Key="main_Reset_MirrorSettings_Text">Delete items not in original settings</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Help">Delete items that aren't present in the original/default settings when resetting the settings.</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Name">Mirror Settings</sys:String>
+
+	<sys:String x:Key="main_UpdateInstructions">Update Instructions</sys:String>
+	<sys:String x:Key="main_UpdateInstructions_Help">Instructions for updating app settings: Use these to prepare builds with different setups.</sys:String>
 
 	<!--  About  -->
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>
@@ -417,6 +426,8 @@
 	<sys:String x:Key="main_Service">Service</sys:String>
 	<sys:String x:Key="main_Status">Status</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
+	<sys:String x:Key="main_Sort_Ascending">Sort Ascending</sys:String>
+	<sys:String x:Key="main_Sort_Descending">Sort Descending</sys:String>
 	<sys:String x:Key="main_Task">Task</sys:String>
 	<sys:String x:Key="main_Title">Title</sys:String>
 	<sys:String x:Key="main_Test">Test</sys:String>
@@ -463,6 +474,7 @@
 	<sys:String x:Key="main_TextBox_Drop_Files_Instructions">Extract and analyze the plain text content from the following files:</sys:String>
 	<sys:String x:Key="main_Use_Macros">Use Macros</sys:String>
 	<sys:String x:Key="main_Vision">Vision</sys:String>
+	<sys:String x:Key="main_Folder_Name_Exists">Folder with the same name already exists.</sys:String>
 	<sys:String x:Key="main_Visual_Studio_Extension_Options">Visual Studio Extension Options</sys:String>
 	<sys:String x:Key="main_VsExtensionFeatureMessage">This feature is only available when the application is run as an extension in Visual Studio.</sys:String>
 	<sys:String x:Key="main_VsExtensionVersionMessage">This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.</sys:String>

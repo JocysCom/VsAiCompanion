@@ -14,7 +14,54 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		{
 			// Initialize a string builder to construct the IClient interface
 			var sb = new StringBuilder();
+
+			// Check if any operations return or accept List<> types
+			bool needsGenericCollections = false;
+
+			foreach (var path in document.Paths)
+			{
+				foreach (var operation in path.Value.Operations)
+				{
+					// Check response types
+					if (operation.Value.Responses.Any(r => r.Value.Content.Any(c =>
+					{
+						var schema = c.Value.Schema;
+						return schema != null && (schema.Type == "array" ||
+							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+					})))
+					{
+						needsGenericCollections = true;
+					}
+
+					// Check parameter types
+					if (operation.Value.Parameters.Any(p =>
+					{
+						var schema = p.Schema;
+						return schema != null && (schema.Type == "array" ||
+							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+					}))
+					{
+						needsGenericCollections = true;
+					}
+
+					// Check request body
+					if (operation.Value.RequestBody?.Content.Any(c =>
+					{
+						var schema = c.Value.Schema;
+						return schema != null && (schema.Type == "array" ||
+							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+					}) == true)
+					{
+						needsGenericCollections = true;
+					}
+				}
+			}
+
 			sb.AppendLine($"using {BaseNamespace};");
+			if (needsGenericCollections)
+			{
+				sb.AppendLine($"using System.Collections.Generic;");
+			}
 			sb.AppendLine();
 			sb.AppendLine("public interface IClient");
 			sb.AppendLine("{");
@@ -36,9 +83,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			WriteHelper.WriteIfDifferent(interfaceFilePath, bytes);
 		}
 
-
 		/// <summary>
-		/// This method will need to be implemented to generate each method signature based on OpenAPI Operation
+		/// Generates method signature based on OpenAPI Operation
 		/// </summary>
 		private string GenerateMethodSignature(string path, OperationType operationType, OpenApiOperation operation, Func<OpenApiSchema, OpenApiSchema> getPrimarySchema)
 		{
@@ -53,38 +99,104 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				var mediaType = response.Content.First().Value;
 				var schema = mediaType.Schema;
 				var primarySchema = getPrimarySchema(schema);
-				// Assume we have a way to convert the schema to a C# type name
-				returnType = GetCSharpTypeName(primarySchema);
+
+				if (primarySchema.Reference != null)
+				{
+					// For referenced types, use the reference ID to get the class name
+					var refId = primarySchema.Reference.Id;
+					var className = GetCSharpClassName(refId);
+
+					// Explicitly check if the class name is a reserved keyword
+					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					{
+						returnType = "@" + className;
+					}
+					else
+					{
+						returnType = className;
+					}
+				}
+				else
+				{
+					// For non-reference types, use the regular type mapping
+					returnType = GetCSharpTypeName(primarySchema);
+				}
 			}
 
 			// Start building the method signature
 			var signatureBuilder = new StringBuilder();
-			signatureBuilder.Append($"    {returnType} {methodName}(");
+			signatureBuilder.Append($"\t{returnType} {methodName}(");
 
 			// Extract parameters from operation and add them to the method signature
 			foreach (var parameter in operation.Parameters)
 			{
-				string parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema));
+				string parameterType;
+				if (parameter.Schema.Reference != null)
+				{
+					var refId = parameter.Schema.Reference.Id;
+					var className = GetCSharpClassName(refId);
+
+					// Explicitly check if the class name is a reserved keyword
+					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					{
+						parameterType = "@" + className;
+					}
+					else
+					{
+						parameterType = className;
+					}
+
+					if (parameter.Schema.Nullable)
+						parameterType += "?";
+				}
+				else
+				{
+					parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema));
+				}
+
+				string parameterName = GetCSharpTypeName(parameter.Name);
 
 				if (parameter.In == ParameterLocation.Header)
 				{
-					// Headers might be optional and have default values, handle them accordingly
-					// Assuming there's a helper method to get default value as string representation for C# code
 					string defaultValue = parameter.Schema.Default != null ? $" = {GetDefaultValueAsString(parameter.Schema.Default)}" : string.Empty;
-					signatureBuilder.Append($"{parameterType} {parameter.Name}{defaultValue}, ");
+					signatureBuilder.Append($"{parameterType} {parameterName}{defaultValue}, ");
 				}
 				else if (parameter.In == ParameterLocation.Query || parameter.In == ParameterLocation.Path)
 				{
-					// Query and path parameters would be regular method parameters
-					signatureBuilder.Append($"{parameterType} {parameter.Name}, ");
+					signatureBuilder.Append($"{parameterType} {parameterName}, ");
 				}
 			}
 
-			// Check if there is a body parameter and add it, assuming only one body is allowed
+			// Check if there is a body parameter and add it
 			if (operation.RequestBody != null && operation.RequestBody.Content.Any())
 			{
-				var schema = getPrimarySchema(operation.RequestBody.Content.First().Value.Schema);
-				var requestBodyType = GetCSharpTypeName(schema);
+				var schema = operation.RequestBody.Content.First().Value.Schema;
+				string requestBodyType;
+
+				if (schema.Reference != null)
+				{
+					var primarySchema = getPrimarySchema(schema);
+					var refId = primarySchema.Reference.Id;
+					var className = GetCSharpClassName(refId);
+
+					// Explicitly check if the class name is a reserved keyword
+					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					{
+						requestBodyType = "@" + className;
+					}
+					else
+					{
+						requestBodyType = className;
+					}
+
+					if (schema.Nullable)
+						requestBodyType += "?";
+				}
+				else
+				{
+					requestBodyType = GetCSharpTypeName(getPrimarySchema(schema));
+				}
+
 				signatureBuilder.Append($"{requestBodyType} body, ");
 			}
 

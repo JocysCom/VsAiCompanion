@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -36,62 +37,61 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		private ItemType _DataType;
 
-
+		/// <summary>
+		/// Gets the data item associated with this control.
+		/// </summary>
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public AiService Item
 		{
 			get => _Item;
-			set
+		}
+		AiService _Item;
+
+		public async Task BindData(AiService value)
+		{
+			await Task.Delay(0);
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			var oldItem = _Item;
+			// If old item is not null then detach event handlers.
+			if (_Item != null)
 			{
-				if (ControlsHelper.IsDesignMode(this))
-					return;
-				lock (_ItemLock)
+				_Item.PropertyChanged -= _Item_PropertyChanged;
+			}
+			if (value != null)
+			{
+				var assembly = GetType().Assembly;
+				var bytes = ClassLibrary.Helper.FindResource<byte[]>($"AI Service - {value.Name}.rtf", assembly);
+				//var bytes = AppHelper.ExtractFile("Documents.zip", "Feature - AI Avatar.rtf");
+				if (bytes == null)
 				{
-					var oldItem = _Item;
-					// If old item is not null then detach event handlers.
-					if (_Item != null)
-					{
-						_Item.PropertyChanged -= _Item_PropertyChanged;
-					}
-					if (value != null)
-					{
-						var assembly = this.GetType().Assembly;
-						var bytes = ClassLibrary.Helper.FindResource<byte[]>($"AI Service - {value.Name}.rtf", assembly);
-						//var bytes = AppHelper.ExtractFile("Documents.zip", "Feature - AI Avatar.rtf");
-						if (bytes == null)
-						{
-							MainTabControl.Visibility = Visibility.Collapsed;
-						}
-						else
-						{
-							ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
-							MainTabControl.Visibility = Visibility.Visible;
-						}
-					}
-					_Item = value ?? new AiService();
-					// Make sure that even custom AiModel old and new item is available to select.
-					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel, oldItem?.DefaultAiModel);
-					DataContext = _Item;
-					// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel);
-					_Item.PropertyChanged += _Item_PropertyChanged;
-					UpdateControlVilibility();
-					// Force VaultItemValueControl to update its DataContext
-					ApiSecretKeyVaultItemValuePanel.DataContext = _Item;
-					ApiOrganizationIdVaultItemValuePanel.DataContext = _Item;
-
-					// Ensure Value is updated
-					ApiSecretKeyVaultItemValuePanel.Value = _Item.ApiSecretKey;
-					ApiOrganizationIdVaultItemValuePanel.Value = _Item.ApiOrganizationId;
-
-					// Ensure VaultItemId is updated
-					ApiSecretKeyVaultItemValuePanel.VaultItemId = _Item.ApiSecretKeyVaultItemId;
-					ApiOrganizationIdVaultItemValuePanel.VaultItemId = _Item.ApiOrganizationIdVaultItemId;
+					MainTabControl.Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+					MainTabControl.Visibility = Visibility.Visible;
 				}
 			}
+			_Item = value ?? new AiService();
+			// Make sure that even custom AiModel old and new item is available to select.
+			AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel, oldItem?.DefaultAiModel);
+			DataContext = _Item;
+			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
+			AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel);
+			_Item.PropertyChanged += _Item_PropertyChanged;
+			UpdateControlVilibility();
+			//await ExternalLinksPanel.BindData(_Item?.ExternalLinks);
+			// Force VaultItemValueControl to update its DataContext
+			ApiSecretKeyVaultItemValuePanel.DataContext = _Item;
+			ApiOrganizationIdVaultItemValuePanel.DataContext = _Item;
+			// Ensure Value is updated
+			ApiSecretKeyVaultItemValuePanel.Value = _Item.ApiSecretKey;
+			ApiOrganizationIdVaultItemValuePanel.Value = _Item.ApiOrganizationId;
+			// Ensure VaultItemId is updated
+			ApiSecretKeyVaultItemValuePanel.VaultItemId = _Item.ApiSecretKeyVaultItemId;
+			ApiOrganizationIdVaultItemValuePanel.VaultItemId = _Item.ApiOrganizationIdVaultItemId;
 		}
-		private AiService _Item;
-		private readonly object _ItemLock = new object();
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -137,7 +137,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void CheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			// Remove default flag from all other items.
-			var aiServices = Global.AppSettings.AiServices.Where(x => x != Item);
+			var aiServices = Global.AiServices.Items.Where(x => x != Item);
 			foreach (var item in aiServices)
 			{
 				if (item.IsDefault)

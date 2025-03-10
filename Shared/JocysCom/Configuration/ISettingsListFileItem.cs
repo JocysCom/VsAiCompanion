@@ -15,8 +15,8 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		// List Properties.
 		bool IsPinned { get; set; }
-		DateTime Created { get; set; }
-		DateTime Modified { get; set; }
+		DateTime? Created { get; set; }
+		DateTime? Modified { get; set; }
 		int ListGroupTimeSortKey { get; }
 		string ListGroupPathSortKey { get; }
 		string ListGroupNameSortKey { get; }

@@ -5,6 +5,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -223,6 +224,31 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				}
 				return text.ToString();
 			}
+		}
+
+		/// <summary>
+		/// Expands a list of paths (files or folders) to a list of file paths.
+		/// </summary>
+		/// <param name="paths">Paths to files or folders. Folder paths will be expanded to include all contained files.</param>
+		/// <param name="recursive">When true, include files in subdirectories of any folder paths.</param>
+		/// <returns>A list of file paths.</returns>
+		public static IEnumerable<string> ExpandPathsToFiles(string[] paths, bool recursive)
+		{
+			var filePaths = new List<string>();
+			foreach (var path in paths)
+			{
+				if (Directory.Exists(path))
+				{
+					var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+					filePaths.AddRange(Directory.GetFiles(path, "*", searchOption));
+				}
+				else if (File.Exists(path))
+				{
+					filePaths.Add(path);
+				}
+				// Silently skip paths that don't exist
+			}
+			return filePaths;
 		}
 
 	}

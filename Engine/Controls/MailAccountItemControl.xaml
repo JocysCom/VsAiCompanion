@@ -39,14 +39,10 @@
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
 		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
-			<TextBlock
-				Name="FeatureDescriptionLabel"
-				Margin="4"
-				Text="{StaticResource main_MaiAccounts_Feature_Description}"
-				TextWrapping="Wrap" />
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_MaiAccounts_Feature_Description}" TextWrapping="Wrap" />
 		</Border>
 		<!--  Row 1  -->
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="1" Margin="3,0,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -63,7 +59,6 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-
 			<Label Grid.Row="1" Content="{StaticResource main_Email_Name}" />
 			<TextBox
 				Name="EmailNameTextBox"

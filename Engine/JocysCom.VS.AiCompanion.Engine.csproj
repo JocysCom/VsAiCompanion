@@ -18,8 +18,8 @@
 		<Copyright>Jocys.com</Copyright>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.16.28</AssemblyVersion>
-		<FileVersion>1.16.28</FileVersion>
+		<AssemblyVersion>1.17.16</AssemblyVersion>
+		<FileVersion>1.17.16</FileVersion>
 		<Title>Jocys.com VS AI Companion</Title>
 		<Description>AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
 		<Product>VS AI Companion</Product>
@@ -142,6 +142,7 @@
 	<ItemGroup>
 		<None Remove="AiCompanion.svg" />
 		<None Remove="App.ico" />
+		<None Remove="Controls\Chat\ChatListControl.html" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Add.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Cancel.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Delete.svg" />
@@ -172,10 +173,12 @@
 		<EmbeddedResource Remove="Resources\Embeddings\**" />
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\Embeddings\**" />
+		<None Remove="Resources\AI Service - DeepSeek.rtf" />
 		<None Remove="Resources\AI Service - Google Gemini.rtf" />
 		<None Remove="Resources\AI Service - Open AI.rtf" />
 		<None Remove="Resources\AI Service - Speech Service.rtf" />
 		<None Remove="Resources\AI Service - xAi Grok.rtf" />
+		<None Remove="Resources\AI Service - xAi.rtf" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
 		<None Remove="Resources\Documents.zip" />
 		<None Remove="Resources\IconExperience.License.txt" />
@@ -186,6 +189,7 @@
 		<None Remove="Resources\Icons\Icons_Default\microsoft_login.svg" />
 		<None Remove="Resources\Icons\Icons_Default\user_azure.svg" />
 		<None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
+		<None Remove="Resources\Icons\Templates\code_template.svg" />
 		<None Remove="Resources\Icons\Templates\control_panel.svg" />
 		<None Remove="Resources\Images\AiCompanion.png" />
 		<None Remove="Resources\Images\AudioDemo.wav" />
@@ -237,10 +241,13 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<EmbeddedResource Include="Controls\Chat\ChatListControl\**\*.*" />
+		<EmbeddedResource Include="Controls\Chat\ChatListControl.html" />
+		<EmbeddedResource Include="Resources\AI Service - DeepSeek.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Google Gemini.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Open AI.rtf" />
 		<EmbeddedResource Include="Resources\AI Service - Speech Service.rtf" />
-		<EmbeddedResource Include="Resources\AI Service - xAi Grok.rtf" />
+		<EmbeddedResource Include="Resources\AI Service - xAi.rtf" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
@@ -252,13 +259,9 @@
 		<Content Include="Resources\MainWindowCommand.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\*.*" />
 		<Page Remove="Resources\Embeddings\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="Controls\Chat\ChatListControl.html" />
-		<EmbeddedResource Include="Controls\Chat\ChatListControl\*.*" />
 		<EmbeddedResource Include="Resources\BuildDate.*" />
 		<EmbeddedResource Include="Resources\Settings\Templates\*.xml" />
 	</ItemGroup>
@@ -283,6 +286,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="AiCompanion.svg" />
+		<Resource Include="Resources\Icons\Templates\code_template.svg" />
 		<Resource Include="Resources\Images\AiCompanion.png" />
 		<Resource Include="Resources\Images\AudioDemo.wav" />
 		<Resource Include="Resources\Images\AvatarBackground.jpg" />

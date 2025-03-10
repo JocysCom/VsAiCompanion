@@ -40,7 +40,7 @@
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
 		<!--  Row 1  -->
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="1" Margin="3,0,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />

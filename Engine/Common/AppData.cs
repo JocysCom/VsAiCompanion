@@ -75,7 +75,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
-
 		[DefaultValue(RiskLevel.Critical)]
 		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
 		RiskLevel _MaxRiskLevel;
@@ -281,6 +280,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private bool _ResetListsMirror;
 
 		[DefaultValue(true)]
+		public bool ResetResetsMirror { get => _ResetResetsMirror; set => SetProperty(ref _ResetResetsMirror, value); }
+		private bool _ResetResetsMirror;
+
+		[DefaultValue(true)]
 		public bool ResetEmbeddingsMirror { get => _ResetEmbeddingsMirror; set => SetProperty(ref _ResetEmbeddingsMirror, value); }
 		private bool _ResetEmbeddingsMirror;
 
@@ -399,39 +402,40 @@ Do not return as a code block.")]
 		/// </summary>
 		public void CleanupAiModels()
 		{
-			var serviceIds = AiServices.Select(x => x.Id).ToArray();
+			var serviceIds = Global.AiServices.Items.Select(x => x.Id).ToArray();
 			// Fix: Remove with empty name
-			var modelsToRemove = Global.AppSettings.AiModels.Where(x => string.IsNullOrWhiteSpace(x.Name)).ToArray();
+			var modelsToRemove = Global.AiModels.Items.Where(x => string.IsNullOrWhiteSpace(x.Name)).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Remove(model);
 			// Remove models without services.
-			modelsToRemove = AiModels.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
+			modelsToRemove = Global.AiModels.Items.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Remove(model);
 			// Remove duplicates
-			var modelsToKeep = AiModels
+			var modelsToKeep = Global.AiModels.Items
 				.GroupBy(model => new { model.AiServiceId, model.Name })
 				.Select(group => group.First())
 				.ToList();
-			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
+			modelsToRemove = Global.AiModels.Items.Except(modelsToKeep).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Items.Remove(model);
 			// Remove duplicates
-			modelsToKeep = AiModels
+			modelsToKeep = Global.AiModels.Items
 				.GroupBy(model => new { model.Id })
 				.Select(group => group.First())
 				.ToList();
-			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
+			modelsToRemove = Global.AiModels.Items.Except(modelsToKeep).ToArray();
 			foreach (var model in modelsToRemove)
-				AiModels.Remove(model);
+				Global.AiModels.Items.Remove(model);
 			// Fix path property (use for the list only).
-			var models = AiModels.ToArray();
+			var models = Global.AiModels.Items.ToArray();
 			foreach (var model in models)
 				if (model.Path != model.AiServiceName)
 					model.Path = model.AiServiceName;
 		}
 
 		/// <summary>AI Services</summary>
+		//[Obsolete("Property is deprecated. Please use `Global.AiServices` property instead.")]
 		public SortableBindingList<AiService> AiServices
 		{
 			get => _AiServices.Value;
@@ -442,6 +446,7 @@ Do not return as a code block.")]
 
 
 		/// <summary>AI Models</summary>
+		//[Obsolete("Property is deprecated. Please use `Global.AiModels` property instead.")]
 		public SortableBindingList<AiModel> AiModels
 		{
 			get => _AiModels.Value;

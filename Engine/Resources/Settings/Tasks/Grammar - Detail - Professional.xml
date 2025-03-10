@@ -60,7 +60,6 @@ Text to process:&#xD;
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

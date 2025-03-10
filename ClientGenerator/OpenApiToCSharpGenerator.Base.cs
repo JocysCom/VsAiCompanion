@@ -9,6 +9,12 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 	/// </summary>
 	public partial class OpenApiToCSharpGenerator
 	{
+		public bool EnableNullable { get; set; }
+
+		public OpenApiToCSharpGenerator(bool enableNullable)
+		{
+			EnableNullable = enableNullable;
+		}
 
 		private const string BaseNamespace = "JocysCom.VS.AiCompanion.Clients.OpenAI.Models";
 
@@ -36,26 +42,32 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Exclude all aliases.
 			FoundClasses = FoundClasses.Except(schemaAliasMapping.Keys).ToList();
 			PopulateBaseProperties();
+			var enumsPath = Path.Combine(outputDirectory, "Enums");
+			var modelsPath = Path.Combine(outputDirectory, "Models");
+			if (!Directory.Exists(enumsPath))
+				Directory.CreateDirectory(enumsPath);
+			if (!Directory.Exists(modelsPath))
+				Directory.CreateDirectory(modelsPath);
 			// Iterate through enums
-			FilesBefore = Directory.GetFiles(outputDirectory + "\\Enums", "*.cs").ToList();
+			FilesBefore = Directory.GetFiles(enumsPath, "*.cs").ToList();
 			foreach (var schema in FoundEnums)
 			{
 				var id = schema.Reference.Id;
 				var csharpClassContent = GenerateEnum(schema);
-				string filePath = Path.Combine(outputDirectory + "\\Enums", GetCSharpClassName(id) + ".cs");
-				WriteHelper.SaveToFile(filePath, csharpClassContent);
+				string filePath = Path.Combine(enumsPath, GetCSharpClassName(id) + ".cs");
+				WriteHelper.SaveToFile(filePath, csharpClassContent, true);
 			}
-			CleanupFiles(outputDirectory + "\\Enums");
+			CleanupFiles(enumsPath);
 			// Iterate through classes, noting aliases and generating classes
-			FilesBefore = Directory.GetFiles(outputDirectory + "\\Models", "*.cs").ToList();
+			FilesBefore = Directory.GetFiles(modelsPath, "*.cs").ToList();
 			foreach (var schema in FoundClasses)
 			{
 				var id = schema.Reference.Id;
 				var csharpClassContent = GenerateClass(schema);
-				string filePath = Path.Combine(outputDirectory + "\\Models", GetCSharpClassName(id) + ".cs");
-				WriteHelper.SaveToFile(filePath, csharpClassContent);
+				string filePath = Path.Combine(modelsPath, GetCSharpClassName(id) + ".cs");
+				WriteHelper.SaveToFile(filePath, csharpClassContent, true);
 			}
-			CleanupFiles(outputDirectory + "\\Models");
+			CleanupFiles(modelsPath);
 		}
 
 		public List<string> FilesBefore = new List<string>();
@@ -243,9 +255,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// Map OpenAPI schema types to C# types.
 		/// </summary>
 		/// <param name="schema">The schema to get the C# type for.</param>
-		/// <param name="enableNullable">Determines whether nullable suffix is allowed for value types.</param>
 		/// <returns>String representation of the corresponding C# type.</returns>
-		private string GetCSharpTypeName(OpenApiSchema schema, bool enableNullable = false)
+		private string GetCSharpTypeName(OpenApiSchema schema)
 		{
 			var csType = "object";
 			// Handle simple types
@@ -258,32 +269,51 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			else if (schema.Type == "number")
 				csType = schema.Format == "float" ? "float" : "double";
 			else if (schema.Type == "array" && schema.Items != null)
-				csType = $"List<{GetCSharpTypeName(schema.Items, enableNullable)}>";
+				csType = $"List<{GetCSharpTypeName(schema.Items)}>";
 
 			// Handle complex types
 			// Check if it is a reference to another complex type such as classes or enums
 			if (schema.Reference != null)
 			{
 				var primarySchema = GetPrimarySchemaByAlias(schema);
-				var refId = GetCSharpClassName(primarySchema.Reference.Id);
+				var refId = primarySchema.Reference.Id;
+				var className = GetCSharpClassName(refId);
+
 				if (FoundEnums.Any(e => e.Reference?.Id == refId))
 				{
 					// It's an enum reference
-					csType = refId;
+					csType = className;
 				}
 				else
 				{
 					// It's a class reference
-					csType = refId;
+					csType = className;
 				}
 			}
 			// Determine if the type is a numeric value type
 			var isValueType = numericTypes.Contains(csType);
 			// Handle nullable types for value types
-			if (schema.Nullable && (enableNullable || isValueType))
+			if (schema.Nullable && (EnableNullable || isValueType))
 				csType += "?";
 
 			return csType;
+		}
+
+		/// <returns>C# class name with prefix `@` for reserved words.</returns>
+		private string GetCSharpTypeName(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				return input;
+			// First, replace any non-alphanumeric characters (except underscores) with underscores
+			// This handles dashes, spaces, and other invalid characters
+			input = Regex.Replace(input, @"[^\w]", "_");
+			var pattern = @"(?<!^)([A-Z])"; // Negative lookbehind to avoid matching the start of the string
+			var result = Regex.Replace(input, pattern, m => "_" + m.Groups[1].Value).ToLower();
+			input = result.Trim('_');
+			var isCSharpKeyword = ReservedKeywords.Contains(input);
+			return isCSharpKeyword
+				? "@" + input
+				: input;
 		}
 
 		/// <summary>
@@ -305,7 +335,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			"case", "catch", "char", "checked", "class", "const",
 			"continue", "decimal", "default", "delegate", "do", "double",
 			"else", "enum", "event", "explicit", "extern", "false",
-			"finally", "fixed", "float", "for", "foreach", "goto",
+			"file", "finally", "fixed", "float", "for", "foreach", "goto",
 			"if", "implicit", "in", "int", "interface", "internal",
 			"is", "lock", "long", "namespace", "new", "null",
 			"object", "operator", "out", "override", "params", "private",
@@ -328,21 +358,6 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			input = GetCSharpTypeName(input);
 			return !string.IsNullOrEmpty(input) && overideClassNames.ContainsKey(input)
 				? overideClassNames[input]
-				: input;
-		}
-
-
-		/// <returns>C# class name with prefix `@` for reserved words.</returns>
-		private string GetCSharpTypeName(string input)
-		{
-			if (string.IsNullOrEmpty(input))
-				return input;
-			var pattern = @"(?<!^)([A-Z])"; // Negative lookbehind to avoid matching the start of the string
-			var result = Regex.Replace(input, pattern, m => "_" + m.Groups[1].Value).ToLower();
-			input = result.Trim('_');
-			var isCSharpKeyword = ReservedKeywords.Contains(input);
-			return isCSharpKeyword
-				? "@" + input
 				: input;
 		}
 

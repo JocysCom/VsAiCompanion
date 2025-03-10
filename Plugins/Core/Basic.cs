@@ -147,63 +147,84 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
+		/// Executes an external command with the option to run it either as a regular process or via PowerShell.
+		/// Use runPowerShell = true when the command requires PowerShell-specific syntax (e.g., command substitution with $("…")).
 		/// </summary>
-		/// <param name="fileName">Application or document to start.</param>
-		/// <param name="arguments">Command-line arguments to use when starting the application.</param>
-		/// <param name="workingDirectory">The working directory for the process to be started. Default is empty string.</param>
-		/// <returns>The output of the started process.</returns>
-		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
-		/// <remarks>Be cautious with executing process requesys received via API due to security risks.</remarks>
+		/// <param name="command">
+		/// When runPowerShell is false, this should be the executable name (e.g., "git", "notepad.exe").
+		/// When runPowerShell is true, this is interpreted as the script or command to execute by PowerShell.
+		/// </param>
+		/// <param name="arguments">
+		/// The command-line arguments to pass. For PowerShell execution, these arguments will be appended to the script, so ensure proper formatting.
+		/// </param>
+		/// <param name="workingDirectory">
+		/// The directory in which the command should be executed.
+		/// </param>
+		/// <param name="runPowerShell">
+		/// Set to true to execute the command using PowerShell (with -NoProfile and -ExecutionPolicy Bypass).
+		/// This should be chosen if the command string contains PowerShell-specific syntax, such as command substitution ($(…)).
+		/// If the command is a simple executable call without such syntax, use false.
+		/// </param>
+		/// <returns>
+		/// The standard output or error output of the executed process.
+		/// </returns>
 		[RiskLevel(RiskLevel.Critical)]
-		public static string StartProcess(string fileName, string arguments, string workingDirectory)
+		public static async Task<OperationResult<string>> ExecuteCommand(
+			string command,
+			string arguments,
+			string workingDirectory,
+			bool runPowerShell = false)
 		{
-			ProcessStartInfo startInfo = new ProcessStartInfo
+			if (runPowerShell)
 			{
-				FileName = fileName,
+				// Combine the script and additional arguments.
+				var combinedCommand = string.IsNullOrWhiteSpace(arguments)
+					? command
+					: $"{command} {arguments}";
+				command = "powershell.exe";
+				arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{combinedCommand}\"";
+			}
+			var startInfo = new ProcessStartInfo
+			{
+				FileName = command,
 				Arguments = arguments,
 				WorkingDirectory = workingDirectory,
 				RedirectStandardOutput = true,
+				RedirectStandardError = true,
 				UseShellExecute = false,
 				CreateNoWindow = true
 			};
-
-			using (Process process = new Process())
-			{
-				process.StartInfo = startInfo;
-				process.Start();
-				string output = process.StandardOutput.ReadToEnd();
-				process.WaitForExit();
-				return output;
-			}
+			return await ExecuteProcess(startInfo);
 		}
 
 		/// <summary>
-		/// Execute a PowerShell script on user computer.
+		/// Internal helper method to execute a process with the specified ProcessStartInfo.
 		/// </summary>
-		/// <param name="script">The PowerShell script to be executed.</param>
-		/// <returns>The output of the executed PowerShell script.</returns>
-		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
-		/// <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
-		[RiskLevel(RiskLevel.Critical)]
-		public static string RunPowerShellScript(string script)
+		/// <param name="startInfo">The ProcessStartInfo with configuration for the process.</param>
+		/// <returns>The combined output (or error output if present) from the process.</returns>
+		private static async Task<OperationResult<string>> ExecuteProcess(ProcessStartInfo startInfo)
 		{
-			ProcessStartInfo startInfo = new ProcessStartInfo
-			{
-				FileName = "powershell.exe",
-				Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
-				RedirectStandardOutput = true,
-				UseShellExecute = false,
-				CreateNoWindow = true
-			};
-
 			using (Process process = new Process())
 			{
 				process.StartInfo = startInfo;
 				process.Start();
-				string output = process.StandardOutput.ReadToEnd();
+
+				// Read both standard output and error concurrently.
+				Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+				Task<string> errorTask = process.StandardError.ReadToEndAsync();
+				await Task.WhenAll(outputTask, errorTask);
+
 				process.WaitForExit();
-				return output;
+
+				string output = outputTask.Result;
+				string error = errorTask.Result;
+
+				// Combine output and error if error is not empty.
+				string combinedOutput = string.IsNullOrWhiteSpace(error)
+					? output
+					: $"{output}{Environment.NewLine}ERROR: {error}";
+
+				return new OperationResult<string>(combinedOutput);
 			}
 		}
 

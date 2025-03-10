@@ -378,7 +378,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var box = new MessageBoxWindow();
 				box.SetSize(640, 240);
-				var serviceModels = Global.AppSettings.AiModels
+				var serviceModels = Global.AiModels.Items
 					.Where(x => x.AiServiceId == aiService.Id)
 					.Select(x => x.Name)
 					.Concat(new string[] { aiService.DefaultAiModel })
@@ -423,9 +423,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (filterRx != null)
 					modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
 				// Remove all old models of AiService.
-				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == aiService.Id).ToList();
+				var serviceModels = Global.AiModels.Items.Where(x => x.AiServiceId == aiService.Id).ToList();
 				foreach (var serviceModel in serviceModels)
-					Global.AppSettings.AiModels.Remove(serviceModel);
+					Global.AiModels.Items.Remove(serviceModel);
 				// Add all new models of AiService.
 				foreach (var modelCode in modelCodes)
 				{
@@ -440,7 +440,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					if (aiModel.MaxInputTokens == 0)
 						aiModel.MaxInputTokens = Client.GetMaxInputTokens(aiModel.Name);
 					Client.SetModelFeatures(aiModel);
-					Global.AppSettings.AiModels.Add(aiModel);
+					Global.AiModels.Add(aiModel);
 				}
 				Global.AppSettings.CleanupAiModels();
 				// This will inform all forms that models changed.
@@ -481,7 +481,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (aiService == null)
 				return;
 			// Make sure checkbox can display current model.
-			var serviceModels = Global.AppSettings.AiModels
+			var serviceModels = Global.AiModels.Items
 				.Where(x => x.AiServiceId == aiService.Id)
 				.Select(x => x.Name)
 				.Distinct(StringComparer.OrdinalIgnoreCase)
@@ -499,8 +499,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var item = new TemplateItem();
 			item.Created = DateTime.Now;
 			item.Modified = item.Created;
-			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
-				Global.AppSettings.AiServices.FirstOrDefault();
+			var defaultAiService = Global.AiServices.Items.FirstOrDefault(x => x.IsDefault) ??
+				Global.AiServices.Items.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService?.DefaultAiModel;
 			if (setNameAndIcon)
@@ -534,8 +534,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var item = new FineTuningItem();
 			item.Created = DateTime.Now;
 			item.Modified = item.Created;
-			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
-				Global.AppSettings.AiServices.FirstOrDefault();
+			var defaultAiService = Global.AiServices.Items.FirstOrDefault(x => x.IsDefault) ??
+				Global.AiServices.Items.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
 			item.Name = $"FineTuning {DateTime.Now:yyyyMMdd_HHmmss}";
@@ -552,8 +552,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var item = new AssistantItem();
 			item.Created = DateTime.Now;
 			item.Modified = item.Created;
-			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
-				Global.AppSettings.AiServices.FirstOrDefault();
+			var defaultAiService = Global.AiServices.Items.FirstOrDefault(x => x.IsDefault) ??
+				Global.AiServices.Items.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
 			item.Name = $"Assistant {DateTime.Now:yyyyMMdd_HHmmss}";
@@ -604,10 +604,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.Created = DateTime.Now;
 			item.Modified = item.Created;
 			item.Name = $"Embedding {DateTime.Now:yyyyMMdd_HHmmss}";
-			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)
-				?? Global.AppSettings.AiServices.FirstOrDefault();
+			var defaultAiService = Global.AiServices.Items.FirstOrDefault(x => x.IsDefault)
+				?? Global.AiServices.Items.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
-			var models = Global.AppSettings.AiModels.Where(x => x.AiServiceId == defaultAiService?.Id);
+			var models = Global.AiModels.Items.Where(x => x.AiServiceId == defaultAiService?.Id);
 			item.AiModel = models?.FirstOrDefault(x => x.Name.IndexOf("embedding", StringComparison.OrdinalIgnoreCase) >= 0)?.Name
 				?? defaultAiService?.DefaultAiModel
 				?? "text-embedding-3-large";
@@ -671,10 +671,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var language in languages)
 				{
 					// The Uri points to the.lex file in the application root.
-					var uri = new Uri($"pack://application:,,,/Dictionary.{language}.lex");
+					var uri = AppHelper.GetResourceUri($"Dictionary.{language}.lex");
 					box.SpellCheck.CustomDictionaries.Add(uri);
 				}
 			}
+		}
+
+		public static Uri GetResourceUri(string path, Assembly assembly = null)
+		{
+			assembly = assembly ?? Assembly.GetExecutingAssembly();
+			// Local Assembly Resource File
+			var resourcePath = $"pack://application:,,,/{assembly.GetName().Name};component/{path}";
+			var uri = new Uri(resourcePath, UriKind.RelativeOrAbsolute);
+			return uri; 
 		}
 
 		public static void AddHelp(Control control, string head, string body)

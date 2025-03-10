@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UglyToad.PdfPig.Graphics.Operations.TextObjects;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -28,6 +27,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			WebBrowserHostObject = new BrowserHostObject();
+			Application.Current.MainWindow.Closing += MainWindow_Closing;
+		}
+
+		private void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			// Dispose WebView2 control or it will crash on exit.
+			if (_WebView2 != null)
+			{
+				// Unsubscribe from events
+				_WebView2.NavigationStarting -= WebView2_NavigationStarting;
+				if (_WebView2.CoreWebView2 != null)
+				{
+					_WebView2.CoreWebView2.WebResourceRequested -= CoreWebView2_WebResourceRequested;
+					// Optionally, stop any ongoing navigation or tasks.
+					_WebView2.Stop();
+				}
+				// Dispose of the control to release all resources
+				_WebView2.Dispose();
+				_WebView2 = null;
+			}
 		}
 
 		public void SetDataItems(TemplateItem item)
@@ -326,12 +345,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				var tempFolderPath = AppHelper.GetTempFolderPath();
 				// Set initial source after initialization
 				_WebView2.CoreWebView2.Navigate($"http://{appAssetsHost}/ChatListControl.html");
+#if DEBUG
+				MakeWebBrowserVisible();
+#endif
 			}
 			catch (Exception ex)
 			{
 				Global.MainControl.InfoPanel.SetBodyError("WebView2 initialization failed: " + ex.Message);
 				Global.MainControl.ErrorsPanel.ErrorsLogPanel.Add(ex.ToString());
 			}
+		}
+
+		private void MakeWebBrowserVisible()
+		{
+			LoadingLabel.Visibility = Visibility.Collapsed;
+			_WebView2.Visibility = Visibility.Visible;
+			WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
+			ScriptHandlerInitialized = true;
+			// If messages set but messages are not loaded yet.
+			if (IsResetMessgesPending)
+				_ = Helper.Debounce(ResetWebMessages);
+			if (Global.IsVsExtension)
+				Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
 		}
 
 		private void WebBrowserHostObject_OnMessageAction(object sender, (string id, string action, string data) e)
@@ -341,15 +376,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e.action);
 			if (action == MessageAction.Loaded)
 			{
-				LoadingLabel.Visibility = Visibility.Collapsed;
-				_WebView2.Visibility = Visibility.Visible;
-				WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
-				ScriptHandlerInitialized = true;
-				// If messages set but messages are not loaded yet.
-				if (IsResetMessgesPending)
-					_ = Helper.Debounce(ResetWebMessages);
-				if (Global.IsVsExtension)
-					Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
+				MakeWebBrowserVisible();
 				return;
 			}
 			var ids = (e.id ?? "").Split('_');

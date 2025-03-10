@@ -56,7 +56,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateButtons()
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<model>();
+			var selecetedItems = MainDataGrid.SelectedItems.OfType<model>();
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = selecetedItems.Any(x => (x.id ?? "").StartsWith("ft:"));
@@ -178,7 +178,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (!Global.ValidateServiceAndModel(Data))
 				return null;
-			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
+			var items = MainDataGrid.SelectedItems.OfType<model>().ToList();
 			if (items.Count == 0)
 				return null;
 			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
@@ -208,7 +208,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateTask_Click(object sender, RoutedEventArgs e)
 		{
-			var item = MainDataGrid.SelectedItems.Cast<model>().FirstOrDefault();
+			var item = MainDataGrid.SelectedItems.OfType<model>().FirstOrDefault();
 			if (item == null)
 				return;
 			var task = AppHelper.GetNewTemplateItem(false);

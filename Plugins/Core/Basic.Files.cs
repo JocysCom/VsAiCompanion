@@ -64,15 +64,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Read information and contents of files.
 		/// </summary>
-		/// <param name="paths">The list of files to read from.</param>
-		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time); `false` for metadata only.</param>
+		/// <param name="paths">The list of files or folders to read from. If a path points to a folder, 
+		/// all files within that folder will be processed.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time); 
+		/// `false` for metadata only.</param>
+		/// <param name="recursive">When true, process subdirectories recursively when a folder is provided.</param>
+		/// <returns>A list of DocItem objects containing the requested file information.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		public static List<DocItem> ReadFiles(string[] paths, bool includeContents)
+		public static List<DocItem> ReadFiles(string[] paths, bool includeContents, bool recursive = false)
 		{
 			var list = new List<DocItem>();
-			foreach (var path in paths)
+			var filePaths = FileHelper.ExpandPathsToFiles(paths, recursive);
+			foreach (var filePath in filePaths)
 			{
-				var di = new DocItem(null, path);
+				var di = new DocItem(null, filePath);
 				di.LoadFileInfo();
 				if (includeContents)
 					di.LoadData();
@@ -80,6 +85,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 			return list;
 		}
+
 
 		/// <summary>
 		/// Write file text content on user computer.
@@ -96,7 +102,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				if (!fi.Directory.Exists)
 					fi.Directory.Create();
 				System.IO.File.WriteAllText(path, text);
-				return new OperationResult<bool>(true);
+				return new OperationResult<bool>(true, 0, $"File Created: '{path}'");
 			}
 			catch (System.Exception ex)
 			{

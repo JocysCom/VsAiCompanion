@@ -132,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					openApiSpecUri = new Uri(uri);
 					var baseUrl = openApiSpecUri.GetLeftPart(UriPartial.Authority);
 
-					var services = Global.AppSettings.AiServices;
+					var services = Global.AiServices.Items;
 					service = services
 						.Where(x => baseUrl.Equals(x.BaseUrl, StringComparison.OrdinalIgnoreCase))
 						.FirstOrDefault();

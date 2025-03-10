@@ -328,7 +328,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var headRequestProperties = new Dictionary<string, string>();
 			// Add/override content header properties.
 			var headContentProperties = new Dictionary<string, string>();
-				//headContentProperties.Add("Content-Type", "application/json");
+			//headContentProperties.Add("Content-Type", "application/json");
 			// Add/override body properties.
 			var bodyProperties = new Dictionary<string, string>();
 			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
@@ -408,7 +408,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// Service item.
 			var service = item.AiService;
 			var modelName = item.AiModel;
-			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 			var maxInputTokens = GetMaxInputTokens(item);
 			// Other settings.
 			var newMessageItems = new List<MessageItem>();
@@ -754,7 +754,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var modelName = item.AiModel;
 			// Try to get max input tokens value from the settings.
-			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x =>
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x =>
 				x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
 			if (aiModel != null && aiModel.MaxInputTokens != 0)
 				return aiModel.MaxInputTokens;
@@ -765,19 +765,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			// Autodetect.
 			modelName = modelName.ToLowerInvariant();
-			// o1 supports 200K tokens.
-			if (modelName.StartsWith("o1") && !modelName.Contains("o1-preview") && !modelName.Contains("mini"))
+			// Final o1 and o3 supports 200K tokens.
+			if ((modelName.StartsWith("o1") || modelName.StartsWith("o3"))
+				&& !modelName.Contains("o1-preview"))
 				return 200 * 1000;
 			// All GPT-4 preview models support 128K tokens (2024-01-28).
 			if (modelName.Contains("-128k") ||
-				modelName.StartsWith("o3") ||
 				modelName.StartsWith("o1") ||
 				modelName.Contains("gpt-4o") ||
 				modelName.Contains("grok") ||
 				modelName.Contains("gemini") ||
 				(modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1000;
-			if (modelName.Contains("-64k"))
+			if (modelName.Contains("-64k") || modelName.Contains("deepseek"))
 				return 64 * 1024;
 			if (modelName.Contains("-32k") || modelName.Contains("text-moderation"))
 				return 32 * 1024;
@@ -797,7 +797,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 2049; // Default for ada, babbage, curie, davinci
 			if (modelName.Contains("code-cushman-001"))
 				return 2048;
-			return 2048; // Default for other models
+			return 128 * 1000; // Default for other models
 		}
 
 		public static void SetModelFeatures(AiModel item)

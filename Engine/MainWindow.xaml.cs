@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;

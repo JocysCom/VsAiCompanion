@@ -135,7 +135,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async Task Remove()
 		{
-			var items = MainDataGrid.SelectedItems.Cast<MessageAttachments>().ToList();
+			var items = MainDataGrid.SelectedItems.OfType<MessageAttachments>().ToList();
 			// Use begin invoke or grid update will deadlock on same thread.
 			await ControlsHelper.BeginInvoke(() =>
 			{

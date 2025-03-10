@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
-	public class VoiceItem : SettingsItem
+	public class VoiceItem : SettingsFileItem
 	{
 
 		public VoiceItem()
@@ -20,7 +20,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		#region Read Only Fields (Azure)
 
-		public string Name { get; set; }
 		public string DisplayName { get; set; }
 		public string LocalName { get; set; }
 		public string ShortName { get; set; }

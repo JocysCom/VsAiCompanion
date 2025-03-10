@@ -99,7 +99,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 		bool _IsPinned;
 
-		public DateTime Created
+		[DefaultValue(null)]
+		public DateTime? Created
 		{
 			get => _Created;
 			set
@@ -109,9 +110,14 @@ namespace JocysCom.ClassLibrary.Configuration
 				OnPropertyChanged(nameof(ListGroupNameSortKey));
 			}
 		}
-		DateTime _Created;
+		DateTime? _Created;
 
-		public DateTime Modified
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeCreated() => _Created != null;
+
+
+		[DefaultValue(null)]
+		public DateTime? Modified
 		{
 			get => _Modified;
 			set
@@ -121,7 +127,10 @@ namespace JocysCom.ClassLibrary.Configuration
 				OnPropertyChanged(nameof(ListGroupNameSortKey));
 			}
 		}
-		DateTime _Modified;
+		DateTime? _Modified;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeModified() => _Modified != null;
 
 		/// <summary>
 		/// Computed property for group name
@@ -138,7 +147,10 @@ namespace JocysCom.ClassLibrary.Configuration
 				var lastWeekStart = today.AddDays(-7);
 				// First day of last month
 				var lastMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
-				var d = Modified;
+				var d0 = Modified;
+				if (d0 == null)
+					return int.MaxValue;
+				var d = d0 ?? DateTime.MinValue;
 				// If Created is today											
 				if (d.Date == today)
 					return 1;
@@ -174,7 +186,10 @@ namespace JocysCom.ClassLibrary.Configuration
 				var yesterday = today.AddDays(-1);
 				var lastWeekStart = today.AddDays(-7);
 				var lastMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
-				var d = Modified;
+				var d0 = Modified;
+				if (d0 == null)
+					return "";
+				var d = d0 ?? DateTime.MinValue;
 				if (d.Date == today)
 					return "Today";
 				else if (d.Date == yesterday)

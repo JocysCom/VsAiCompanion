@@ -34,7 +34,6 @@ $wordCount = $words.Count&#xD;
 Write-Host "Number of words in the file: $wordCount"&#xD;
 ```</Text>
   <Attachments />
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ResetMessage</MessageBoxOperation>

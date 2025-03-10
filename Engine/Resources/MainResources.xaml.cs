@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ClearMessages_Name => FindResource(nameof(main_ClearMessages_Name));
         public static string main_Copy => FindResource(nameof(main_Copy));
         public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
+        public static string main_Copy_Path => FindResource(nameof(main_Copy_Path));
         public static string main_Creativity => FindResource(nameof(main_Creativity));
         public static string main_Enable_Spell_Check_Help => FindResource(nameof(main_Enable_Spell_Check_Help));
         public static string main_Enable_Spell_Check_Name => FindResource(nameof(main_Enable_Spell_Check_Name));
@@ -139,6 +140,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Use_Maximum_Context_Name => FindResource(nameof(main_Use_Maximum_Context_Name));
         public static string main_Use_System_Message_Help => FindResource(nameof(main_Use_System_Message_Help));
         public static string main_Use_System_Message_Name => FindResource(nameof(main_Use_System_Message_Name));
+        public static string main_Use_Monotype_Font => FindResource(nameof(main_Use_Monotype_Font));
+        public static string main_Use_Monotype_Font_Help => FindResource(nameof(main_Use_Monotype_Font_Help));
         public static string main_Text_Placeholder => FindResource(nameof(main_Text_Placeholder));
         public static string main_Placeholder => FindResource(nameof(main_Placeholder));
         public static string main_Temperature_Creativity => FindResource(nameof(main_Temperature_Creativity));
@@ -209,6 +212,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_List_IsReadOnly => FindResource(nameof(main_List_IsReadOnly));
         public static string main_Lists_Feature_Description => FindResource(nameof(main_Lists_Feature_Description));
         public static string main_ReadOnly => FindResource(nameof(main_ReadOnly));
+        public static string main_AcceptsReturn => FindResource(nameof(main_AcceptsReturn));
         public static string main_Task_Path => FindResource(nameof(main_Task_Path));
         public static string main_Disable_All => FindResource(nameof(main_Disable_All));
         public static string main_Enable_All => FindResource(nameof(main_Enable_All));
@@ -268,6 +272,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
         public static string main_ServiceType => FindResource(nameof(main_ServiceType));
         public static string main_RequestOverrides => FindResource(nameof(main_RequestOverrides));
+        public static string main_ExternalLinks => FindResource(nameof(main_ExternalLinks));
         public static string main_Override_API_version => FindResource(nameof(main_Override_API_version));
         public static string main_Override_API_version_Help => FindResource(nameof(main_Override_API_version_Help));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
@@ -326,6 +331,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Voice_Type => FindResource(nameof(main_Voice_Type));
         public static string main_Voices => FindResource(nameof(main_Voices));
         public static string main_Feature_UiPresets => FindResource(nameof(main_Feature_UiPresets));
+        public static string main_Reset_Settings_with_Instructions => FindResource(nameof(main_Reset_Settings_with_Instructions));
         public static string main_Reset_All_Settings => FindResource(nameof(main_Reset_All_Settings));
         public static string main_Reset_Application_Settings => FindResource(nameof(main_Reset_Application_Settings));
         public static string main_Reset_Embeddings => FindResource(nameof(main_Reset_Embeddings));
@@ -344,6 +350,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_MirrorSettings_Text => FindResource(nameof(main_Reset_MirrorSettings_Text));
         public static string main_Reset_MirrorSettings_Help => FindResource(nameof(main_Reset_MirrorSettings_Help));
         public static string main_Reset_MirrorSettings_Name => FindResource(nameof(main_Reset_MirrorSettings_Name));
+        public static string main_UpdateInstructions => FindResource(nameof(main_UpdateInstructions));
+        public static string main_UpdateInstructions_Help => FindResource(nameof(main_UpdateInstructions_Help));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
         public static string main_Changes => FindResource(nameof(main_Changes));
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));
@@ -384,6 +392,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Service => FindResource(nameof(main_Service));
         public static string main_Status => FindResource(nameof(main_Status));
         public static string main_Stop => FindResource(nameof(main_Stop));
+        public static string main_Sort_Ascending => FindResource(nameof(main_Sort_Ascending));
+        public static string main_Sort_Descending => FindResource(nameof(main_Sort_Descending));
         public static string main_Task => FindResource(nameof(main_Task));
         public static string main_Title => FindResource(nameof(main_Title));
         public static string main_Test => FindResource(nameof(main_Test));
@@ -428,6 +438,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_TextBox_Drop_Files_Instructions => FindResource(nameof(main_TextBox_Drop_Files_Instructions));
         public static string main_Use_Macros => FindResource(nameof(main_Use_Macros));
         public static string main_Vision => FindResource(nameof(main_Vision));
+        public static string main_Folder_Name_Exists => FindResource(nameof(main_Folder_Name_Exists));
         public static string main_Visual_Studio_Extension_Options => FindResource(nameof(main_Visual_Studio_Extension_Options));
         public static string main_VsExtensionFeatureMessage => FindResource(nameof(main_VsExtensionFeatureMessage));
         public static string main_VsExtensionVersionMessage => FindResource(nameof(main_VsExtensionVersionMessage));

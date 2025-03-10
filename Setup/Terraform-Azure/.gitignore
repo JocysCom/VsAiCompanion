@@ -1,3 +1,4 @@
+Data/
 .terraform
 *.tfstate
 *.backup

@@ -55,6 +55,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (DataType == ItemType.Lists)
 			{
+				ListsItemPanel.FeatureDescription = Engine.Resources.MainResources.main_Lists_Feature_Description;
 				await ListsItemPanel.BindData((ListInfo)item);
 			}
 			else if (DataType == ItemType.UiPreset)
@@ -75,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (DataType == ItemType.AiService)
 			{
-				AiServiceItemPanel.Item = (AiService)item;
+				await AiServiceItemPanel.BindData((AiService)item);
 			}
 			else if (DataType == ItemType.AiModel)
 			{

@@ -87,7 +87,6 @@ JSON Lines example:&#xD;
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
-  <Settings />
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>

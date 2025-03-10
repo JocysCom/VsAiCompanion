@@ -62,10 +62,12 @@ function InsertMessage(message, autoScroll) {
 	var chatLog = document.getElementById('chatLog');
 	var messageHTML = CreateMessageHtml(message)
 	chatLog.insertAdjacentHTML('beforeend', messageHTML);
+	UpdateRegenerateButtons();
+	// After appending content, render any math expressions
+	renderMathExpressions();
 	// Scroll to the bottom of the chatLog div.
 	if (autoScroll && keepScrollOnTheBottom)
 		ScrollToBottom();
-	UpdateRegenerateButtons();
 }
 
 function isEmpty(s) {
@@ -119,6 +121,8 @@ function UpdateMessage(message, autoScroll) {
 		chatLog.insertAdjacentHTML('beforeend', messageHTML);
 	}
 	UpdateRegenerateButtons();
+	// After appending content, render any math expressions
+	renderMathExpressions();
 	// Scroll if needed
 	if (autoScroll === undefined)
 		autoScroll = true;
@@ -219,7 +223,7 @@ function CreateMessageHtml(message) {
 			if ((a.Instructions) && ("" + a.Instructions).length > 0) {
 				aInstructions = a.Instructions;
 				aInstructions = ConvertForDisplayAsHtml(aInstructions);
-				aInstructions = aInstructions + "</ br>";
+				aInstructions = aInstructions + "<br/>";
 			}
 			var aTitle = a.Title;
 			if (a.SendType === AttachmentSendType.Temp) {
@@ -234,19 +238,13 @@ function CreateMessageHtml(message) {
 		}
 	}
 	var bodyContents = "" + messageInstructionsHTML + body;
-	// Replace all placeholders with actual values from the message.
-	var messageTemplate = document.getElementById('messageTemplate').innerHTML;
-	var messageHTML = messageTemplate
-		.replace(/{Type}/g, messageType[message.Type])
-		.replace(/{Automated}/g, message.IsAutomated ? "Automated" : "Normal")
-		.replace(/{Id}/g, idPrefix + message.Id)
-		.replace(/{User}/g, message.User)
-		.replace(/{Date}/g, FormatDateTime(message.Date))
-		.replace(/{Body}/g, bodyContents)
-		.replace(/{BodyHide}/g, isEmpty(bodyContents) ? "display-none" : "")
-		.replace(/{Data}/g, data)
-		.replace(/{DataHide}/g, isEmpty(data) ? "display-none" : "")
-		.replace(/{Buttons}/g, buttons);
+	var messageHTML = createMessageHTML(
+		idPrefix + message.Id,
+		messageType[message.Type],
+		message.IsAutomated ? "Automated" : "Normal",
+		FormatDateTime(message.Date),
+		bodyContents, data,
+		buttons, !isEmpty(bodyContents), !isEmpty(data));
 	return messageHTML;
 }
 
@@ -275,6 +273,93 @@ function UpdateRegenerateButtons() {
 	}
 }
 
+/**
+ * Generates an expandable panel HTML based on the template
+ * @param {string} id - Unique identifier for the panel
+ * @param {string} title - Panel title text
+ * @param {string} buttonHTML - HTML for buttons in the title bar
+ * @param {string} instructions - Instructions content
+ * @param {string} codeHTML - Data/code content to display
+ * @param {boolean} [showData=true] - Whether to show the data section
+ * @param {boolean} [showInstructions=true] - Whether to show the instructions section
+ * @param {boolean} [showPanel=true] - Whether to show the entire panel
+ * @returns {string} The generated panel HTML
+ */
+function createExpandableBoxHTML(id, title, buttonHTML, instructions, codeHTML, showData = true, showInstructions = true, showPanel = true) {
+	// Create a temporary container to work with the template
+	const template = document.getElementById("expandableBoxPanelTemplate");
+	const tempContainer = document.createElement('div');
+	tempContainer.innerHTML = template.innerHTML;
+	// Get the main panel element and set its properties
+	const panel = tempContainer.querySelector('.expandable-box');
+	panel.id = `${id}_panel`;
+	SetVisible(panel, showPanel);
+	// Set the title
+	const titleElements = tempContainer.querySelectorAll('.expandable-head-text');
+	titleElements.forEach(el => {
+		el.textContent = title || "";
+		el.title = title || "";
+	});
+	// Set the buttons
+	const buttonsElement = tempContainer.querySelector('.expandable-head-buttons');
+	buttonsElement.innerHTML = buttonHTML;
+	// Set instructions and visibility
+	const instructionsElement = tempContainer.querySelector('.expandable-instructions');
+	instructionsElement.id = `${id}_instructions`;
+	instructionsElement.innerHTML = instructions;
+	SetVisible(instructionsElement, showInstructions);
+	// Set data content and visibility
+	const dataElement = tempContainer.querySelector('.expandable-data');
+	dataElement.id = `${id}_data`;
+	dataElement.innerHTML = codeHTML;
+	SetVisible(dataElement, showData);
+	// Return results.
+	return tempContainer.innerHTML;
+}
+
+
+/**
+ * Generates a chat message HTML based on the template
+ * @param {string} id - Unique identifier for the message
+ * @param {string} type - Message type (affects styling)
+ * @param {boolean} automated - Whether the message is automated
+ * @param {string} date - Date/time string for the message
+ * @param {string} body - Main message content
+ * @param {string} data - Additional data content
+ * @param {string} buttons - Additional button HTML
+ * @param {boolean} [showBody=true] - Whether to show the message body
+ * @param {boolean} [showData=false] - Whether to show the data section
+ * @returns {string} The generated message HTML
+ */
+function createMessageHTML(id, type, automated, date, body, data, buttons, showBody = true, showData = false) {
+	// Create a temporary container to work with the template
+	const template = document.getElementById("messageTemplate");
+	const tempContainer = document.createElement('div');
+	tempContainer.innerHTML = template.innerHTML;
+
+	// Replace all placeholders in the HTML except Body and Data
+	let html = tempContainer.innerHTML;
+	html = html.replace(/{Id}/g, id);
+	html = html.replace(/{Type}/g, type);
+	html = html.replace(/{Automated}/g, automated);
+	html = html.replace(/{Date}/g, date);
+	html = html.replace(/{Buttons}/g, buttons || "");
+
+	// Update the temporary container with the partially processed HTML
+	tempContainer.innerHTML = html;
+
+	// Handle body and data with DOM manipulation
+	const bodyElement = tempContainer.querySelector('.chat-message-body');
+	bodyElement.innerHTML = body;
+	SetVisible(bodyElement, showBody);
+
+	const dataElement = tempContainer.querySelector('.chat-message-data');
+	dataElement.innerHTML = data || "";
+	SetVisible(dataElement, showData);
+
+	return tempContainer.innerHTML;
+}
+
 /*
 	id = "{messageId}_{attachmentId}".
 */
@@ -294,15 +379,7 @@ function AddAttachmentBox(id, title, instructions, data, displayPanelContent, co
 		titleButtonsHTML = document.getElementById("expandableBoxImageButtonTemplate").innerHTML
 			.replace(/{Id}/g, id);
 	}
-	var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML
-		.replace(/{Id}/g, id)
-		.replace(/{Title}/g, title)
-		.replace(/{PanelClass}/g, displayPanelContent ? "" : "display-none")
-		.replace(/{Instructions}/g, instructions)
-		.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
-		.replace(/{Data}/g, data)
-		.replace(/{DataClass}/g, showData ? "" : "display-none")
-		.replace(/{TitleButtons}/g, titleButtonsHTML);
+	var panelHTML = createExpandableBoxHTML(id, title, titleButtonsHTML, instructions, data, showData, showInstructions, displayPanelContent);
 	return { buttonHTML: buttonHTML, panelHTML: panelHTML };
 }
 
@@ -330,7 +407,7 @@ function AttachmentButton_Click(sender, id) {
 
 function SetVisible(el, isVisible) {
 	var isControlVisible = !el.classList.contains("display-none");
-	console.log("SetVisible: " + isVisible + ", isControlVisible: " + isControlVisible);
+	//console.log("SetVisible: " + isVisible + ", isControlVisible: " + isControlVisible);
 	// if must show and is not visible then...
 	if (isVisible && !isControlVisible) {
 		el.classList.remove("display-none");
@@ -350,7 +427,7 @@ function ConvertForDisplayAsHtml(input) {
 	if (!input)
 		return input;
 	var lines = input.split(/\r?\n|\r/);
-	var rx = new RegExp(/^\s*[`]{3}[a-z0-9\-]*\s*$/gmi);
+	var rx = new RegExp(/^\s*[`]{3,}[a-z0-9\-]*\s*$/gmi);
 	var insideBlock = false;
 	for (var i = 0; i < lines.length; i++) {
 		var line = lines[i];
@@ -358,7 +435,7 @@ function ConvertForDisplayAsHtml(input) {
 		if (isMark) {
 			// If block ends then...
 			if (insideBlock)
-				lines[i] = lines[i] + "\r\n<br />";
+				lines[i] = lines[i] + "\r\n<br/>";
 			insideBlock = !insideBlock;
 			continue;
 		}
@@ -372,7 +449,7 @@ function ConvertForDisplayAsHtml(input) {
 				parts[p] = EscapeHtml(parts[p]);
 			}
 		}
-		// Add extra new line for markdown to add `<br />` correcly.
+		// Add extra new line for markdown to add `<br/>` correcly.
 		lines[i] = parts.join('`') + "\r\n";
 	}
 	var processedText = lines.join("\r\n");
@@ -381,9 +458,13 @@ function ConvertForDisplayAsHtml(input) {
 
 function EscapeHtml(unsafe) {
 	return unsafe
-		.replace(/&/g, "&amp;")
+		.replace(/<think>/g, "##THINK_START##")
+		.replace(/<\/think>/g, "##THINK_END##")
 		.replace(/</g, "&lt;")
 		.replace(/>/g, "&gt;")
+		.replace(/##THINK_START##/g, "<think>")
+		.replace(/##THINK_END##/g, "</think>")
+		.replace(/&/g, "&amp;")
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#039;");
 }
@@ -402,6 +483,8 @@ function UpdateMessageDiff(messageId, responseDiff) {
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
 	previousMessageTextBody = currentMessageTextBody;
+	// Render math expressions after updating content
+	renderMathExpressions();
 }
 
 function ApplyDiffference(el, newHtml) {
@@ -600,56 +683,233 @@ function MessageAction(button, id, action) {
 	}
 }
 
+/**
+ * Parses markdown text and converts it to HTML with syntax highlighting and math support
+ * @param {string} body - The markdown text to parse
+ * @param {boolean} [boxedCode=false] - Whether to place code blocks in expandable boxes
+ * @returns {string} The HTML representation of the markdown
+ */
 function parseMarkdown(body, boxedCode) {
+	// Process <think> blocks by replacing double (or more) newlines with a line break tag.
+	body = body.replace(/^(<think>)([\s\S]*?)(<\/think>|$)/gi, function (match, start, content, end) {
+		// Replace 2+ newlines with a literal line break tag.
+		var cleaned = content.replace(/(?:[ \t]*\r?\n){2,}/g, "<br/>\r\n");
+		return start + cleaned + end;
+	});
 
-	// Update rendered to convert language to lowercase for Prism.js.
-	var renderer = new marked.Renderer();
-	var originalCodeFunction = renderer.code;
+	// Remove trailing spaces from the body
+	var spacesRx = new RegExp("\\s+$", "g");
+	body = body.replace(spacesRx, "");
 
-	renderer.code = function (code, lang, escaped) {
-		lang = lang ? lang.toLowerCase() : undefined;
-		// Remove trailing spaces from the code.
-		var spacesRx = new RegExp("\\s+$", "g")
-		code = code.replace(spacesRx, "");
-		// Remove trailing spaces from converted code.
-		var html = originalCodeFunction.call(this, code, lang, escaped);
-		spacesRx = new RegExp("\\s+</code>", "g")
-		html = html.replace(spacesRx, "</code>");
+	// First, identify and protect code blocks from math processing
+	let codeBlocks = [];
+	let processedBody = body.replace(/```([\s\S]*?)```/g, function (match) {
+		const id = codeBlocks.length;
+		codeBlocks.push(match);
+		return `CODE_BLOCK_PLACEHOLDER_${id}`;
+	});
+
+	// Also protect inline code
+	let inlineCode = [];
+	processedBody = processedBody.replace(/`([^`]+)`/g, function (match) {
+		const id = inlineCode.length;
+		inlineCode.push(match);
+		return `INLINE_CODE_PLACEHOLDER_${id}`;
+	});
+
+	// Now process math expressions on the protected text
+	let mathExpressions = [];
+
+	// Process display math expressions ($$...$$) first
+	processedBody = processedBody.replace(/\$\$([^\$]+?)\$\$/g, function (match, expression) {
+		const id = mathExpressions.length;
+		mathExpressions.push({
+			expression: expression.trim(),
+			display: true
+		});
+		return `MATH_PLACEHOLDER_${id}`;
+	});
+
+	// Then process inline math expressions ($...$)
+	processedBody = processedBody.replace(/\$([^\$\n]+?)\$/g, function (match, expression) {
+		// Skip if it looks like currency
+		if (/^\s*\d+([,.]\d+)?\s*$/.test(expression)) {
+			return match;
+		}
+		const id = mathExpressions.length;
+		mathExpressions.push({
+			expression: expression.trim(),
+			display: false
+		});
+		return `MATH_PLACEHOLDER_${id}`;
+	});
+
+	// Restore code blocks before markdown parsing
+	processedBody = processedBody.replace(/CODE_BLOCK_PLACEHOLDER_(\d+)/g, function (match, id) {
+		return codeBlocks[parseInt(id)];
+	});
+
+	processedBody = processedBody.replace(/INLINE_CODE_PLACEHOLDER_(\d+)/g, function (match, id) {
+		return inlineCode[parseInt(id)];
+	});
+
+	// Create a custom renderer
+	const renderer = new marked.Renderer();
+
+	// Override code rendering function for marked v13+
+	renderer.code = function (code, infostring, escaped) {
+		// Extract the actual code content
+		let codeText;
+		let language = '';
+
+		// Handle the code parameter based on its type
+		if (typeof code === 'string') {
+			codeText = code;
+			language = infostring || '';
+		} else if (typeof code === 'object' && code !== null) {
+			// Extract language from the code object if available
+			language = (code.lang || infostring || '').toLowerCase();
+
+			// Extract text from the token object
+			if (typeof code.text === 'string') {
+				codeText = code.text;
+			} else if (typeof code.raw === 'string') {
+				// Remove code fence markers if present
+				const rawText = code.raw;
+				const fenceMatch = /^```.*?\n([\s\S]*?)```$/m.exec(rawText);
+				if (fenceMatch) {
+					codeText = fenceMatch[1];
+				} else {
+					codeText = rawText;
+				}
+			} else {
+				// Last resort: convert to string
+				codeText = JSON.stringify(code);
+				console.warn("Code block content had to be stringified:", codeText.substring(0, 100));
+			}
+		} else {
+			codeText = String(code || '');
+			language = infostring || '';
+		}
+
+		// Convert language to lowercase
+		language = language.toLowerCase();
+
+		// Remove trailing spaces from the code
+		const cleanedCode = codeText.replace(spacesRx, "");
+
+		console.log("Processing code block:", {
+			language: language,
+			codePreview: cleanedCode.substring(0, 50),
+			hasPrismLanguage: language && Prism.languages[language] ? true : false
+		});
+
+		// Apply syntax highlighting with Prism if language is specified
+		let highlightedCode = cleanedCode;
+		if (language && Prism.languages[language]) {
+			try {
+				highlightedCode = Prism.highlight(cleanedCode, Prism.languages[language], language);
+				console.log("Highlighting successful for language:", language);
+			} catch (e) {
+				console.error("Prism highlighting error:", e);
+			}
+		} else {
+			console.log("No syntax highlighting applied - language not supported or not specified");
+		}
+
+		// Create HTML for the code block
+		let codeHTML = '<pre><code' + (language ? ' class="language-' + language + '"' : '') + '>';
+		codeHTML += highlightedCode;
+		codeHTML += '</code></pre>';
+
+		// If boxed code is requested, wrap the code in an expandable box
 		if (boxedCode) {
 			var id = "rnd_" + generateGUID();
 			var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
 			buttonHTML = buttonHTML
 				.replace(/{Id}/g, id);
-			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
-			panelHTML = panelHTML
-				.replace("display: none;", "")
-				.replace(/{Id}/g, id)
-				.replace(/{Title}/g, lang)
-				.replace(/{Instructions}/g, "aaa")
-				.replace(/{InstructionsClass}/g, "display-none")
-				.replace(/{Data}/g, html)
-				.replace(/{DataClass}/g, "")
-				.replace(/{TitleButtons}/g, buttonHTML);
-			//console.log(panelHTML);
-			html = panelHTML;
+			var panelHTML = createExpandableBoxHTML(id, language, buttonHTML, "", codeHTML);
+			return panelHTML;
 		}
-		return html;
+		return codeHTML;
 	};
 
+	// Set marked options
 	marked.setOptions({
-		// Enable for prism.
-		highlight: function (code, lang) {
-			return Prism.languages[lang] ? Prism.highlight(code, Prism.languages[lang], lang) : code;
-		},
-		renderer: renderer
+		renderer: renderer,
+		highlight: null, // Disable built-in highlighting
+		gfm: true,
+		breaks: true,
+		pedantic: false,
+		xhtml: false,
+		smartLists: true,
+		smartypants: false
 	});
-	// Parse the markdown with the modified renderer.
-	return marked.parse(body);
+
+	// Parse the markdown and return the HTML
+	try {
+		let html = marked.parse(processedBody);
+
+		// Restore math expressions with placeholders for KaTeX rendering
+		html = html.replace(/MATH_PLACEHOLDER_(\d+)/g, function (match, id) {
+			const item = mathExpressions[parseInt(id)];
+			const escapedExpression = EscapeHtml(item.expression);
+
+			if (item.display) {
+				// Display math (centered, larger)
+				return `<div class="math-display" data-math="${escapedExpression}">$$${item.expression}$$</div>`;
+			} else {
+				// Inline math
+				return `<span class="math-inline" data-math="${escapedExpression}">$${item.expression}$</span>`;
+			}
+		});
+
+		return html;
+	} catch (e) {
+		console.error("Marked parsing error:", e);
+		return "<p>" + body.replace(/\n/g, "<br/>") + "</p>";
+	}
+}
+
+// Separate debugging function that doesn't reference external variables
+function debugMarkedTokens() {
+	console.log("Running marked debug...");
+
+	// Create a test case
+	const testMarkdown = "```javascript\nconst x = 1;\n```";
+
+	// Create a new renderer for debugging
+	const debugRenderer = new marked.Renderer();
+
+	// Override the code method for debugging
+	debugRenderer.code = function (code, infostring, escaped) {
+		console.log("Debug - Code block received:");
+		console.log("Type:", typeof code);
+		console.log("Value:", code);
+		if (typeof code === 'object') {
+			console.log("Properties:", Object.keys(code));
+		}
+		console.log("Infostring:", infostring);
+		console.log("Escaped:", escaped);
+
+		// Return simple HTML
+		return '<pre><code>' + (typeof code === 'string' ? code : JSON.stringify(code)) + '</code></pre>';
+	};
+
+	// Parse with debug renderer
+	const originalOptions = marked.getDefaults();
+	marked.setOptions({ renderer: debugRenderer });
+	marked.parse(testMarkdown);
+
+	// Restore original options
+	marked.setOptions(originalOptions);
+
+	console.log("Debug complete");
 }
 
 var isInsideApp = false;
 
-window.onload = function () {
+window.addEventListener('load', function () {
 	console.log("window.onload");
 	if (
 		typeof window.chrome !== 'undefined' &&
@@ -680,7 +940,7 @@ window.onload = function () {
 
 	SimulateMessages();
 	SimulateStreaming();
-}
+});
 
 //#region Examples
 
@@ -710,7 +970,13 @@ function SimulateMessages() {
 		// Add CSS code block to test.
 		"```css\r\n" +
 		"p { color: red }\r\n" +
-		"```\r\n";
+		"```\r\n" +
+		"\r\n" +
+		// Add mathematical expression.
+		"**The Cauchy-Schwarz Inequality**\r\n" +
+		"$$\\left(\\sum_{ k=1 } ^ n a_k b_k \\right) ^ 2 \\leq \\left(\\sum_{ k=1 } ^ n a_k ^ 2 \\right) \\left(\\sum_{ k=1 } ^ n b_k ^ 2 \\right)$$\r\n"+
+		"\r\n";
+
 	for (var i = 0; i < 6; i++) {
 		var message = {
 			Type: i % 6,
@@ -749,7 +1015,6 @@ function SimulateMessages() {
 		}
 		InsertMessage(message);
 	}
-	ScrollToBottom();
 }
 
 function SimulateStreaming() {
@@ -767,9 +1032,14 @@ function SimulateStreaming() {
 
 	// Simulate streaming by appending text over time
 	var streamedText = [
-		"Hello", " world", "! Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"Hello", " world", "! Here", " is", " some", " streamed", " text.", "\r\n\r\n",
-		"Hello", " world", "! Here", " is", " some", " streamed", " text."
+		"<think>",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text. ",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text. ", "\r\n\r\n",
+		"I", " am", " thinking", ".", " Here", " is", " some", " streamed", " text. ",
+		"</think>",
+		"Hello", " world", "!", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"<think>", "Hello", " world", "!", "</think>", " Here", " is", " some", " streamed", " text.", "\r\n\r\n",
+		"$$\\left(\\sum_{ k=1 } ^ n a_k b_k \\right) ^ 2 \\leq \\left(\\sum_{ k=1 } ^ n a_k ^ 2 \\right) \\left(\\sum_{ k=1 } ^ n b_k ^ 2 \\right)$$\r\n"
 	];
 	var index = 0;
 
@@ -825,6 +1095,8 @@ function AppendMessageBody(messageId, newText, autoScroll) {
 	var currentMessageTextBody = currentMessageBodies[messageId];
 	var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
 	ApplyDiffference(bodyEl, currentMessageHtmlBody);
+	// After appending content, render any math expressions
+	renderMathExpressions();
 	// Scroll if needed
 	if (autoScroll !== true || autoScroll !== false)
 		autoScroll = true;
@@ -864,3 +1136,152 @@ function ApplyDiffference(el, newHtml) {
 }
 
 // #endregion
+
+//#region KaText
+
+/**
+ * Renders all math expressions on the page using KaTeX
+ * @param {boolean} [retryOnFailure=true] - Whether to retry if KaTeX isn't loaded yet
+ */
+function renderMathExpressions(retryOnFailure = true) {
+	if (typeof katex === 'undefined') {
+		console.warn('KaTeX library not loaded yet. Math expressions will not be rendered.');
+		if (retryOnFailure) {
+			// Retry after a short delay
+			setTimeout(() => renderMathExpressions(false), 500);
+		}
+		return;
+	}
+
+	// Find all unrendered math elements
+	const mathElements = document.querySelectorAll('.math-inline:not(.katex-rendered), .math-display:not(.katex-rendered)');
+
+	if (mathElements.length > 0) {
+		console.log(`Rendering ${mathElements.length} math expressions`);
+	}
+
+	mathElements.forEach(element => {
+		// Skip if element is inside a code block
+		if (isElementInCodeBlock(element)) {
+			// Mark as processed to avoid future attempts
+			element.classList.add('katex-rendered');
+			element.classList.add('in-code-block');
+			return;
+		}
+
+		try {
+			const expression = element.getAttribute('data-math');
+			const isDisplay = element.classList.contains('math-display');
+
+			katex.render(expression, element, {
+				throwOnError: false,
+				displayMode: isDisplay,
+				strict: "ignore"  // Use "ignore" to suppress warnings
+			});
+
+			// Mark as rendered to avoid re-processing
+			element.classList.add('katex-rendered');
+		} catch (e) {
+			console.error('KaTeX rendering error:', e);
+			// Keep the original format if rendering fails
+			const mathDelimiter = element.classList.contains('math-display') ? '$$' : '$';
+			element.textContent = mathDelimiter + element.getAttribute('data-math') + mathDelimiter;
+		}
+	});
+
+	// Call layout fix after rendering
+	fixLayoutIssues();
+}
+
+/**
+ * Checks if an element is inside a code block
+ * @param {Element} element - The element to check
+ * @returns {boolean} - True if the element is inside a code block
+ */
+function isElementInCodeBlock(element) {
+	let current = element;
+	while (current) {
+		// Check if element is inside a code tag, pre tag, or has a language class
+		if (current.tagName === 'CODE' ||
+			current.tagName === 'PRE' ||
+			(current.className &&
+				(current.className.includes('language-') ||
+					current.className.includes('expandable-data')))) {
+			return true;
+		}
+
+		// Also check parent element's class for code-related classes
+		if (current.parentElement &&
+			current.parentElement.className &&
+			(current.parentElement.className.includes('language-') ||
+				current.parentElement.className.includes('expandable-data'))) {
+			return true;
+		}
+
+		current = current.parentElement;
+	}
+	return false;
+}
+
+// Add robust event listeners for initialization
+window.addEventListener('DOMContentLoaded', function () {
+	// Wait a moment for everything to initialize
+	setTimeout(debugMarkedTokens, 1000);
+
+	console.log("DOM content loaded, initializing KaTeX support");
+
+	// Function to check if KaTeX is loaded and render math
+	function checkKatexAndRender() {
+		if (typeof katex !== 'undefined') {
+			console.log("KaTeX is loaded, rendering math expressions");
+			renderMathExpressions(false);
+			return true;
+		}
+		return false;
+	}
+
+	// Try immediately
+	if (!checkKatexAndRender()) {
+		// If not loaded, set up a polling mechanism
+		console.log("KaTeX not immediately available, setting up polling");
+		let attempts = 0;
+		const maxAttempts = 50; // 5 seconds max
+
+		const katexCheckInterval = setInterval(function () {
+			attempts++;
+			if (checkKatexAndRender() || attempts >= maxAttempts) {
+				clearInterval(katexCheckInterval);
+				if (attempts >= maxAttempts) {
+					console.error("Failed to load KaTeX after multiple attempts");
+				}
+			}
+		}, 100);
+	}
+
+	// Add layout fix handler
+	window.addEventListener('resize', fixLayoutIssues);
+	fixLayoutIssues();
+});
+
+/**
+ * Fixes any layout issues and excessive space
+ */
+function fixLayoutIssues() {
+	// Fix excessive space at the bottom
+	const chatLog = document.getElementById('chatLog');
+	const body = document.body;
+
+	// Reset any extreme height values
+	if (chatLog.style.height === 'auto') {
+		chatLog.style.height = '';
+	}
+
+	// Clean up any inline styles that might be causing issues
+	if (body.scrollHeight > window.innerHeight * 2) {
+		console.log("Detected potential excessive space, applying fix");
+		body.style.paddingBottom = '0';
+		chatLog.style.marginBottom = '0';
+	}
+}
+
+//#endregion

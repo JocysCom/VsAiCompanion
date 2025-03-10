@@ -240,7 +240,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{ ".jexl", "JEXL" },
 			{ ".jl", "Julia" },
 			{ ".jq", "JQ" },
-			{ ".js", "Flow" },
+			{ ".js", "JavaScript" },
 			{ ".jsdoc", "JSDoc" },
 			{ ".json5", "JSON5" },
 			{ ".jsonp", "JSONP" },

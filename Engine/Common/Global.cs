@@ -1,13 +1,14 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.HotKey;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.VS.AiCompanion.DataClient;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
 using JocysCom.VS.AiCompanion.Engine.Security;
+using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
@@ -15,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -116,6 +116,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public const string ResetsName = nameof(Resets);
+
+		public static SettingsData<ListInfo> Resets =
+			new SettingsData<ListInfo>($"{ResetsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
 		public const string UiPresetsName = nameof(UiPresets);
 
@@ -125,8 +129,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
-		public const string EmbeddingsName = nameof(Embeddings);
+		// Preparnig to move AI Services and AI Models to a separate settings file.
+		public static bool StoreAiServicesAndModelsInSeparateFile = false;
 
+		public const string AiServicesName = nameof(AiServices);
+		public static SettingsData<AiService> AiServices =
+			new SettingsData<AiService>($"{AiServicesName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+
+		public const string AiModelsName = nameof(AiModels);
+		public static SettingsData<AiModel> AiModels =
+			new SettingsData<AiModel>($"{AiModelsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+
+
+		public const string EmbeddingsName = nameof(Embeddings);
 		public static SettingsData<EmbeddingsItem> Embeddings =
 			new SettingsData<EmbeddingsItem>($"{EmbeddingsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
@@ -184,15 +199,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public const string FineTuningsName = nameof(FineTunings);
 
 		public static SettingsData<FineTuningItem> FineTunings =
-			new SettingsData<FineTuningItem>($"{nameof(ItemType.FineTuning)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			new SettingsData<FineTuningItem>($"{FineTuningsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
 
+		public const string AssistantsName = nameof(Assistants);
+
 		public static SettingsData<AssistantItem> Assistants =
-			new SettingsData<AssistantItem>($"{nameof(Assistants)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			new SettingsData<AssistantItem>($"{AssistantsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
@@ -211,8 +229,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Embeddings: return Embeddings.Items;
 				case ItemType.MailAccount: return AppSettings.MailAccounts;
 				case ItemType.VaultItem: return AppSettings.VaultItems;
-				case ItemType.AiService: return AppSettings.AiServices;
-				case ItemType.AiModel: return AppSettings.AiModels;
+				case ItemType.AiService: return AiServices.Items;
+				case ItemType.AiModel: return AiModels.Items;
 				case ItemType.UiPreset: return UiPresets.Items;
 				default: return null;
 			}
@@ -271,10 +289,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		public static string FineTuningPath
-			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, FineTuningsName);
 
 		public static string AssistantsPath
-			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Assistants));
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, AssistantsName);
 
 		public static string PluginsSearchPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Plugins), nameof(Plugins.Core.Search));
@@ -469,12 +487,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Voices.Save();
 			Prompts.Save();
 			Lists.Save();
+			if (StoreAiServicesAndModelsInSeparateFile)
+			{
+				AiServices.Save();
+				AiModels.Save();
+			}
 			Embeddings.Save();
 			Templates.Save();
 			Tasks.Save();
 			FineTunings.Save();
 			Assistants.Save();
 			UiPresets.Save();
+			Resets.Save();
 		}
 
 		/// <summary>
@@ -531,24 +555,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Save();
 			}
 			AppSettings.CleanupAiModels();
-			AppSettings.AiServices.ListChanged += AiServices_ListChanged;
+			AiServices.Items.ListChanged += AiServices_ListChanged;
 			if (ResetSettings)
 				SettingsSourceManager.ResetAllSettings();
 			else
 			{
 				// If Azure "Speech Service" not found then...
-				if (!AppSettings.AiServices.Any(x => x.ServiceType == ApiServiceType.Azure))
+				if (!AiServices.Items.Any(x => x.ServiceType == ApiServiceType.Azure))
 				{
 					// Add "Speech Service" from the settings file.
 					var zip = SettingsSourceManager.GetSettingsZip();
 					if (zip != null)
 					{
-						var zipAppDataItems = SettingsSourceManager.GetItemsFromZip(zip, AppDataName, AppData);
-						var zipServices = zipAppDataItems[0].AiServices;
+						var zipServices = SettingsSourceManager.GetItemsFromZip(zip, Global.AiServicesName, Global.AiServices);
 						var azureService = zipServices.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
 						if (azureService != null)
 						{
-							AppSettings.AiServices.Add(azureService);
+							AiServices.Add(azureService);
 							RaiseOnAiServicesUpdated();
 						}
 					}
@@ -573,6 +596,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Lists.Load();
 			if (Lists.IsSavePending)
 				Lists.Save();
+			if (StoreAiServicesAndModelsInSeparateFile)
+			{
+				// Load Services.
+				AiServices.OnValidateData += AiServices_OnValidateData;
+				AiServices.Load();
+				if (AiServices.IsSavePending)
+					AiServices.Save();
+				// Load Models.
+				AiModels.OnValidateData += AiModels_OnValidateData;
+				AiModels.Load();
+				if (AiModels.IsSavePending)
+					AiModels.Save();
+			}
+			// Load Resets items.
+			Resets.OnValidateData += Resets_OnValidateData;
+			Resets.Load();
+			if (Resets.IsSavePending)
+				Resets.Save();
 			// Load UI Presets.
 			UiPresets.OnValidateData += UiPresets_OnValidateData;
 			UiPresets.Load();
@@ -609,12 +650,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
-			// If old settings version then reset templates.
-			if (AppData.Version < 2 && !ResetSettings)
-			{
-				AppData.Version = 2;
-				SettingsSourceManager.ResetTemplates();
-			}
+			SettingsSourceManager.ResetWithInstructions(false, false, true);
 			// Enable logging.
 			AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			LogHelper.LogHttp = AppSettings.LogHttp;
@@ -745,6 +781,77 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		public static void FixAiServices(IList<AiService> items)
+		{
+			if (items == null)
+				return;
+			// Fix filters.
+			foreach (var item in items)
+			{
+				if (string.IsNullOrWhiteSpace(item.ModelFilter))
+					continue;
+				var filters = item.ModelFilter.Split('|').ToList();
+				if (filters.Contains("embedding"))
+					continue;
+				filters.Add("embedding");
+				item.ModelFilter = string.Join("|", filters);
+			}
+		}
+
+		private static void AiServices_OnValidateData(object sender, SettingsData<AiService>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				SettingsSourceManager.ResetServicesAndModels();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
+			else
+			{
+				FixAiServices(e.Items);
+			}
+		}
+
+		public static void FixAiModels(IList<AiModel> items)
+		{
+			if (items == null)
+				return;
+			foreach (var item in items)
+			{
+				if (item.MaxInputTokens == 0)
+					item.MaxInputTokens = Companions.ChatGPT.Client.GetMaxInputTokens(item.Name);
+			}
+		}
+
+
+		private static void AiModels_OnValidateData(object sender, SettingsData<AiModel>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				SettingsSourceManager.ResetServicesAndModels();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
+			else
+			{
+				FixAiModels(e.Items);
+			}
+		}
+
+
+		private static void Resets_OnValidateData(object sender, SettingsData<ListInfo>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				SettingsSourceManager.ResetResets();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
+			else
+			{
+			}
+		}
+
 		private static void UiPresets_OnValidateData(object sender, SettingsData<UiPresetItem>.SettingsDataEventArgs e)
 		{
 			if (e.Items.Count == 0)
@@ -787,6 +894,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		class IHasGuidComparer : IEqualityComparer<IHasGuid>
+		{
+			public bool Equals(IHasGuid x, IHasGuid y) => x.Id == y.Id;
+			public int GetHashCode(IHasGuid obj) => throw new System.NotImplementedException();
+		}
+
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
 		{
 			var data = sender as ISettingsData;
@@ -797,31 +910,39 @@ namespace JocysCom.VS.AiCompanion.Engine
 				data.IsSavePending = true;
 				ResetSettings = true;
 			}
-			// Fix filters.
-			var aiServices = e.Items.FirstOrDefault()?.AiServices;
-			if (aiServices != null)
-			{
-				foreach (var item in aiServices)
-				{
-					if (string.IsNullOrWhiteSpace(item.ModelFilter))
-						continue;
-					var filters = item.ModelFilter.Split('|').ToList();
-					if (filters.Contains("embedding"))
-						continue;
-					filters.Add("embedding");
-					item.ModelFilter = string.Join("|", filters);
-				}
-			}
-			var aiModels = e.Items.FirstOrDefault()?.AiModels;
-			if (aiModels != null)
-			{
-				foreach (var item in aiModels)
-				{
-					if (item.MaxInputTokens == 0)
-						item.MaxInputTokens = Client.GetMaxInputTokens(item.Name);
-				}
 
+			var aiServices = e.Items.FirstOrDefault()?.AiServices;
+			var aiModels = e.Items.FirstOrDefault()?.AiModels;
+
+			if (StoreAiServicesAndModelsInSeparateFile)
+			{
+				// Move AI services to a new location / file.
+				if (aiServices?.Any() == true && !AiServices.Items.Any())
+				{
+					CollectionsHelper.Synchronize(aiServices, AiServices.Items, new IHasGuidComparer());
+					AiServices.Save();
+					// Don't clear yet, in order not to break old apps.
+					//e.Items.Clear();
+				}
+				// Move AI Models to a new location / file.
+				if (aiModels?.Any() == true && !AiModels.Items.Any())
+				{
+					CollectionsHelper.Synchronize(aiModels, AiModels.Items, new IHasGuidComparer());
+					AiModels.Save();
+					// Don't clear yet, in order not to break old apps.
+					//e.Items.Clear();
+				}
 			}
+			else
+			{
+				AiServices.Items = aiServices;
+				AiModels.Items = aiModels;
+				if (!aiServices.Any() || !aiModels.Any())
+					SettingsSourceManager.ResetServicesAndModels();
+				FixAiServices(aiServices);
+				FixAiModels(aiModels);
+			}
+
 			var avatarItem = e.Items.FirstOrDefault()?.AiAvatar;
 			if (avatarItem != null)
 			{
@@ -883,17 +1004,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 						e.Items.Add(item);
 					if (items.Count > 0)
 						Templates.IsSavePending = true;
-				}
-			}
-			else
-			{
-				// Check for missing templates only.
-				var itemsAdded = SettingsSourceManager.CheckRequiredTemplates(e.Items);
-				if (itemsAdded > 0)
-				{
-					// Reorder and save.
-					Templates.SortList(e.Items);
-					Templates.IsSavePending = true;
 				}
 			}
 			data.IsSavePending |= FixTempalteItems(e.Items);
