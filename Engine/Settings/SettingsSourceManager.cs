@@ -515,7 +515,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 						return;
 					foreach (var resetItem in resetItems)
 					{
-						var typeAndName = resetItem.Key?.Split('/')
+						var typeAndName = resetItem.Key.Split('/')
 											 .Where(x => !string.IsNullOrWhiteSpace(x))
 											 .ToArray();
 						if (typeAndName.Length != 2)
