@@ -344,7 +344,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				_WebView2.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
 				var tempFolderPath = AppHelper.GetTempFolderPath();
 				// Set initial source after initialization
-				_WebView2.CoreWebView2.Navigate($"http://{appAssetsHost}/ChatListControl.html");
+				_WebView2.CoreWebView2.Navigate($"http://{appAssetsHost}/ChatListControl/default.htm");
 #if DEBUG
 				MakeWebBrowserVisible();
 #endif

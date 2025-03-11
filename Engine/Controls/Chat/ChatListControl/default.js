@@ -423,11 +423,18 @@ function SetVisible(el, isVisible) {
 }
 
 /** Prepare text for markdown and display as HTML. */
+
+/** 
+ * Prepare text for markdown and display as HTML.
+ * @param {string} input - The markdown text to convert
+ * @returns {string} The processed text ready for HTML display
+ */
 function ConvertForDisplayAsHtml(input) {
 	if (!input)
 		return input;
 	var lines = input.split(/\r?\n|\r/);
-	var rx = new RegExp(/^\s*[`]{3,}[a-z0-9\-]*\s*$/gmi);
+	// Use a non-backtracking regex approach with atomic groups or possessive quantifiers
+	var rx = new RegExp(/^\s{0,10}[`]{3,10}[a-z0-9\-]{0,30}\s{0,10}$/mi);
 	var insideBlock = false;
 	for (var i = 0; i < lines.length; i++) {
 		var line = lines[i];
