@@ -91,6 +91,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CurrentItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			var pi = currentItem.GetType().GetProperty(e.PropertyName);
+			// Do not update read only or write only properties.
+			if (!pi.CanRead || !pi.CanWrite)
+				return;
 			var items = ListPanel.MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().ToList();
 			if (items.Count < 2)
 				return;
@@ -99,7 +103,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
 				return;
-			var pi = currentItem.GetType().GetProperty(e.PropertyName);
 			var value = pi.GetValue(currentItem);
 			foreach (var item in items)
 				pi.SetValue(item, value);

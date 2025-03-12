@@ -495,6 +495,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 
 		static int NewAppDataVersion = 3;
 
+		public static string ResetItem(ItemType itemType, ISettingsFileItem item)
+		{
+			var zip = GetSettingsZip();
+			var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
+			var zipItems = GetItemsFromZip(zip, zipAppDataItems[0]);
+			var source = zipItems[itemType];
+			var sourceItem = source?.FirstOrDefault(x => x.Name == item.Name);
+			if (sourceItem != null)
+			{
+				var target = Global.GetSettingItems(itemType);
+				target.Remove(item);
+				target.Add(sourceItem);
+				return null;
+			}
+			return "Error: Original item was not found!";
+		}
+
 		/// <summary>Reset Resets</summary>
 		public static void ResetWithInstructions(bool confirm = false, bool appUpdate = false, bool checkVersion = false)
 		{

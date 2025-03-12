@@ -150,7 +150,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				var d0 = Modified;
 				if (d0 == null)
 					return int.MaxValue;
-				var d = DateTime.MinValue;
+				var d = d0.Value;
 				// If Created is today											
 				if (d.Date == today)
 					return 1;
@@ -189,7 +189,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				var d0 = Modified;
 				if (d0 == null)
 					return "";
-				var d = DateTime.MinValue;
+				var d = d0.Value;
 				if (d.Date == today)
 					return "Today";
 				else if (d.Date == yesterday)

@@ -9,7 +9,6 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-using Microsoft.Graph.Applications.GetAvailableExtensionProperties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -229,10 +228,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
-		public void SelectByName(string name)
+		public void SelectByName(params string[] name)
 		{
-			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(ISettingsListFileItem.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(ISettingsListFileItem.Name), name.ToList(), 0);
 		}
 
 		TaskSettings PanelSettings { get; set; } = new TaskSettings();
@@ -887,6 +885,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			copyPathMenuItem.Click += (s, e) =>
 				System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, paths));
 			contextMenu.Items.Add(copyPathMenuItem);
+
+			// Add reset item menu
+			var resetMenuItem = new MenuItem { Header = items.Length > 1 ? "Reset Items" : "Reset Item" };
+			resetMenuItem.Click += (s, e) =>
+			{
+				var selectedNames = items.Select(x => x.Name).ToArray();
+				foreach (var item in items)
+				{
+					var error = SettingsSourceManager.ResetItem(itemType, item);
+					if (!string.IsNullOrEmpty(error))
+						Global.MainControl.InfoPanel.SetBodyError(error);
+				}
+				SelectByName(selectedNames);
+			};
+			contextMenu.Items.Add(resetMenuItem);
+
 			// Add reset menus if available.
 			var allResetItems = Global.Resets.Items.FirstOrDefault()?.Items;
 			if (allResetItems == null)
