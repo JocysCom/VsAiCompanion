@@ -214,7 +214,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (addMessageAsRole == message_role.assistant)
 					messageType = MessageType.In;
 				// If no message and last message is user then...
-				if (string.IsNullOrEmpty(itemText) && item.Messages?.Last().Type == MessageType.Out)
+				if (string.IsNullOrEmpty(itemText) && item.Messages.LastOrDefault()?.Type == MessageType.Out)
 				{
 					// Reuse last user message.
 					m = item.Messages?.Last();

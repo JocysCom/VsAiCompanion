@@ -7,7 +7,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
-	d:DesignHeight="250"
+	d:DesignHeight="180"
 	d:DesignWidth="400"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
@@ -19,7 +19,8 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<StackPanel DataContext="{Binding Item, ElementName=This}">
+	<StackPanel DataContext="{Binding Item, ElementName=This}" Orientation="Horizontal">
+		<!--  Tool Choice Required GroupBox  -->
 		<GroupBox Grid.Row="3" Margin="3,0,3,3" HorizontalAlignment="Left">
 			<GroupBox.Header>
 				<StackPanel Margin="-4" Orientation="Horizontal">
@@ -31,8 +32,6 @@
 						IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<TextBlock Margin="0,5,0,0" Text="{Binding ToolChoiceRequiredNamesString, ElementName=This}" />
 				</StackPanel>
-
-
 			</GroupBox.Header>
 			<StackPanel>
 				<ListBox
@@ -44,6 +43,43 @@
 					AutomationProperties.Name="{StaticResource main_ToolChoiceRequiredNames_Name}"
 					ItemsSource="{Binding ListBoxData, ElementName=This}"
 					SelectionMode="Single">
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<VirtualizingStackPanel />
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<CheckBox Content="{Binding Key}" IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</GroupBox>
+
+		<!--  Tool Exclude All Except GroupBox  -->
+		<GroupBox Grid.Row="4" Margin="3,0,3,3" HorizontalAlignment="Left">
+			<GroupBox.Header>
+				<StackPanel Margin="-4" Orientation="Horizontal">
+					<CheckBox
+						Name="ToolExcludeAllExceptCheckBox"
+						AutomationProperties.HelpText="Exclude all tools except the selected ones"
+						AutomationProperties.Name="Exclude All Except"
+						Content="Exclude All Except"
+						IsChecked="{Binding ToolExcludeAllExcept, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<TextBlock Margin="0,5,0,0" Text="{Binding ToolExcludeAllExceptNamesString, ElementName=This}" />
+				</StackPanel>
+			</GroupBox.Header>
+			<StackPanel>
+				<ListBox
+					Name="ToolExcludeAllExceptNamesListBox"
+					MinWidth="100"
+					MinHeight="100"
+					MaxHeight="200"
+					AutomationProperties.HelpText="Select tools to include, all others will be excluded"
+					AutomationProperties.Name="Tool Exclusion List"
+					ItemsSource="{Binding ExcludeListBoxData, ElementName=This}"
+					SelectionMode="Multiple">
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
 							<VirtualizingStackPanel />

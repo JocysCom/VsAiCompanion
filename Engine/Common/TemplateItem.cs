@@ -256,6 +256,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _PluginsEnabled;
 
 
+		#region ToolChoiceRequired
+
 		/// <summary>Specifies whether a tool function must be called by the AI model.</summary>
 		[DefaultValue(false)]
 		public bool ToolChoiceRequired { get => _ToolChoiceRequired; set => SetProperty(ref _ToolChoiceRequired, value); }
@@ -269,6 +271,31 @@ namespace JocysCom.VS.AiCompanion.Engine
 			set => SetProperty(ref _ToolChoiceRequiredNames, value);
 		}
 		List<string> _ToolChoiceRequiredNames;
+
+		#endregion
+
+		#region ToolExcludeAllExcept
+
+		/// <summary>Specifies whether to exclude all tools except the selected ones.</summary>
+		[DefaultValue(false)]
+		public bool ToolExcludeAllExcept { get => _ToolExcludeAllExcept; set => SetProperty(ref _ToolExcludeAllExcept, value); }
+		bool _ToolExcludeAllExcept;
+
+		/// <summary>Specifies the names of tools to include when excluding all others.</summary>
+		[DefaultValue(null)]
+		public List<string> ToolExcludeAllExceptNames
+		{
+			get => _ToolExcludeAllExceptNames = _ToolExcludeAllExceptNames ?? new List<string>();
+			set => SetProperty(ref _ToolExcludeAllExceptNames, value);
+		}
+		List<string> _ToolExcludeAllExceptNames;
+
+		#endregion
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeToolExcludeAllExceptNames() => _ToolExcludeAllExceptNames?.Count > 0;
+
+
 
 		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
 		public bool ShouldSerializeToolChoiceRequiredNames() => _ToolChoiceRequiredNames?.Count > 0;

@@ -99,9 +99,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public bool AllowToSend()
 		{
-			return
-				!string.IsNullOrEmpty(DataTextBox.PART_ContentTextBox.Text) ||
-				!string.IsNullOrEmpty(DataInstructionsTextBox.PART_ContentTextBox.Text);
+			return !string.IsNullOrEmpty(DataTextBox.PART_ContentTextBox.Text);
 		}
 
 		public bool UseEnterToSendMessage { get; set; } = true;

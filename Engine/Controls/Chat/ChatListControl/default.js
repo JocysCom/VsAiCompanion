@@ -696,148 +696,124 @@ function MessageAction(button, id, action) {
  * @param {boolean} [boxedCode=false] - Whether to place code blocks in expandable boxes
  * @returns {string} The HTML representation of the markdown
  */
-function parseMarkdown(body, boxedCode) {
-	// Process <think> blocks by replacing double (or more) newlines with a line break tag.
+function parseMarkdown(body, boxedCode = false) {
+	if (!body) return '';
+
+	// Process <think> blocks first
 	body = body.replace(/^(<think>)([\s\S]*?)(<\/think>|$)/gi, function (match, start, content, end) {
-		// Replace 2+ newlines with a literal line break tag.
+		// Replace 2+ newlines with a line break tag
 		var cleaned = content.replace(/(?:[ \t]*\r?\n){2,}/g, "<br/>\r\n");
 		return start + cleaned + end;
 	});
 
-	// Remove trailing spaces from the body
-	var spacesRx = new RegExp("\\s+$", "g");
-	body = body.replace(spacesRx, "");
+	// Remove trailing spaces
+	body = body.trim();
 
-	// First, identify and protect code blocks from math processing
-	let codeBlocks = [];
-	let processedBody = body.replace(/```([\s\S]*?)```/g, function (match) {
-		const id = codeBlocks.length;
-		codeBlocks.push(match);
-		return `CODE_BLOCK_PLACEHOLDER_${id}`;
-	});
+	// Define language fallbacks in a more compact format
+	// Format: "targetLanguage": ["sourceLanguage1", "sourceLanguage2", ...]
+	const languageFallbackMap = {
+		"css": ["css-extras", "css-extra"],
+		"html": ["htm", "xhtml"],
+		"xml": ["xaml", "axml", "svg"],
+		"javascript": ["js", "jsx"],
+		"typescript": ["ts", "tsx"],
+		"cs": ["csharp", "c#"],
+		"python": ["py"],
+		"powershell": ["ps", "ps1"],
+		"bash": ["shell"],
+		"batch": ["bat", "cmd"]
+	};
 
-	// Also protect inline code
-	let inlineCode = [];
-	processedBody = processedBody.replace(/`([^`]+)`/g, function (match) {
-		const id = inlineCode.length;
-		inlineCode.push(match);
-		return `INLINE_CODE_PLACEHOLDER_${id}`;
-	});
-
-	// Now process math expressions on the protected text
-	let mathExpressions = [];
-
-	// Process display math expressions ($$...$$) first
-	processedBody = processedBody.replace(/\$\$([^\$]+?)\$\$/g, function (match, expression) {
-		const id = mathExpressions.length;
-		mathExpressions.push({
-			expression: expression.trim(),
-			display: true
-		});
-		return `MATH_PLACEHOLDER_${id}`;
-	});
-
-	// Then process inline math expressions ($...$)
-	processedBody = processedBody.replace(/\$([^\$\n]+?)\$/g, function (match, expression) {
-		// Skip if it looks like currency
-		if (/^\s*\d+([,.]\d+)?\s*$/.test(expression)) {
-			return match;
+	// Create a flattened lookup map for faster access
+	const languageFallbacks = {};
+	for (const [targetLang, sourceLangs] of Object.entries(languageFallbackMap)) {
+		for (const sourceLang of sourceLangs) {
+			languageFallbacks[sourceLang] = targetLang;
 		}
-		const id = mathExpressions.length;
-		mathExpressions.push({
-			expression: expression.trim(),
-			display: false
-		});
-		return `MATH_PLACEHOLDER_${id}`;
-	});
-
-	// Restore code blocks before markdown parsing
-	processedBody = processedBody.replace(/CODE_BLOCK_PLACEHOLDER_(\d+)/g, function (match, id) {
-		return codeBlocks[parseInt(id)];
-	});
-
-	processedBody = processedBody.replace(/INLINE_CODE_PLACEHOLDER_(\d+)/g, function (match, id) {
-		return inlineCode[parseInt(id)];
-	});
+	}
 
 	// Create a custom renderer
 	const renderer = new marked.Renderer();
 
-	// Override code rendering function for marked v13+
+	// Override code rendering function
 	renderer.code = function (code, infostring, escaped) {
-		// Extract the actual code content
-		let codeText;
-		let language = '';
-
-		// Handle the code parameter based on its type
+		// Normalize code content
+		let codeText = '';
 		if (typeof code === 'string') {
 			codeText = code;
-			language = infostring || '';
-		} else if (typeof code === 'object' && code !== null) {
-			// Extract language from the code object if available
-			language = (code.lang || infostring || '').toLowerCase();
-
-			// Extract text from the token object
-			if (typeof code.text === 'string') {
-				codeText = code.text;
-			} else if (typeof code.raw === 'string') {
-				// Remove code fence markers if present
-				const rawText = code.raw;
-				const fenceMatch = /^```.*?\n([\s\S]*?)```$/m.exec(rawText);
-				if (fenceMatch) {
-					codeText = fenceMatch[1];
-				} else {
-					codeText = rawText;
-				}
-			} else {
-				// Last resort: convert to string
-				codeText = JSON.stringify(code);
-				console.warn("Code block content had to be stringified:", codeText.substring(0, 100));
-			}
+		} else if (code && typeof code.text === 'string') {
+			codeText = code.text;
+		} else if (code && typeof code.raw === 'string') {
+			const match = /^```.*?\n([\s\S]*?)```$/m.exec(code.raw);
+			codeText = match ? match[1] : code.raw;
 		} else {
 			codeText = String(code || '');
-			language = infostring || '';
 		}
 
-		// Convert language to lowercase
-		language = language.toLowerCase();
+		// Clean the code
+		const cleanedCode = codeText.trim();
 
-		// Remove trailing spaces from the code
-		const cleanedCode = codeText.replace(spacesRx, "");
+		// Normalize language identification
+		let language = '';
+		if (infostring) {
+			language = infostring.toLowerCase();
+		} else if (code && code.lang) {
+			language = code.lang.toLowerCase();
+		}
 
-		console.log("Processing code block:", {
-			language: language,
-			codePreview: cleanedCode.substring(0, 50),
-			hasPrismLanguage: language && Prism.languages[language] ? true : false
-		});
+		// Debug logging
+		console.log(`Processing code block with language: "${language}"`);
 
-		// Apply syntax highlighting with Prism if language is specified
-		let highlightedCode = cleanedCode;
+		// Determine highlighting approach
+		let highlightedCode = '';
+		let effectiveLanguage = language;
+
+		// Try highlighting with the specified language
 		if (language && Prism.languages[language]) {
 			try {
 				highlightedCode = Prism.highlight(cleanedCode, Prism.languages[language], language);
-				console.log("Highlighting successful for language:", language);
+				console.log(`Highlighted with language: ${language}`);
 			} catch (e) {
-				console.error("Prism highlighting error:", e);
+				console.error(`Error highlighting with ${language}:`, e);
+				highlightedCode = EscapeHtml(cleanedCode);
 			}
-		} else {
-			console.log("No syntax highlighting applied - language not supported or not specified");
+		}
+		// Try fallback language if defined
+		else if (language && languageFallbacks[language] && Prism.languages[languageFallbacks[language]]) {
+			const fallbackLang = languageFallbacks[language];
+			try {
+				highlightedCode = Prism.highlight(cleanedCode, Prism.languages[fallbackLang], fallbackLang);
+				console.log(`Used fallback ${fallbackLang} for ${language}`);
+				effectiveLanguage = language; // Keep original language for display
+			} catch (e) {
+				console.error(`Error with fallback ${fallbackLang} for ${language}:`, e);
+				highlightedCode = EscapeHtml(cleanedCode);
+			}
+		}
+		// Default to plain text
+		else {
+			console.log(`No syntax highlighting for language: ${language}`);
+			highlightedCode = EscapeHtml(cleanedCode);
+			effectiveLanguage = language || 'text';
 		}
 
-		// Create HTML for the code block
-		let codeHTML = '<pre><code' + (language ? ' class="language-' + language + '"' : '') + '>';
+		// Create HTML for the code block - always include language class if available
+		let codeHTML = `<pre><code class="language-${effectiveLanguage || 'text'}">`;
 		codeHTML += highlightedCode;
 		codeHTML += '</code></pre>';
 
-		// If boxed code is requested, wrap the code in an expandable box
+		// If boxed code is requested, wrap in expandable box
 		if (boxedCode) {
-			var id = "rnd_" + generateGUID();
-			var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
-			buttonHTML = buttonHTML
+			const id = "rnd_" + generateGUID();
+			const buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML
 				.replace(/{Id}/g, id);
-			var panelHTML = createExpandableBoxHTML(id, language, buttonHTML, "", codeHTML);
-			return panelHTML;
+
+			// Make sure to display the language in the title
+			const displayLanguage = effectiveLanguage || 'text';
+
+			return createExpandableBoxHTML(id, displayLanguage, buttonHTML, "", codeHTML);
 		}
+
 		return codeHTML;
 	};
 
@@ -855,27 +831,42 @@ function parseMarkdown(body, boxedCode) {
 
 	// Parse the markdown and return the HTML
 	try {
-		let html = marked.parse(processedBody);
+		// First pass: standard markdown parsing
+		let html = marked.parse(body);
 
-		// Restore math expressions with placeholders for KaTeX rendering
-		html = html.replace(/MATH_PLACEHOLDER_(\d+)/g, function (match, id) {
-			const item = mathExpressions[parseInt(id)];
-			const escapedExpression = EscapeHtml(item.expression);
-
-			if (item.display) {
-				// Display math (centered, larger)
-				return `<div class="math-display" data-math="${escapedExpression}">$$${item.expression}$$</div>`;
-			} else {
-				// Inline math
-				return `<span class="math-inline" data-math="${escapedExpression}">$${item.expression}$</span>`;
-			}
-		});
+		// Second pass: process math expressions for KaTeX
+		html = processMathExpressions(html);
 
 		return html;
 	} catch (e) {
-		console.error("Marked parsing error:", e);
+		console.error("Markdown parsing error:", e);
 		return "<p>" + body.replace(/\n/g, "<br/>") + "</p>";
 	}
+}
+
+/**
+ * Processes math expressions in HTML for KaTeX rendering
+ * @param {string} html - The HTML to process
+ * @returns {string} HTML with math expressions prepared for KaTeX
+ */
+function processMathExpressions(html) {
+	// Process display math expressions ($$...$$)
+	html = html.replace(/\$\$([\s\S]+?)\$\$/g, function (match, expression) {
+		const escapedExpression = EscapeHtml(expression.trim());
+		return `<div class="math-display" data-math="${escapedExpression}">$$${expression}$$</div>`;
+	});
+
+	// Process inline math expressions ($...$) - skip currency-like expressions
+	html = html.replace(/\$([^\$\n]+?)\$/g, function (match, expression) {
+		// Skip if it looks like currency
+		if (/^\s*\d+([,.]\d+)?\s*$/.test(expression)) {
+			return match;
+		}
+		const escapedExpression = EscapeHtml(expression.trim());
+		return `<span class="math-inline" data-math="${escapedExpression}">$${expression}$</span>`;
+	});
+
+	return html;
 }
 
 // Separate debugging function that doesn't reference external variables
@@ -977,6 +968,16 @@ function SimulateMessages() {
 		// Add CSS code block to test.
 		"```css\r\n" +
 		"p { color: red }\r\n" +
+		"```\r\n" +
+		"\r\n" +
+		// Add HTML/XML code block to test.
+		"```html\r\n" +
+		"<body><span>Lorem ipsum dolor sit amet.</span></body>\r\n" +
+		"```\r\n" +
+		"\r\n" +
+		// Add HTML/XML code block to test.
+		"```xaml\r\n" +
+		"<body><span>Lorem ipsum dolor sit amet.</span></body>\r\n" +
 		"```\r\n" +
 		"\r\n" +
 		// Add mathematical expression.
