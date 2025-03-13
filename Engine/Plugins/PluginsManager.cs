@@ -525,10 +525,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="item">Template item with settings.</param>
 		/// <param name="options">Chat completion options</param>
-		public static void ProvideTools(List<ChatTool> tools, TemplateItem item,
+		public static void ProvideTools(List<ChatTool> allowedTools, TemplateItem item,
 			ChatCompletionOptions options = null, MessageItem message = null)
 		{
-			if (tools.Count == 0)
+			if (allowedTools.Count == 0)
 				return;
 			// Need to use reflection to set the Temperature property
 			// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
@@ -537,19 +537,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Make sure that last message is not automated reply or it will go into the infinite loop.
 			if (item.Messages.LastOrDefault()?.IsAutomated == true)
 				return;
+			// If chat is configured to exclude all tools except specific ones then...
+			if (item.ToolExcludeAllExcept)
+				allowedTools = allowedTools.Where(x => item.ToolExcludeAllExceptNames.Contains(x.FunctionName)).ToList();
 			// If chat is configured to require a specific tool then...
 			if (item.ToolChoiceRequired)
 			{
 				value = ChatToolChoice.CreateRequiredChoice();
-				var requiredFunctions = tools.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
-				foreach (var tool in requiredFunctions)
+				var requiredTools = allowedTools.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
+				foreach (var tool in requiredTools)
 					toolsToProvide.Add(tool);
 			}
 			// If no required tools are added, then...
 			if (toolsToProvide.Count == 0)
 			{
-				// Add all functions as available.
-				foreach (var tool in tools)
+				// Add all tools.
+				foreach (var tool in allowedTools)
 					toolsToProvide.Add(tool);
 			}
 			// If options supplied then..

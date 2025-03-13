@@ -1,10 +1,11 @@
-2025-03-10 v1.17.16
+2025-03-13 v1.17.17
 
 - Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
 - Fix: Resolved an issue with how code and HTML display within a markdown block.
 - New: Clear Search Button.
 - New: Buttons to sort the lists.
 - New: Support for the KaTeX math rendering library.
+- New: Option to exclude all tools except specific ones for chat.
 - Update: Improved list search using the `name:`, `body:`, and `date:` tokens.
 - Update: List and process plugin functions.
 - Update: Upgraded to Marked version 15.0.6.
