@@ -149,6 +149,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void UpdateMessageEditDebounced()
 		{
+			bool refreshAfterEdit = false;
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			var isAttachmentEdit = !string.IsNullOrEmpty(EditAttachmentId);
 			AppHelper.UpdateHelp(SendButton,
@@ -164,7 +165,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			MaskDrawingTabItem.Visibility = isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
 			SendButtonIcon.Content = isEdit
-				? Resources[Icons_Default.Icon_button_ok]
+				? Resources[refreshAfterEdit ? Icons_Default.Icon_button_ok_refresh : Icons_Default.Icon_button_ok]
 				: Resources[Icons_Default.Icon_media_play];
 			StopButtonIcon.Content = isEdit
 				? Resources[Icons_Default.Icon_button_cancel]

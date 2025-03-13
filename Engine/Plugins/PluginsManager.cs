@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml;
-using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;

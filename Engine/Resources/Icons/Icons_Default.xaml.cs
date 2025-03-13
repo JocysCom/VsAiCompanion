@@ -26,6 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_button_cancel = nameof(Icon_button_cancel);
 		public const string Icon_button_error = nameof(Icon_button_error);
 		public const string Icon_button_ok = nameof(Icon_button_ok);
+		public const string Icon_button_ok_refresh = nameof(Icon_button_ok_refresh);
 		public const string Icon_button_trend_up = nameof(Icon_button_trend_up);
 		public const string Icon_cancel_gray = nameof(Icon_cancel_gray);
 		public const string Icon_chart_radar = nameof(Icon_chart_radar);
