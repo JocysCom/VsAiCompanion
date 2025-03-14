@@ -1,10 +1,12 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Resources;
 using JocysCom.VS.AiCompanion.Engine.Resources.Icons;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -708,6 +710,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				default:
 					break;
 			}
+		}
+
+		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
+
+		private void InstructionsPathBrowseButton_Click(object sender, RoutedEventArgs e)
+		{
+			var path = AssemblyInfo.ExpandPath(Item.InstructionsPath);
+			if (_OpenFileDialog == null)
+			{
+				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+				_OpenFileDialog.SupportMultiDottedExtensions = true;
+				DialogHelper.AddFilter(_OpenFileDialog, ".txt");
+				DialogHelper.AddFilter(_OpenFileDialog, ".md");
+				DialogHelper.AddFilter(_OpenFileDialog);
+				_OpenFileDialog.FilterIndex = 1;
+				_OpenFileDialog.RestoreDirectory = true;
+			}
+			var dialog = _OpenFileDialog;
+			dialog.FileName = Path.GetFileName(path);
+			dialog.InitialDirectory = Path.GetDirectoryName(path);
+			dialog.Title = "Open Instructions File";
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			if (Item.InstructionsPathEnabled == false && string.IsNullOrWhiteSpace(Item.InstructionsPath))
+				Item.InstructionsPathEnabled = true;
+			Item.InstructionsPath = AssemblyInfo.ParameterizePath(dialog.FileName, true);
 		}
 
 

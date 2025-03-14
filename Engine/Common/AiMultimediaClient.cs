@@ -38,8 +38,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Crate a copy in order not to add to existing list.
 			try
 			{
-				if (!string.IsNullOrWhiteSpace(rItem.TextInstructions))
-					messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
+				var itemInstructions = await ClientHelper.GetInstructions(rItem);
+				if (!string.IsNullOrWhiteSpace(itemInstructions))
+					messages.Add(new chat_completion_message(message_role.system, itemInstructions));
+
 				var message = new chat_completion_message(message_role.user, prompt);
 				var content = new List<content_item>();
 				content.Add(new content_item { type = cotent_item_type.text, text = prompt });

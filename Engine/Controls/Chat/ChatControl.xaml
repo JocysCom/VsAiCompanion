@@ -116,13 +116,51 @@
 									<Label x:Name="InstructionsCountLabel" x:FieldModifier="public" />
 								</StackPanel>
 							</TabItem.Header>
-							<JcControls:PlaceholderTextBox
-								x:Name="DataInstructionsTextBox"
-								Background="{StaticResource InstructionsBackgroundBrush}"
-								IsInTab="True"
-								PlaceholderText="Type instructions"
-								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
-								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="*" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<CheckBox x:Name="InstructionsPathEnabledCheckBox" Content="{StaticResource main_Source_File}" IsChecked="{Binding InstructionsPathEnabled, UpdateSourceTrigger=PropertyChanged}" />
+								<TextBox
+									Name="InstructionsPathTextBox"
+									Grid.Column="1"
+									Margin="3,0,3,0"
+									Text="{Binding InstructionsPath, UpdateSourceTrigger=PropertyChanged}" />
+								<Button
+									Name="InstructionsPathBrowseButton"
+									Grid.Column="2"
+									MinWidth="78"
+									Click="InstructionsPathBrowseButton_Click">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_folder_open_doc}" Focusable="False" />
+										<Label Content="{StaticResource main_Browse}" />
+									</StackPanel>
+								</Button>
+								<Border
+									x:Name="DataInstructionsBorder"
+									Grid.Row="2"
+									Grid.ColumnSpan="3"
+									BorderBrush="{StaticResource BorderDark}"
+									BorderThickness="0,1,0,0">
+
+									<JcControls:PlaceholderTextBox
+										x:Name="DataInstructionsTextBox"
+										Background="{StaticResource InstructionsBackgroundBrush}"
+										IsInTab="True"
+										PlaceholderText="Type instructions"
+										PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
+										Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
+								</Border>
+
+							</Grid>
+
 						</TabItem>
 
 						<!--  Placeholder  -->

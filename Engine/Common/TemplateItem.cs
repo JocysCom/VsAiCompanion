@@ -58,6 +58,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		string _TextInstructions;
 
+		[DefaultValue(false)]
+		public bool InstructionsPathEnabled { get => _InstructionsPathEnabled; set => SetProperty(ref _InstructionsPathEnabled, value); }
+		bool _InstructionsPathEnabled;
+
+
+		[DefaultValue(null)]
+		public string InstructionsPath { get => _InstructionsPath; set => SetProperty(ref _InstructionsPath, value); }
+		string _InstructionsPath;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeInstructionsPath() => !string.IsNullOrEmpty(InstructionsPath);
+
+
 		/// <summary>Show RISEN textboxes</summary>
 		[DefaultValue(false)]
 		public bool ShowRisen { get => _ShowRisen; set => SetProperty(ref _ShowRisen, value); }

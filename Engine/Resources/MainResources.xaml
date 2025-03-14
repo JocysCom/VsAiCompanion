@@ -196,7 +196,6 @@
 	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
 	<sys:String x:Key="main_Include_Patterns">Include Patterns</sys:String>
 	<sys:String x:Key="main_Source">Source</sys:String>
-	<sys:String x:Key="main_Source_Folder">Source Folder</sys:String>
 	<sys:String x:Key="main_Target_Database">Target Database</sys:String>
 	<sys:String x:Key="main_OverrideGroupName_Name">Override Group Name</sys:String>
 	<sys:String x:Key="main_OverrideGroupName_Help">Override Group Name - Don't automatically set the group name from the data folder when importing data.</sys:String>
@@ -425,6 +424,8 @@
 	<sys:String x:Key="main_Refresh">Refresh</sys:String>
 	<sys:String x:Key="main_Service">Service</sys:String>
 	<sys:String x:Key="main_Status">Status</sys:String>
+	<sys:String x:Key="main_Source_Folder">Source Folder</sys:String>
+	<sys:String x:Key="main_Source_File">Source File</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
 	<sys:String x:Key="main_Sort_Ascending">Sort Ascending</sys:String>
 	<sys:String x:Key="main_Sort_Descending">Sort Descending</sys:String>

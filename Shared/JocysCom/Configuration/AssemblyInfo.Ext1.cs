@@ -42,6 +42,8 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static string ExpandPath(string path)
 		{
+			if (string.IsNullOrEmpty(path))
+				return path;
 			// Variables are quoted with '%' (percent) sign.
 			path = Environment.ExpandEnvironmentVariables(path);
 			// Variables are quoted with '{' and '}' sign.
@@ -51,6 +53,8 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static string ParameterizePath(string path, bool useEnvironmentVariables = false)
 		{
+			if (string.IsNullOrEmpty(path))
+				return path;
 			// Variables are quoted with '{' and '}' sign
 			path = JocysCom.ClassLibrary.Text.Helper.Replace(Entry, path, false);
 			if (useEnvironmentVariables)

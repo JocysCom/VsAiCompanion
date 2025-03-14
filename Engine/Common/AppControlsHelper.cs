@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -52,33 +53,103 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		public static string GetFileWithCodeBlockContent(params string[] files)
+		{
+			var sb = new StringBuilder();
+			var binaryFiles = new List<string>();
+			// Append file content
+			foreach (string file in files)
+			{
+				if (!File.Exists(file) || JocysCom.ClassLibrary.Files.Mime.IsBinary(file))
+				{
+					binaryFiles.Add(file);
+					continue;
+				}
+				var fileContent = File.ReadAllText(file);
+				var markdownCodeBlock = MarkdownHelper.CreateMarkdownCodeBlock(file, fileContent, null);
+				sb.AppendLine($"\r\n`{file}`:\r\n");
+				sb.AppendLine($"{markdownCodeBlock}");
+			}
+			if (binaryFiles.Any())
+			{
+				// Append file paths
+				foreach (string file in files)
+					sb.AppendLine($"- {file}");
+			}
+			return sb.ToString();
+		}
+
+		public static string GetFileReferences(params string[] file)
+		{
+			var content = string.Join(Environment.NewLine, file.Select(x => $"#file:'{x}'"));
+			return content;
+		}
+
+		public static string ReplaceFileReferences(string inputText)
+		{
+			if (string.IsNullOrEmpty(inputText))
+				return inputText;
+
+			// Regex to match #file:'path' pattern
+			// Uses a non-greedy match to handle multiple file references
+			var regex = new Regex(@"#file:'([^']+)'");
+
+			// Use a StringBuilder for efficient string manipulation
+			var result = new StringBuilder(inputText);
+
+			// Find all matches
+			var matches = regex.Matches(inputText);
+
+			// Process matches in reverse order to avoid index shifting problems
+			// when replacing text of different lengths
+			for (int i = matches.Count - 1; i >= 0; i--)
+			{
+				var match = matches[i];
+				var filePath = match.Groups[1].Value;
+
+				try
+				{
+					// Read the file content
+					string fileContent = AppControlsHelper.GetFileWithCodeBlockContent(filePath);
+
+					// Replace the #file reference with the file content
+					result.Remove(match.Index, match.Length);
+					result.Insert(match.Index, fileContent);
+				}
+				catch (Exception ex)
+				{
+					// Handle file reading errors
+					string errorMessage = $"/* Error reading file '{filePath}': {ex.Message} */";
+					result.Remove(match.Index, match.Length);
+					result.Insert(match.Index, errorMessage);
+				}
+			}
+
+			return result.ToString();
+		}
+
+
 		public static void DropFiles(TextBox textBox, string[] files)
 		{
 			var sb = new StringBuilder();
 			var currentLine = GetLineFromCaret(textBox);
-			// If user holds CTRL key during drop then...
-			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+			var isCtrlDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
+			var isAltDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt);
+			// If user holds ALT key during drop then...
+			if (isAltDown)
 			{
-				var binaryFiles = new List<string>();
-				// Append file content
-				foreach (string file in files)
-				{
-					if (!File.Exists(file) || JocysCom.ClassLibrary.Files.Mime.IsBinary(file))
-					{
-						binaryFiles.Add(file);
-						continue;
-					}
-					var fileContent = File.ReadAllText(file);
-					var markdownCodeBlock = MarkdownHelper.CreateMarkdownCodeBlock(file, fileContent, null);
-					sb.AppendLine($"\r\n`{file}`:\r\n");
-					sb.AppendLine($"{markdownCodeBlock}");
-				}
-				if (binaryFiles.Any())
-				{
-					// Append file paths
-					foreach (string file in files)
-						sb.AppendLine($"- {file}");
-				}
+				var content = GetFileReferences(files);
+				sb.Append(content);
+			}
+			// If user holds CTRL key during drop then...
+			else if (isCtrlDown)
+			{
+				var content = GetFileWithCodeBlockContent(files);
+				sb.Append(content);
 			}
 			else
 			{

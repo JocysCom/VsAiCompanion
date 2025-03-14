@@ -195,7 +195,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Exclude_Patterns => FindResource(nameof(main_Exclude_Patterns));
         public static string main_Include_Patterns => FindResource(nameof(main_Include_Patterns));
         public static string main_Source => FindResource(nameof(main_Source));
-        public static string main_Source_Folder => FindResource(nameof(main_Source_Folder));
         public static string main_Target_Database => FindResource(nameof(main_Target_Database));
         public static string main_OverrideGroupName_Name => FindResource(nameof(main_OverrideGroupName_Name));
         public static string main_OverrideGroupName_Help => FindResource(nameof(main_OverrideGroupName_Help));
@@ -391,6 +390,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Refresh => FindResource(nameof(main_Refresh));
         public static string main_Service => FindResource(nameof(main_Service));
         public static string main_Status => FindResource(nameof(main_Status));
+        public static string main_Source_Folder => FindResource(nameof(main_Source_Folder));
+        public static string main_Source_File => FindResource(nameof(main_Source_File));
         public static string main_Stop => FindResource(nameof(main_Stop));
         public static string main_Sort_Ascending => FindResource(nameof(main_Sort_Ascending));
         public static string main_Sort_Descending => FindResource(nameof(main_Sort_Descending));

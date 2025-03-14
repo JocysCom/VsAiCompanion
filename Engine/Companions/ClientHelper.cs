@@ -98,12 +98,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					// Add system message.
 					if (!string.IsNullOrWhiteSpace(systemContent))
+					{
+						systemContent = AppControlsHelper.ReplaceFileReferences(systemContent);
 						completionMessages.Add(new chat_completion_message(message_role.system, systemContent));
+					}
 				}
 				else
 				{
 					messageContent = JoinMessageParts(systemContent, messageContent);
 				}
+				messageContent = AppControlsHelper.ReplaceFileReferences(messageContent);
 				// Add user message.
 				completionMessages.Add(new chat_completion_message(message_role.user, messageContent));
 			}
@@ -170,6 +174,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var isTask = Global.Tasks.Items.Contains(item);
 				// Message is added. Cleanup now.
 				var itemText = overrideText ?? item.Text;
+				//itemText = AppControlsHelper.ReplaceFileReferences(itemText);
 				if (isTask)
 				{
 					if (item.MessageBoxOperation == MessageBoxOperation.ClearMessage)
@@ -184,7 +189,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 							item.Text = template.Text;
 					}
 				}
-
 				if (item.AutoFormatMessage)
 					itemText = await FormatMessage(item, itemText);
 				embeddingText = itemText;
@@ -198,11 +202,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var copilotInstructions = "";
 				if (Global.IsVsExtension && item.EnableCopilotInstructions)
 					copilotInstructions = GetCopilotInstructions();
+				var itemInstructions = await GetInstructions(item);
 				// Prepare instructions.
 				var instructions = JoinMessageParts(
 					globalInstructions,
 					modelInstructions,
-					item.TextInstructions,
+					itemInstructions,
 					copilotInstructions
 					);
 				if (item.UseMacros)
@@ -500,6 +505,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				ControlsHelper.AppBeginInvoke(() => { _ = Global.Tasks.Items.Remove(item); });
 		}
 
+
 		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions
 		{
 			WriteIndented = true,
@@ -520,6 +526,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return availableTokens;
 		}
 
+		public static async Task<string> ReadOrDownloadContent(string path)
+		{
+			string content = null;
+			try
+			{
+
+				path = AssemblyInfo.ExpandPath(path);
+				// Use external URL or local file specified by the user.
+				var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
+				if (isUrl)
+				{
+					content = (await Plugins.Core.Web.DownloadContentAuthenticated(path)).ContentData;
+
+				}
+				else if (File.Exists(path))
+				{
+					content = File.ReadAllText(path);
+				}
+			}
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			return content;
+		}
+
 		#region Reserved Tempalte Functions
 
 		public async static Task<string> FormatMessage(TemplateItem item, string text)
@@ -535,7 +567,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
+				var itemInstructions = await GetInstructions(rItem);
+				messages.Add(new chat_completion_message(message_role.system, itemInstructions));
 				// Supply data for processing.
 				messages.Add(new chat_completion_message(message_role.user, text));
 				var client = AiClientFactory.GetAiClient(rItem.AiService);
@@ -557,7 +590,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return text;
 		}
 
-		public async static Task GenerateResult(TemplateItem item, string taskName)
+		public static async Task<string> GetInstructions(TemplateItem item)
+		{
+			string pathInstructions = null;
+			if (item.InstructionsPathEnabled)
+				pathInstructions = await ReadOrDownloadContent(item.InstructionsPath);
+			var instructions = JoinMessageParts(pathInstructions, item.TextInstructions);
+			return instructions;
+		}
+
+		public static async Task GenerateResult(TemplateItem item, string taskName)
 		{
 			/// Try to get reserved template to generate title.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == taskName);
@@ -571,8 +613,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					var userMessage = new MessageItem();
 					userMessage.Type = MessageType.Out;
-					userMessage.Body = item.Text;
-					userMessage.Body = item.TextInstructions;
+					userMessage.Body = JoinMessageParts(item.TextInstructions, item.Text);
 					messagesToSend.Add(userMessage);
 				}
 			}
@@ -588,7 +629,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			{
 				// Add instructions to generate title to existing messages.
 				var role = rItem.UseSystemInstructions ? message_role.system : message_role.user;
-				messages.Add(new chat_completion_message(role, rItem.TextInstructions));
+				var itemInstructions = await GetInstructions(rItem);
+				messages.Add(new chat_completion_message(role, itemInstructions));
 				var client = AiClientFactory.GetAiClient(rItem.AiService);
 				if (client is null)
 					return;
@@ -659,7 +701,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
+				var itemInstructions = await GetInstructions(rItem);
+				messages.Add(new chat_completion_message(message_role.system, itemInstructions));
 				var client = AiClientFactory.GetAiClient(item.AiService);
 				if (client is null)
 					return null;

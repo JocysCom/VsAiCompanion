@@ -6,6 +6,7 @@
 - New: Buttons to sort the lists.
 - New: Support for the KaTeX math rendering library.
 - New: Option to exclude all tools except specific ones for chat.
+- New: Allow setting the model instruction source as a path or URL.
 - Update: Improved list search using the `name:`, `body:`, and `date:` tokens.
 - Update: List and process plugin functions.
 - Update: Upgraded to Marked version 15.0.6.
