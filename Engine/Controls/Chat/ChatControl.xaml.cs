@@ -36,6 +36,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				AppControlsHelper.AllowDrop(item.Box, true);
 				AppControlsHelper.AllowPasteFiles(item.Box, true);
 			}
+			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+			UpdateEnterToSend();
+		}
+
+		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(AppData.UseEnterToSendMessage):
+					UpdateEnterToSend();
+					break;
+				default:
+					break;
+			}
+		}
+
+		void UpdateEnterToSend()
+		{
+			var action = Global.AppSettings.UseEnterToSendMessage ? new Func<bool>(Send) : null;
+			AppControlsHelper.UseEnterToSend(DataTextBox.PART_ContentTextBox, action);
 		}
 
 		public string EditAttachmentId
@@ -99,32 +119,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			});
 		}
 
+		/// <summary>
+		/// Determines if the current message can be sent based on content validation.
+		/// </summary>
+		/// <returns>True if the message can be sent; otherwise, false.</returns>
 		public bool AllowToSend()
 		{
 			return !string.IsNullOrEmpty(DataTextBox.PART_ContentTextBox.Text);
 		}
 
-		public bool UseEnterToSendMessage { get; set; } = true;
-
-		private void DataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		public bool Send()
 		{
-			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-			{
-				// Prevent new line added to the message.
-				e.Handled = true;
-			}
-		}
-
-		private void DataTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
-		{
-			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-			{
-				if (AllowToSend())
-					OnSend?.Invoke(sender, e);
-				// Prevent new line added to the message.
-				e.Handled = true;
-			}
-			UpdateMessageEdit();
+			if (AllowToSend())
+				OnSend?.Invoke(this, EventArgs.Empty);
+			return true;
 		}
 
 		private void DataInstructionsTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -142,6 +150,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			UpdateMessageEdit();
 		}
 
+		/// <summary>
+		/// Schedules an update of the message edit UI with debouncing to prevent excessive updates.
+		/// </summary>
 		public void UpdateMessageEdit()
 		{
 			_ = Helper.Debounce(UpdateMessageEditDebounced, 100);
@@ -149,6 +160,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public bool IsBusy;
 
+		/// <summary>
+		/// Updates the message edit UI components based on current edit state.
+		/// </summary>
 		public void UpdateMessageEditDebounced()
 		{
 			bool refreshAfterEdit = false;
@@ -203,6 +217,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public event EventHandler OnSend;
 		public event EventHandler OnStop;
 
+		/// <summary>
+		/// Applies changes to an edited message and clears the edit state.
+		/// </summary>
+		/// <returns>A task representing the asynchronous operation.</returns>
 		public async Task ApplyMessageEditAsync()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
@@ -224,6 +242,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>
 		/// If the chat form is in message edit mode, remove relevant messages before adding a new message.
 		/// </summary>
+		/// <returns>A task representing the asynchronous operation.</returns>
 		public async Task ApplyMessageEditWithRemovingMessages()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
@@ -633,6 +652,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		bool _ChatInputExpanded;
 
 
+		/// <summary>
+		/// Toggles between maximized and normal view for the chat input area.
+		/// </summary>
 		public void MaximizeAndNormal()
 		{
 			if (IsChatInputExpanded)
@@ -656,9 +678,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			IsChatInputExpanded = !IsChatInputExpanded;
 		}
 
+		/// <summary>
+		/// Expands a specific row in the main grid while collapsing others.
+		/// </summary>
+		/// <param name="rowIndex">The index of the row to expand.</param>
 		public void ExpandRow(int rowIndex)
 		{
-
 			// Iterate over all RowDefinitions in the MainGrid
 			for (int i = 0; i < MainGrid.RowDefinitions.Count; i++)
 			{

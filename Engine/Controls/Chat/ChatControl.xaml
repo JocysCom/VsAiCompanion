@@ -101,8 +101,6 @@
 								Background="White"
 								IsInTab="True"
 								PlaceholderText="{Binding TextPlaceholder, UpdateSourceTrigger=PropertyChanged}"
-								PreviewKeyDown="DataTextBox_PreviewKeyDown"
-								PreviewKeyUp="DataTextBox_PreviewKeyUp"
 								Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
 								TextChanged="DataTextBox_TextChanged" />
 						</TabItem>
@@ -181,8 +179,6 @@
 								Background="{StaticResource PlaceholderBackgroundBrush}"
 								IsInTab="True"
 								PlaceholderText="{StaticResource main_Text_Placeholder}"
-								PreviewKeyDown="DataTextBox_PreviewKeyDown"
-								PreviewKeyUp="DataTextBox_PreviewKeyUp"
 								Text="{Binding TextPlaceholder, UpdateSourceTrigger=PropertyChanged}"
 								TextChanged="DataTextBox_TextChanged" />
 						</TabItem>

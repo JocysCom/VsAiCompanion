@@ -47,7 +47,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
 			//SelectionRadioButton.IsEnabled = Global.GetSelection != null;
 			Global.OnSaveSettings += Global_OnSaveSettings;
-			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
 			ListsPromptsPanel.AddPromptButton.Click += ListsPromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
@@ -213,9 +212,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			switch (e.PropertyName)
 			{
-				case nameof(AppData.UseEnterToSendMessage):
-					ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
-					break;
 				case nameof(AppData.IsSpellCheckEnabled):
 					UpdateSpellCheck();
 					break;

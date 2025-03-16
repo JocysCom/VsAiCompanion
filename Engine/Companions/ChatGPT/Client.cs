@@ -1,15 +1,12 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using JocysCom.ClassLibrary;
+﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using NPOI.POIFS.Properties;
 using OpenAI;
 using OpenAI.Chat;
 using System;
 using System.ClientModel.Primitives;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
