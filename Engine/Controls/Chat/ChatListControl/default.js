@@ -59,6 +59,7 @@ function SetZoom(zoom) {
 }
 
 function InsertMessage(message, autoScroll) {
+	console.log(`InsertMessage(message, ${autoScroll})`);
 	var chatLog = document.getElementById('chatLog');
 	var messageHTML = CreateMessageHtml(message)
 	chatLog.insertAdjacentHTML('beforeend', messageHTML);
@@ -86,6 +87,10 @@ function UpdateMessageStatus(messageId, status) {
 	statusTextEl.textContent = status;
 	// Show/Hide the status element
 	SetVisible(statusEl, !isEmpty(status));
+	// Making items visible can expand content.
+	// Make sure to keep scroll on the bottom.
+	if (keepScrollOnTheBottom)
+		ScrollToBottom();
 }
 
 function DeleteMessage(messageId) {
@@ -102,6 +107,7 @@ function DeleteMessages() {
 }
 
 function UpdateMessage(message, autoScroll) {
+	console.log(`UpdateMessage(message, ${autoScroll})`);
 	var messageEl = document.getElementById(idPrefix + message.Id);
 	if (!messageEl)
 		return false;
@@ -406,6 +412,7 @@ function AttachmentButton_Click(sender, id) {
 }
 
 function SetVisible(el, isVisible) {
+	//console.log(`SetVisible(el, ${isVisible})`);
 	var isControlVisible = !el.classList.contains("display-none");
 	//console.log("SetVisible: " + isVisible + ", isControlVisible: " + isControlVisible);
 	// if must show and is not visible then...
@@ -416,10 +423,6 @@ function SetVisible(el, isVisible) {
 	else if (!isVisible && isControlVisible) {
 		el.classList.add("display-none");
 	}
-	// Making items visible can expand content.
-	// Make sure to keep scroll on the bottom.
-	if (keepScrollOnTheBottom)
-		ScrollToBottom();
 }
 
 /** Prepare text for markdown and display as HTML. */
@@ -523,14 +526,6 @@ function ApplyDiffference(el, newHtml) {
 	}
 }
 
-
-function ScrollToBottom() {
-	// Add a 50ms delay to make sure the UI has enough time to update, and the scroll ends up at the bottom.
-	window.setTimeout(function () {
-		window.scroll(0, document.body.scrollHeight);
-	}, 50);
-}
-
 function Copy() {
 	if (isElementFocused())
 		document.execCommand("Copy", false, null);
@@ -580,9 +575,11 @@ function GetItemPath(name) {
 }
 
 function SetSettings(settings) {
+	console.log(`SetSettings(${settings})`);
 	if (!settings)
 		return;
 	var position = settings.ScrollPosition;
+	console.log(`settings.ScrollPosition = ${position})`);
 	// Check if position is a valid number
 	if (isNaN(position))
 		return;
@@ -605,7 +602,18 @@ function GetSettings() {
 }
 
 function SetScrollPosition(position) {
-	window.scrollTo(0, position);
+	console.log(`SetScrollPosition(${position})`);
+	var position = (position)
+		? position
+		: document.body.scrollHeight;
+	// Add a 50ms delay to make sure the UI has enough time to update, and the scroll ends up at the bottom.
+	window.setTimeout(function () {
+		window.scrollTo(0, position);
+	});
+}
+
+function ScrollToBottom() {
+	SetScrollPosition(null)
 }
 
 function GetScrollPosition() {
@@ -650,6 +658,7 @@ window.addEventListener('scroll', window_scroll);
 let resizeTimeout;
 
 function window_resize() {
+	console.log(`window_resize`);
 	// Clear the timeout if it exists
 	if (resizeTimeout)
 		clearTimeout(resizeTimeout);
@@ -762,7 +771,7 @@ function parseMarkdown(body, boxedCode = false) {
 		}
 
 		// Debug logging
-		console.log(`Processing code block with language: "${language}"`);
+		//console.log(`Processing code block with language: "${language}"`);
 
 		// Determine highlighting approach
 		let highlightedCode = '';
@@ -772,7 +781,7 @@ function parseMarkdown(body, boxedCode = false) {
 		if (language && Prism.languages[language]) {
 			try {
 				highlightedCode = Prism.highlight(cleanedCode, Prism.languages[language], language);
-				console.log(`Highlighted with language: ${language}`);
+				//console.log(`Highlighted with language: ${language}`);
 			} catch (e) {
 				console.error(`Error highlighting with ${language}:`, e);
 				highlightedCode = EscapeHtml(cleanedCode);
@@ -982,7 +991,7 @@ function SimulateMessages() {
 		"\r\n" +
 		// Add mathematical expression.
 		"**The Cauchy-Schwarz Inequality**\r\n" +
-		"$$\\left(\\sum_{ k=1 } ^ n a_k b_k \\right) ^ 2 \\leq \\left(\\sum_{ k=1 } ^ n a_k ^ 2 \\right) \\left(\\sum_{ k=1 } ^ n b_k ^ 2 \\right)$$\r\n"+
+		"$$\\left(\\sum_{ k=1 } ^ n a_k b_k \\right) ^ 2 \\leq \\left(\\sum_{ k=1 } ^ n a_k ^ 2 \\right) \\left(\\sum_{ k=1 } ^ n b_k ^ 2 \\right)$$\r\n" +
 		"\r\n";
 
 	for (var i = 0; i < 6; i++) {
@@ -1141,6 +1150,11 @@ function ApplyDiffference(el, newHtml) {
 		}
 	}
 	SetVisible(el, !isEmpty(tempEl.innerText));
+
+	// Making items visible can expand content.
+	// Make sure to keep scroll on the bottom.
+	if (keepScrollOnTheBottom)
+		ScrollToBottom();
 }
 
 // #endregion
@@ -1286,7 +1300,7 @@ function fixLayoutIssues() {
 
 	// Clean up any inline styles that might be causing issues
 	if (body.scrollHeight > window.innerHeight * 2) {
-		console.log("Detected potential excessive space, applying fix");
+		//console.log("Detected potential excessive space, applying fix");
 		body.style.paddingBottom = '0';
 		chatLog.style.marginBottom = '0';
 	}
