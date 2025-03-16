@@ -110,7 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				try
 				{
 					// Read the file content
-					string fileContent = AppControlsHelper.GetFileWithCodeBlockContent(filePath);
+					string fileContent = GetFileWithCodeBlockContent(filePath);
 
 					// Replace the #file reference with the file content
 					result.Remove(match.Index, match.Length);
@@ -231,11 +231,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Header = "Copy"
 				};
 				textBox.ContextMenu.Items.Add(copyItem);
-			}
 
-			// Check if any Paste menu items already exist
-			bool hasPaste = textBox.ContextMenu.Items.OfType<MenuItem>().Any(item =>
-				item.Command == ApplicationCommands.Paste || item.Header.ToString().Equals("Paste", StringComparison.OrdinalIgnoreCase));
+				// Add the Opening event handler to update menu states
+				textBox.ContextMenu.Opened += (s, e) => UpdatePasteMenuItems(textBox.ContextMenu);
+			}
 
 			// Remove existing paste items to avoid duplicates when refreshing
 			var existingPasteItems = textBox.ContextMenu.Items.OfType<MenuItem>()
@@ -248,49 +247,61 @@ namespace JocysCom.VS.AiCompanion.Engine
 				textBox.ContextMenu.Items.Remove(item);
 			}
 
-			// Create a submenu for paste options
-			MenuItem pasteMenu = new MenuItem { Header = "Paste" };
-
-			// Regular paste
+			// Standard paste
 			MenuItem standardPasteItem = new MenuItem
 			{
 				Command = ApplicationCommands.Paste,
-				Header = "Standard Paste"
+				Header = "Paste",
+				Tag = PasteOption.None
 			};
-			pasteMenu.Items.Add(standardPasteItem);
+			textBox.ContextMenu.Items.Add(standardPasteItem);
 
-			// Separator
-			pasteMenu.Items.Add(new Separator());
+			// Paste files as list
+			MenuItem pasteAsListItem = new MenuItem
+			{
+				Header = "Paste File with Instructions",
+				ToolTip = "Paste file instructions and file path list",
+				Tag = PasteOption.AsList
+			};
+			pasteAsListItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.AsList);
+			textBox.ContextMenu.Items.Add(pasteAsListItem);
 
 			// Paste files as references
 			MenuItem pasteAsReferencesItem = new MenuItem
 			{
 				Header = "Paste Files as References",
-				ToolTip = "Paste file paths as reference strings"
+				ToolTip = "Paste file paths as reference strings",
+				Tag = PasteOption.AsReferences
 			};
 			pasteAsReferencesItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.AsReferences);
-			pasteMenu.Items.Add(pasteAsReferencesItem);
+			textBox.ContextMenu.Items.Add(pasteAsReferencesItem);
 
 			// Paste files with content
 			MenuItem pasteWithContentItem = new MenuItem
 			{
 				Header = "Paste Files with Content",
-				ToolTip = "Paste file paths and content wrapped into markdown block"
+				ToolTip = "Paste file paths and content wrapped into markdown block",
+				Tag = PasteOption.WithContent
 			};
 			pasteWithContentItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.WithContent);
-			pasteMenu.Items.Add(pasteWithContentItem);
+			textBox.ContextMenu.Items.Add(pasteWithContentItem);
 
-			// Paste files as list
-			MenuItem pasteAsListItem = new MenuItem
+		}
+
+		/// <summary>
+		/// Updates the enabled state of paste menu items based on clipboard content
+		/// </summary>
+		private static void UpdatePasteMenuItems(ContextMenu menu)
+		{
+			bool hasFileDropList = Clipboard.ContainsFileDropList();
+			foreach (var item in menu.Items.OfType<MenuItem>())
 			{
-				Header = "Paste Files as List with Instructions",
-				ToolTip = "Paste file instructions and file path list"
-			};
-			pasteAsListItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.AsList);
-			pasteMenu.Items.Add(pasteAsListItem);
-
-			// Add the paste submenu to the context menu
-			textBox.ContextMenu.Items.Add(pasteMenu);
+				// Skip items that aren't paste-related
+				if (item.Tag == null || !(item.Tag is PasteOption tag && tag != PasteOption.None))
+					continue;
+				// Enable paste file options only when clipboard contains files
+				item.IsEnabled = hasFileDropList;
+			}
 		}
 
 		/// <summary>
@@ -298,6 +309,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		private enum PasteOption
 		{
+			/// <summary>Standard paste without special handling for files</summary>
+			None,
 			/// <summary>Paste file paths as reference strings</summary>
 			AsReferences,
 			/// <summary>Paste file paths and content wrapped into markdown block</summary>
@@ -319,6 +332,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string textToInsert;
 			switch (option)
 			{
+				case PasteOption.None:
+					// Simple paste of file paths without instructions
+					var sb = new StringBuilder();
+					foreach (string file in filePaths)
+						sb.AppendLine(file);
+					textToInsert = sb.ToString();
+					break;
 				case PasteOption.AsReferences:
 					textToInsert = GetFileReferences(filePaths);
 					break;
@@ -359,30 +379,57 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (Clipboard.ContainsFileDropList())
 				{
-					// Use the default paste behavior (AsList) when using keyboard shortcut
-					var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
-					DropFiles(textBox, filePaths);
+					// Check if this is a standard paste operation from the command
+					bool isStandardPaste = e.Command == ApplicationCommands.Paste &&
+										  e.OriginalSource is TextBox &&
+										  !(e.Parameter is PasteOption);
+
+					if (isStandardPaste)
+					{
+						// For standard paste, just insert file paths without instructions
+						var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
+						int selectionStart = textBox.SelectionStart;
+						int selectionLength = textBox.SelectionLength;
+
+						// Create a simple list of file paths
+						var sb = new StringBuilder();
+						foreach (string file in filePaths)
+							sb.AppendLine(file);
+
+						string filePathsText = sb.ToString();
+
+						// Replace selected text with the file list
+						textBox.Text = textBox.Text.Remove(selectionStart, selectionLength);
+						textBox.Text = textBox.Text.Insert(selectionStart, filePathsText);
+						textBox.SelectionStart = selectionStart + filePathsText.Length;
+					}
+					else
+					{
+						// Use the enhanced drop behavior for special paste commands
+						var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
+						DropFiles(textBox, filePaths);
+					}
 					e.Handled = true;
 					return;
 				}
 
-				string textToInsert = null;
+				string clipboardText = null;
 				if (Clipboard.ContainsImage())
 				{
 					var tempFolderPath = Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
-					textToInsert = ClipboardHelper.GetImageFromClipboard(tempFolderPath, true);
+					clipboardText = ClipboardHelper.GetImageFromClipboard(tempFolderPath, true);
 				}
 				else if (Clipboard.ContainsText())
 				{
-					textToInsert = Clipboard.GetText();
+					clipboardText = Clipboard.GetText();
 				}
 
-				if (!string.IsNullOrEmpty(textToInsert))
+				if (!string.IsNullOrEmpty(clipboardText))
 				{
 					int selectionStart = textBox.SelectionStart;
 					textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
-					textBox.Text = textBox.Text.Insert(selectionStart, textToInsert);
-					textBox.SelectionStart = selectionStart + textToInsert.Length;
+					textBox.Text = textBox.Text.Insert(selectionStart, clipboardText);
+					textBox.SelectionStart = selectionStart + clipboardText.Length;
 					e.Handled = true;
 				}
 			}
