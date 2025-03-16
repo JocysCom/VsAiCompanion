@@ -79,6 +79,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return sb.ToString();
 		}
 
+
 		public static string GetFileReferences(params string[] file)
 		{
 			var content = string.Join(Environment.NewLine, file.Select(x => $"#file:'{x}'"));
@@ -129,43 +130,41 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
+		/// <summary>
+		/// Handles dropping files into a TextBox with various formatting options.
+		/// </summary>
+		/// <param name="textBox">The TextBox receiving the files</param>
+		/// <param name="files">Array of file paths being dropped</param>
 		public static void DropFiles(TextBox textBox, string[] files)
 		{
-			var sb = new StringBuilder();
-			var currentLine = GetLineFromCaret(textBox);
-			var isCtrlDown =
-				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
-				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
-			var isAltDown =
-				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) ||
-				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt);
-			// If user holds ALT key during drop then...
+			if (textBox == null || files == null || files.Length == 0)
+				return;
+
+			// Determine option based on modifier keys
+			var option = FilePasteOption.None;
+			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+			var isAltDown = Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt);
+
 			if (isAltDown)
-			{
-				// Paste file paths as reference strings.
-				var content = GetFileReferences(files);
-				sb.Append(content);
-			}
-			// If user holds CTRL key during drop then...
+				option = FilePasteOption.AsReferences;
 			else if (isCtrlDown)
-			{
-				// Paste file paths and content wrapped into markdown block.
-				var content = GetFileWithCodeBlockContent(files);
-				sb.Append(content);
-			}
+				option = FilePasteOption.WithContent;
 			else
 			{
-				// Initialize the text to insert
-				// Ensure instructions are added only once and not present in the current line
+				option = FilePasteOption.AsList;
+				// Check if instructions already exist in the text
+				var currentLine = GetLineFromCaret(textBox);
 				var instructionsExist = textBox.Text.Contains(Resources.MainResources.main_TextBox_Drop_Files_Instructions);
-				// Determine if instructions should be added
-				if (!instructionsExist && !currentLine.TrimStart().StartsWith("-"))
-					sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
-				// Append file paths
-				foreach (string file in files)
-					sb.AppendLine($"- {file}");
+
+				// If instructions already exist or the current line starts with a list marker, use simple format
+				if (instructionsExist || currentLine.TrimStart().StartsWith("-"))
+					option = FilePasteOption.None;
 			}
-			// Insert or append the text to the TextBox
+
+			// Generate the content
+			string content = GenerateContentFromFiles(files, option);
+
+			// Insert the content at the appropriate position
 			var startIndex = textBox.CaretIndex;
 			if (!IsCaretAtLineStart(textBox))
 			{
@@ -174,9 +173,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 					? insertionIndex + Environment.NewLine.Length
 					: textBox.Text.Length;
 			}
-			textBox.Text = textBox.Text.Insert(startIndex, sb.ToString());
-			// Update cursor position
-			textBox.CaretIndex = startIndex + sb.Length;
+
+			textBox.Text = textBox.Text.Insert(startIndex, content);
+			textBox.CaretIndex = startIndex + content.Length;
 		}
 
 		#endregion
@@ -252,7 +251,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Command = ApplicationCommands.Paste,
 				Header = "Paste",
-				Tag = PasteOption.None
+				Tag = FilePasteOption.None
 			};
 			textBox.ContextMenu.Items.Add(standardPasteItem);
 
@@ -261,9 +260,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Header = "Paste File with Instructions",
 				ToolTip = "Paste file instructions and file path list",
-				Tag = PasteOption.AsList
+				Tag = FilePasteOption.AsList
 			};
-			pasteAsListItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.AsList);
+			pasteAsListItem.Click += (s, e) => PasteFilesWithOption(textBox, FilePasteOption.AsList);
 			textBox.ContextMenu.Items.Add(pasteAsListItem);
 
 			// Paste files as references
@@ -271,9 +270,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Header = "Paste Files as References",
 				ToolTip = "Paste file paths as reference strings",
-				Tag = PasteOption.AsReferences
+				Tag = FilePasteOption.AsReferences
 			};
-			pasteAsReferencesItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.AsReferences);
+			pasteAsReferencesItem.Click += (s, e) => PasteFilesWithOption(textBox, FilePasteOption.AsReferences);
 			textBox.ContextMenu.Items.Add(pasteAsReferencesItem);
 
 			// Paste files with content
@@ -281,9 +280,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Header = "Paste Files with Content",
 				ToolTip = "Paste file paths and content wrapped into markdown block",
-				Tag = PasteOption.WithContent
+				Tag = FilePasteOption.WithContent
 			};
-			pasteWithContentItem.Click += (s, e) => PasteFilesWithOption(textBox, PasteOption.WithContent);
+			pasteWithContentItem.Click += (s, e) => PasteFilesWithOption(textBox, FilePasteOption.WithContent);
 			textBox.ContextMenu.Items.Add(pasteWithContentItem);
 
 		}
@@ -297,7 +296,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			foreach (var item in menu.Items.OfType<MenuItem>())
 			{
 				// Skip items that aren't paste-related
-				if (item.Tag == null || !(item.Tag is PasteOption tag && tag != PasteOption.None))
+				if (item.Tag == null || !(item.Tag is FilePasteOption tag && tag != FilePasteOption.None))
 					continue;
 				// Enable paste file options only when clipboard contains files
 				item.IsEnabled = hasFileDropList;
@@ -307,7 +306,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Options for pasting files
 		/// </summary>
-		private enum PasteOption
+		public enum FilePasteOption
 		{
 			/// <summary>Standard paste without special handling for files</summary>
 			None,
@@ -320,49 +319,73 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		/// <summary>
+		/// Generates content from file paths based on the specified paste option.
+		/// </summary>
+		/// <param name="files">Array of file paths to process</param>
+		/// <param name="option">Option determining how files should be processed</param>
+		/// <returns>Generated text content based on the option</returns>
+		public static string GenerateContentFromFiles(string[] files, FilePasteOption option)
+		{
+			if (files == null || files.Length == 0)
+				return string.Empty;
+
+			var sb = new StringBuilder();
+
+			switch (option)
+			{
+				case FilePasteOption.AsReferences:
+					return GetFileReferences(files);
+
+				case FilePasteOption.WithContent:
+					return GetFileWithCodeBlockContent(files);
+
+				case FilePasteOption.AsList:
+					// Add instructions if needed
+					sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+					// Append file paths
+					foreach (string file in files)
+						sb.AppendLine($"- {file}");
+					return sb.ToString();
+
+				case FilePasteOption.None:
+				default:
+					// Simple list of file paths without formatting
+					foreach (string file in files)
+						sb.AppendLine(file);
+					return sb.ToString();
+			}
+		}
+
+		/// <summary>
 		/// Pastes files from clipboard with specified option
 		/// </summary>
-		private static void PasteFilesWithOption(TextBox textBox, PasteOption option)
+		private static void PasteFilesWithOption(TextBox textBox, FilePasteOption option)
 		{
-			if (!Clipboard.ContainsFileDropList())
+			if (!Clipboard.ContainsFileDropList() || textBox == null)
 				return;
 
 			var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
 
-			string textToInsert;
-			switch (option)
+			// Special case for AsList option to maintain consistency with drop behavior
+			if (option == FilePasteOption.AsList)
 			{
-				case PasteOption.None:
-					// Simple paste of file paths without instructions
-					var sb = new StringBuilder();
-					foreach (string file in filePaths)
-						sb.AppendLine(file);
-					textToInsert = sb.ToString();
-					break;
-				case PasteOption.AsReferences:
-					textToInsert = GetFileReferences(filePaths);
-					break;
-				case PasteOption.WithContent:
-					textToInsert = GetFileWithCodeBlockContent(filePaths);
-					break;
-				case PasteOption.AsList:
-				default:
-					// Simulate default drop behavior for consistency
-					DropFiles(textBox, filePaths);
-					return;
+				DropFiles(textBox, filePaths);
+				return;
 			}
 
-			if (!string.IsNullOrEmpty(textToInsert))
+			// Generate content based on option
+			string content = GenerateContentFromFiles(filePaths, option);
+
+			if (!string.IsNullOrEmpty(content))
 			{
 				int selectionStart = textBox.SelectionStart;
 				textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
-				textBox.Text = textBox.Text.Insert(selectionStart, textToInsert);
-				textBox.SelectionStart = selectionStart + textToInsert.Length;
+				textBox.Text = textBox.Text.Insert(selectionStart, content);
+				textBox.SelectionStart = selectionStart + content.Length;
 			}
 		}
 
 		#endregion
-
 
 		private static void OnCanPasteFiles(object sender, CanExecuteRoutedEventArgs e)
 		{
@@ -375,63 +398,60 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private static void OnPasteFiles(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (sender is TextBox textBox)
+			if (!(sender is TextBox textBox))
+				return;
+
+			// Handle file drop list
+			if (Clipboard.ContainsFileDropList())
 			{
-				if (Clipboard.ContainsFileDropList())
+				var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
+
+				// Check if this is a standard paste operation from the command
+				bool isStandardPaste = e.Command == ApplicationCommands.Paste &&
+									  e.OriginalSource is TextBox &&
+									  !(e.Parameter is FilePasteOption);
+
+				if (isStandardPaste)
 				{
-					// Check if this is a standard paste operation from the command
-					bool isStandardPaste = e.Command == ApplicationCommands.Paste &&
-										  e.OriginalSource is TextBox &&
-										  !(e.Parameter is PasteOption);
-
-					if (isStandardPaste)
-					{
-						// For standard paste, just insert file paths without instructions
-						var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
-						int selectionStart = textBox.SelectionStart;
-						int selectionLength = textBox.SelectionLength;
-
-						// Create a simple list of file paths
-						var sb = new StringBuilder();
-						foreach (string file in filePaths)
-							sb.AppendLine(file);
-
-						string filePathsText = sb.ToString();
-
-						// Replace selected text with the file list
-						textBox.Text = textBox.Text.Remove(selectionStart, selectionLength);
-						textBox.Text = textBox.Text.Insert(selectionStart, filePathsText);
-						textBox.SelectionStart = selectionStart + filePathsText.Length;
-					}
-					else
-					{
-						// Use the enhanced drop behavior for special paste commands
-						var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
-						DropFiles(textBox, filePaths);
-					}
-					e.Handled = true;
-					return;
-				}
-
-				string clipboardText = null;
-				if (Clipboard.ContainsImage())
-				{
-					var tempFolderPath = Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
-					clipboardText = ClipboardHelper.GetImageFromClipboard(tempFolderPath, true);
-				}
-				else if (Clipboard.ContainsText())
-				{
-					clipboardText = Clipboard.GetText();
-				}
-
-				if (!string.IsNullOrEmpty(clipboardText))
-				{
+					// For standard paste, use the None option (simple list)
+					string content = GenerateContentFromFiles(filePaths, FilePasteOption.None);
 					int selectionStart = textBox.SelectionStart;
-					textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
-					textBox.Text = textBox.Text.Insert(selectionStart, clipboardText);
-					textBox.SelectionStart = selectionStart + clipboardText.Length;
-					e.Handled = true;
+					int selectionLength = textBox.SelectionLength;
+
+					// Replace selected text with the file list
+					textBox.Text = textBox.Text.Remove(selectionStart, selectionLength);
+					textBox.Text = textBox.Text.Insert(selectionStart, content);
+					textBox.SelectionStart = selectionStart + content.Length;
 				}
+				else
+				{
+					// For special paste commands, use the DropFiles method
+					DropFiles(textBox, filePaths);
+				}
+
+				e.Handled = true;
+				return;
+			}
+
+			// Handle image or text in clipboard
+			string clipboardText = null;
+			if (Clipboard.ContainsImage())
+			{
+				var tempFolderPath = Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
+				clipboardText = ClipboardHelper.GetImageFromClipboard(tempFolderPath, true);
+			}
+			else if (Clipboard.ContainsText())
+			{
+				clipboardText = Clipboard.GetText();
+			}
+
+			if (!string.IsNullOrEmpty(clipboardText))
+			{
+				int selectionStart = textBox.SelectionStart;
+				textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
+				textBox.Text = textBox.Text.Insert(selectionStart, clipboardText);
+				textBox.SelectionStart = selectionStart + clipboardText.Length;
+				e.Handled = true;
 			}
 		}
 

@@ -1,12 +1,15 @@
-﻿using JocysCom.ClassLibrary;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using NPOI.POIFS.Properties;
 using OpenAI;
 using OpenAI.Chat;
 using System;
 using System.ClientModel.Primitives;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -14,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -591,9 +595,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					functionResults, assistantMessageItem,
 					cancellationTokenSource);
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw;
+				// Preserves the original stack trace as if the exception was never caught and rethrow.
+				// Allows parent catch see the exception exactly as it was at the original throw point.
+				ExceptionDispatchInfo.Capture(ex).Throw();
 			}
 			finally
 			{
