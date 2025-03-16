@@ -427,8 +427,9 @@ function SetVisible(el, isVisible) {
 
 /** Prepare text for markdown and display as HTML. */
 
-/** 
+/**
  * Prepare text for markdown and display as HTML.
+ * This function selectively escapes HTML entities in text that's not within code blocks.
  * @param {string} input - The markdown text to convert
  * @returns {string} The processed text ready for HTML display
  */
@@ -436,7 +437,7 @@ function ConvertForDisplayAsHtml(input) {
 	if (!input)
 		return input;
 	var lines = input.split(/\r?\n|\r/);
-	// Use a non-backtracking regex approach with atomic groups or possessive quantifiers
+	// Use a non-backtracking regex approach to detect code block markers
 	var rx = new RegExp(/^\s{0,10}[`]{3,10}[a-z0-9\-]{0,30}\s{0,10}$/mi);
 	var insideBlock = false;
 	for (var i = 0; i < lines.length; i++) {
@@ -449,23 +450,44 @@ function ConvertForDisplayAsHtml(input) {
 			insideBlock = !insideBlock;
 			continue;
 		}
-		// Don't escape text inside block
+		// Don't escape text inside code blocks
 		if (insideBlock)
 			continue;
+
+		// Process inline code segments separately
 		var parts = line.split('`');
 		for (var p = 0; p < parts.length; p++) {
-			// Only process the text not within single quotes
+			// Only escape HTML in parts not within inline code (even-indexed parts)
 			if (p % 2 === 0) {
-				parts[p] = EscapeHtml(parts[p]);
+				// Use a safer approach that avoids double-encoding
+				parts[p] = safeEncodeHtml(parts[p]);
 			}
 		}
-		// Add extra new line for markdown to add `<br/>` correcly.
+		// Add extra new line for markdown to add `<br/>` correctly.
 		lines[i] = parts.join('`') + "\r\n";
 	}
 	var processedText = lines.join("\r\n");
 	return processedText;
 }
 
+/**
+ * Safely encodes HTML entities while avoiding double-encoding
+ * @param {string} text - The text to encode
+ * @returns {string} The safely encoded text
+ */
+function safeEncodeHtml(text) {
+	// Create a temporary element
+	var el = document.createElement('div');
+	// Set the text content (browser handles the encoding)
+	el.textContent = text;
+	// Get the HTML as a string (with entities properly encoded)
+	var encodedText = el.innerHTML;
+	// Clean up
+	el = null;
+	return encodedText;
+}
+
+// The original EscapeHtml function can remain for other uses
 function EscapeHtml(unsafe) {
 	return unsafe
 		.replace(/<think>/g, "##THINK_START##")

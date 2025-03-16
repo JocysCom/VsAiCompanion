@@ -526,6 +526,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return availableTokens;
 		}
 
+		public static bool isValidUriOrFilePath(string path)
+		{
+			var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
+			if (isUrl)
+				return true;
+			var invalidChars = path.Intersect(Path.GetInvalidFileNameChars());
+			return !invalidChars.Any();
+		}
+
 		public static async Task<string> ReadOrDownloadContent(string path)
 		{
 			string content = null;

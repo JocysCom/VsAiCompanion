@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Windows;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -107,25 +108,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var match = matches[i];
 				var filePath = match.Groups[1].Value;
-
+				var isUrl = Uri.TryCreate(filePath, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
+				var value = match.Value;
 				try
 				{
-					// Read the file content
-					string fileContent = GetFileWithCodeBlockContent(filePath);
-
-					// Replace the #file reference with the file content
-					result.Remove(match.Index, match.Length);
-					result.Insert(match.Index, fileContent);
+					// Get content only if reference is URL or valid existing file.
+					var getContent = isUrl ||
+						(!filePath.Intersect(Path.GetInvalidPathChars()).Any() && File.Exists(filePath));
+					if (getContent)
+					{
+						// Read the file content
+						value = GetFileWithCodeBlockContent(filePath);
+					}
 				}
 				catch (Exception ex)
 				{
-					// Handle file reading errors
-					string errorMessage = $"/* Error reading file '{filePath}': {ex.Message} */";
-					result.Remove(match.Index, match.Length);
-					result.Insert(match.Index, errorMessage);
+					value = $"/* Error reading file '{filePath}': {ex.Message} */";
 				}
+				result.Remove(match.Index, match.Length);
+				result.Insert(match.Index, value);
 			}
-
 			return result.ToString();
 		}
 
