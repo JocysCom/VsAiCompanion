@@ -89,16 +89,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private async Task ResetWebMessagesDebounced()
 		{
+			// First clear all existing messages
 			await InvokeScriptAsync($"DeleteMessages();");
 			var path = System.IO.Path.GetDirectoryName(Global.GetPath(Item));
 			await SetItemAsync(path, Item.Name);
-			foreach (var message in Item.Messages)
+			// Create a local copy of messages to avoid potential changes during processing
+			var messagesToProcess = Item.Messages.ToArray();
+			// Process messages sequentially with proper awaiting
+			for (int i = 0; i < messagesToProcess.Length; i++)
 			{
+				var message = messagesToProcess[i];
 				// Set message id in case data is bad and it is missing.
 				if (string.IsNullOrEmpty(message.Id))
 					message.Id = Guid.NewGuid().ToString("N");
-				await InsertWebMessage(message, false);
 			}
+			// DOM update will complete before this returns
+			var json = JsonSerializer.Serialize(messagesToProcess);
+			await InvokeScriptAsync($"InsertMessages({json}, false);");
 			await SetWebSettingsAsync(Item.Settings);
 		}
 

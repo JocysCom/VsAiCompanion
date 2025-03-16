@@ -60,9 +60,17 @@ function SetZoom(zoom) {
 
 function InsertMessage(message, autoScroll) {
 	console.log(`InsertMessage(message, ${autoScroll})`);
-	var chatLog = document.getElementById('chatLog');
-	var messageHTML = CreateMessageHtml(message)
-	chatLog.insertAdjacentHTML('beforeend', messageHTML);
+	InsertMessages([message], autoScroll);
+}
+
+function InsertMessages(messages, autoScroll) {
+	console.log(`InsertMessages(messages, ${autoScroll})`);
+	for (var i = 0; i < messages.length; i++) {
+		var message = messages[i];
+		var chatLog = document.getElementById('chatLog');
+		var messageHTML = CreateMessageHtml(message)
+		chatLog.insertAdjacentHTML('beforeend', messageHTML);
+	}
 	UpdateRegenerateButtons();
 	// After appending content, render any math expressions
 	renderMathExpressions();
