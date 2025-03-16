@@ -1,4 +1,4 @@
-2025-03-13 v1.17.17
+2025-03-16 v1.17.21
 
 - Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
 - Fix: Resolved an issue with how code and HTML display within a markdown block.
