@@ -594,14 +594,14 @@ function SetSettings(settings) {
 }
 
 function GetSettings() {
-	var position = GetScrollPosition();
 	// Always return null if position is on the bottom.
-	if (IsScrollOnTheBottom())
-		position = null;
+	var position = IsScrollOnTheBottom()
+		? null
+		: Math.ceil(GetScrollPosition());
 	var settings = {
 		"ScrollPosition": position,
 	};
-	return JSON.stringify(settings);
+	return settings;
 }
 
 function SetScrollPosition(position) {

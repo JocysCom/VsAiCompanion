@@ -122,7 +122,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (!ScriptHandlerInitialized)
 				return null;
-			var json = await InvokeScriptAsync($"GetSettings();") as string;
+			var result = await InvokeScriptAsync($"return GetSettings();");
+			var json = result as string;
 			if (string.IsNullOrEmpty(json))
 				return null;
 			try
@@ -161,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			var arg1 = JsonSerializer.Serialize(item);
 			var arg2 = JsonSerializer.Serialize(autoScroll);
-			await InvokeScriptAsync($"UpdateMessage({arg1}, {arg2});");
+			await InvokeScriptAsync($"return UpdateMessage({arg1}, {arg2});");
 		}
 
 		/// <summary>
@@ -484,7 +485,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (isCtrlDown && e.Key == Key.C)
 			{
 				// Can return string error.
-				var isFocused = await InvokeScriptAsync("isElementFocused();") as bool?;
+				var isFocused = await InvokeScriptAsync("return isElementFocused();") as bool?;
 				if (isFocused == true)
 				{
 					await InvokeScriptAsync("Copy();");
