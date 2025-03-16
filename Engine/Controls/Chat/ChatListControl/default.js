@@ -450,12 +450,16 @@ function ConvertForDisplayAsHtml(input) {
 			insideBlock = !insideBlock;
 			continue;
 		}
-		// Don't escape text inside code blocks
+		// Don't process text inside code blocks
 		if (insideBlock)
 			continue;
 
+		// Process file references before processing inline code segments
+		// This converts file references to special markers
+		lines[i] = processFileReferences(lines[i]);
+
 		// Process inline code segments separately
-		var parts = line.split('`');
+		var parts = lines[i].split('`');
 		for (var p = 0; p < parts.length; p++) {
 			// Only escape HTML in parts not within inline code (even-indexed parts)
 			if (p % 2 === 0) {
@@ -864,6 +868,9 @@ function parseMarkdown(body, boxedCode = false) {
 	try {
 		// First pass: standard markdown parsing
 		let html = marked.parse(body);
+
+		// Replace file reference markers with actual links
+		html = replaceFileReferenceMarkers(html);
 
 		// Second pass: process math expressions for KaTeX
 		html = processMathExpressions(html);
@@ -1329,3 +1336,69 @@ function fixLayoutIssues() {
 }
 
 //#endregion
+
+//#region References
+
+/**
+ * Processes file references in the format #file:'<file_path>' and converts them to special markers
+ * that will be replaced with actual links after HTML escaping
+ * @param {string} text - The text to process
+ * @returns {string} - The processed text with file references converted to markers
+ */
+function processFileReferences(text) {
+	if (!text)
+		return text;
+	// Regex to match #file:'<file_path>' pattern
+	const fileRefRegex = /#file:'([^']+)'/g;
+	return text.replace(fileRefRegex, function (match, filePath) {
+		// Create a unique marker with a random ID
+		const markerId = "FILE_REF_" + Math.random().toString(36).substring(2, 15);
+		// Store the file path in a global object for later retrieval
+		if (!window.fileRefMarkers) {
+			window.fileRefMarkers = {};
+		}
+		window.fileRefMarkers[markerId] = filePath;
+		// Return a marker that won't be affected by HTML escaping
+		return "[[" + markerId + "]]";
+	});
+}
+
+/**
+ * Replaces file reference markers with actual HTML links
+ * @param {string} html - The HTML with file reference markers
+ * @returns {string} - The HTML with actual file reference links
+ */
+function replaceFileReferenceMarkers(html) {
+	if (!html || !window.fileRefMarkers) return html;
+
+	// Regex to match our markers
+	const markerRegex = /\[\[(FILE_REF_[a-z0-9]+)\]\]/g;
+
+	return html.replace(markerRegex, function (match, markerId) {
+		const filePath = window.fileRefMarkers[markerId];
+		if (!filePath) return match;
+		// Convert the path to a proper file:/// URL
+		let fileUrl = filePath;
+		// If the path doesn't already have a protocol
+		if (!fileUrl.match(/^[a-z]+:\/\//i)) {
+			// Normalize path separators for URLs (use forward slashes)
+			fileUrl = fileUrl.replace(/\\/g, '/');
+			// Add the appropriate file:/// prefix based on path format
+			if (fileUrl.match(/^[a-zA-Z]:\//)) {
+				// Windows path like C:/folder - needs three slashes
+				fileUrl = 'file:///' + fileUrl;
+			} else if (fileUrl.startsWith('/')) {
+				// Unix absolute path starting with / - needs file://
+				fileUrl = 'file://' + fileUrl;
+			} else {
+				// Relative path - make it absolute with three slashes
+				fileUrl = 'file:///' + fileUrl;
+			}
+		}
+		// Create a standard anchor tag with the file:/// URL
+		return `<a href="${fileUrl}" class="file-reference" target="_blank">${filePath}</a>`;
+	});
+}
+
+//#endregion
+

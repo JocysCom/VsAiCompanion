@@ -268,7 +268,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				var name = Uri.UnescapeDataString(uri.Segments.Last());
 				MemoryStream stream = null;
 				// If task or template item content then...
-				if (uri.Segments.Length > 2 && Uri.UnescapeDataString(uri.Segments[1]) == Item.Name + "/")
+				// Example: http://appassets.invalid/ChatListControl/AI%20-%20Chat/OpenDocuments_20250316_174604_1024x1024.png
+				if (uri.Segments.Length > 2 && Uri.UnescapeDataString(uri.Segments[2]) == Item.Name + "/")
 				{
 					var folderPath = Global.GetPath(Item);
 					var fileFullPath = Path.Combine(folderPath, name);
