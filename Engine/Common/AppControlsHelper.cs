@@ -260,8 +260,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Paste files as list
 			MenuItem pasteAsListItem = new MenuItem
 			{
-				Header = "Paste File with Instructions",
-				ToolTip = "Paste file instructions and file path list",
+				Header = "Paste Files with Instructions",
+				ToolTip = "Paste file paths and instructions",
 				Tag = FilePasteOption.AsList
 			};
 			pasteAsListItem.Click += (s, e) => PasteFilesWithOption(textBox, FilePasteOption.AsList);
