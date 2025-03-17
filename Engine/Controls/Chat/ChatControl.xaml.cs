@@ -72,6 +72,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		}
 		string _EditMessageId;
 
+		// It set to true then regenerate action will be performent after applying editing of the message.
+		bool regenerateMessageActionAfterEdit = false;
+
 		private void Tasks_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
 			UpdateControlButtons();
@@ -161,11 +164,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public bool IsBusy;
 
 		/// <summary>
-		/// Updates the message edit UI components based on current edit state.
+		/// Determines if messages after the specified index contain only errors or empty messages.
+		/// </summary>
+		/// <returns>True if all subsequent messages are errors or empty; otherwise, false.</returns>
+		public bool DoRegenerateMessageActionAfterEdit()
+		{
+			if (string.IsNullOrEmpty(EditMessageId))
+				return false;
+			var editMessage = MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId);
+			if (editMessage == null)
+				return false;
+			// Don't regenerate if not user message.
+			if (editMessage.Type != MessageType.Out)
+				return false;
+			var messageIndex = MessagesPanel.Item.Messages.IndexOf(editMessage);
+			if (messageIndex < 0 || MessagesPanel.Item?.Messages == null || messageIndex >= MessagesPanel.Item.Messages.Count - 1)
+				return false;
+			for (int i = messageIndex + 1; i < MessagesPanel.Item.Messages.Count; i++)
+			{
+				var message = MessagesPanel.Item.Messages[i];
+				// Consider a message non-empty and non-error if it's from assistant and has content
+				if (message.Type == MessageType.In && !string.IsNullOrWhiteSpace(message.Body))
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Updates the message edit UI components based on current edit state and determines if regeneration is needed.
 		/// </summary>
 		public void UpdateMessageEditDebounced()
 		{
-			bool refreshAfterEdit = false;
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			var isAttachmentEdit = !string.IsNullOrEmpty(EditAttachmentId);
 			AppHelper.UpdateHelp(SendButton,
@@ -180,8 +209,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			MessageOptionsTabItem.Visibility = isEdit && !isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MaskDrawingTabItem.Visibility = isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
+
+			// Determine if regeneration is needed after edit
+			regenerateMessageActionAfterEdit = DoRegenerateMessageActionAfterEdit();
+
 			SendButtonIcon.Content = isEdit
-				? Resources[refreshAfterEdit ? Icons_Default.Icon_button_ok_refresh : Icons_Default.Icon_button_ok]
+				? Resources[regenerateMessageActionAfterEdit ? Icons_Default.Icon_button_ok_refresh : Icons_Default.Icon_button_ok]
 				: Resources[Icons_Default.Icon_media_play];
 			StopButtonIcon.Content = isEdit
 				? Resources[Icons_Default.Icon_button_cancel]
@@ -233,6 +266,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					message.BodyInstructions = DataInstructionsTextBox.PART_ContentTextBox.Text;
 					DataTextBox.PART_ContentTextBox.Text = "";
 					await MessagesPanel.UpdateWebMessage(message, true);
+
+					// If regeneration is needed after edit, perform it
+					if (regenerateMessageActionAfterEdit)
+					{
+						// Save the message ID before clearing edit state
+						var messageId = EditMessageId;
+						EditMessageId = null;
+						EditAttachmentId = null;
+
+						// Find the message again (since we just cleared the edit state)
+						var messageToRegenerate = MessagesPanel.Item.Messages.FirstOrDefault(x => x.Id == messageId);
+						if (messageToRegenerate != null)
+						{
+							// Trigger regeneration by removing subsequent messages and sending
+							var messageIndex = MessagesPanel.Item.Messages.IndexOf(messageToRegenerate);
+							if (messageIndex > -1)
+							{
+								var messagesToDelete = MessagesPanel.Item.Messages.Skip(messageIndex + 1).ToArray();
+								foreach (var messageToDelete in messagesToDelete)
+									await MessagesPanel.RemoveMessageAsync(messageToDelete);
+
+								// Notify that a message action needs to be performed
+								OnSend?.Invoke(this, EventArgs.Empty);
+							}
+						}
+						return;
+					}
 				}
 			}
 			EditMessageId = null;
