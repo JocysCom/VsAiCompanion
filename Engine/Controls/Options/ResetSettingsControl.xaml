@@ -10,7 +10,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
-	d:DesignHeight="460"
+	d:DesignHeight="560"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
@@ -287,6 +287,28 @@
 
 					</StackPanel>
 				</GroupBox>
+
+				<GroupBox
+					Margin="3,0,0,3"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"
+					Header="{StaticResource main_Developer_Experimental}">
+					<StackPanel>
+
+						<Button
+							Name="SyncWithSettingsZipButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							AutomationProperties.HelpText="{StaticResource main_Sync_with_Settings_Zip}"
+							Click="SyncWithSettingsZipButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Sync_with_Settings_Zip}" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+				</GroupBox>
+
 			</StackPanel>
 		</ScrollViewer>
 

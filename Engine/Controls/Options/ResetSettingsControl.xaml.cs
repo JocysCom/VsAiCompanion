@@ -1,5 +1,9 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Settings;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -19,6 +23,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 		}
+
+		#region Reset Settings Group Box
 
 		private void ResetAllSettingsButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -110,6 +116,101 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			Global.RaiseOnAiServicesUpdated();
 			Global.RaiseOnAiModelsUpdated();
 		}
+
+		#endregion
+
+		#region Sync with Settings Zip
+
+		private async void SyncWithSettingsZipButton_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				// Get items from zip file
+				var zip = SettingsSourceManager.GetSettingsZip();
+				if (zip == null)
+				{
+					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, "Settings zip file could not be loaded.");
+					return;
+				}
+
+				var zipAppDataItems = SettingsSourceManager.GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
+				var zipItems = SettingsSourceManager.GetItemsFromZip(zip, zipAppDataItems[0]);
+
+				// Get Tasks and Templates from zip
+				var zipTasks = zipItems[ItemType.Task];
+				var zipTemplates = zipItems[ItemType.Template];
+
+				var zipPaths = new List<string>();
+				zipPaths.AddRange(zipTasks.Select(x => SettingsSourceManager.ConvertItemToPath(ItemType.Task, x.Name)));
+				zipPaths.AddRange(zipTemplates.Select(x => SettingsSourceManager.ConvertItemToPath(ItemType.Template, x.Name)));
+
+				var currentPaths = Global.Resets.Items.FirstOrDefault()?.Items.Select(x => x.Key).ToList();
+
+				// Find missing paths
+				var pathsToInsert = zipPaths.Except(currentPaths).ToList();
+				// Find paths that are in the current list but not in the zip.
+				var pathsToDelete = currentPaths.Except(zipPaths).ToList();
+
+				// If no changes needed
+				if (!pathsToInsert.Any() && !pathsToDelete.Any())
+				{
+					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Information, "All items are synchronized with settings zip file.");
+					return;
+				}
+
+				// Confirm changes with the user
+				var message = $"Found {pathsToInsert.Count} missing items to add and {pathsToDelete.Count} items to remove.\n\nDo you want to proceed?";
+				var result = MessageBox.Show(message, "Confirm Synchronization",
+					MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+				if (result != MessageBoxResult.Yes)
+					return;
+
+				// Get all reset items from the current list
+				var resetList = Global.Resets.Items.FirstOrDefault();
+				if (resetList == null)
+				{
+					resetList = new ListInfo()
+					{
+						Description = Engine.Resources.MainResources.main_UpdateInstructions_Help,
+					};
+					Global.Resets.Items.Add(resetList);
+				}
+
+				// Add missing items with RestoreIfNotDeleted instruction
+				foreach (var path in pathsToInsert)
+				{
+					// Add a new reset item with RestoreIfNotDeleted instruction
+					resetList.Items.Add(new ListItem
+					{
+						Key = path,
+						Value = UpdateInstruction.RestoreIfNotDeleted.ToString()
+					});
+				}
+
+				// Remove items that don't exist in the zip
+				foreach (var path in pathsToDelete)
+				{
+					var existingItem = resetList.Items.FirstOrDefault(x => x.Key == path);
+					if (existingItem != null)
+						resetList.Items.Remove(existingItem);
+				}
+
+				// Save changes to the reset list
+				Global.Resets.Save();
+
+				// Refresh the UI
+				await UpdateInstructionsPanel.BindData(resetList);
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Information, "Synchronization Complete");
+			}
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, $"Error synchronizing with settings zip: {ex.Message}");
+			}
+		}
+
+		#endregion
+
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{

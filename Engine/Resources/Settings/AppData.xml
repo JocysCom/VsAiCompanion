@@ -46,8 +46,8 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>807.3333333333333</Left>
-        <Top>166</Top>
+        <Left>1280</Left>
+        <Top>54</Top>
         <Width>1179.3333333333333</Width>
         <Height>894</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -77,7 +77,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.18647007805724197</GridSplitterPosition>
+          <GridSplitterPosition>0.18648960739030024</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -109,7 +109,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
-          <GridSplitterPosition>0.29973297730307075</GridSplitterPosition>
+          <GridSplitterPosition>0.2999417588817705</GridSplitterPosition>
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>

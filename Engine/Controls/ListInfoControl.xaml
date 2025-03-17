@@ -143,36 +143,36 @@
 				<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
 
 					<Button
-					Name="AddButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="AddButton_Click"
-					ToolTip="{StaticResource main_Add_New}">
+						Name="AddButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="AddButton_Click"
+						ToolTip="{StaticResource main_Add_New}">
 						<StackPanel>
 							<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
 							<Label x:Name="AddButtonLabel" Content="{StaticResource main_Add_New}" Visibility="Collapsed" />
 						</StackPanel>
 					</Button>
 					<Button
-					Name="EditButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="EditButton_Click"
-					ToolTip="{StaticResource main_Edit}">
+						Name="EditButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
 						<StackPanel>
 							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
 							<Label x:Name="EditButtonLabel" Content="{StaticResource main_Edit}" Visibility="Collapsed" />
 						</StackPanel>
 					</Button>
 					<Button
-					Name="DeleteButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="DeleteButton_Click"
-					ToolTip="{StaticResource main_Delete}">
+						Name="DeleteButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="DeleteButton_Click"
+						ToolTip="{StaticResource main_Delete}">
 						<StackPanel>
 							<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
 							<Label x:Name="DeleteButtonLabel" Content="{StaticResource main_Delete}" Visibility="Collapsed" />

@@ -133,6 +133,43 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 
 		#endregion
 
+		#region Item Path Helper
+
+		/// <summary>
+		/// Converts an item to a path string.
+		/// </summary>
+		/// <param name="itemType">The type of the item.</param>
+		/// <param name="itemName">The name of the item.</param>
+		/// <returns>The path string.</returns>
+		public static string ConvertItemToPath(ItemType itemType, string itemName)
+		{
+			return $"/{itemType}/{itemName}";
+		}
+
+		/// <summary>
+		/// Parses a path string back to the item type and name.
+		/// </summary>
+		/// <param name="path">The path string.</param>
+		/// <param name="itemType">The parsed item type.</param>
+		/// <param name="itemName">The parsed item name.</param>
+		/// <returns>True if parsing was successful, otherwise false.</returns>
+		public static bool ParsePathToItem(string path, out ItemType itemType, out string itemName)
+		{
+			itemType = default;
+			itemName = null;
+			if (string.IsNullOrEmpty(path))
+				return false;
+			var parts = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+			if (parts.Length != 2)
+				return false;
+			if (!Enum.TryParse(parts[0], out itemType))
+				return false;
+			itemName = parts[1];
+			return true;
+		}
+
+		#endregion
+
 		public static void ResetAllSettings(bool confirm = false)
 		{
 			if (confirm && !AppHelper.AllowReset("All Settings", "Please note that this will reset all services, models, templates and tasks!"))

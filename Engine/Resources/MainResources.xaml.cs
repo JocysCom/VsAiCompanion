@@ -223,6 +223,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_App_Always_on_Top => FindResource(nameof(main_App_Always_on_Top));
         public static string main_Bar_Always_on_Top => FindResource(nameof(main_Bar_Always_on_Top));
         public static string main_Developer => FindResource(nameof(main_Developer));
+        public static string main_Developer_Experimental => FindResource(nameof(main_Developer_Experimental));
         public static string main_Enable_FormInfo => FindResource(nameof(main_Enable_FormInfo));
         public static string main_LogHttp => FindResource(nameof(main_LogHttp));
         public static string main_Minimize_on_Close => FindResource(nameof(main_Minimize_on_Close));
@@ -344,6 +345,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_UI => FindResource(nameof(main_Reset_UI));
         public static string main_Reset_UI_Settings => FindResource(nameof(main_Reset_UI_Settings));
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));
+        public static string main_Sync_with_Settings_Zip => FindResource(nameof(main_Sync_with_Settings_Zip));
         public static string main_Reset_to_Default => FindResource(nameof(main_Reset_to_Default));
         public static string main_Reset_UI_Presets => FindResource(nameof(main_Reset_UI_Presets));
         public static string main_Reset_MirrorSettings_Text => FindResource(nameof(main_Reset_MirrorSettings_Text));

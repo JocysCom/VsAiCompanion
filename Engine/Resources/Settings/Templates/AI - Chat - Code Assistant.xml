@@ -82,9 +82,9 @@ Wrap any and all code—including regular code snippets, inline code segments, o
   <UiSelections>
     <TextBoxData>
       <Name>DataInstructionsTextBox</Name>
-      <SelectionStart>4160</SelectionStart>
+      <SelectionStart>4152</SelectionStart>
       <SelectionLength>0</SelectionLength>
-      <TextLength>4160</TextLength>
+      <TextLength>4152</TextLength>
     </TextBoxData>
   </UiSelections>
 </TemplateItem>

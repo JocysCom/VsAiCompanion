@@ -233,6 +233,7 @@
 	<sys:String x:Key="main_App_Always_on_Top">App Always on Top</sys:String>
 	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
 	<sys:String x:Key="main_Developer">Developer</sys:String>
+	<sys:String x:Key="main_Developer_Experimental">Developer (Experimental)</sys:String>
 	<sys:String x:Key="main_Enable_FormInfo">Enable Form Info (CTRL+SHIFT+RMB)</sys:String>
 	<sys:String x:Key="main_LogHttp">Log HTTP Messages</sys:String>
 	<sys:String x:Key="main_Minimize_on_Close">Minimize on Close</sys:String>
@@ -373,6 +374,7 @@
 	<sys:String x:Key="main_Reset_UI">Reset_UI</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings">Reset UI Settings</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
+	<sys:String x:Key="main_Sync_with_Settings_Zip">Sync with Settings Zip</sys:String>
 	<sys:String x:Key="main_Reset_to_Default">Reset to Default</sys:String>
 	<sys:String x:Key="main_Reset_UI_Presets">Reset UI Presets</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Text">Delete items not in original settings</sys:String>
