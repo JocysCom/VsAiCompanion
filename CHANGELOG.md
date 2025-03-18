@@ -4,6 +4,7 @@
 - Fix: Resolved an issue with how code and HTML display within a markdown block.
 - Fix: The chat window won't remember its scroll position.
 - Fix: Chat messages sometimes appear in the wrong order.
+- Fix: Sending incorrect parameter to gpt-4o-mini-search.
 - New: Clear Search Button.
 - New: Buttons to sort the lists.
 - New: Support for the KaTeX math rendering library.

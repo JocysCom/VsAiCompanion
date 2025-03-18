@@ -256,6 +256,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				if (UseSeparateFiles)
 				{
 					var di = GetRootDirectory(fi);
+					// Create directory because it will be watched for changes.
 					if (!di.Exists)
 						di.Create();
 					for (int i = 0; i < tItems.Length; i++)

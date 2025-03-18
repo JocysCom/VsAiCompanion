@@ -90,7 +90,8 @@ function Install-n8nContainer {
         "--detach",                            # Run container in background.
         "--publish", "5678:5678",              # Map host port 5678 to container port 5678.
         "--volume", "n8n_data:/home/node/.n8n",  # Bind mount volume "n8n_data" to /home/node/.n8n in the container.
-        "--name", "n8n"                        # Assign the container the name "n8n".
+        "--name", "n8n",                        # Assign the container the name "n8n".
+		"--env", "N8N_COMMUNITY_PACKAGES_ENABLED=true"  # Enable community packages
     )
 
     # If an external domain is provided, add environment variable options.

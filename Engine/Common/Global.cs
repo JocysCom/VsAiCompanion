@@ -199,7 +199,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
-		public const string FineTuningsName = nameof(FineTunings);
+		public const string FineTuningsName = nameof(ItemType.FineTuning);
 
 		public static SettingsData<FineTuningItem> FineTunings =
 			new SettingsData<FineTuningItem>($"{FineTuningsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())

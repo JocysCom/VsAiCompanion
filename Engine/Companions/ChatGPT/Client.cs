@@ -285,13 +285,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var endpoint = new Uri(Service.BaseUrl);
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			OpenAIClient client;
+
+			// Initialize logger if requested
+			if (useLogger)
+				_Logger = new HttpClientLogger();
+
 			// If use modified OpenAIClient by Microsoft then...
 			if (Service.IsAzureOpenAI)
 			{
 				// Using `Azure.AI.OpenAI.AzureOpenAIClient` by `azure-sdk Microsoft`
 				var options = new Azure.AI.OpenAI.AzureOpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-				options.Transport = GetTransport(item);
+				options.Transport = GetTransport(item, useLogger);
 				if (string.IsNullOrEmpty(apiSecretKey))
 				{
 					var credential = new Azure.Identity.DefaultAzureCredential();
@@ -309,13 +314,43 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				options.Endpoint = endpoint;
-				options.Transport = GetTransport(item);
+				options.Transport = GetTransport(item, useLogger);
 				if (string.IsNullOrEmpty(apiSecretKey))
 					apiSecretKey = "NoKey";
 				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
 				client = new OpenAIClient(credential, options);
 			}
 			return client;
+		}
+
+		public PipelineTransport GetTransport(TemplateItem item = null, bool useLogger = false)
+		{
+			var endpoint = new Uri(Service.BaseUrl);
+			// Add/override link query properties.
+			var linkProperties = new Dictionary<string, string>();
+			if (item?.AiService?.IsAzureOpenAI == true && item?.AiService?.OverrideApiVersionEnabled == true)
+				linkProperties.Add("api-version", item.AiService.OverrideApiVersion);
+			// Add/override request header properties.
+			var headRequestProperties = new Dictionary<string, string>();
+			// Add/override content header properties.
+			var headContentProperties = new Dictionary<string, string>();
+			//headContentProperties.Add("Content-Type", "application/json");
+			// Add/override body properties.
+			var bodyProperties = new Dictionary<string, string>();
+			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
+				bodyProperties.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
+			// Always create a custom transport so the pipeline is used.
+			HttpMessageHandler handler = new HttpClientHandler();
+			// Add logger if requested
+			if (useLogger && _Logger != null)
+				handler = _Logger;
+			handler = new ModifyRequestHandler(linkProperties, headRequestProperties, headContentProperties, bodyProperties, handler);
+			var httpClient = new HttpClient(handler);
+			httpClient.BaseAddress = endpoint;
+			httpClient.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
+			// Register the handler in the HttpPipeline
+			var transport = new HttpClientPipelineTransport(httpClient);
+			return transport;
 		}
 
 		public PipelineTransport GetTransport(TemplateItem item = null)
@@ -468,7 +503,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						PluginsManager.ProvideTools(tools, item, options: completionsOptions);
 					}
 				});
-				var client = await GetAiClient(false, item);
+				var client = await GetAiClient(true, item);
 				var chatClient = client.GetChatClient(modelName);
 				var toolCalls = new List<ChatToolCall>();
 				// If streaming  mode is enabled and AI model supports streaming then...
@@ -634,7 +669,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public static ChatCompletionOptions GetChatCompletionOptions(TemplateItem item)
 		{
 			var options = new ChatCompletionOptions();
-			options.Temperature = (float)item.Creativity;
+			// If creativity not normal then add it.
+			if (item.Creativity != 1)
+				options.Temperature = (float)item.Creativity;
 			if (item.MaxCompletionTokensEnabled)
 				options.MaxOutputTokenCount = item.MaxCompletionTokens;
 			//// Need to use reflection to set the Temperature property

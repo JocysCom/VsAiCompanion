@@ -4,5 +4,5 @@ param (
     [string] $LogPrefix = ""
 )
 
-..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\Documents" "$($PSScriptRoot)\Documents.zip" -excludePattern "Temp*" -LogPrefix $LogPrefix
+..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\Documents" "$($PSScriptRoot)\Documents.zip" -excludePattern "Temp*" -LogPrefix $LogPrefix -IgnoreEmptyFolders $true
 

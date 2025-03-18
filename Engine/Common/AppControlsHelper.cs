@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Windows;
-using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -81,10 +80,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		public static string GetFileReferences(params string[] file)
+		public static string GetFileReferences(params string[] files)
 		{
-			var content = string.Join(Environment.NewLine, file.Select(x => $"#file:'{x}'"));
-			return content;
+			var sb = new StringBuilder();
+			foreach (var file in files)
+				sb.AppendLine($"#file:'{file}'");
+			return sb.ToString();
 		}
 
 		public static string ReplaceFileReferences(string inputText)

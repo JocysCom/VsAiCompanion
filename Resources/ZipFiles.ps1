@@ -19,7 +19,11 @@ param (
 
     # Optional. Use comment for console.
     [Parameter(Mandatory = $false, Position = 5)]
-    [string] $LogPrefix = ""
+    [string] $LogPrefix = "",
+
+    # Optional. Ignore empty folders when creating the zip file.
+    [Parameter(Mandatory = $false, Position = 6)]
+    $IgnoreEmptyFolders = $false
 )
 
 if (!(Test-Path -Path $sourceDir)) {
@@ -113,7 +117,8 @@ function CheckAndZipFiles {
     }
 
     # 2. Compare directories: any directory in zip but missing on disk (or vice versa) triggers a rewrite.
-    if ($tempDir) {
+    # Skip this check if IgnoreEmptyFolders is true
+    if ($tempDir -and -not $IgnoreEmptyFolders) {
         $sourceDirs = Get-ChildItem -Path $sourceDir -Recurse -Directory | 
                       ForEach-Object { $_.FullName.Replace($sourceDir, "").TrimStart("\") }
         $destDirs   = Get-ChildItem -Path $tempDir  -Recurse -Directory |
@@ -145,9 +150,9 @@ function CheckAndZipFiles {
             Remove-Item -Path $destFile -Force
         }
         if ($UseShellToZipFiles) {
-            Compress-ZipFileUsingShell -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern -excludePattern $excludePattern
+            Compress-ZipFileUsingShell -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern -excludePattern $excludePattern -ignoreEmptyFolders $IgnoreEmptyFolders
         } else {
-            Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern -excludePattern $excludePattern
+            Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern -excludePattern $excludePattern -ignoreEmptyFolders $IgnoreEmptyFolders
         }
     } else {
         Write-Host "$($logPrefix)Source and destination checksums match. No update needed."
@@ -159,7 +164,8 @@ function Compress-ZipFileUsingCSharp {
         [string] $sourceDir,
         [string] $destFile,
         [string] $searchPattern,
-        [string] $excludePattern
+        [string] $excludePattern,
+        [bool] $ignoreEmptyFolders = $false
     )
     # Create a temporary directory
     $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
@@ -190,6 +196,19 @@ function Compress-ZipFileUsingCSharp {
         Copy-Item -Path $file.FullName -Destination $targetPath -Force
     }
     
+    # If not ignoring empty folders, copy the directory structure as well
+    if (-not $ignoreEmptyFolders) {
+        $directories = Get-ChildItem -Path $sourceDir -Recurse -Directory
+        foreach ($dir in $directories) {
+            $relativePath = $dir.FullName.Replace($sourceDir, "").TrimStart("\")
+            $targetPath = Join-Path -Path $tempSourceDir -ChildPath $relativePath
+            
+            if (!(Test-Path $targetPath)) {
+                New-Item -ItemType Directory -Path $targetPath -Force | Out-Null
+            }
+        }
+    }
+    
     [IO.Compression.ZipFile]::CreateFromDirectory($tempSourceDir.FullName, $destFile)
     Remove-Item -Path $tempSourceDir -Recurse -Force
 }
@@ -199,7 +218,8 @@ function Compress-ZipFileUsingShell {
         [string] $sourceDir,
         [string] $destFile,
         [string] $searchPattern,
-        [string] $excludePattern
+        [string] $excludePattern,
+        [bool] $ignoreEmptyFolders = $false
     )
     
     # Ensure the destination directory exists
@@ -222,7 +242,8 @@ function Compress-ZipFileUsingShell {
         return
     }
 
-    $files = Get-ChildItem -Path $sourceDir -Recurse 
+    # Get files first
+    $files = Get-ChildItem -Path $sourceDir -Recurse -File
     
     # Apply search pattern if specified
     if (![string]::IsNullOrEmpty($searchPattern)) {
@@ -234,6 +255,7 @@ function Compress-ZipFileUsingShell {
         $files = $files | Where-Object { $_.Name -notlike $excludePattern }
     }
 
+    # Process files
     foreach ($file in $files) {
         $path = $file.FullName
         $zipPackage.CopyHere($path)
@@ -248,6 +270,32 @@ function Compress-ZipFileUsingShell {
                 break
             }
         } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
+    }
+
+    # Process directories if not ignoring empty folders
+    if (-not $ignoreEmptyFolders) {
+        $directories = Get-ChildItem -Path $sourceDir -Recurse -Directory
+        
+        # Filter directories to only include empty ones (since non-empty ones will be created when adding files)
+        $emptyDirectories = $directories | Where-Object {
+            (Get-ChildItem -Path $_.FullName -File -Recurse).Count -eq 0
+        }
+        
+        foreach ($dir in $emptyDirectories) {
+            $path = $dir.FullName
+            $zipPackage.CopyHere($path)
+            
+            $maxRetries = 4
+            $retryCount = 0
+            Do {
+                Start-Sleep -Seconds 2
+                $retryCount++
+                if ($retryCount -gt $maxRetries) {
+                    Write-Host "$($logPrefix)Max retries reached. Moving to next directory..."
+                    break
+                }
+            } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
+        }
     }
 
     # Release COM objects
