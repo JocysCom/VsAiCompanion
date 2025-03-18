@@ -165,7 +165,7 @@ function Compress-ZipFileUsingCSharp {
         [string] $destFile,
         [string] $searchPattern,
         [string] $excludePattern,
-        [bool] $ignoreEmptyFolders = $false
+        $ignoreEmptyFolders = $false
     )
     # Create a temporary directory
     $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
@@ -219,7 +219,7 @@ function Compress-ZipFileUsingShell {
         [string] $destFile,
         [string] $searchPattern,
         [string] $excludePattern,
-        [bool] $ignoreEmptyFolders = $false
+        $ignoreEmptyFolders = $false
     )
     
     # Ensure the destination directory exists
