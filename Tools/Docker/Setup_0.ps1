@@ -493,8 +493,8 @@ function Backup-ContainerState {
          return $false
     }
     
-    # Commit the container to an image with tag "backup-<ContainerName>:latest"
-    $backupImageTag = "backup-$ContainerName:latest"
+    # Commit the container to an image with tag "backup-container-name:latest"
+    $backupImageTag = "backup-container-$ContainerName:latest"
     Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
     # podman commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
     # commit    Create a new image from a container's changes.
