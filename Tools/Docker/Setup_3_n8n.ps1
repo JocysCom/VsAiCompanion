@@ -68,15 +68,20 @@ function Get-n8nContainerConfig {
     
     # Ensure N8N_COMMUNITY_PACKAGES_ENABLED is set to true
     $communityPackagesEnabled = $false
+    $communityPackagesToolsEnabled = $false
     foreach ($env in $envVars) {
         if ($env -match "^N8N_COMMUNITY_PACKAGES_ENABLED=") {
             $communityPackagesEnabled = $true
-            break
+        }
+        if ($env -match "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=") {
+            $communityPackagesToolsEnabled = $true
         }
     }
-    
     if (-not $communityPackagesEnabled) {
         $envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
+    }
+    if (-not $communityPackagesToolsEnabled) {
+        $envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
     }
     
     # Return a custom object with the container information
@@ -244,7 +249,10 @@ function Install-n8nContainer {
     $externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
 
     # Define environment variables
-    $envVars = @("N8N_COMMUNITY_PACKAGES_ENABLED=true")
+    $envVars = @()
+	
+	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
+	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
 
     # If an external domain is provided, add environment variable options.
     if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
