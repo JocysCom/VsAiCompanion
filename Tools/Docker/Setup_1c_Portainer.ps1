@@ -136,10 +136,21 @@ function Start-PortainerContainer {
         "--detach",
         "--publish", "${HttpPort}:9000",
         "--publish", "${HttpsPort}:9443",
-        "--volume", "portainer_data:/data",
-        "--volume", "/var/run/docker.sock:/var/run/docker.sock",
-        "--name", "portainer"
+        "--volume", "portainer_data:/data"
     )
+    
+    # Add socket volume based on container engine
+    if ($global:containerEngine -eq "docker") {
+        $runOptions += "--volume"
+        $runOptions += "/var/run/docker.sock:/var/run/docker.sock"
+    } else {
+        # For Podman, we might need a different socket path
+        $runOptions += "--volume"
+        $runOptions += "/run/podman/podman.sock:/var/run/docker.sock:ro"
+    }
+    
+    $runOptions += "--name"
+    $runOptions += "portainer"
     
     # Add all environment variables
     foreach ($env in $EnvVars) {
