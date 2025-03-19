@@ -9,8 +9,12 @@ This solution uses containerization to simplify the installation, integration, a
 ## Tools Provided
 
 - **Docker / Podman Setup**  
-  These scripts automatically install and configure the underlying container engine on your system. Docker and Podman allow you to run applications in isolated environments, ensuring that software dependencies and configurations don’t conflict with your host system. They make deploying, updating, and troubleshooting services quick and consistent. This setup forms the backbone of the containerized solution, ensuring a smooth installation experience.
+  These scripts automatically install and configure the underlying container engine on your system. Docker and Podman allow you to run applications in isolated environments, ensuring that software dependencies and configurations don't conflict with your host system. They make deploying, updating, and troubleshooting services quick and consistent. This setup forms the backbone of the containerized solution, ensuring a smooth installation experience.
   <img alt="Podman Desktop" src="Images/Podman.png" width="640" height="360">
+
+- **Portainer**  
+  Portainer is a lightweight management UI that allows you to easily manage your Docker and Podman environments. It provides a simple, intuitive interface for creating, managing, and monitoring containers, volumes, networks, and images. Portainer simplifies container management by offering a visual dashboard where you can view container status, logs, and resource usage at a glance, making it perfect for both beginners and experienced users.
+  <img alt="Portainer UI" src="Images/Portainer.png" width="640" height="360">
 
 - **Open WebUI**  
   Open WebUI delivers a friendly graphical interface for managing your AI pipelines and container operations. It hides the underlying command-line complexity and provides real-time monitoring, status updates, and control options at the click of a button. This tool enables you to easily track system health, view logs, and manage services, making it ideal for users who prefer a visual approach.  
@@ -52,6 +56,9 @@ This solution uses containerization to simplify the installation, integration, a
 
 - **Setup_1b_BackupRestore.ps1**  
   Offers a menu-driven interface for backing up and restoring container images, ensuring your environments can be easily preserved or restored.
+
+- **Setup_1c_Portainer.ps1**  
+  Installs and configures Portainer, a lightweight management UI for Docker and Podman environments, making container management visual and intuitive.
 
 - **Setup_2a_Pipelines.ps1**  
   Deploys the Pipelines Container to orchestrate your AI workflows reliably with minimal manual intervention.
