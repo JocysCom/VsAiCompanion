@@ -10,7 +10,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
-	d:DesignHeight="560"
+	d:DesignHeight="640"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
@@ -289,23 +289,47 @@
 				</GroupBox>
 
 				<GroupBox
+					x:Name="DeveloperPanel"
 					Margin="3,0,0,3"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Header="{StaticResource main_Developer_Experimental}">
-					<StackPanel>
-
+					<StackPanel x:Name="FixButtonsPanel">
 						<Button
-							Name="SyncWithSettingsZipButton"
+							Name="FixResetInstructionsListButton"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
-							AutomationProperties.HelpText="{StaticResource main_Sync_with_Settings_Zip}"
-							Click="SyncWithSettingsZipButton_Click">
+							AutomationProperties.HelpText="{StaticResource main_Fix_ResetInstructions_List}"
+							AutomationProperties.Name="{StaticResource main_Fix_ResetInstructions_List}"
+							Click="FixResetInstructionsListButton_Click">
 							<StackPanel Focusable="False">
 								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-								<Label Content="{StaticResource main_Sync_with_Settings_Zip}" />
+								<Label Content="{StaticResource main_Fix_ResetInstructions_List}" />
 							</StackPanel>
 						</Button>
+						<Button
+							Name="FixResetItemStatesListButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							AutomationProperties.HelpText="{StaticResource main_Fix_ResetItemStates_List}"
+							Click="FixResetItemStatesListButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Fix_ResetItemStates_List}" />
+							</StackPanel>
+						</Button>
+						<Button
+							Name="ResetItemStatesToNoneButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							AutomationProperties.HelpText="{StaticResource main_SetItemStatesToNone}"
+							Click="ResetItemStatesToNoneButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_SetItemStatesToNone}" />
+							</StackPanel>
+						</Button>
+
 					</StackPanel>
 				</GroupBox>
 
@@ -322,15 +346,34 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Reset}" />
-						<Label AutomationProperties.HelpText="{StaticResource main_UpdateInstructions_Help}" AutomationProperties.Name="{StaticResource main_UpdateInstructions}" Content="{StaticResource main_UpdateInstructions}" />
+						<Label AutomationProperties.HelpText="{StaticResource main_ResetInstructions_Help}" AutomationProperties.Name="{StaticResource main_ResetInstructions}" Content="{StaticResource main_ResetInstructions}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:ListInfoControl
-					x:Name="UpdateInstructionsPanel"
+					x:Name="ResetInstructionsPanel"
 					ColumnCommentVisibility="Collapsed"
 					ColumnStatusVisibility="Collapsed"
 					DescriptionVisibility="Collapsed"
-					FeatureDescription="{DynamicResource main_UpdateInstructions_Help}"
+					FeatureDescription="{DynamicResource main_ResetInstructions_Help}"
+					IconVisibility="Collapsed"
+					InstructionsVisibility="Collapsed"
+					ListToggleVisibility="Collapsed"
+					OptionsVisibility="Collapsed" />
+			</TabItem>
+
+			<TabItem x:Name="SettingItemStatesTabItem">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Reset}" />
+						<Label AutomationProperties.HelpText="{StaticResource main_ResetItemStates_Help}" AutomationProperties.Name="{StaticResource main_ResetItemStates}" Content="{StaticResource main_ResetItemStates}" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:ListInfoControl
+					x:Name="ResetItemStatesPanel"
+					ColumnCommentVisibility="Collapsed"
+					ColumnStatusVisibility="Collapsed"
+					DescriptionVisibility="Collapsed"
+					FeatureDescription="{DynamicResource main_ResetItemStates_Help}"
 					IconVisibility="Collapsed"
 					InstructionsVisibility="Collapsed"
 					ListToggleVisibility="Collapsed"

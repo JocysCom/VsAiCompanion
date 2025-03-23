@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -182,6 +183,64 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		#endregion
+
+		#region Button
+
+
+		/// <summary>
+		/// Get Button with the specified icon, name, help text, and click handler.
+		/// </summary>
+		/// <param name="icon">The icon resource to display in the button</param>
+		/// <param name="name">The name of the button (used for both the button name and label content)</param>
+		/// <param name="help">The help text for the button</param>
+		/// <param name="clickHandler">The event handler for the button's Click event</param>
+		/// <returns>The created button</returns>
+		public Button GetButton(object icon, string name, string help, RoutedEventHandler clickHandler)
+		{
+			// Create the button
+			var button = new Button
+			{
+				Name = name + "Button",
+				Margin = new Thickness(0, 0, 3, 3),
+				Background = System.Windows.Media.Brushes.Transparent,
+				HorizontalAlignment = HorizontalAlignment.Stretch,
+				HorizontalContentAlignment = HorizontalAlignment.Left
+			};
+			// Set automation properties
+			AutomationProperties.SetName(button, name);
+			AutomationProperties.SetHelpText(button, help);
+			// Add click handler
+			if (clickHandler != null)
+				button.Click += clickHandler;
+			// Create stack panel for content
+			var stackPanel = new StackPanel
+			{
+				Focusable = false
+			};
+			// Add icon
+			if (icon != null)
+			{
+				var contentControl = new ContentControl
+				{
+					Content = icon,
+					Focusable = false
+				};
+				stackPanel.Children.Add(contentControl);
+			}
+			// Add label
+			var label = new Label
+			{
+				Content = name
+			};
+			stackPanel.Children.Add(label);
+			// Set button content
+			button.Content = stackPanel;
+			return button;
+		}
+
+
+		#endregion
+
 
 		#region TextBox: Allow Paste
 

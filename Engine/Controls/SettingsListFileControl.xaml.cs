@@ -902,12 +902,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			contextMenu.Items.Add(resetMenuItem);
 
 			// Add reset menus if available.
-			var allResetItems = Global.Resets.Items.FirstOrDefault()?.Items;
+			var allResetItems = Global.ResetInstructions.Items;
 			if (allResetItems == null)
 				return contextMenu;
 			var presetMenuItem = new MenuItem { Header = "Update Instructions" };
 			contextMenu.Items.Add(presetMenuItem);
-			var instructions = (Settings.UpdateInstruction[])Enum.GetValues(typeof(Settings.UpdateInstruction));
+			var instructions = (Settings.ResetInstruction[])Enum.GetValues(typeof(Settings.ResetInstruction));
 			var resetItems = allResetItems.Where(x => paths.Contains(x.Key)).ToArray();
 			foreach (var instruction in instructions)
 			{
@@ -927,7 +927,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						// Add or update instruction.
 						if (resetItem != null)
 						{
-							if (instruction == Settings.UpdateInstruction.None)
+							if (instruction == Settings.ResetInstruction.None)
 							{
 								allResetItems.Remove(resetItem);
 							}
@@ -936,7 +936,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 								resetItem.Value = instruction.ToString();
 							}
 						}
-						else if (instruction != Settings.UpdateInstruction.None)
+						else if (instruction != Settings.ResetInstruction.None)
 						{
 							resetItem = new ListItem { Key = path, Value = instruction.ToString() };
 							allResetItems.Add(resetItem);

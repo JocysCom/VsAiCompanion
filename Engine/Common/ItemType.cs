@@ -16,6 +16,6 @@
 		Attachment = 11,
 		VaultItem = 12,
 		UiPreset = 13,
-		ResetItem = 14,
+		Resets = 14,
 	}
 }

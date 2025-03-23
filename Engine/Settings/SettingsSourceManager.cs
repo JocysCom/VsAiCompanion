@@ -299,13 +299,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 		public static void ResetResets(ZipStorer zip = null)
 		{
 			ResetItems(zip, Global.Resets, Global.AppSettings.ResetListsMirror, Global.ResetsName, x => x.Name);
-			if (!Global.Resets.Items.Any())
+			EnsureResetInstructions(Global.Resets.Items);
+			EnsureResetItemStates(Global.Resets.Items);
+		}
+
+		public static void EnsureResetInstructions(IList<ListInfo> items)
+		{
+			var item = items.FirstOrDefault(x => x.Name == nameof(Global.ResetInstructions));
+			if (item == null)
 			{
-				var li = new ListInfo()
+				item = new ListInfo()
 				{
-					Description = Resources.MainResources.main_UpdateInstructions_Help,
+					Name = nameof(Global.ResetInstructions),
+					Description = Engine.Resources.MainResources.main_ResetInstructions_Help,
 				};
-				Global.Resets.Items.Add(li);
+				items.Add(item);
+			}
+		}
+
+		public static void EnsureResetItemStates(IList<ListInfo> items)
+		{
+
+			var item = items.FirstOrDefault(x => x.Name == nameof(Global.ResetItemStates));
+			if (item == null)
+			{
+				item = new ListInfo()
+				{
+					Name = nameof(Global.ResetItemStates),
+					Description = Engine.Resources.MainResources.main_ResetItemStates_Help,
+				};
+				items.Add(item);
 			}
 		}
 
@@ -522,7 +545,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 					return appData.VaultItems;
 				case ItemType.UiPreset:
 					return GetItemsFromZip(zip, Global.UiPresetsName, Global.UiPresets);
-				case ItemType.ResetItem:
+				case ItemType.Resets:
 					return GetItemsFromZip(zip, Global.ResetsName, Global.Resets);
 				default:
 					break;
@@ -560,7 +583,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 				var zip = GetSettingsZip();
 				var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
 				var zipItems = GetItemsFromZip(zip, zipAppDataItems[0]);
-				var resetLists = zipItems[ItemType.ResetItem].Cast<ListInfo>().ToArray();
+				var resetLists = zipItems[ItemType.Resets].Cast<ListInfo>().ToArray();
 
 				for (var i = 0; i < resetLists.Length; i++)
 				{
@@ -581,7 +604,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 						var itemName = typeAndName[1];
 
 						// Get the update instruction.
-						if (!Enum.TryParse(resetItem.Value, out UpdateInstruction instruction))
+						if (!Enum.TryParse(resetItem.Value, out ResetInstruction instruction))
 							continue;
 
 						var source = zipItems[itemType];
@@ -598,11 +621,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 						}
 
 						// Using HasFlag to allow combining instructions if needed.
-						if (instruction.HasFlag(UpdateInstruction.RestoreIfNotExists))
+						if (instruction.HasFlag(ResetInstruction.RestoreIfNotExists))
 							addItem = true;
-						if (appUpdate && instruction.HasFlag(UpdateInstruction.RestoreIfNotExistsOnAppUpdate))
+						if (appUpdate && instruction.HasFlag(ResetInstruction.RestoreIfNotExistsOnAppUpdate))
 							addItem = true;
-						if (settingsUpdate && instruction.HasFlag(UpdateInstruction.RestoreIfNotExistsOnSettingsUpdate))
+						if (settingsUpdate && instruction.HasFlag(ResetInstruction.RestoreIfNotExistsOnSettingsUpdate))
 							addItem = true;
 
 						if (addItem)

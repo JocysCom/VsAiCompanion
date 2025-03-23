@@ -179,7 +179,12 @@
 						</StackPanel>
 					</Button>
 				</StackPanel>
-				<StackPanel Margin="3,3,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+				<StackPanel
+					x:Name="RightButtonsPanel"
+					Margin="3,3,0,0"
+					HorizontalAlignment="Right"
+					x:FieldModifier="public"
+					Orientation="Horizontal">
 					<Button
 						Name="SortAscendingButton"
 						Margin="0,0,3,3"

@@ -374,15 +374,19 @@
 	<sys:String x:Key="main_Reset_UI">Reset_UI</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings">Reset UI Settings</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
-	<sys:String x:Key="main_Sync_with_Settings_Zip">Sync with Settings Zip</sys:String>
 	<sys:String x:Key="main_Reset_to_Default">Reset to Default</sys:String>
 	<sys:String x:Key="main_Reset_UI_Presets">Reset UI Presets</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Text">Delete items not in original settings</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Help">Delete items that aren't present in the original/default settings when resetting the settings.</sys:String>
 	<sys:String x:Key="main_Reset_MirrorSettings_Name">Mirror Settings</sys:String>
 
-	<sys:String x:Key="main_UpdateInstructions">Update Instructions</sys:String>
-	<sys:String x:Key="main_UpdateInstructions_Help">Instructions for updating app settings: Use these to prepare builds with different setups.</sys:String>
+	<sys:String x:Key="main_ResetInstructions">Reset Instructions</sys:String>
+	<sys:String x:Key="main_ResetInstructions_Help">Instructions that control how settings are restored during application updates. These rules determine which items are preserved, reset, or updated when installing new versions.</sys:String>
+	<sys:String x:Key="main_ResetItemStates">Item States</sys:String>
+	<sys:String x:Key="main_ResetItemStates_Help">Tracks the current state of settings items to determine if they've been modified, deleted, or created by the user. This information helps preserve your customizations during updates.</sys:String>
+	<sys:String x:Key="main_Fix_ResetInstructions_List">Fix Instructions List</sys:String>
+	<sys:String x:Key="main_Fix_ResetItemStates_List">Fix Item States List</sys:String>
+	<sys:String x:Key="main_SetItemStatesToNone">Set Item States To None</sys:String>
 
 	<!--  About  -->
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>

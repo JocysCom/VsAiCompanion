@@ -1,8 +1,65 @@
 ﻿<Data Version="0">
   <Items>
     <ListInfo>
+      <Name>ResetInstructions</Name>
       <Description>Update Instructions for application settings.</Description>
       <Items>
+        <ListItem>
+          <Key>/Task/AI - Chat (GPT-4o)</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/AI - Improve Prompt</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Company - CyberNet Solutions</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Check Spelling</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail - Casual</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail - Professional</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Generate Demo Data</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 1 - Convert to Messages</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 2 - Validate Questions</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 3 - Split Messages</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 4 - Remove Duplicates</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 5 - Resolve Conflicts</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 6 - Check Answer</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
         <ListItem>
           <Key>/Template/® System - AI Window</Key>
           <Value>RestoreIfNotExists</Value>
@@ -72,39 +129,11 @@
           <Value>RestoreIfNotExists</Value>
         </ListItem>
         <ListItem>
-          <Key>/Task/Grammar - Detail - Professional</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Task/AI - Chat (GPT-4o)</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Task/AI - Improve Prompt</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Task/Grammar - Check Spelling</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Task/Grammar - Detail - Casual</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Task/Company - CyberNet Solutions</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Task/Grammar - Detail</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
-          <Key>/Template/® AI Tuning - Step 6 - Check Answer</Key>
-          <Value>RestoreIfNotDeleted</Value>
-        </ListItem>
-        <ListItem>
           <Key>/Template/AI - Chat</Key>
+          <Value>RestoreIfNotDeleted</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat - Code Assistant</Key>
           <Value>RestoreIfNotDeleted</Value>
         </ListItem>
         <ListItem>
@@ -383,29 +412,419 @@
           <Key>/Template/Writing - Story Picture</Key>
           <Value>RestoreIfNotDeleted</Value>
         </ListItem>
+      </Items>
+    </ListInfo>
+    <ListInfo>
+      <Name>ResetItemStates</Name>
+      <Description>Tracks the current state of settings items to determine if they've been modified, deleted, or created by the user. This information helps preserve your customizations during updates.</Description>
+      <Items>
+        <ListItem>
+          <Key>/Task/AI - Chat (GPT-4o)</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/AI - Improve Prompt</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Company - CyberNet Solutions</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Check Spelling</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail - Casual</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail - Professional</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Task/Grammar - Detail</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat (Gogle Gemini)</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat (xAI Grok)</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat - Code Assistant</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat - Personalized</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Chat</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Computer Use</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Evaluate Morality</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Improve Prompt</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Introduction</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - LM Studio</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/AI - Reasoning</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Add types</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Check Spelling</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Cleanup</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Document steps</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Document</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Find a bug</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Fix Debug Exception</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Fix Selected Issue</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Handle errors</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Localize XAML</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Make easier to debug</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Make more readable</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Make more robust</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Project Analysis for AI</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Pull Request Review</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Simplify</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Smart Search</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Code - Split</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Convert - KnockoutJS to Angular</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Custom - Historical Events</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Custom - Social Meeting Topics</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Custom - Transcript</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - API Calls</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - Creating a Company</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - Database Browsing</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - Lists - Project TODO</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - TTS Chat</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - TTS Narration</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Demo - VS - Analyse Open Documents</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Casual</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Check Spelling</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Default</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Grammar - Professional</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Legal - Check Contract</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Lists - Creating Roles and Profiles</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Lists - Update User Profile</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - English to Klingon</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - Klingon to English</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - To Americal English</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - To British English</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Translate - To Lithuanian</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Book or Movie</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Explanation</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Fact Checking</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Health and Wellness</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Historical Events</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Homework Help</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Language Learning</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utility - Travel Advice</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Utiltiy - Cooking Ideas</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Voice - Tell a Story</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Add Character</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Add Emotions</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Assistance</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Business Benefits</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Character Picture</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Character Profile</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Keywords</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Simplify and Refine</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/Writing - Story Picture</Key>
+          <Value>None</Value>
+        </ListItem>
         <ListItem>
           <Key>/Template/® AI Tuning - Generate Demo Data</Key>
-          <Value>RestoreIfNotDeleted</Value>
+          <Value>None</Value>
         </ListItem>
         <ListItem>
           <Key>/Template/® AI Tuning - Step 1 - Convert to Messages</Key>
-          <Value>RestoreIfNotDeleted</Value>
+          <Value>None</Value>
         </ListItem>
         <ListItem>
           <Key>/Template/® AI Tuning - Step 2 - Validate Questions</Key>
-          <Value>RestoreIfNotDeleted</Value>
+          <Value>None</Value>
         </ListItem>
         <ListItem>
           <Key>/Template/® AI Tuning - Step 3 - Split Messages</Key>
-          <Value>RestoreIfNotDeleted</Value>
+          <Value>None</Value>
         </ListItem>
         <ListItem>
           <Key>/Template/® AI Tuning - Step 4 - Remove Duplicates</Key>
-          <Value>RestoreIfNotDeleted</Value>
+          <Value>None</Value>
         </ListItem>
         <ListItem>
           <Key>/Template/® AI Tuning - Step 5 - Resolve Conflicts</Key>
-          <Value>RestoreIfNotDeleted</Value>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® AI Tuning - Step 6 - Check Answer</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - AI Window</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Audio-To-Text</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Create Image - Google</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Create Image - xAI</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Format Message</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Icon</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Image</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Title - Google</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Title - xAI</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Generate Title</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Modify Image</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Plugin Approval</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Text-To-Audio</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Text-To-Video</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Video-To-Text - Google</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Video-To-Text - xAI</Key>
+          <Value>None</Value>
+        </ListItem>
+        <ListItem>
+          <Key>/Template/® System - Video-To-Text</Key>
+          <Value>None</Value>
         </ListItem>
       </Items>
     </ListInfo>

@@ -7,7 +7,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 	/// Use combination of flags if multiple behaviors are desired.
 	/// </summary>
 	[Flags]
-	public enum UpdateInstruction
+	public enum ResetInstruction
 	{
 		None = 0,
 		RestoreIfNotExists = 1 << 0,

@@ -12,6 +12,7 @@ using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using NPOI.HSSF.Record.Aggregates;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -121,6 +122,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static SettingsData<ListInfo> Resets =
 			new SettingsData<ListInfo>($"{ResetsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
+		/// <summary>
+		/// Gets the ListInfo that stores reset instructions.
+		/// </summary>
+		public static ListInfo ResetInstructions => Resets.Items.FirstOrDefault(x => x.Name == nameof(ResetInstructions));
+
+		/// <summary>
+		/// Gets the ListInfo that stores item states.
+		/// </summary>
+		public static ListInfo ResetItemStates => Resets.Items.FirstOrDefault(x => x.Name == nameof(ResetItemStates));
+
+
 		public const string UiPresetsName = nameof(UiPresets);
 
 		public static SettingsData<UiPresetItem> UiPresets =
@@ -217,36 +229,51 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static ObservableCollection<string> VisibilityPaths { get; set; } = new ObservableCollection<string>();
 
-		public static IBindingList GetSettingItems(ItemType type)
+		public static IBindingList GetSettingItems(ItemType itemType)
 		{
-			switch (type)
+			switch (itemType)
 			{
+				case ItemType.AiModel: return AiModels.Items;
+				case ItemType.AiService: return AiServices.Items;
+				case ItemType.Assistant: return Assistants.Items;
+				case ItemType.Embeddings: return Embeddings.Items;
+				case ItemType.FineTuning: return FineTunings.Items;
+				case ItemType.Lists: return Lists.Items;
+				case ItemType.MailAccount: return AppSettings.MailAccounts;
+				case ItemType.Resets: return Resets.Items;
 				case ItemType.Task: return Tasks.Items;
 				case ItemType.Template: return Templates.Items;
-				case ItemType.FineTuning: return FineTunings.Items;
-				case ItemType.Assistant: return Assistants.Items;
-				case ItemType.Lists: return Lists.Items;
-				case ItemType.Embeddings: return Embeddings.Items;
-				case ItemType.MailAccount: return AppSettings.MailAccounts;
-				case ItemType.VaultItem: return AppSettings.VaultItems;
-				case ItemType.AiService: return AiServices.Items;
-				case ItemType.AiModel: return AiModels.Items;
 				case ItemType.UiPreset: return UiPresets.Items;
+				case ItemType.VaultItem: return AppSettings.VaultItems;
 				default: return null;
 			}
+		}
+
+		/// <summary>
+		/// Gets a current item from the appropriate collection based on its type and name.
+		/// </summary>
+		public static ISettingsFileItem GetSettingItem(ItemType itemType, string itemName)
+		{
+			var items = GetSettingItems(itemType);
+			return items?.Cast<ISettingsFileItem>().FirstOrDefault(x => x.Name == itemName);
 		}
 
 		public static ISettingsData GetSettings(ItemType type)
 		{
 			switch (type)
 			{
+				case ItemType.AiModel: return AiModels;
+				case ItemType.AiService: return AiServices;
+				case ItemType.Assistant: return Assistants;
+				case ItemType.Embeddings: return Embeddings;
+				case ItemType.FineTuning: return FineTunings;
+				case ItemType.Lists: return Lists;
+				//case ItemType.MailAccount: return AppSettings;
+				case ItemType.Resets: return Resets;
 				case ItemType.Task: return Tasks;
 				case ItemType.Template: return Templates;
-				case ItemType.FineTuning: return FineTunings;
-				case ItemType.Assistant: return Assistants;
-				case ItemType.Lists: return Lists;
-				case ItemType.Embeddings: return Embeddings;
 				case ItemType.UiPreset: return UiPresets;
+				//case ItemType.VaultItem: return AppSettings;
 				default: return null;
 			}
 		}
@@ -838,7 +865,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-
+		/// <summary>
+		/// Event handler that validates the Resets data when loaded.
+		/// Ensures that both ResetInstructions and ResetItemStates lists exist.
+		/// </summary>
 		private static void Resets_OnValidateData(object sender, SettingsData<ListInfo>.SettingsDataEventArgs e)
 		{
 			if (e.Items.Count == 0)
@@ -847,9 +877,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Data is reset, no need to handle it.
 				e.Handled = true;
 			}
-			else
-			{
-			}
+			SettingsSourceManager.EnsureResetInstructions(e.Items);
+			SettingsSourceManager.EnsureResetItemStates(e.Items);
 		}
 
 		private static void UiPresets_OnValidateData(object sender, SettingsData<UiPresetItem>.SettingsDataEventArgs e)

@@ -667,7 +667,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// Sorts the Items list that is bound to the grid, synchronizes the sorted list with the original collection,
 		/// and reapplies the previously selected items to the grid.
 		/// </summary>
-		void Sort(bool ascending)
+		public void Sort(bool ascending)
 		{
 			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToList();
 			var newItems = ascending
