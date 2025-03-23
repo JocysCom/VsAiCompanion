@@ -339,6 +339,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				MoveButton(FixButtonsPanel, ResetItemStatesPanel.RightButtonsPanel, FixResetItemStatesListButton);
 				MoveButton(FixButtonsPanel, ResetItemStatesPanel.RightButtonsPanel, ResetItemStatesToNoneButton);
 				// Hide developer panel.
+				ResetInstructionsPanel.AddButton.Visibility = Visibility.Collapsed;
+				ResetInstructionsPanel.MainDataGrid.CanUserAddRows = false;
+				ResetItemStatesPanel.AddButton.Visibility = Visibility.Collapsed;
+				ResetItemStatesPanel.MainDataGrid.CanUserAddRows = false;
 				DeveloperPanel.Visibility = Visibility.Collapsed;
 			}
 		}
