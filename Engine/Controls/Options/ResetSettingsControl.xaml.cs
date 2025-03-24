@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+﻿using DiffPlex.DiffBuilder;
+using DiffPlex;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -321,6 +323,116 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		#endregion
 
+		#region Diff Viewer
+
+		public void ShowDiff(string originalText, string modifiedText)
+		{
+			DiffViewer.SideBySideModeToggleTitle = false;
+			DiffViewer.IsCommandBarVisible = true;
+			SetDiff(originalText, modifiedText);
+			ControlsHelper.SetVisible(CompareItemsTabItem, true);
+		}
+
+		public void SetDiff(string oldText, string newText)
+		{
+			var diffBuilder = new SideBySideDiffBuilder(new Differ());
+			var diffModel = diffBuilder.BuildDiffModel(oldText, newText);
+			DiffViewer.OldText = oldText;
+			DiffViewer.NewText = newText;
+		}
+
+		/// <summary>
+		/// Loads the original item from the settings zip and the current item (serialized as XML) 
+		/// based on the provided item path. Then displays their differences in the diff viewer.
+		/// It also switches focus to the CompareItemsTabItem tab.
+		/// </summary>
+		/// <param name="itemPath">The item path (for example "/Template/SomeItem") to compare.</param>
+		private void LoadAndCompareItemContent(string itemPath)
+		{
+			// Get the settings zip file.
+			var zip = SettingsSourceManager.GetSettingsZip();
+			if (zip == null)
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, "Settings zip file could not be loaded.");
+				return;
+			}
+
+			// Parse the item path to get its type and name.
+			if (!SettingsSourceManager.ParsePathToItem(itemPath, out ItemType itemType, out string itemName))
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, "Invalid item path format.");
+				zip.Close();
+				return;
+			}
+
+			// Get the original settings from the zip.
+			var zipAppDataItems = SettingsSourceManager.GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
+			var zipItems = SettingsSourceManager.GetItemsFromZip(zip, zipAppDataItems[0]);
+			if (!zipItems.ContainsKey(itemType))
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, $"No items of type {itemType} found in zip.");
+				zip.Close();
+				return;
+			}
+			var sourceItems = zipItems[itemType];
+			var originalItem = sourceItems.FirstOrDefault(x => string.Equals(x.Name, itemName, StringComparison.OrdinalIgnoreCase));
+			if (originalItem == null)
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, $"Original item '{itemName}' not found in zip.");
+				zip.Close();
+				return;
+			}
+
+			// Serialize the original item from the zip using the existing SerializeToXml helper.
+			string originalXml = SerializeToXml(originalItem);
+
+			// Get the current item from Global settings.
+			var currentItem = Global.GetSettingItem(itemType, itemName);
+			if (currentItem == null)
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, $"Current item '{itemName}' not found in current settings.");
+				zip.Close();
+				return;
+			}
+			string currentXml = SerializeToXml(currentItem);
+
+			// Always close the zip after reading.
+			zip.Close();
+
+			// Call ShowDiff to display the differences.
+			ShowDiff(originalXml, currentXml);
+
+			// Switch focus to the CompareItemsTabItem so the user sees the diff.
+			MainTabControl.SelectedItem = CompareItemsTabItem;
+		}
+
+		/// <summary>
+		/// Event handler for the new Compare Selected Reset Item button.
+		/// It reads the selected item (its Key) from ResetItemStatesPanel and calls the diff method.
+		/// </summary>
+		private void CompareSelectedResetItemButton_Click(object sender, RoutedEventArgs e)
+		{
+			// Retrieve the selected item from the ResetItemStatesPanel data grid.
+			if (ResetItemStatesPanel.MainDataGrid.SelectedItem is ListItem selectedItem)
+			{
+				string itemPath = selectedItem.Key;
+				if (!string.IsNullOrEmpty(itemPath))
+				{
+					LoadAndCompareItemContent(itemPath);
+				}
+				else
+				{
+					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "The selected item does not have a valid path.");
+				}
+			}
+			else
+			{
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an item from the Reset Item States list.");
+			}
+		}
+
+		#endregion
+
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -338,6 +450,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				MoveButton(FixButtonsPanel, ResetInstructionsPanel.RightButtonsPanel, FixResetInstructionsListButton);
 				MoveButton(FixButtonsPanel, ResetItemStatesPanel.RightButtonsPanel, FixResetItemStatesListButton);
 				MoveButton(FixButtonsPanel, ResetItemStatesPanel.RightButtonsPanel, ResetItemStatesToNoneButton);
+				MoveButton(FixButtonsPanel, ResetItemStatesPanel.RightButtonsPanel, CompareSelectedResetItemButton);
 				// Hide developer panel.
 				ResetInstructionsPanel.AddButton.Visibility = Visibility.Collapsed;
 				ResetInstructionsPanel.MainDataGrid.CanUserAddRows = false;

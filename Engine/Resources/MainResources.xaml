@@ -387,6 +387,8 @@
 	<sys:String x:Key="main_Fix_ResetInstructions_List">Fix Instructions List</sys:String>
 	<sys:String x:Key="main_Fix_ResetItemStates_List">Fix Item States List</sys:String>
 	<sys:String x:Key="main_SetItemStatesToNone">Set Item States To None</sys:String>
+	<sys:String x:Key="main_CompareItems">Compare Items</sys:String>
+	<sys:String x:Key="main_CompareItems_Help">Compare Items</sys:String>
 
 	<!--  About  -->
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>

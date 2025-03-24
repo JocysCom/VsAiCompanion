@@ -357,6 +357,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Fix_ResetInstructions_List => FindResource(nameof(main_Fix_ResetInstructions_List));
         public static string main_Fix_ResetItemStates_List => FindResource(nameof(main_Fix_ResetItemStates_List));
         public static string main_SetItemStatesToNone => FindResource(nameof(main_SetItemStatesToNone));
+        public static string main_CompareItems => FindResource(nameof(main_CompareItems));
+        public static string main_CompareItems_Help => FindResource(nameof(main_CompareItems_Help));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
         public static string main_Changes => FindResource(nameof(main_Changes));
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));

@@ -7,6 +7,7 @@
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:diffPlex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
@@ -330,6 +331,19 @@
 							</StackPanel>
 						</Button>
 
+						<Button
+							Name="CompareSelectedResetItemButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							AutomationProperties.HelpText="Compare the selected reset item with its original content from the settings zip"
+							Click="CompareSelectedResetItemButton_Click">
+							<StackPanel Focusable="False">
+								<!--  Replace Icon_Compare with the name of an existing icon resource, or use the same icon as Reset  -->
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="Compare Selected Reset Item" />
+							</StackPanel>
+						</Button>
+
 					</StackPanel>
 				</GroupBox>
 
@@ -378,6 +392,16 @@
 					InstructionsVisibility="Collapsed"
 					ListToggleVisibility="Collapsed"
 					OptionsVisibility="Collapsed" />
+			</TabItem>
+
+			<TabItem x:Name="CompareItemsTabItem">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Reset}" />
+						<Label AutomationProperties.HelpText="{StaticResource main_CompareItems_Help}" AutomationProperties.Name="{StaticResource main_CompareItems}" Content="{StaticResource main_CompareItems}" />
+					</StackPanel>
+				</TabItem.Header>
+				<diffPlex:DiffViewer Name="DiffViewer" />
 			</TabItem>
 
 		</TabControl>
