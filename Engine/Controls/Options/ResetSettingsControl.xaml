@@ -398,10 +398,10 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Reset}" />
-						<Label AutomationProperties.HelpText="{StaticResource main_CompareItems_Help}" AutomationProperties.Name="{StaticResource main_CompareItems}" Content="{StaticResource main_CompareItems}" />
+						<Label x:Name="CompareItemLabel" AutomationProperties.HelpText="{StaticResource main_CompareItems_Help}" AutomationProperties.Name="{StaticResource main_CompareItems}" Content="{StaticResource main_CompareItems}" />
 					</StackPanel>
 				</TabItem.Header>
-				<diffPlex:DiffViewer Name="DiffViewer" />
+				<diffPlex:DiffViewer Name="DiffViewer" Background="White" FontFamily="Consolas" />
 			</TabItem>
 
 		</TabControl>

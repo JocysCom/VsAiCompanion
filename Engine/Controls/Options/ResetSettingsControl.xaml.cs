@@ -1,5 +1,5 @@
-﻿using DiffPlex.DiffBuilder;
-using DiffPlex;
+﻿using DiffPlex;
+using DiffPlex.DiffBuilder;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Settings;
@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
@@ -120,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			Global.RaiseOnAiServicesUpdated();
 			Global.RaiseOnAiModelsUpdated();
 		}
-		
+
 		#endregion
 
 		#region Sync with Settings Zip
@@ -251,7 +250,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			}
 		}
 
-		
+
 
 		/// <summary>
 		/// Compares two items to determine if the current item has been modified from the source.
@@ -325,20 +324,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		#region Diff Viewer
 
-		public void ShowDiff(string originalText, string modifiedText)
+		public void ShowDiff(string oldText, string newText, string path)
 		{
 			DiffViewer.SideBySideModeToggleTitle = false;
 			DiffViewer.IsCommandBarVisible = true;
-			SetDiff(originalText, modifiedText);
-			ControlsHelper.SetVisible(CompareItemsTabItem, true);
-		}
-
-		public void SetDiff(string oldText, string newText)
-		{
+			DiffViewer.OldTextHeader = "Original";
+			DiffViewer.NewTextHeader = "Current";
 			var diffBuilder = new SideBySideDiffBuilder(new Differ());
 			var diffModel = diffBuilder.BuildDiffModel(oldText, newText);
 			DiffViewer.OldText = oldText;
 			DiffViewer.NewText = newText;
+			CompareItemLabel.Content = $"{Engine.Resources.MainResources.main_CompareItems} - {path}".Trim();
+			ControlsHelper.SetVisible(CompareItemsTabItem, true);
 		}
 
 		/// <summary>
@@ -400,11 +397,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			zip.Close();
 
 			// Call ShowDiff to display the differences.
-			ShowDiff(originalXml, currentXml);
+			ShowDiff(originalXml, currentXml, itemPath);
 
 			// Switch focus to the CompareItemsTabItem so the user sees the diff.
-			MainTabControl.SelectedItem = CompareItemsTabItem;
+			//MainTabControl.SelectedItem = CompareItemsTabItem;
 		}
+
+		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (ResetItemStatesPanel.MainDataGrid.SelectedItem is ListItem selectedItem)
+			{
+				var itemPath = selectedItem.Key;
+				if (!string.IsNullOrEmpty(itemPath))
+					LoadAndCompareItemContent(itemPath);
+				return;
+			}
+			ControlsHelper.SetVisible(CompareItemsTabItem, false);
+		}
+
 
 		/// <summary>
 		/// Event handler for the new Compare Selected Reset Item button.
@@ -457,6 +467,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				ResetItemStatesPanel.AddButton.Visibility = Visibility.Collapsed;
 				ResetItemStatesPanel.MainDataGrid.CanUserAddRows = false;
 				DeveloperPanel.Visibility = Visibility.Collapsed;
+				ResetItemStatesPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 			}
 		}
 
