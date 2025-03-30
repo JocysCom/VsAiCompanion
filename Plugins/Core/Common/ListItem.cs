@@ -63,6 +63,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		string _Value;
 
 		/// <summary>
+		/// Indicates whether the value should be masked.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool IsProtected { get => _IsProtected; set => SetProperty(ref _IsProtected, value); }
+		bool _IsProtected;
+
+		/// <summary>
 		/// Optional. Provides additional information about the list item,
 		/// such as task status (e.g., complete, pending) or extra details for settings and environment variables.
 		/// It encourages to infer potential statuses or metadata that could enhance data handling or task management strategies creatively.

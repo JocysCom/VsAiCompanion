@@ -442,6 +442,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		#region ■ Property: Column Protected Visibility
+
+		/// <summary>Controls column visibility.</summary>
+		public static readonly DependencyProperty ColumnProtectedVisibilityProperty =
+			DependencyProperty.Register(
+				nameof(ColumnProtectedVisibility), typeof(Visibility),
+				typeof(ListInfoControl), new PropertyMetadata(Visibility.Visible));
+
+		/// <summary>Controls column visibility.</summary>
+		public Visibility ColumnProtectedVisibility
+		{
+			get => (Visibility)GetValue(ColumnProtectedVisibilityProperty);
+			set => SetValue(ColumnProtectedVisibilityProperty, value);
+		}
+
+		#endregion
+
+
 		#region ■ Property: Column Comment Visibility
 
 		/// <summary>Controls column visibility.</summary>

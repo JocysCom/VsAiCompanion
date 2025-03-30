@@ -894,6 +894,11 @@
             Optional. The value associated with the key.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.IsProtected">
+            <summary>
+            Indicates whether the value should be masked.
+            </summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Comment">
             <summary>
             Optional. Provides additional information about the list item,

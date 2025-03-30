@@ -20,6 +20,8 @@
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+			<!--  Add the converter  -->
+			<controls:ProtectedValueConverter x:Key="ProtectedValueConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid DataContext="{Binding Item, ElementName=This, UpdateSourceTrigger=PropertyChanged}">
@@ -248,13 +250,34 @@
 					Header="{StaticResource main_Status}"
 					SelectedItemBinding="{Binding Status}"
 					Visibility="{Binding DataContext.ColumnStatusVisibility, Source={x:Reference ProxyElement}}" />
-				<DataGridTextColumn
-					x:Name="ValueColumn"
-					Width="Auto"
-					Binding="{Binding Value}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{StaticResource main_Value}" />
+				<DataGridCheckBoxColumn
+					x:Name="IsProtectedColumn"
+					Binding="{Binding IsProtected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
+					Header="🔒"
+					IsThreeState="False"
+					Visibility="{Binding DataContext.ColumnProtextedVisibility, Source={x:Reference ProxyElement}}" />
+				<DataGridTemplateColumn x:Name="ValueColumn" Width="Auto" Header="{StaticResource main_Value}">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Style="{StaticResource TextBlockCell}">
+								<TextBlock.Text>
+									<MultiBinding Converter="{StaticResource ProtectedValueConverter}">
+										<Binding Path="Value" />
+										<Binding Path="IsProtected" />
+									</MultiBinding>
+								</TextBlock.Text>
+							</TextBlock>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<TextBox Style="{StaticResource TextBoxCell}" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
 				<DataGridTextColumn
 					x:Name="CommentColumn"
 					Width="Auto"
