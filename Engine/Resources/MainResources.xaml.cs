@@ -99,6 +99,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ToolChoiceRequired_Help => FindResource(nameof(main_ToolChoiceRequired_Help));
         public static string main_ToolChoiceRequiredNames_Name => FindResource(nameof(main_ToolChoiceRequiredNames_Name));
         public static string main_ToolChoiceRequiredNames_Help => FindResource(nameof(main_ToolChoiceRequiredNames_Help));
+        public static string main_RequestData_Name => FindResource(nameof(main_RequestData_Name));
+        public static string main_RequestData_Help => FindResource(nameof(main_RequestData_Help));
+        public static string main_RequestData_RequestHeaders => FindResource(nameof(main_RequestData_RequestHeaders));
+        public static string main_RequestData_RequestHeaders_Help => FindResource(nameof(main_RequestData_RequestHeaders_Help));
+        public static string main_RequestData_ContentHeaders => FindResource(nameof(main_RequestData_ContentHeaders));
+        public static string main_RequestData_ContentHeaders_Help => FindResource(nameof(main_RequestData_ContentHeaders_Help));
+        public static string main_RequestData_BodyData => FindResource(nameof(main_RequestData_BodyData));
+        public static string main_RequestData_BodyData_Help => FindResource(nameof(main_RequestData_BodyData_Help));
+        public static string main_RequestData_QueryData => FindResource(nameof(main_RequestData_QueryData));
+        public static string main_RequestData_QueryData_Help => FindResource(nameof(main_RequestData_QueryData_Help));
         public static string main_Audio_To_Text => FindResource(nameof(main_Audio_To_Text));
         public static string main_Create_Image => FindResource(nameof(main_Create_Image));
         public static string main_External_AI_Models => FindResource(nameof(main_External_AI_Models));

@@ -1594,8 +1594,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_button_ok_refresh"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_button_ok_refresh"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_6C23C6C6C7A99EDD9B868BA81626660D3C350F35433BA5AF8F691679AA35F2CF">
 		<Canvas Width="24" Height="24">
@@ -10560,6 +10561,65 @@
 					StrokeThickness="1">
 					<Path.Data>
 						<PathGeometry Figures="M176 64l304 0l0 16l-304 0z M176 432l144 0l0 16l-144 0z M176 384l304 0l0 16l-304 0z M176 336l304 0l0 16l-304 0z M176 288l304 0l0 16l-304 0z M176 208l192 0l0 16l-192 0z M176 160l304 0l0 16l-304 0z M176 112l304 0l0 16l-304 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		x:Key="Icon_logs_blue"
+		x:Shared="False"
+		Stretch="Uniform"
+		Tag="SHA256_0768CE034CCCB6BCC2F5DCBC51917DBAF4CE05A1C3CB79C5FEAD8F7BCDC90820">
+		<Canvas
+			Canvas.Left="0"
+			Canvas.Top="0"
+			Width="24"
+			Height="24">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources />
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF4484DA">
+					<Path.Data>
+						<PathGeometry Figures="M21 4V2.2c0 -0.66 -0.54 -1.2 -1.2 -1.2H4.2c-0.66 0 -1.2 0.54 -1.2 1.2v1.8H21z" FillRule="NonZero" />
+					</Path.Data>
+				</Path>
+				<Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FFDBE7F8">
+					<Path.Data>
+						<PathGeometry Figures="M3 4v17.8c0 0.66 0.54 1.2 1.2 1.2h15.6c0.66 0 1.2 -0.54 1.2 -1.2V4" FillRule="NonZero" />
+					</Path.Data>
+				</Path>
+				<Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF0A1D37" Opacity="0.06">
+					<Path.Data>
+						<PathGeometry Figures="M19.8 1h-3.7738l-4.5377 22H19.8c0.66 0 1.2 -0.54 1.2 -1.2V2.2C21 1.54 20.46 1 19.8 1z" FillRule="NonZero" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Opacity="0.7"
+					Stroke="#FF225FB0"
+					StrokeEndLineCap="Round"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Round"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M10 11.5h8M10 9.5h8M10 7.5h8M10 17.5h8M10 19.5h8M10 15.5h8M10 13.5h8" FillRule="NonZero" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Stroke="#FF17417A"
+					StrokeEndLineCap="Round"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Round"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M6 11.5h2M6 9.5h2M6 7.5h2M6 17.5h2M6 15.5h2M6 13.5h2M6 19.5h2" FillRule="NonZero" />
 					</Path.Data>
 				</Path>
 			</Canvas>

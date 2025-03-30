@@ -1,65 +1,79 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <!-- Colors for Dark Theme -->
+	<!--  Colors for Dark Theme  -->
 
-  <!-- Transparent Background (unchanged) -->
-  <SolidColorBrush x:Key="BackgroundTransparent" Color="Transparent" />
+	<!--  Transparent Background (unchanged)  -->
+	<SolidColorBrush x:Key="BackgroundTransparent" Color="Transparent" />
 
-  <!-- Adjusted Backgrounds -->
-  <SolidColorBrush x:Key="BackgroundWhite" Color="#232323" /> <!-- Originally white, now dark grey -->
-  <SolidColorBrush x:Key="BackgroundLight" Color="#3F3F46" /> <!-- Light background in dark theme -->
-  <SolidColorBrush x:Key="BackgroundDark" Color="#2D2D30" /> <!-- Darker background -->
-  <SolidColorBrush x:Key="BackgroundDarkSelected" Color="#3A80CC" /> <!-- Selection background -->
-  <SolidColorBrush x:Key="BackgroundDarkPressed" Color="#404040" /> <!-- Pressed background -->
+	<!--  Adjusted Backgrounds  -->
+	<SolidColorBrush x:Key="BackgroundWhite" Color="#232323" />
+	<!--  Originally white, now dark grey  -->
+	<SolidColorBrush x:Key="BackgroundLight" Color="#3F3F46" />
+	<!--  Light background in dark theme  -->
+	<SolidColorBrush x:Key="BackgroundDark" Color="#2D2D30" />
+	<!--  Darker background  -->
+	<SolidColorBrush x:Key="BackgroundDarkSelected" Color="#3A80CC" />
+	<!--  Selection background  -->
+	<SolidColorBrush x:Key="BackgroundDarkPressed" Color="#404040" />
+	<!--  Pressed background  -->
 
-  <!-- Adjusted Special Backgrounds -->
-  <SolidColorBrush x:Key="BackgroundWarning" Color="#803333" /> <!-- Warning background -->
-  <SolidColorBrush x:Key="BackgroundHelp" Color="#43434D" /> <!-- Help background -->
+	<!--  Adjusted Special Backgrounds  -->
+	<SolidColorBrush x:Key="BackgroundWarning" Color="#803333" />
+	<!--  Warning background  -->
+	<SolidColorBrush x:Key="BackgroundHelp" Color="#43434D" />
+	<!--  Help background  -->
 
-  <!-- Adjusted Borders -->
-  <SolidColorBrush x:Key="BorderDark" Color="#696969" /> <!-- Border color -->
+	<!--  Adjusted Borders  -->
+	<SolidColorBrush x:Key="BorderDark" Color="#696969" />
+	<!--  Border color  -->
 
-  <!-- Adjusted Foregrounds -->
-  <SolidColorBrush x:Key="ForegroundBlack" Color="#FFFFFF" /> <!-- Text foreground -->
-  <SolidColorBrush x:Key="ForegroundWarning" Color="#FF5555" /> <!-- Warning text -->
+	<!--  Adjusted Foregrounds  -->
+	<SolidColorBrush x:Key="ForegroundBlack" Color="#FFFFFF" />
+	<!--  Text foreground  -->
+	<SolidColorBrush x:Key="ForegroundWarning" Color="#FF5555" />
+	<!--  Warning text  -->
 
-  <!-- Adjusted State Colors -->
-  <SolidColorBrush x:Key="ColorNormal" Color="#88C0D0" /> <!-- Normal state -->
-  <SolidColorBrush x:Key="ColorActive" Color="#A3BE8C" /> <!-- Active state -->
-  <SolidColorBrush x:Key="ColorOver" Color="#D08770" />   <!-- Mouse over -->
-  <SolidColorBrush x:Key="ColorRecord" Color="#BF616A" /> <!-- Record state -->
+	<!--  Adjusted State Colors  -->
+	<SolidColorBrush x:Key="ColorNormal" Color="#88C0D0" />
+	<!--  Normal state  -->
+	<SolidColorBrush x:Key="ColorActive" Color="#A3BE8C" />
+	<!--  Active state  -->
+	<SolidColorBrush x:Key="ColorOver" Color="#D08770" />
+	<!--  Mouse over  -->
+	<SolidColorBrush x:Key="ColorRecord" Color="#BF616A" />
+	<!--  Record state  -->
 
-  <!-- Adjusted SolidColorBrush_BFF -->
-  <SolidColorBrush x:Key="SolidColorBrush_BFF" Color="#FFFFFFFF" /> <!-- Changed from black to white -->
+	<!--  Adjusted SolidColorBrush_BFF  -->
+	<SolidColorBrush x:Key="SolidColorBrush_BFF" Color="#FFFFFFFF" />
+	<!--  Changed from black to white  -->
 
-  <!-- Adjusted HUE Color Brushes -->
-  <!-- HUE Color Degrees - Light (dark shades for dark theme) -->
-  <SolidColorBrush x:Key="SolidColorBrush_000L">#2E2E2E</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_030L">#2E2A29</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_060L">#2E2E29</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_090L">#2A2E29</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_120L">#292E29</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_150L">#292E2A</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_180L">#292E2E</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_210L">#292A2E</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_240L">#2A292E</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_270L">#2E292E</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_300L">#2E292A</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_330L">#2E2929</SolidColorBrush>
+	<!--  Adjusted HUE Color Brushes  -->
+	<!--  HUE Color Degrees - Light (dark shades for dark theme)  -->
+	<SolidColorBrush x:Key="SolidColorBrush_000L">#2E2E2E</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_030L">#2E2A29</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_060L">#2E2E29</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_090L">#2A2E29</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_120L">#292E29</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_150L">#292E2A</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_180L">#292E2E</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_210L">#292A2E</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_240L">#2A292E</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_270L">#2E292E</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_300L">#2E292A</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_330L">#2E2929</SolidColorBrush>
 
-  <!-- HUE Color Degrees - Dark (bright shades for dark theme) -->
-  <SolidColorBrush x:Key="SolidColorBrush_000D">#D16969</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_030D">#D19A69</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_060D">#D1D169</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_090D">#9AD169</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_120D">#69D169</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_150D">#69D19A</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_180D">#69D1D1</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_210D">#699AD1</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_240D">#6969D1</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_270D">#9A69D1</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_300D">#D169D1</SolidColorBrush>
-  <SolidColorBrush x:Key="SolidColorBrush_330D">#D1699A</SolidColorBrush>
+	<!--  HUE Color Degrees - Dark (bright shades for dark theme)  -->
+	<SolidColorBrush x:Key="SolidColorBrush_000D">#D16969</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_030D">#D19A69</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_060D">#D1D169</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_090D">#9AD169</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_120D">#69D169</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_150D">#69D19A</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_180D">#69D1D1</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_210D">#699AD1</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_240D">#6969D1</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_270D">#9A69D1</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_300D">#D169D1</SolidColorBrush>
+	<SolidColorBrush x:Key="SolidColorBrush_330D">#D1699A</SolidColorBrush>
 
 </ResourceDictionary>

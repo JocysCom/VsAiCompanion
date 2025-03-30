@@ -101,6 +101,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_internet = nameof(Icon_internet);
 		public const string Icon_list = nameof(Icon_list);
 		public const string Icon_list_style_numbered = nameof(Icon_list_style_numbered);
+		public const string Icon_logs_blue = nameof(Icon_logs_blue);
 		public const string Icon_logs_disabled = nameof(Icon_logs_disabled);
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
 		public const string Icon_mail = nameof(Icon_mail);

@@ -235,6 +235,18 @@
 					<controlsTemplate:ToolsUserControl x:Name="ToolsPanel" />
 				</TabItem>
 
+
+				<TabItem x:Name="DataTabItem">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_logs_blue}" />
+							<Label AutomationProperties.HelpText="{StaticResource main_RequestData_Help}" AutomationProperties.Name="{StaticResource main_RequestData_Name}" Content="{StaticResource main_RequestData_Name}" />
+						</StackPanel>
+					</TabItem.Header>
+					<controlsTemplate:RequestDataControl x:Name="RequestDataPanel" MinHeight="240" />
+				</TabItem>
+
+
 				<TabItem x:Name="MailTabItem" x:FieldModifier="public">
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">

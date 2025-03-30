@@ -327,24 +327,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var endpoint = new Uri(Service.BaseUrl);
 			// Add/override link query properties.
-			var linkProperties = new Dictionary<string, string>();
+			var requestQueryData = new Dictionary<string, string>();
 			if (item?.AiService?.IsAzureOpenAI == true && item?.AiService?.OverrideApiVersionEnabled == true)
-				linkProperties.Add("api-version", item.AiService.OverrideApiVersion);
+				requestQueryData.Add("api-version", item.AiService.OverrideApiVersion);
+			foreach (var kv in item.RequestQueryData.Items.Where(x => !string.IsNullOrEmpty(x.Key)))
+				requestQueryData.Add(kv.Key, kv.Value);
 			// Add/override request header properties.
-			var headRequestProperties = new Dictionary<string, string>();
+			var requestHeaders = new Dictionary<string, string>();
+			foreach (var kv in item.RequestHeaders.Items.Where(x => !string.IsNullOrEmpty(x.Key)))
+				requestHeaders.Add(kv.Key, kv.Value);
 			// Add/override content header properties.
-			var headContentProperties = new Dictionary<string, string>();
+			var requestContentHeaders = new Dictionary<string, string>();
+			foreach (var kv in item.RequestContentHeaders.Items.Where(x => !string.IsNullOrEmpty(x.Key)))
+				requestContentHeaders.Add(kv.Key, kv.Value);
 			//headContentProperties.Add("Content-Type", "application/json");
 			// Add/override body properties.
-			var bodyProperties = new Dictionary<string, string>();
+			var requestBodyData = new Dictionary<string, string>();
 			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
-				bodyProperties.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
+				requestBodyData.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
+			foreach (var kv in item.RequestBodyData.Items.Where(x=>!string.IsNullOrEmpty(x.Key)))
+				requestBodyData.Add(kv.Key, kv.Value);
 			// Always create a custom transport so the pipeline is used.
 			HttpMessageHandler handler = new HttpClientHandler();
 			// Add logger if requested
 			if (useLogger && _Logger != null)
 				handler = _Logger;
-			handler = new ModifyRequestHandler(linkProperties, headRequestProperties, headContentProperties, bodyProperties, handler);
+			handler = new ModifyRequestHandler(requestQueryData, requestHeaders, requestContentHeaders, requestBodyData, handler);
 			var httpClient = new HttpClient(handler);
 			httpClient.BaseAddress = endpoint;
 			httpClient.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);

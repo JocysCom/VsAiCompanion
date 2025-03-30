@@ -379,6 +379,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await VisualStudioPanel.BindData(_Item);
 			await EmbeddingsPanel.BindData(_Item);
 			await MailPanel.BindData(_Item);
+			await RequestDataPanel.BindData(_Item);
 			_Item.PropertyChanged += _item_PropertyChanged;
 			AiModelBoxPanel.Item = _Item;
 			ToolsPanel.Item = _Item;

@@ -159,7 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		ListInfo _ExternalLinks;
 
 		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
-		public bool ShouldSerializeExternalLinks() => _ExternalLinks != null && !ExternalLinks.IsEmpty;
+		public bool ShouldSerializeExternalLinks() => _ExternalLinks?.IsEmpty == false;
 
 
 	}

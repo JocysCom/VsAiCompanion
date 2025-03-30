@@ -70,6 +70,52 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
 		public bool ShouldSerializeInstructionsPath() => !string.IsNullOrEmpty(InstructionsPath);
 
+		#region Additional Request Data
+
+		[DefaultValue(null)]
+		public ListInfo RequestHeaders {
+			get => _RequestHeaders = _RequestHeaders ?? new ListInfo();
+			set => SetProperty(ref _RequestHeaders, value); }
+		ListInfo _RequestHeaders;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeRequestHeaders() => _RequestHeaders?.IsEmpty == false;
+
+
+		[DefaultValue(null)]
+		public ListInfo RequestContentHeaders {
+			get => _RequestContentHeaders = _RequestContentHeaders ?? new ListInfo();
+			set => SetProperty(ref _RequestContentHeaders, value); }
+		ListInfo _RequestContentHeaders;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeRequestContentHeaders() => _RequestContentHeaders?.IsEmpty == false;
+
+
+		[DefaultValue(null)]
+		public ListInfo RequestBodyData {
+			get => _RequestBodyData = _RequestBodyData ?? new ListInfo();
+			set => SetProperty(ref _RequestBodyData, value); }
+		ListInfo _RequestBodyData;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeRequestBodyData() => _RequestBodyData?.IsEmpty == false;
+
+
+		[DefaultValue(null)]
+		public ListInfo RequestQueryData
+		{
+			get => _RequestQueryData = _RequestQueryData ?? new ListInfo();
+			set => SetProperty(ref _RequestQueryData, value);
+		}
+		ListInfo _RequestQueryData;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeRequestQueryData() => _RequestQueryData?.IsEmpty == false;
+
+
+		#endregion
+
 
 		/// <summary>Show RISEN textboxes</summary>
 		[DefaultValue(false)]

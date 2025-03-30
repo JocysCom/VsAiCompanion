@@ -79,9 +79,17 @@ class Pipeline:
         user_email = "anonymous"
         if "user" in body and isinstance(body["user"], dict) and "email" in body["user"]:
             user_email = body["user"]["email"]
-        
+            
+        # Extract access_code if present in the request body
+        access_code = body.get("access_code", None)
+
+        # Prepare inputs with optional access_code
+        inputs = {"prompt": user_message}
+        if access_code is not None:
+            inputs["access_code"] = access_code
+
         data = {
-            "inputs": {"prompt": user_message},
+            "inputs": inputs,
             "user": user_email
         }
 

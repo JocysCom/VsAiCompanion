@@ -63,6 +63,19 @@
 	<sys:String x:Key="main_ToolChoiceRequiredNames_Name">Tool Choice Required Name</sys:String>
 	<sys:String x:Key="main_ToolChoiceRequiredNames_Help">Specifies the name of the required tool function the AI model must call.</sys:String>
 
+	<!--  Tasks / Templates → Data  -->
+
+	<sys:String x:Key="main_RequestData_Name">Request Data</sys:String>
+	<sys:String x:Key="main_RequestData_Help">Specify custom key/value pairs to include in different parts of the HTTP request.</sys:String>
+	<sys:String x:Key="main_RequestData_RequestHeaders">Request Headers</sys:String>
+	<sys:String x:Key="main_RequestData_RequestHeaders_Help">Add custom HTTP headers to the request (e.g., Authorization, Accept, X-Api-Key).</sys:String>
+	<sys:String x:Key="main_RequestData_ContentHeaders">Content Headers</sys:String>
+	<sys:String x:Key="main_RequestData_ContentHeaders_Help">Add custom HTTP headers specific to the request body's content (e.g., Content-Type, Content-Disposition).</sys:String>
+	<sys:String x:Key="main_RequestData_BodyData">Body Data</sys:String>
+	<sys:String x:Key="main_RequestData_BodyData_Help">Add custom key/value pairs to the root of the JSON request body.</sys:String>
+	<sys:String x:Key="main_RequestData_QueryData">Query Data</sys:String>
+	<sys:String x:Key="main_RequestData_QueryData_Help">Add custom key/value pairs to the root of the JSON request Query.</sys:String>
+
 	<!--  Tasks / Templates → Options → Multimedia  -->
 
 	<sys:String x:Key="main_Audio_To_Text">Audio-To-Text</sys:String>
