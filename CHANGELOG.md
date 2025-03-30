@@ -1,4 +1,4 @@
-2025-03-16 v1.17.21
+2025-03-30 v1.17.23
 
 - Fix: Markdown code is displayed incorrectly when quoted in more than three backticks.
 - Fix: Resolved an issue with how code and HTML display within a markdown block.
@@ -10,6 +10,8 @@
 - New: Support for the KaTeX math rendering library.
 - New: Option to exclude all tools except specific ones for chat.
 - New: Allow setting the model instruction source as a path or URL.
+- New: Add additional data to request header, content header, body, or query.
+- New: Allow masking item values in lists.
 - Update: Improved list search using the `name:`, `body:`, and `date:` tokens.
 - Update: List and process plugin functions.
 - Update: Upgraded to Marked version 15.0.6.
