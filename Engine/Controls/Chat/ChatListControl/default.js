@@ -756,7 +756,7 @@ function parseMarkdown(body, boxedCode = false) {
 	// Format: "targetLanguage": ["sourceLanguage1", "sourceLanguage2", ...]
 	const languageFallbackMap = {
 		"css": ["css-extras", "css-extra"],
-		"html": ["htm", "xhtml"],
+		"html": ["htm", "xhtml", "aspx", "asp"],
 		"xml": ["xaml", "axml", "svg"],
 		"javascript": ["js", "jsx"],
 		"typescript": ["ts", "tsx"],
