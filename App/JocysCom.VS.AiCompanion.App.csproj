@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+	<PropertyGroup>
+		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
+		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
+		<ProjectDir Condition="'$(ProjectDir)' == '' Or '$(ProjectDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\.\'))</ProjectDir>
+	</PropertyGroup>
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
