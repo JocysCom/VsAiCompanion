@@ -31,7 +31,7 @@ else {
     $global:enginePath    = Get-PodmanPath
     $global:pullOptions   = @("--tls-verify=false")
     # Use the Docker Hub version of n8n for Podman to avoid 403 errors.
-    $global:imageName     = "n8nio/n8n:latest"
+    $global:imageName     = "docker.io/n8nio/n8n:latest"
 }
 
 #############################################
@@ -82,6 +82,15 @@ function Get-n8nContainerConfig {
     }
     if (-not $communityPackagesToolsEnabled) {
         $envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+    }
+	
+    # Prompt user for external domain configuration.
+    $externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
+	
+    # If an external domain is provided, add environment variable options.
+    if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
+        $envVars += "N8N_HOST=$externalDomain"
+        $envVars += "WEBHOOK_URL=https://$externalDomain"
     }
     
     # Return a custom object with the container information
@@ -245,14 +254,14 @@ function Install-n8nContainer {
     # Remove any existing container
     Remove-n8nContainer
 
-    # Prompt user for external domain configuration.
-    $externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
-
     # Define environment variables
     $envVars = @()
 	
 	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
 	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+
+    # Prompt user for external domain configuration.
+    $externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
 
     # If an external domain is provided, add environment variable options.
     if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
@@ -302,7 +311,19 @@ function Uninstall-n8nContainer {
     Uses the Backup-ContainerState helper function to create a backup of the container.
 #>
 function Backup-n8nContainer {
-    Backup-ContainerState -Engine $global:enginePath -ContainerName "n8n"
+    Write-Host "Backing up n8n container..."
+    
+    # Debug output to verify the container name being passed
+    Write-Host "DEBUG: Passing container name 'n8n' to Backup-ContainerState"
+    
+    # Call Backup-ContainerState with the explicit container name string
+    if (Backup-ContainerState -Engine $global:enginePath -ContainerName 'n8n') {
+        Write-Host "n8n container backed up successfully." -ForegroundColor Green
+        return $true
+    } else {
+        Write-Error "Failed to backup n8n container."
+        return $false
+    }
 }
 
 <#
@@ -312,7 +333,41 @@ function Backup-n8nContainer {
     Uses the Restore-ContainerState helper function to restore the container from a backup.
 #>
 function Restore-n8nContainer {
-    Restore-ContainerState -Engine $global:enginePath -ContainerName "n8n"
+    Write-Host "Attempting to restore n8n container and its data volume from backup..."
+    
+    # First load the image from backup and restore volumes if available
+    $imageName = Restore-ContainerState -Engine $global:enginePath -ContainerName "n8n" -RestoreVolumes
+    
+    if (-not $imageName) {
+        Write-Error "Failed to restore image for n8n container."
+        return
+    }
+    
+    # Remove any existing container
+    Remove-n8nContainer
+    
+    # Get configuration from existing container or use defaults
+    $config = Get-n8nContainerConfig
+    if (-not $config) {
+        Write-Host "No existing configuration found, using defaults."
+        $config = [PSCustomObject]@{
+            Image = $imageName
+            EnvVars = @(
+                "N8N_COMMUNITY_PACKAGES_ENABLED=true",
+                "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+            )
+        }
+    } else {
+        # Update the image to use the restored one
+        $config.Image = $imageName
+    }
+    
+    # Start the container using the restored image and existing configuration
+    if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
+        Write-Host "n8n container successfully restored and started." -ForegroundColor Green
+    } else {
+        Write-Error "Failed to start restored n8n container."
+    }
 }
 
 <#

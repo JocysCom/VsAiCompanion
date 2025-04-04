@@ -334,29 +334,236 @@ function Test-WebSocketPort {
 }
 
 #------------------------------
-# Function: Check-AndRestoreBackup
-#
-# Determines whether a backup file exists for the specified image in the Backup folder.
-# If a backup is found, it offers the choice to restore it using the provided container engine.
-# The backup file is expected to follow the naming convention where any ':' or '/' in the image name 
-# is replaced with '_' and appended with a .tar extension.
-#
+# Function: Backup-ContainerImage
+# Description: Backs up a single container image to a tar file.
 # Parameters:
-#   - Engine: The container engine command (e.g., "docker" or "podman").
-#   - ImageName: The full image name (repository:tag) for which a backup may exist.
-#   - BackupFolder (optional): The folder where backup tar files are stored (default ".\Backup").
-#
-# Returns:
-#   $true if a backup was restored successfully, or $false otherwise.
+#   -Engine: Path to the container engine (docker or podman)
+#   -ImageName: Name of the image to backup
+#   -BackupFolder: Folder to store the backup file (default ".\Backup")
+#------------------------------
+function Backup-ContainerImage {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$ImageName,
+        
+        [string]$BackupFolder = ".\Backup"
+    )
+    
+    if (-not (Test-Path $BackupFolder)) {
+        New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
+        Write-Host "Created backup folder: $BackupFolder"
+    }
+    
+    # Replace characters not allowed in file names (':' and '/' become '_')
+    $safeName = $ImageName -replace "[:/]", "_"
+    $backupFile = Join-Path $BackupFolder "$safeName.tar"
+    
+    Write-Host "Backing up image '$ImageName' to '$backupFile'..."
+    # podman save [options] IMAGE
+    # save      Save an image to a tar archive.
+    # --output string   Specify the output file for saving the image.
+    & $Engine save --output $backupFile $ImageName
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+        return $true
+    }
+    else {
+        Write-Error "Failed to backup image '$ImageName'"
+        return $false
+    }
+}
+
+#------------------------------
+# Function: Backup-ContainerImages
+# Description: Backs up all container images to tar files.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -BackupFolder: Folder to store the backup files (default ".\Backup")
+#------------------------------
+function Backup-ContainerImages {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        
+        [string]$BackupFolder = ".\Backup"
+    )
+    
+    Write-Host "Retrieving list of images for $Engine..."
+    $images = & $Engine images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -ne "<none>:<none>" }
+    
+    if (-not $images) {
+        Write-Host "No images found for $Engine."
+        return $false
+    }
+    
+    $successCount = 0
+    foreach ($image in $images) {
+        if (Backup-ContainerImage -Engine $Engine -ImageName $image -BackupFolder $BackupFolder) {
+            $successCount++
+        }
+    }
+    
+    Write-Host "Backed up $successCount out of $($images.Count) images."
+    return ($successCount -gt 0)
+}
+
+#------------------------------
+# Function: Restore-ContainerImage
+# Description: Restores a container image from a tar file.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -BackupFile: Path to the backup tar file
+#   -RunContainer: Whether to run a container from the restored image
+#------------------------------
+function Restore-ContainerImage {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$BackupFile,
+        
+        [switch]$RunContainer = $false
+    )
+    
+    if (-not (Test-Path $BackupFile)) {
+        Write-Error "Backup file '$BackupFile' not found."
+        return $false
+    }
+    
+    Write-Host "Restoring image from '$BackupFile'..."
+    # podman load [options]
+    # load       Load an image from a tar archive.
+    # --input string   Specify the input file containing the saved image.
+    $output = & $Engine load --input $BackupFile
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Successfully restored image from '$BackupFile'." -ForegroundColor Green
+        
+        # Attempt to parse the image name from the load output
+        # Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
+        $imageName = $null
+        if ($output -match "Loaded image:\s*(\S+)") {
+            $imageName = $matches[1].Trim()
+            Write-Host "Parsed image name: $imageName"
+            
+            if ($RunContainer) {
+                Run-RestoredContainer -Engine $Engine -ImageName $imageName
+            }
+            return $true
+        }
+        else {
+            Write-Host "Could not parse image name from the load output."
+            return $true
+        }
+    }
+    else {
+        Write-Error "Failed to restore image from '$BackupFile'."
+        return $false
+    }
+}
+
+#------------------------------
+# Function: Run-RestoredContainer
+# Description: Runs a container from a restored image.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -ImageName: Name of the image to run
+#------------------------------
+function Run-RestoredContainer {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$ImageName
+    )
+    
+    # Generate a container name by replacing ':' and '/' with underscores
+    $containerName = ($ImageName -replace "[:/]", "_") + "_container"
+    
+    Write-Host "Starting container from image '$ImageName' with container name '$containerName'..."
+    # podman run [options] IMAGE [COMMAND [ARG...]]
+    # run         Run a command in a new container.
+    # --detach    Run container in background and print container ID.
+    # --name      Assign a name to the container.
+    & $Engine run --detach --name $containerName $ImageName
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Container '$containerName' started successfully." -ForegroundColor Green
+        return $true
+    }
+    else {
+        Write-Error "Failed to start container from image '$ImageName'."
+        return $false
+    }
+}
+
+#------------------------------
+# Function: Restore-ContainerImages
+# Description: Restores all container images from tar files in a folder.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -BackupFolder: Folder containing the backup tar files (default ".\Backup")
+#   -RunContainers: Whether to run containers from the restored images
+#------------------------------
+function Restore-ContainerImages {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+        
+        [string]$BackupFolder = ".\Backup",
+        
+        [switch]$RunContainers = $false
+    )
+    
+    if (-not (Test-Path $BackupFolder)) {
+        Write-Host "Backup folder '$BackupFolder' does not exist. Nothing to restore."
+        return $false
+    }
+    
+    $tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*.tar"
+    if (-not $tarFiles) {
+        Write-Host "No backup tar files found in '$BackupFolder'."
+        return $false
+    }
+    
+    $successCount = 0
+    foreach ($file in $tarFiles) {
+        if (Restore-ContainerImage -Engine $Engine -BackupFile $file.FullName -RunContainer:$RunContainers) {
+            $successCount++
+        }
+    }
+    
+    Write-Host "Restored $successCount out of $($tarFiles.Count) images."
+    return ($successCount -gt 0)
+}
+
+#------------------------------
+# Function: Check-AndRestoreBackup
+# Description: Checks if a backup exists for an image and offers to restore it.
+# Parameters:
+#   -Engine: Path to the container engine (docker or podman)
+#   -ImageName: Name of the image to check for backup
+#   -BackupFolder: Folder containing the backup tar files (default ".\Backup")
 #------------------------------
 function Check-AndRestoreBackup {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string]$Engine,      # container engine command ("docker" or "podman")
+        [string]$Engine,
         
         [Parameter(Mandatory = $true)]
-        [string]$ImageName,   # full image name, e.g. "open-webui/pipelines:custom"
+        [string]$ImageName,
         
         [string]$BackupFolder = ".\Backup"
     )
@@ -373,19 +580,7 @@ function Check-AndRestoreBackup {
     Write-Host "Backup file found for image '$ImageName': $backupFile"
     $choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
     if ($choice -and $choice.ToUpper() -eq "Y") {
-        Write-Host "Restoring backup from $backupFile..."
-        # podman load [options]
-        # load      Load an image from a tar archive into the container engine.
-        # --input string   Specify the input file containing the saved image.
-        & $Engine load --input $backupFile
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "Successfully restored backup for image '$ImageName'."
-            return $true
-        }
-        else {
-            Write-Error "Failed to restore backup for image '$ImageName'."
-            return $false
-        }
+        return (Restore-ContainerImage -Engine $Engine -BackupFile $backupFile)
     }
     else {
         Write-Host "User opted not to restore backup for image '$ImageName'."
@@ -466,11 +661,13 @@ function Check-WSLStatus {
 #--------------------------------------
 # Function: Backup-ContainerState
 # Description: Creates a backup of a live running container by committing its state 
-#              to an image and saving that image as a tar file.
+#              to an image and saving that image as a tar file. Also backs up 
+#              associated volumes if specified.
 # Parameters:
 #   -Engine: Path to the container engine (docker or podman)
 #   -ContainerName: Name of the container to backup
 #   -BackupFolder: Folder to store the backup file (default ".\Backup")
+#   -BackupVolumes: Whether to also backup volumes associated with the container
 #--------------------------------------
 function Backup-ContainerState {
     param(
@@ -493,12 +690,11 @@ function Backup-ContainerState {
          return $false
     }
     
-    # Commit the container to an image with tag "backup-container-name:latest"
-    # Make sure we have a valid image name by adding "latest" if ContainerName is empty
-    $backupImageTag = "backup-container-$ContainerName:latest"
-    if ($ContainerName -eq "") {
-        $backupImageTag = "backup-container-unknown:latest"
-    }
+    # Debug output to verify container name
+    Write-Host "DEBUG: Container name is '$ContainerName'"
+    
+    # Create a simple image tag without any container- prefix that might be causing issues
+    $backupImageTag = "backup-$ContainerName"
     
     Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
     # podman commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
@@ -792,10 +988,12 @@ function Refresh-EnvironmentVariables {
 # Function: Restore-ContainerState
 # Description: Restores a container from a previously saved backup tar file.
 #              Loads the backup image and runs a new container from it.
+#              Also restores associated volumes if backup files exist.
 # Parameters:
 #   -Engine: Path to the container engine (docker or podman)
 #   -ContainerName: Name of the container to restore
 #   -BackupFolder: Folder where the backup file is located (default ".\Backup")
+#   -RestoreVolumes: Whether to also restore volumes associated with the container
 #--------------------------------------
 function Restore-ContainerState {
     param(
@@ -803,54 +1001,108 @@ function Restore-ContainerState {
         [string]$Engine,
         [Parameter(Mandatory=$true)]
         [string]$ContainerName,
-        [string]$BackupFolder = ".\Backup"
+        [string]$BackupFolder = ".\Backup",
+        [switch]$RestoreVolumes = $true
     )
     
+    # First try the container-specific backup format
     $safeName = $ContainerName -replace "[:/]", "_"
     $backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
     
+    # If container-specific backup not found, try to find a matching image backup
     if (-not (Test-Path $backupFile)) {
-         Write-Host "Backup file '$backupFile' not found for container '$ContainerName'."
-         return $false
+        Write-Host "Container-specific backup file '$backupFile' not found."
+        Write-Host "Looking for image backups that might match this container..."
+        
+        # Get all tar files in the backup folder
+        $tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*.tar"
+        
+        # Try to find a matching image backup
+        $matchingBackup = $null
+        foreach ($file in $tarFiles) {
+            # Extract potential image name from filename (remove .tar extension)
+            $potentialImageName = $file.Name -replace '\.tar$', ''
+            
+            # Check if this backup file might be for the container we're looking for
+            if ($potentialImageName -match $ContainerName) {
+                $matchingBackup = $file.FullName
+                Write-Host "Found potential matching backup: $matchingBackup"
+                break
+            }
+        }
+        
+        if ($matchingBackup) {
+            $backupFile = $matchingBackup
+        } else {
+            Write-Error "No backup file found for container '$ContainerName'."
+            return $false
+        }
     }
     
     Write-Host "Loading backup image from '$backupFile'..."
     # podman load [options]
     # load      Load an image from a tar archive.
     # --input string   Specify the input file containing the saved image.
-    & $Engine load --input $backupFile
+    $loadOutput = & $Engine load --input $backupFile 2>&1
     if ($LASTEXITCODE -ne 0) {
          Write-Error "Failed to load backup image from '$backupFile'."
          return $false
     }
     
-    # Assume the backup image tag is "backup-<ContainerName>:latest"
-    $backupImageTag = "backup-$ContainerName:latest"
-    
-    # Stop and remove the existing container if it exists.
-    $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
-    if ($existingContainer) {
-         Write-Host "Stopping and removing existing container '$ContainerName'..."
-         # podman rm [options] CONTAINER [CONTAINER...]
-         # rm        Remove one or more containers.
-         # --force   Force removal of a running container.
-         & $Engine rm --force $ContainerName
-         if ($LASTEXITCODE -ne 0) {
-              Write-Error "Failed to remove existing container '$ContainerName'."
-              return $false
-         }
-    }
-    
-    Write-Host "Starting container '$ContainerName' from backup image '$backupImageTag'..."
-    # podman run [options] IMAGE [COMMAND [ARG...]]
-    # run         Run a command in a new container.
-    # --detach    Run container in background and print container ID.
-    & $Engine run --detach --name $ContainerName $backupImageTag
-    if ($LASTEXITCODE -eq 0) {
-         Write-Host "Container '$ContainerName' restored and running."
-         return $true
+    # Parse the actual image name from the load output
+    $imageName = $null
+    if ($loadOutput -match "Loaded image: (.+)") {
+        $imageName = $matches[1].Trim()
+        Write-Host "Loaded image: $imageName"
     } else {
-         Write-Error "Failed to start container from backup image."
-         return $false
+        Write-Error "Could not determine the loaded image name from output: $loadOutput"
+        return $false
     }
+    
+    # If RestoreVolumes is true, check for volume backups
+    if ($RestoreVolumes) {
+        # For n8n, we know the volume name is "n8n_data"
+        if ($ContainerName -eq "n8n") {
+            $volumeName = "n8n_data"
+            $volumeBackupFile = Join-Path $BackupFolder "$volumeName-data.tar"
+            
+            if (Test-Path $volumeBackupFile) {
+                Write-Host "Found volume backup for '$volumeName': $volumeBackupFile"
+                
+                # Check if volume exists, create if not
+                $volumeExists = & $Engine volume ls --filter "name=$volumeName" --format "{{.Name}}"
+                if (-not $volumeExists) {
+                    Write-Host "Creating volume '$volumeName'..."
+                    & $Engine volume create $volumeName
+                }
+                
+                # Ask for confirmation before restoring volume
+                $restoreVolumeConfirm = Read-Host "Restore volume data for '$volumeName'? This will merge with existing data. (Y/N, default is Y)"
+                if ($restoreVolumeConfirm -ne "N") {
+                    Write-Host "Restoring volume '$volumeName' from '$volumeBackupFile'..."
+                    
+                    # Create a temporary container to restore the volume data
+                    $tempContainerName = "restore-volume-$volumeName-$(Get-Random)"
+                    
+                    # Run a temporary container with the volume mounted and extract the backup
+                    & $Engine run --rm --volume ${volumeName}:/target --volume ${BackupFolder}:/backup --name $tempContainerName alpine tar -xf /backup/$(Split-Path $volumeBackupFile -Leaf) -C /target
+                    
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host "Successfully restored volume '$volumeName' from '$volumeBackupFile'" -ForegroundColor Green
+                    } else {
+                        Write-Error "Failed to restore volume '$volumeName'"
+                    }
+                } else {
+                    Write-Host "Skipping volume restore as requested."
+                }
+            } else {
+                Write-Host "No volume backup found for '$volumeName' at '$volumeBackupFile'."
+                Write-Host "Will continue with container image restore only. Existing volume data will be preserved."
+            }
+        }
+        # For other containers, we would need to determine volume names differently
+    }
+    
+    # Return the loaded image name
+    return $imageName
 }
