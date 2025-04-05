@@ -69,18 +69,91 @@ CW - Check WSL Status (Verifies WSL installation and required service status).
 
 ## Feature requirements
 
-### SR - References Setup_0.ps1 with shared functions.
+### HE - Header
 
-Script must include shared library:
+Script must start with a standard header block:
+
+```PowerShell
+################################################################################
+# File         : [Your_Script_Name.ps1]
+# Description  : [Brief description of the script's purpose]
+# Usage        : [How to run the script, e.g., Run as Administrator]
+################################################################################
+```
+
+### SR - Shared Library Reference
+
+Script must include the shared library using dot-sourcing at the beginning, after the header and any `using namespace` statements:
 
 ```PowerShell
 # Dot-source the common functions file.
 . "$PSScriptRoot\Setup_0.ps1"
 ```
 
+### EL - Ensure Elevated
+
+If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Ensure-Elevated` function immediately after dot-sourcing `Setup_0.ps1`:
+
+```PowerShell
+Ensure-Elevated
+```
+
+### SL - Set Script Location
+
+Scripts should set their execution location to the script's directory using `Set-ScriptLocation` after ensuring elevation (if applicable):
+
+```PowerShell
+Set-ScriptLocation
+```
+
+### SE - Select Container Engine
+
+Scripts supporting both Docker and Podman should prompt the user and set global variables for the engine name and path:
+
+```PowerShell
+$global:containerEngine = Select-ContainerEngine
+if ($global:containerEngine -eq "docker") {
+    # Ensure-Elevated # Call if Docker requires elevation
+    $global:enginePath = Get-DockerPath
+}
+else {
+    $global:enginePath = Get-PodmanPath
+}
+# Validate $global:enginePath is not null
+```
+
+### CS / IM - Container Installation Flow
+
+The standard flow for installing a container service and its image should be:
+1.  Check/Create necessary volumes (e.g., `[engine] volume create [volume_name]`).
+2.  Check if the image exists locally (`[engine] images ...`).
+3.  If the image doesn't exist, attempt to restore from backup (`Check-AndRestoreBackup`).
+4.  If no backup restored, pull the image (`[engine] pull [image_name]`).
+5.  Remove any existing container with the same name (`[engine] rm --force [container_name]`).
+6.  Run the new container with appropriate options (`[engine] run --detach --name ... --publish ... --volume ... [image_name]`).
+7.  Wait for startup (`Start-Sleep`).
+8.  Test connectivity (using TC, HT, WB).
+
+### TC / HT / WB - Port Testing
+
+After starting a container, connectivity should be tested using the relevant functions from `Setup_0.ps1`:
+
+```PowerShell
+Test-TCPPort -ComputerName "localhost" -Port [port_number] -serviceName "[Service Name]"
+Test-HTTPPort -Uri "http://localhost:[port_number]" -serviceName "[Service Name]"
+# Test-WebSocketPort -Uri "ws://localhost:[port_number]/[path]" -serviceName "[Service Name]" # If applicable
+```
+
+### BS / RC / UP / RS - Backup, Restore, Update
+
+Scripts providing Backup, Restore, and Update functionality via the menu should use the corresponding shared functions from `Setup_0.ps1`:
+*   Backup: `Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName`
+*   Restore: `Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName` (potentially with `-RestoreVolumes`)
+*   Update: Use the `Update-Container` function, providing a script block (`$RunFunction`) that correctly runs the specific container with its required options. `Check-AndRestoreBackup` (which calls `Restore-ContainerImage`) is often used within the install function called by `Update-Container`.
+
 ### ME - Have the container menu.
 
-Script must have at least 7 menu choices:
+Script must have at least 7 menu choices, typically implemented within a `do/while` loop calling a `Show-ContainerMenu` function:
 
 ```text
 ===========================================
