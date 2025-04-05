@@ -75,8 +75,72 @@ function Backup-ContainerState {
          return $true
     } else {
          Write-Error "Failed to save backup image to '$backupFile'."
-         return $false
+        return $false
     }
+}
+
+#############################################
+# Function: Remove-ContainerAndVolume
+# Description: Stops and removes a container, and optionally its associated volume.
+# Parameters:
+#   -Engine: Path to the container engine executable.
+#   -ContainerName: Name of the container to remove.
+#   -VolumeName: Name of the associated data volume to potentially remove.
+# Returns: $true if container removal was successful, $false otherwise.
+#############################################
+function Remove-ContainerAndVolume {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+
+        [Parameter(Mandatory=$true)]
+        [string]$ContainerName,
+
+        [Parameter(Mandatory=$true)]
+        [string]$VolumeName
+    )
+
+    # Check if container exists
+    $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
+    if (-not $existingContainer) {
+        Write-Host "Container '$ContainerName' not found. Nothing to remove." -ForegroundColor Yellow
+        return $true # Indicate success as there's nothing to do
+    }
+
+    Write-Host "Stopping container '$ContainerName'..."
+    & $Engine stop $ContainerName 2>$null | Out-Null
+
+    Write-Host "Removing container '$ContainerName'..."
+    & $Engine rm --force $ContainerName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to remove container '$ContainerName'."
+        return $false
+    }
+    Write-Host "Container '$ContainerName' removed successfully."
+
+    # Check if volume exists
+    $existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
+    if ($existingVolume) {
+        Write-Host "Data volume '$VolumeName' exists." -ForegroundColor Yellow
+        $removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
+        if ($removeVolume -eq 'Y') {
+            Write-Host "Removing volume '$VolumeName'..."
+            & $Engine volume rm $VolumeName
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "Volume '$VolumeName' removed successfully." -ForegroundColor Green
+            } else {
+                Write-Error "Failed to remove volume '$VolumeName'."
+                # Continue even if volume removal fails, as container was removed
+            }
+        } else {
+            Write-Host "Volume '$VolumeName' was not removed."
+        }
+    } else {
+        Write-Host "Volume '$VolumeName' not found."
+    }
+
+    return $true
 }
 
 #--------------------------------------

@@ -178,3 +178,50 @@ function Refresh-EnvironmentVariables {
     Write-Host "Environment variables refreshed. Current PATH:"
     Write-Host $env:PATH
 }
+
+#############################################
+# Function: Invoke-MenuLoop
+# Description: Handles a generic menu loop.
+# Parameters:
+#   -ShowMenuScriptBlock: A script block that displays the menu options.
+#   -ActionMap: A hashtable where keys are menu choices (strings) and values are script blocks to execute.
+#   -ExitChoice: The menu choice string that exits the loop (default "0").
+#############################################
+function Invoke-MenuLoop {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [scriptblock]$ShowMenuScriptBlock,
+
+        [Parameter(Mandatory=$true)]
+        [hashtable]$ActionMap,
+
+        [string]$ExitChoice = "0"
+    )
+
+    do {
+        & $ShowMenuScriptBlock
+        $choice = Read-Host "Enter your choice"
+
+        if ($ActionMap.ContainsKey($choice)) {
+            try {
+                & $ActionMap[$choice]
+            }
+            catch {
+                Write-Error "An error occurred executing action for choice '$choice': $_"
+            }
+        }
+        elseif ($choice -eq $ExitChoice) {
+            Write-Host "Exiting menu."
+        }
+        else {
+            Write-Warning "Invalid selection."
+        }
+
+        if ($choice -ne $ExitChoice) {
+             Write-Host "`nPress any key to continue..."
+             $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+             Clear-Host
+        }
+    } while ($choice -ne $ExitChoice)
+}

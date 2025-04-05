@@ -22,6 +22,7 @@ Set-ScriptLocation
 
 # Global variables used across functions.
 $global:containerName   = "pipelines"
+$global:volumeName      = "pipelines" # Assuming volume name matches container name
 $global:pipelinesFolder = ".\pipelines"
 $global:downloadFolder  = ".\downloads"
 $global:enginePath      = $null
@@ -50,7 +51,7 @@ if (-not $global:enginePath) {
 .DESCRIPTION
    This function takes an absolute Windows path and converts it to the corresponding WSL
    path by replacing the drive letter and backslashes with the Linux mount point format.
-   IMPORTANT: This workaround is CRUCIAL for successfully copying a file from the local 
+   IMPORTANT: This workaround is CRUCIAL for successfully copying a file from the local
    machine to Podman.
 .PARAMETER winPath
    The Windows path to convert.
@@ -94,7 +95,7 @@ function Install-PipelinesContainer {
         Write-Host "Pipelines container already exists. Removing it..."
         & $global:enginePath rm --force $global:containerName
     }
-    
+
     Write-Host "Running Pipelines container..."
 
     # Conditionally set the --add-host parameter if using Docker
@@ -111,12 +112,19 @@ function Install-PipelinesContainer {
         '--detach',                                      # run in background
         '--publish', '9099:9099'                          # port mapping
     ) + $addHostParams + @(
-        '--volume', 'pipelines:/app/pipelines',          # volume mapping for persistent data
+        '--volume', "$($global:volumeName):/app/pipelines", # volume mapping for persistent data
         '--restart', 'always',                           # restart policy
         '--name', $global:containerName,                 # container name
         $customPipelineImageTag                          # pre-built image tag
     )
-    
+
+    # Command: run
+    #   --detach: Run container in background.
+    #   --publish: Map host port 9099 to container port 9099.
+    #   --add-host: (Docker only) Map host.docker.internal to host gateway IP.
+    #   --volume: Mount the named volume for persistent pipeline data.
+    #   --restart always: Always restart the container unless explicitly stopped.
+    #   --name: Assign a name to the container.
     & $global:enginePath run @runArgs
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to run the Pipelines container."
@@ -162,28 +170,12 @@ function Restore-PipelinesContainer {
 
 <#
 .SYNOPSIS
-    Uninstalls (removes) the Pipelines container.
+    Uninstalls the Pipelines container and optionally the data volume.
 .DESCRIPTION
-    Checks if the engine path is set and removes the container if it exists.
+    Uses the generic Remove-ContainerAndVolume function.
 #>
 function Uninstall-PipelinesContainer {
-    if (-not $global:enginePath) {
-        Write-Error "Engine path not set. Nothing to uninstall."
-        return
-    }
-    $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing Pipelines container '$($global:containerName)'..."
-        & $global:enginePath rm --force $global:containerName
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "Pipelines container removed successfully."
-        } else {
-            Write-Error "Failed to remove Pipelines container."
-        }
-    }
-    else {
-        Write-Host "No Pipelines container found to remove."
-    }
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 }
 
 <#
@@ -238,7 +230,7 @@ function Add-PipelineToContainer {
     # Clean up the temporary file
     Remove-Item $tempFile -Force
     Write-Host "Pipeline added successfully."
-    
+
     Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
@@ -265,14 +257,14 @@ function Update-PipelinesContainer {
             return
         }
     }
-    
+
     Write-Host "Pulling the latest image..."
     & $global:enginePath pull ghcr.io/open-webui/pipelines:main
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to pull the latest Pipelines image. Update aborted."
         return
     }
-    
+
     Install-PipelinesContainer
 }
 
@@ -294,7 +286,7 @@ function Update-PipelinesUserData {
 #>
 function Show-ContainerMenu {
     Write-Host "==========================================="
-    Write-Host "Container Menu"
+    Write-Host "Pipelines Container Menu"
     Write-Host "==========================================="
     Write-Host "1. Install container"
     Write-Host "2. Uninstall container"
@@ -307,25 +299,16 @@ function Show-ContainerMenu {
 }
 
 ################################################################################
-# Main Menu Loop for Pipelines Container Management
+# Main Menu Loop using Generic Function
 ################################################################################
-do {
-    Show-ContainerMenu
-    $choice = Read-Host "Enter your choice (1, 2, 3, 4, 5, or 6)"
-    switch ($choice) {
-        "1" { Install-PipelinesContainer }
-        "2" { Uninstall-PipelinesContainer }
-        "3" { Backup-PipelinesContainer }
-        "4" { Restore-PipelinesContainer }
-        "A" { Add-PipelineToContainer }
-        "B" { Update-PipelinesContainer }
-        "C" { Update-PipelinesUserData }
-        "0" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Enter 1, 2, 3, 4, 5, or 6." }
-    }
-    if ($choice -ne "0") {
-         Write-Host "`nPress any key to continue..."
-         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-         Clear-Host
-    }
-} while ($choice -ne "0")
+$menuActions = @{
+    "1" = { Install-PipelinesContainer }
+    "2" = { Uninstall-PipelinesContainer }
+    "3" = { Backup-PipelinesContainer }
+    "4" = { Restore-PipelinesContainer }
+    "A" = { Add-PipelineToContainer }
+    "B" = { Update-PipelinesContainer }
+    "C" = { Update-PipelinesUserData }
+}
+
+Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

@@ -14,6 +14,9 @@ using namespace System.IO
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
 . "$PSScriptRoot\Setup_0_Network.ps1" # For Test-HTTPPort, Test-TCPPort
+# Note: This script specifically uses Podman, so no engine selection needed.
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1" # For Get-PodmanPath
+. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1" # For Remove-ContainerAndVolume
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -22,6 +25,10 @@ Set-ScriptLocation
 # Global Variables and Build Context Directory
 #############################################
 $global:buildDir = Join-Path $PSScriptRoot "embedding_api"
+$global:containerName = "embedding-api"
+$global:imageTag = "embedding-api" # Use the same for image and container for simplicity
+$global:volumeName = "embedding_api_data" # Define a volume name (though not used by default app)
+$global:enginePath = Get-PodmanPath # Explicitly use Podman
 
 <#
 .SYNOPSIS
@@ -29,11 +36,6 @@ $global:buildDir = Join-Path $PSScriptRoot "embedding_api"
 .DESCRIPTION
     Populates the build context directory with the Dockerfile, requirements.txt, and embedding_api.py.
     Then builds the container image with the tag "embedding-api" using Podman.
-    The file contents include informative comments such as:
-    # Command: run
-    #   --detach: runs the container in background.
-    #   --name: assigns the container the name "embedding-api".
-    #   --publish: maps host port 8000 to container port 8000.
 #>
 function Build-EmbeddingImage {
     # Define file contents for the Embedding API application.
@@ -87,13 +89,13 @@ class EmbeddingRequest(BaseModel):
 async def get_embeddings(request: EmbeddingRequest):
     if not request.input:
         raise HTTPException(status_code=400, detail='No input provided')
-    
+
     # Ensure we always operate on a list.
     inputs = request.input if isinstance(request.input, list) else [request.input]
-    
+
     # Get embeddings as a tensor; the model returns 768-d vectors.
     embeddings = model.encode(inputs, convert_to_tensor=True, show_progress_bar=False)
-    
+
     data = []
     total_tokens = 0  # (Token count not computed here)
     for i, emb in enumerate(embeddings):
@@ -108,7 +110,7 @@ async def get_embeddings(request: EmbeddingRequest):
             'embedding': emb_b64,
             'index': i
         })
-    
+
     return {
         'object': 'list',
         'data': data,
@@ -156,24 +158,42 @@ async def options_handler(path: str):
 
     Write-Host "Building the Embedding API container image..."
     # Build the container image using Podman.
-    Invoke-Expression "podman build --tag embedding-api `"$global:buildDir`""
+    & $global:enginePath build --tag $global:imageTag "`"$global:buildDir`""
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to build embedding API image."
+        exit 1
+    }
 }
 
 <#
 .SYNOPSIS
     Installs (builds and runs) the Embedding API container.
 .DESCRIPTION
-    Calls Build-EmbeddingImage to build the container image, then runs the container on port 8000.
+    Calls Build-EmbeddingImage to build the container image, removes any existing
+    container, then runs the container on port 8000.
     After starting the container, the script waits for initialization and tests connectivity.
 #>
 function Install-EmbeddingContainer {
     Build-EmbeddingImage
+
+    # Remove existing container if it exists
+    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    if ($existingContainer) {
+        Write-Host "Removing existing container '$global:containerName'..."
+        & $global:enginePath rm --force $global:containerName
+    }
+
     Write-Host "Running the Embedding API container..."
     # Command: run
     #   --detach: runs the container in background.
     #   --name: assigns the container the name "embedding-api".
     #   --publish: maps host port 8000 to container port 8000.
-    Invoke-Expression "podman run --detach --name embedding-api --publish 8000:8000 embedding-api"
+    & $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageTag
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to run embedding API container."
+        exit 1
+    }
+
     Start-Sleep -Seconds 10
     Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
     Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
@@ -185,20 +205,34 @@ function Install-EmbeddingContainer {
     Updates the Embedding API container.
 .DESCRIPTION
     Rebuilds the container image using the current build context, stops and removes the existing
-    container (if any), and runs a new container with the updated image. This integrates the update
-    logic formerly contained in a separate update script.
+    container (if any), and runs a new container with the updated image.
 #>
 function Update-EmbeddingContainer {
     Write-Host "Updating the Embedding API container..."
     # Rebuild the container image.
     Build-EmbeddingImage
-    Write-Host "Stopping existing container (if any)..."
-    # Stop container; ignore errors if not running.
-    Invoke-Expression "podman stop embedding-api"
-    Write-Host "Removing existing container (if any)..."
-    Invoke-Expression "podman rm embedding-api"
+
+    # Stop and remove existing container
+    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
+    if ($existingContainer) {
+        Write-Host "Stopping existing container..."
+        & $global:enginePath stop $global:containerName 2>$null | Out-Null
+        Write-Host "Removing existing container..."
+        & $global:enginePath rm $global:containerName
+    }
+
+    # Run the updated container
     Write-Host "Running the updated Embedding API container..."
-    Invoke-Expression "podman run --detach --name embedding-api --publish 8000:8000 embedding-api"
+    # Command: run
+    #   --detach: runs the container in background.
+    #   --name: assigns the container the name "embedding-api".
+    #   --publish: maps host port 8000 to container port 8000.
+    & $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageTag
+     if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to run updated embedding API container."
+        exit 1
+    }
+
     Start-Sleep -Seconds 10
     Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
     Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
@@ -207,15 +241,14 @@ function Update-EmbeddingContainer {
 
 <#
 .SYNOPSIS
-    Uninstalls the Embedding API container.
+    Uninstalls the Embedding API container and optionally the data volume.
 .DESCRIPTION
-    Stops and removes the container named "embedding-api" if it exists.
+    Uses the generic Remove-ContainerAndVolume function.
 #>
 function Uninstall-EmbeddingContainer {
-    Write-Host "Stopping container 'embedding-api'..."
-    Invoke-Expression "podman stop embedding-api"
-    Write-Host "Removing container 'embedding-api'..."
-    Invoke-Expression "podman rm embedding-api"
+    # Note: This app doesn't use a named volume by default, so VolumeName is set to container name
+    # for potential future use or if user manually created one.
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 }
 
 <#
@@ -227,30 +260,21 @@ function Uninstall-EmbeddingContainer {
 #>
 function Show-ContainerMenu {
     Write-Host "==========================================="
-    Write-Host "Embedding API Container Menu"
+    Write-Host "Embedding API Container Menu (Podman Only)"
     Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Update container"
+    Write-Host "1. Install/Rebuild container"
+    Write-Host "2. Update container (Rebuild & Run)"
     Write-Host "3. Uninstall container"
     Write-Host "0. Exit menu"
 }
 
 ################################################################################
-# Main Menu Loop for Embedding API Container Management
+# Main Menu Loop using Generic Function
 ################################################################################
-do {
-    Show-ContainerMenu
-    $choice = Read-Host "Enter your choice (1, 2, 3, or 0)"
-    switch ($choice) {
-        "1" { Install-EmbeddingContainer }
-        "2" { Update-EmbeddingContainer }
-        "3" { Uninstall-EmbeddingContainer }
-        "0" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Please enter 1, 2, 3, or 0." }
-    }
-    if ($choice -ne "0") {
-         Write-Host "`nPress any key to continue..."
-         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-         Clear-Host
-    }
-} while ($choice -ne "0")
+$menuActions = @{
+    "1" = { Install-EmbeddingContainer }
+    "2" = { Update-EmbeddingContainer }
+    "3" = { Uninstall-EmbeddingContainer }
+}
+
+Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

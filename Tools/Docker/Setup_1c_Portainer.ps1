@@ -137,35 +137,37 @@ function Start-PortainerContainer {
     
     # Build the run command
     $runOptions = @(
-        "--detach",
-        "--publish", "${HttpPort}:9000",
-        "--publish", "${HttpsPort}:9443",
-        "--volume", "portainer_data:/data"
+        "--detach",                             # Run container in background.
+        "--publish", "${HttpPort}:9000",        # Map host HTTP port to container port 9000.
+        "--publish", "${HttpsPort}:9443",       # Map host HTTPS port to container port 9443.
+        "--volume", "portainer_data:/data"      # Mount the named volume for persistent data.
     )
-    
+
     # Add socket volume based on container engine
     if ($global:containerEngine -eq "docker") {
+        # Mount the Docker socket for container management.
         $runOptions += "--volume"
         $runOptions += "/var/run/docker.sock:/var/run/docker.sock"
     } else {
-        # For Podman, we might need a different socket path
+        # Mount the Podman socket for container management (read-only).
         $runOptions += "--volume"
         $runOptions += "/run/podman/podman.sock:/var/run/docker.sock:ro"
     }
-    
+
+    # Assign a name to the container.
     $runOptions += "--name"
     $runOptions += "portainer"
-    
-    # Add all environment variables
+
+    # Add all environment variables (if any).
     foreach ($env in $EnvVars) {
         $runOptions += "--env"
         $runOptions += $env
     }
-    
+
     # Run the container
     Write-Host "Starting Portainer container with image: $Image"
     & $global:enginePath run $runOptions $Image
-    
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host "Waiting for container startup..."
         Start-Sleep -Seconds 10
@@ -242,68 +244,17 @@ function Install-PortainerContainer {
                 return
             }
         }
-        else {
-            Write-Host "Using restored backup image '$global:imageName'."
-        }
     }
-    else {
-        Write-Host "Portainer image already exists. Skipping pull."
-    }
-
-    # Remove any existing container
-    Remove-PortainerContainer
-
-    # Prompt user for port configuration
-    $useDefaultPorts = Read-Host "Use default ports (HTTP: $global:httpPort, HTTPS: $global:httpsPort)? (Y/N, default is Y)"
-    
-    if ($useDefaultPorts -eq "N") {
-        $httpPortInput = Read-Host "Enter HTTP port (default is $global:httpPort)"
-        if (-not [string]::IsNullOrWhiteSpace($httpPortInput)) {
-            $global:httpPort = [int]$httpPortInput
-        }
-        
-        $httpsPortInput = Read-Host "Enter HTTPS port (default is $global:httpsPort)"
-        if (-not [string]::IsNullOrWhiteSpace($httpsPortInput)) {
-            $global:httpsPort = [int]$httpsPortInput
-        }
-    }
-
-    # Define environment variables
-    $envVars = @()
-
-    # Start the container
-    Start-PortainerContainer -Image $global:imageName -EnvVars $envVars -HttpPort $global:httpPort -HttpsPort $global:httpsPort
 }
 
 <#
 .SYNOPSIS
-    Uninstalls the Portainer container.
+    Uninstalls the Portainer container and optionally the data volume.
 .DESCRIPTION
-    Checks for an existing container named "portainer" and removes it using the container engine's rm command.
-    IMPORTANT: This only removes the container, not the volume with user data.
+    Uses the generic Remove-ContainerAndVolume function.
 #>
 function Uninstall-PortainerContainer {
-    $existingContainer = & $global:enginePath ps --all --filter "name=portainer" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing Portainer container..."
-        Write-Host "IMPORTANT: This only removes the container, NOT the volume with user data." -ForegroundColor Yellow
-        Write-Host "           Your configuration remains safe in the 'portainer_data' volume." -ForegroundColor Yellow
-        
-        $confirmation = Read-Host "Continue with container removal? (Y/N)"
-        if ($confirmation -ne "Y") {
-            Write-Host "Container removal cancelled."
-            return
-        }
-        
-        if (Remove-PortainerContainer) {
-            Write-Host "Portainer container removed successfully."
-            Write-Host "To completely remove all user data, you would need to manually delete the volume with:" -ForegroundColor DarkYellow
-            Write-Host "  $global:enginePath volume rm portainer_data" -ForegroundColor DarkYellow
-        }
-    }
-    else {
-        Write-Host "No Portainer container found to remove."
-    }
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data"
 }
 
 <#
@@ -403,23 +354,14 @@ function Show-ContainerMenu {
 }
 
 ################################################################################
-# Main Menu Loop for Portainer Container Management
+# Main Menu Loop using Generic Function
 ################################################################################
-do {
-    Show-ContainerMenu
-    $choice = Read-Host "Enter your choice (1-5, or 0 to exit)"
-    switch ($choice) {
-        "1" { Install-PortainerContainer }
-        "2" { Uninstall-PortainerContainer }
-        "3" { Backup-PortainerContainer }
-        "4" { Restore-PortainerContainer }
-        "5" { Update-PortainerContainer }
-        "0" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Please enter a number between 0 and 5." }
-    }
-    if ($choice -ne "0") {
-         Write-Host "`nPress any key to continue..."
-         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-         Clear-Host
-    }
-} while ($choice -ne "0")
+$menuActions = @{
+    "1" = { Install-PortainerContainer }
+    "2" = { Uninstall-PortainerContainer }
+    "3" = { Backup-PortainerContainer }
+    "4" = { Restore-PortainerContainer }
+    "5" = { Update-PortainerContainer }
+}
+
+Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

@@ -47,25 +47,27 @@ RV - Refresh Environment Variables (Refreshes the current session's environment 
 RS - Restore Container State (restores a container from a previously saved backup tar file).
 CI - Check Image Update Available (Checks if a newer version of a container image is available from its registry).
 CW - Check WSL Status (Verifies WSL installation and required service status).
+ML - Menu Loop (Uses the generic Invoke-MenuLoop function).
+RM - Remove Container (Uses the generic Remove-ContainerAndVolume function).
 
-| Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW |
-|--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
-| Setup_0.ps1                          | HE | SR |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW |
-| Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW |
-| Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW |
-| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME |    | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    | RS | RV |    | CW |
-| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |
-| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    |
-| Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    |    |    |    |    |    | SE |    |    |    |    | BC |    | RC |    |    |    |    |    |
-| Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
-| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL | DF |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
-| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI | CW |
-| Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
-| Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
-| Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
-| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    |    |    |    | TC | HT |    |    |    |    | UP |    |    |    |    |
-| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |
-| Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
+| Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM |
+|--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| Setup_0_*.ps1                        | HE |    |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM |
+| Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW |    |    |
+| Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW |    |    |
+| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME |    | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    | RS | RV |    | CW | ML | RM |
+| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |    |    |
+| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    | ML |    |
+| Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    |    |    |    |    |    | SE |    |    |    |    | BC |    | RC |    |    |    |    |    | ML |    |
+| Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
+| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL | DF |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
+| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI | CW | ML | RM |
+| Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
+| Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
+| Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
+| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    |    |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM |
+| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |    |
+| Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
 
 ## Feature requirements
 
@@ -83,7 +85,7 @@ Script must start with a standard header block:
 
 ### SR - Shared Library Reference
 
-Scripts must include the specific shared library files they need using dot-sourcing at the beginning, after the header and any `using namespace` statements. Import only the necessary files based on the functions used.
+Scripts must include the specific shared library files (`Setup_0_*.ps1`) they need using dot-sourcing at the beginning, after the header and any `using namespace` statements. Import only the necessary files based on the functions used. **Do not import `Setup_0.ps1` directly.**
 
 **Example:** A script using core functions, network tests, and container engine selection would import:
 ```PowerShell
@@ -96,7 +98,7 @@ Scripts must include the specific shared library files they need using dot-sourc
 
 ### EL - Ensure Elevated
 
-If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Ensure-Elevated` function immediately after dot-sourcing `Setup_0.ps1`:
+If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Ensure-Elevated` function immediately after dot-sourcing `Setup_0_Core.ps1`:
 
 ```PowerShell
 Ensure-Elevated
@@ -134,13 +136,13 @@ The standard flow for installing a container service and its image should be:
 3.  If the image doesn't exist, attempt to restore from backup (`Check-AndRestoreBackup`).
 4.  If no backup restored, pull the image (`[engine] pull [image_name]`).
 5.  Remove any existing container with the same name (`[engine] rm --force [container_name]`).
-6.  Run the new container with appropriate options (`[engine] run --detach --name ... --publish ... --volume ... [image_name]`).
+6.  Run the new container with appropriate options (`[engine] run --detach --name ... --publish ... --volume ... [image_name]`). Add comments explaining parameters.
 7.  Wait for startup (`Start-Sleep`).
 8.  Test connectivity (using TC, HT, WB).
 
 ### TC / HT / WB - Port Testing
 
-After starting a container, connectivity should be tested using the relevant functions from `Setup_0.ps1`:
+After starting a container, connectivity should be tested using the relevant functions from `Setup_0_Network.ps1`:
 
 ```PowerShell
 Test-TCPPort -ComputerName "localhost" -Port [port_number] -serviceName "[Service Name]"
@@ -150,23 +152,54 @@ Test-HTTPPort -Uri "http://localhost:[port_number]" -serviceName "[Service Name]
 
 ### BS / RC / UP / RS - Backup, Restore, Update
 
-Scripts providing Backup, Restore, and Update functionality via the menu should use the corresponding shared functions from `Setup_0.ps1`:
+Scripts providing Backup, Restore, and Update functionality via the menu should use the corresponding shared functions from `Setup_0_BackupRestore.ps1` and `Setup_0_ContainerMgmt.ps1`:
 *   Backup: `Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName`
 *   Restore: `Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName` (potentially with `-RestoreVolumes`)
 *   Update: Use the `Update-Container` function, providing a script block (`$RunFunction`) that correctly runs the specific container with its required options. `Check-AndRestoreBackup` (which calls `Restore-ContainerImage`) is often used within the install function called by `Update-Container`.
 
-### ME - Have the container menu.
+### ME - Menu Display Function
 
-Script must have at least 7 menu choices, typically implemented within a `do/while` loop calling a `Show-ContainerMenu` function:
+Scripts with a menu must define a `Show-ContainerMenu` function that displays the available options clearly. The standard menu should include Install, Uninstall, Backup, Restore, Update System, Update User Data (if applicable), and Exit.
 
-```text
-===========================================
-Container Menu - {Container_Name}
-===========================================
-1. Install container
-2. Uninstall container
-3. Backup Live container
-4. Restore Live container
-5. Update System
-6. Update User Data
-0. Exit menu
+```PowerShell
+function Show-ContainerMenu {
+    Write-Host "==========================================="
+    Write-Host "[Specific Container Name] Menu"
+    Write-Host "==========================================="
+    Write-Host "1. Install container"
+    Write-Host "2. Uninstall container"
+    Write-Host "3. Backup Live container"
+    Write-Host "4. Restore Live container"
+    Write-Host "5. Update System"
+    # Write-Host "6. Update User Data" # Optional
+    # Write-Host "[Letter]. [Custom Action]" # Optional custom actions
+    Write-Host "0. Exit menu"
+}
+```
+
+### ML - Menu Loop
+
+Scripts with a menu must use the generic `Invoke-MenuLoop` function from `Setup_0_Core.ps1` to handle the menu logic. Define a hashtable mapping menu choices (strings) to the corresponding action script blocks.
+
+```PowerShell
+$menuActions = @{
+    "1" = { Install-SpecificContainer }
+    "2" = { Uninstall-SpecificContainer }
+    "3" = { Backup-SpecificContainer }
+    "4" = { Restore-SpecificContainer }
+    "5" = { Update-SpecificContainer }
+    # "6" = { Update-SpecificUserData } # Optional
+    # "A" = { Custom-Action } # Optional
+}
+
+Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+```
+
+### RM - Remove Container
+
+Scripts should use the generic `Remove-ContainerAndVolume` function from `Setup_0_ContainerMgmt.ps1` for the uninstall action. Pass the correct engine path, container name, and volume name.
+
+```PowerShell
+function Uninstall-SpecificContainer {
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "specific-container" -VolumeName "specific-volume"
+}

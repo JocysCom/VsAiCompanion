@@ -1,7 +1,7 @@
 ################################################################################
 # File         : Setup_7_NocoDB.ps1
-# Description  : Script to set up, backup, restore, uninstall, and update the 
-#                NocoDB container using Docker/Podman support. Provides a container 
+# Description  : Script to set up, backup, restore, uninstall, and update the
+#                NocoDB container using Docker/Podman support. Provides a container
 #                menu for container operations.
 #                NocoDB is an AirTable alternative.
 # Usage        : Run as Administrator if using Docker.
@@ -23,6 +23,8 @@ Set-ScriptLocation
 #############################################
 # Global Variables and Container Engine Setup
 #############################################
+$global:containerName = "nocodb"
+$global:volumeName    = "nocodb_data"
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
     Ensure-Elevated
@@ -36,7 +38,6 @@ else {
 
 # Set the NocoDB image name and container name.
 $global:imageName = "nocodb/nocodb:latest"
-$global:containerName = "nocodb"
 
 #############################################
 # Function: Install-NocoDBContainer
@@ -49,14 +50,13 @@ function Install-NocoDBContainer {
     Write-Host "Installing NocoDB container using image '$global:imageName'..."
 
     # Check if the volume for NocoDB data exists; if not, create it.
-    $volumeName = "nocodb_data"
-    $existingVolume = & $global:enginePath volume ls --filter "name=$volumeName" --format "{{.Name}}"
+    $existingVolume = & $global:enginePath volume ls --filter "name=$global:volumeName" --format "{{.Name}}"
     if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Host "Creating volume '$volumeName' for NocoDB data..."
-        & $global:enginePath volume create $volumeName
+        Write-Host "Creating volume '$global:volumeName' for NocoDB data..."
+        & $global:enginePath volume create $global:volumeName
     }
     else {
-        Write-Host "Volume '$volumeName' already exists. Skipping creation."
+        Write-Host "Volume '$global:volumeName' already exists. Skipping creation."
     }
 
     # Check if the NocoDB image exists.
@@ -90,7 +90,7 @@ function Install-NocoDBContainer {
     $runOptions = @(
         "--detach",                             # Run container in background.
         "--publish", "8570:8080",               # Map host port 8570 to container port 8080.
-        "--volume", "$($volumeName):/usr/app/data",# Bind mount volume for data persistence.
+        "--volume", "$($global:volumeName):/usr/app/data",# Bind mount volume for data persistence.
         "--name", $global:containerName         # Set container name.
     )
 
@@ -111,23 +111,10 @@ function Install-NocoDBContainer {
 
 #############################################
 # Function: Uninstall-NocoDBContainer
-# Description: Removes the NocoDB container if it exists.
+# Description: Removes the NocoDB container and optionally the data volume.
 #############################################
 function Uninstall-NocoDBContainer {
-    $existingContainer = & $global:enginePath ps --all --filter "name=^$global:containerName$" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing NocoDB container '$global:containerName'..."
-        & $global:enginePath rm --force $global:containerName
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "NocoDB container removed successfully."
-        }
-        else {
-            Write-Error "Failed to remove NocoDB container."
-        }
-    }
-    else {
-        Write-Host "No NocoDB container found to remove."
-    }
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 }
 
 #############################################
@@ -152,24 +139,12 @@ function Restore-NocoDBContainer {
 #              pulling the latest image, and reinstalling the container.
 #############################################
 function Update-NocoDBContainer {
-    Write-Host "Updating NocoDB container..."
-    $existingContainer = & $global:enginePath ps --all --filter "name=^$global:containerName$" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing existing container '$global:containerName'..."
-        & $global:enginePath rm --force $global:containerName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to remove existing NocoDB container. Update aborted."
-            return
-        }
-    }
-    Write-Host "Pulling latest NocoDB image '$global:imageName'..."
-    $pullCmd = @("pull") + $global:pullOptions + $global:imageName
-    & $global:enginePath @pullCmd
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to pull the latest NocoDB image. Update aborted."
-        return
-    }
-    Install-NocoDBContainer
+     # Define Run Function for Update-Container
+     $runContainerFunction = {
+         Install-NocoDBContainer # Re-use install logic
+     }
+    # Use the shared update function
+     Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
 }
 
 #############################################
@@ -189,23 +164,14 @@ function Show-ContainerMenu {
 }
 
 ################################################################################
-# Main Menu Loop for NocoDB Container Management
+# Main Menu Loop using Generic Function
 ################################################################################
-do {
-    Show-ContainerMenu
-    $choice = Read-Host "Enter your choice (1, 2, 3, 4, 5, or 0)"
-    switch ($choice) {
-        "1" { Install-NocoDBContainer }
-        "2" { Uninstall-NocoDBContainer }
-        "3" { Backup-NocoDBContainer }
-        "4" { Restore-NocoDBContainer }
-        "5" { Update-NocoDBContainer }
-        "0" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Please enter 1, 2, 3, 4, 5, or 0." }
-    }
-    if ($choice -ne "0") {
-         Write-Host "`nPress any key to continue..."
-         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-         Clear-Host
-    }
-} while ($choice -ne "0")h
+$menuActions = @{
+    "1" = { Install-NocoDBContainer }
+    "2" = { Uninstall-NocoDBContainer }
+    "3" = { Backup-NocoDBContainer }
+    "4" = { Restore-NocoDBContainer }
+    "5" = { Update-NocoDBContainer }
+}
+
+Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
