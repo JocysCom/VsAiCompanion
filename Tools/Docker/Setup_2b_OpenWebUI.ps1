@@ -10,8 +10,13 @@
 using namespace System
 using namespace System.IO
 
-# Dot-source common helper functions.
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_Network.ps1"
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Check-WSLStatus
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

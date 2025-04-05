@@ -8,8 +8,9 @@
 using namespace System
 using namespace System.IO
 
-# Dot-source the common functions file.
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
 
 # Function: Show-MainMenu displays backup/restore options.
 function Show-MainMenu {

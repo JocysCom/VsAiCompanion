@@ -12,8 +12,9 @@
 # Define default values at script scope
 $diskLocation = ""      # Default disk location (empty means use default user profile location)
 
-# Dot-source shared helper functions from Setup_0.ps1:
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Check-WSLStatus
 
 # Optionally ensure the script is running as Administrator and set the working directory.
 #Ensure-Elevated
@@ -435,213 +436,127 @@ function Move-PodmanMachineImage {
         Write-Error "Failed to copy Podman machine folder: $_"
         return $false
     }
-    
-    function Move-PodmanMachineImage {
-        param(
-            [Parameter(Mandatory = $true)]
-            [string]$DestinationPath,
-            [string]$MachineName = "default"
-        )
-        
-        $wslDistName = "podman-machine-$MachineName"
-        
-        # Step 1: Stop the Podman machine if it's running
-        Write-Host "Stopping Podman machine..."
-        & podman machine stop $MachineName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to stop Podman machine. Aborting move operation."
-            return $false
-        }
-        
-        # Verify the machine is stopped by checking WSL status
-        Write-Host "Verifying machine is stopped using 'wsl -l -v'..."
-        $wslStatus = & wsl -l -v 2>&1
-        Write-Host $wslStatus
-        
-        # Get the actual WSL distribution name by checking the output
-        $wslDistNames = & wsl --list
-        Write-Host "Available WSL distributions:"
-        Write-Host $wslDistNames
-        
-        # Check if podman-machine-default exists in the list
-        $podmanDistFound = $wslDistNames | Select-String -Pattern $wslDistName -SimpleMatch
-        
-        if (-not $podmanDistFound) {
-            Write-Host "Warning: Distribution '$wslDistName' not found in WSL list."
-            Write-Host "Proceeding with copying files only, skipping WSL unregister step."
-            $skipUnregister = $true
-        } else {
-            $skipUnregister = $false
-        }
-        
-        # Step 2: Locate the VHDX folder and check disk space
-        $userProfile = $env:USERPROFILE
-        $podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\$wslDistName"
-        
-        if (-not (Test-Path $podmanFolder)) {
-            Write-Error "Podman machine folder not found at: $podmanFolder"
-            return $false
-        }
-        
-        # Get source folder size
-        $folderSize = (Get-ChildItem -Path $podmanFolder -Recurse | Measure-Object -Property Length -Sum).Sum
-        $folderSizeGB = [math]::Round($folderSize / 1GB, 2)
-        Write-Host "Source folder size: $folderSizeGB GB"
-        
-        # Check destination disk space
-        $destinationDrive = [System.IO.Path]::GetPathRoot($DestinationPath)
-        # Extract just the drive letter with colon (e.g., "D:")
-        $driveLetter = $destinationDrive.Substring(0, 2)
-        $freeSpace = (Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='$driveLetter'").FreeSpace
-        $freeSpaceGB = [math]::Round($freeSpace / 1GB, 2)
-        Write-Host "Free space on destination drive ($driveLetter): $freeSpaceGB GB"
-        
-        if ($freeSpace -lt ($folderSize * 1.1)) {  # Add 10% buffer
-            Write-Error "Insufficient disk space on destination drive. Need at least $([math]::Round($folderSize * 1.1 / 1GB, 2)) GB but only $freeSpaceGB GB available."
-            return $false
-        }
-        
-        # Create destination directory if it doesn't exist
-        $destinationFolder = Join-Path $DestinationPath $wslDistName
-        if (-not (Test-Path $destinationFolder)) {
-            Write-Host "Creating destination directory: $destinationFolder"
-            New-Item -ItemType Directory -Path $destinationFolder -Force | Out-Null
-        }
-        
-        # Copy the entire folder (not just VHDX)
-        Write-Host "Copying Podman machine folder to new location..."
-        Write-Host "From: $podmanFolder"
-        Write-Host "To: $destinationFolder"
-        
-        try {
-            Copy-Item -Path "$podmanFolder\*" -Destination $destinationFolder -Recurse -Force
-            Write-Host "Folder copied successfully."
-        }
-        catch {
-            Write-Error "Failed to copy Podman machine folder: $_"
-            return $false
-        }
-        
-        # Verify the VHDX file was copied
-        $vhdxPath = Join-Path $destinationFolder "ext4.vhdx"
-        if (-not (Test-Path $vhdxPath)) {
-            Write-Error "VHDX file not found after copy at: $vhdxPath"
-            return $false
-        }
-        
-        # Step 3: Unregister the WSL distribution only if it exists
-        if (-not $skipUnregister) {
-            Write-Host "Unregistering WSL distribution: $wslDistName"
-            Write-Host "This will remove the original VHDX file."
-            $confirm = Read-Host "Continue? (Y/N, default is N)"
-            if ($confirm -ne "Y") {
-                Write-Host "Operation cancelled. The copied files remain at: $destinationFolder"
-                Write-Host "Original Podman machine is untouched."
-                return $false
-            }
-            
-            & wsl --unregister $wslDistName
-            if ($LASTEXITCODE -ne 0) {
-                Write-Warning "Failed to unregister WSL distribution. Continuing with import step."
-            }
-        } else {
-            Write-Host "Skipping WSL unregister step as distribution was not found."
-        }
-        
-        # Step 4: Import the copied VHDX file in-place
-        Write-Host "Importing VHDX in-place..."
-        & wsl --import-in-place $wslDistName $vhdxPath
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to import VHDX in-place. Check if the path is correct and try again."
-            Write-Host "VHDX path: $vhdxPath"
-            
-            # Alternate approach if import-in-place fails
-            Write-Host "Trying alternate import method..."
-            & wsl --import $wslDistName $destinationFolder $vhdxPath
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "All import methods failed. Manual intervention required."
-                return $false
-            }
-        }
-        
-        # Step 5: Update Podman configuration if needed
-        # The .config directory contains Podman's machine configuration files
-        $configDir = Join-Path $env:USERPROFILE ".config\containers\podman\machine"
-        
-        if (Test-Path $configDir) {
-            Write-Host "Updating Podman machine configuration..."
-            
-            # First stop any existing podman processes
-            Get-Process | Where-Object { $_.Name -like "*podman*" } | ForEach-Object {
-                Write-Host "Stopping process: $($_.Name) (ID: $($_.Id))"
-                Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
-            }
-            
-            # Make a backup of the current configuration
-            $backupFolder = Join-Path $env:TEMP "podman-config-backup-$(Get-Date -Format 'yyyyMMddHHmmss')"
-            Write-Host "Creating backup of Podman configuration at: $backupFolder"
-            if (Test-Path $configDir) {
-                Copy-Item -Path $configDir -Destination $backupFolder -Recurse
-            }
-            
-            # Remove the configuration to force Podman to recreate it
-            Write-Host "Removing current machine configuration to force recreation..."
-            Remove-Item -Path $configDir -Recurse -Force -ErrorAction SilentlyContinue
-        }
-        
-        # Step 6: Initialize/recreate the Podman machine
-        Write-Host "Re-initializing Podman machine with the moved WSL distribution..."
-        
-        # Wait for WSL to fully register the imported distribution
-        Start-Sleep -Seconds 5
-        
-        # Check if podman-machine-default is registered in WSL
-        $wslCheck = & wsl --list | Select-String -Pattern $wslDistName
-        if (-not $wslCheck) {
-            Write-Error "WSL distribution '$wslDistName' was not properly registered. Please check WSL status."
-            return $false
-        }
-        
-        # Initialize a new Podman machine with "--now=false" to avoid starting it yet
-        Write-Host "Creating new Podman machine configuration..."
-        & podman machine init --now=false
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to initialize new Podman machine configuration."
-            return $false
-        }
-        
-        # Start the Podman machine
-        Write-Host "Starting Podman machine..."
-        & podman machine start $MachineName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to start Podman machine after move. Check if the import was successful using 'wsl -l -v'."
-            
-            # If starting fails, try a different approach - remove and recreate
-            Write-Host "Attempting recovery by recreating the machine..."
-            
-            # Keep the WSL distribution but remove the Podman machine
-            & podman machine rm -f $MachineName 2>$null
-            
-            # Initialize a new machine pointing to the existing WSL distribution
-            & podman machine init
-            if ($LASTEXITCODE -eq 0) {
-                & podman machine start $MachineName
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "Machine successfully recreated and started."
-                    return $true
-                }
-            }
-            
-            Write-Host "Recovery failed. You may need to: "
-            Write-Host "1. Run 'podman machine rm -f $MachineName' to remove the failed configuration"
-            Write-Host "2. Run 'podman machine init' to create a new machine"
-            Write-Host "3. Run 'podman machine start $MachineName' to start it"
-            return $false
-        }
-        
-        Write-Host "Podman machine image successfully moved to: $destinationFolder" -ForegroundColor Green
-        return $true
+
+    # Verify the VHDX file was copied
+    $vhdxPath = Join-Path $destinationFolder "ext4.vhdx"
+    if (-not (Test-Path $vhdxPath)) {
+        Write-Error "VHDX file not found after copy at: $vhdxPath"
+        return $false
     }
+
+    # Step 3: Unregister the WSL distribution only if it exists
+    if (-not $skipUnregister) {
+        Write-Host "Unregistering WSL distribution: $wslDistName"
+        Write-Host "This will remove the original VHDX file."
+        $confirm = Read-Host "Continue? (Y/N, default is N)"
+        if ($confirm -ne "Y") {
+            Write-Host "Operation cancelled. The copied files remain at: $destinationFolder"
+            Write-Host "Original Podman machine is untouched."
+            return $false
+        }
+
+        & wsl --unregister $wslDistName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to unregister WSL distribution. Continuing with import step."
+        }
+    } else {
+        Write-Host "Skipping WSL unregister step as distribution was not found."
+    }
+
+    # Step 4: Import the copied VHDX file in-place
+    Write-Host "Importing VHDX in-place..."
+    & wsl --import-in-place $wslDistName $vhdxPath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to import VHDX in-place. Check if the path is correct and try again."
+        Write-Host "VHDX path: $vhdxPath"
+
+        # Alternate approach if import-in-place fails
+        Write-Host "Trying alternate import method..."
+        & wsl --import $wslDistName $destinationFolder $vhdxPath
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "All import methods failed. Manual intervention required."
+            return $false
+        }
+    }
+
+    # Step 5: Update Podman configuration if needed
+    # The .config directory contains Podman's machine configuration files
+    $configDir = Join-Path $env:USERPROFILE ".config\containers\podman\machine"
+
+    if (Test-Path $configDir) {
+        Write-Host "Updating Podman machine configuration..."
+
+        # First stop any existing podman processes
+        Get-Process | Where-Object { $_.Name -like "*podman*" } | ForEach-Object {
+            Write-Host "Stopping process: $($_.Name) (ID: $($_.Id))"
+            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+        }
+
+        # Make a backup of the current configuration
+        $backupFolder = Join-Path $env:TEMP "podman-config-backup-$(Get-Date -Format 'yyyyMMddHHmmss')"
+        Write-Host "Creating backup of Podman configuration at: $backupFolder"
+        if (Test-Path $configDir) {
+            Copy-Item -Path $configDir -Destination $backupFolder -Recurse
+        }
+
+        # Remove the configuration to force Podman to recreate it
+        Write-Host "Removing current machine configuration to force recreation..."
+        Remove-Item -Path $configDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    # Step 6: Initialize/recreate the Podman machine
+    Write-Host "Re-initializing Podman machine with the moved WSL distribution..."
+
+    # Wait for WSL to fully register the imported distribution
+    Start-Sleep -Seconds 5
+
+    # Check if podman-machine-default is registered in WSL
+    $wslCheck = & wsl --list | Select-String -Pattern $wslDistName
+    if (-not $wslCheck) {
+        Write-Error "WSL distribution '$wslDistName' was not properly registered. Please check WSL status."
+        return $false
+    }
+
+    # Initialize a new Podman machine with "--now=false" to avoid starting it yet
+    Write-Host "Creating new Podman machine configuration..."
+    & podman machine init --now=false
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to initialize new Podman machine configuration."
+        return $false
+    }
+
+    # Start the Podman machine
+    Write-Host "Starting Podman machine..."
+    & podman machine start $MachineName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to start Podman machine after move. Check if the import was successful using 'wsl -l -v'."
+
+        # If starting fails, try a different approach - remove and recreate
+        Write-Host "Attempting recovery by recreating the machine..."
+
+        # Keep the WSL distribution but remove the Podman machine
+        & podman machine rm -f $MachineName 2>$null
+
+        # Initialize a new machine pointing to the existing WSL distribution
+        & podman machine init
+        if ($LASTEXITCODE -eq 0) {
+            & podman machine start $MachineName
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "Machine successfully recreated and started."
+                return $true
+            }
+        }
+
+        Write-Host "Recovery failed. You may need to: "
+        Write-Host "1. Run 'podman machine rm -f $MachineName' to remove the failed configuration"
+        Write-Host "2. Run 'podman machine init' to create a new machine"
+        Write-Host "3. Run 'podman machine start $MachineName' to start it"
+        return $false
+    }
+
+    Write-Host "Podman machine image successfully moved to: $destinationFolder" -ForegroundColor Green
+    return $true
+}
 
 #############################################
 # Function: Start-PodmanMachine

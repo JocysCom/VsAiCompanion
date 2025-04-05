@@ -83,11 +83,15 @@ Script must start with a standard header block:
 
 ### SR - Shared Library Reference
 
-Script must include the shared library using dot-sourcing at the beginning, after the header and any `using namespace` statements:
+Scripts must include the specific shared library files they need using dot-sourcing at the beginning, after the header and any `using namespace` statements. Import only the necessary files based on the functions used.
 
+**Example:** A script using core functions, network tests, and container engine selection would import:
 ```PowerShell
-# Dot-source the common functions file.
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_Network.ps1"
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+# Add other Setup_0_*.ps1 files as needed (e.g., Setup_0_BackupRestore.ps1)
 ```
 
 ### EL - Ensure Elevated

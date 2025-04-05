@@ -11,8 +11,9 @@
 using namespace System
 using namespace System.IO
 
-# Dot-source the common functions file.
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_Network.ps1" # For Test-HTTPPort, Test-TCPPort
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

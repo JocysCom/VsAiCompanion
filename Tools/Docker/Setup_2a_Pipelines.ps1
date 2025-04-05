@@ -10,10 +10,12 @@
 using namespace System
 using namespace System.IO
 
-# Dot-source the common functions file (assumed to provide functions like Check-Git, Set-ScriptLocation,
-# Select-ContainerEngine, Get-DockerPath, Get-PodmanPath, Backup-ContainerState, Restore-ContainerState,
-# Test-TCPPort, and Test-HTTPPort).
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_Network.ps1"
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
 
 # Ensure the working directory is set.
 Set-ScriptLocation

@@ -9,8 +9,10 @@
 using namespace System
 using namespace System.IO
 
-# Dot-source the common functions file.
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_WSL.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
 Ensure-Elevated
