@@ -43,29 +43,29 @@ BC - Backup Container Image (backs up a container image to a tar file).
 BS - Backup Container State (backs up a live running container by committing its state to an image and saving that image as a tar file).
 RC - Restore Container Image (restores a container image from a tar file).
 UP - Update Container (updates a container while preserving its configuration).
-RE - Refresh Environment Variables (Refreshes the current session's environment variables).
-RE - Restore Container State (restores a container from a previously saved backup tar file).
+RV - Refresh Environment Variables (Refreshes the current session's environment variables).
+RS - Restore Container State (restores a container from a previously saved backup tar file).
 CI - Check Image Update Available (Checks if a newer version of a container image is available from its registry).
 CW - Check WSL Status (Verifies WSL installation and required service status).
 
-| Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RE | RV | CI | CW |
+| Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW |
 |--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
-| Setup_0.ps1                          | HE | SR |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| Setup_0.ps1                          | HE | SR |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW |
 | Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW |
-| Setup_1a_Docker.ps1                  | HE | SR | CS |    |    | EL | SL | DF |    | GP |    |    |    |    |    |    |    |    |    |    |    |    |    | CW |
-| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME |    | SL | DF |    |    | PP |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_1b_BackupRestore.ps1           | HE | SR |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    | RC |    |    |    |    |    |
-| Setup_1c_Portainer.ps1               | HE | SR |    |    | ME | EL | SL |    |    | GP |    | SE |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_2a_Pipelines.ps1               | HE | SR |    |    | ME |    | SL | DF |    |    |    | SE |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_2b_OpenWebUI.ps1               | HE | SR |    |    | ME |    | SL |    |    |    |    |    |    |    |    | WB |    |    |    |    |    |    | CW |    |
-| Setup_3_n8n.ps1                      | HE | SR |    |    | ME |    | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_4_Firecrawl.ps1                | HE | SR |    |    | ME |    | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_5_Qdrant.ps1                   | HE | SR |    |    | ME |    | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_6_Embedding.ps1                | HE | SR |    |    |    |    | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_7_NocoDB.ps1                   | HE | SR |    |    | ME |    | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW |
+| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME |    | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    | RS | RV |    | CW |
+| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |
+| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    |
+| Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    |    |    |    |    |    | SE |    |    |    |    | BC |    | RC |    |    |    |    |    |
+| Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
+| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL | DF |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
+| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI | CW |
+| Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
+| Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
+| Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
+| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    |    |    |    | TC | HT |    |    |    |    | UP |    |    |    |    |
+| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |
+| Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
 
 ## Feature requirements:
 
