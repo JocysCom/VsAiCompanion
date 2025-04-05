@@ -33,7 +33,7 @@ function Backup-ContainerState {
 
     if (-not (Test-Path $BackupFolder)) {
          New-Item -ItemType Directory -Path $BackupFolder -Force | Out-Null
-         Write-Host "Created backup folder: $BackupFolder"
+         Write-Output "Created backup folder: $BackupFolder"
     }
 
     # Check if the container exists.
@@ -44,12 +44,12 @@ function Backup-ContainerState {
     }
 
     # Debug output to verify container name
-    Write-Host "DEBUG: Container name is '$ContainerName'"
+    Write-Output "DEBUG: Container name is '$ContainerName'"
 
     # Create a simple image tag without any container- prefix that might be causing issues
     $backupImageTag = "backup-$ContainerName"
 
-    Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
+    Write-Output "Committing container '$ContainerName' to image '$backupImageTag'..."
     # podman commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
     # commit    Create a new image from a container's changes.
     & $Engine commit $ContainerName $backupImageTag
@@ -65,13 +65,13 @@ function Backup-ContainerState {
     }
     $backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
 
-    Write-Host "Saving backup image '$backupImageTag' to '$backupFile'..."
+    Write-Output "Saving backup image '$backupImageTag' to '$backupFile'..."
     # podman save [options] IMAGE
     # save      Save an image to a tar archive.
     # --output string   Specify the output file for saving the image.
     & $Engine save --output $backupFile $backupImageTag
     if ($LASTEXITCODE -eq 0) {
-         Write-Host "Backup successfully saved to '$backupFile'."
+         Write-Output "Backup successfully saved to '$backupFile'."
          return $true
     } else {
          Write-Error "Failed to save backup image to '$backupFile'."
@@ -89,7 +89,8 @@ function Backup-ContainerState {
 # Returns: $true if container removal was successful, $false otherwise.
 #############################################
 function Remove-ContainerAndVolume {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -104,40 +105,46 @@ function Remove-ContainerAndVolume {
     # Check if container exists
     $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
     if (-not $existingContainer) {
-        Write-Host "Container '$ContainerName' not found. Nothing to remove." -ForegroundColor Yellow
+        Write-Output "Container '$ContainerName' not found. Nothing to remove." # Removed ForegroundColor Yellow
         return $true # Indicate success as there's nothing to do
     }
 
-    Write-Host "Stopping container '$ContainerName'..."
-    & $Engine stop $ContainerName 2>$null | Out-Null
-
-    Write-Host "Removing container '$ContainerName'..."
-    & $Engine rm --force $ContainerName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to remove container '$ContainerName'."
-        return $false
+    if ($PSCmdlet.ShouldProcess($ContainerName, "Stop Container")) {
+        Write-Output "Stopping container '$ContainerName'..."
+        & $Engine stop $ContainerName 2>$null | Out-Null
     }
-    Write-Host "Container '$ContainerName' removed successfully."
+
+    if ($PSCmdlet.ShouldProcess($ContainerName, "Remove Container")) {
+        Write-Output "Removing container '$ContainerName'..."
+        & $Engine rm --force $ContainerName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to remove container '$ContainerName'."
+            return $false
+        }
+        Write-Output "Container '$ContainerName' removed successfully."
+    }
 
     # Check if volume exists
     $existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
     if ($existingVolume) {
-        Write-Host "Data volume '$VolumeName' exists." -ForegroundColor Yellow
+        Write-Output "Data volume '$VolumeName' exists." # Removed ForegroundColor Yellow
         $removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
         if ($removeVolume -eq 'Y') {
-            Write-Host "Removing volume '$VolumeName'..."
-            & $Engine volume rm $VolumeName
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "Volume '$VolumeName' removed successfully." -ForegroundColor Green
-            } else {
-                Write-Error "Failed to remove volume '$VolumeName'."
-                # Continue even if volume removal fails, as container was removed
+            if ($PSCmdlet.ShouldProcess($VolumeName, "Remove Volume")) {
+                Write-Output "Removing volume '$VolumeName'..."
+                & $Engine volume rm $VolumeName
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Output "Volume '$VolumeName' removed successfully." # Removed ForegroundColor Green
+                } else {
+                    Write-Error "Failed to remove volume '$VolumeName'."
+                    # Continue even if volume removal fails, as container was removed
+                }
             }
         } else {
-            Write-Host "Volume '$VolumeName' was not removed."
+            Write-Output "Volume '$VolumeName' was not removed."
         }
     } else {
-        Write-Host "Volume '$VolumeName' not found."
+        Write-Output "Volume '$VolumeName' not found."
     }
 
     return $true
@@ -161,7 +168,7 @@ function Restore-ContainerState {
         [Parameter(Mandatory=$true)]
         [string]$ContainerName,
         [string]$BackupFolder = ".\Backup",
-        [switch]$RestoreVolumes = $true
+        [switch]$RestoreVolumes = $false # Changed default to $false
     )
 
     # First try the container-specific backup format
@@ -170,8 +177,8 @@ function Restore-ContainerState {
 
     # If container-specific backup not found, try to find a matching image backup
     if (-not (Test-Path $backupFile)) {
-        Write-Host "Container-specific backup file '$backupFile' not found."
-        Write-Host "Looking for image backups that might match this container..."
+        Write-Output "Container-specific backup file '$backupFile' not found."
+        Write-Output "Looking for image backups that might match this container..."
 
         # Get all tar files in the backup folder
         $tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*.tar"
@@ -185,7 +192,7 @@ function Restore-ContainerState {
             # Check if this backup file might be for the container we're looking for
             if ($potentialImageName -match $ContainerName) {
                 $matchingBackup = $file.FullName
-                Write-Host "Found potential matching backup: $matchingBackup"
+                Write-Output "Found potential matching backup: $matchingBackup"
                 break
             }
         }
@@ -198,7 +205,7 @@ function Restore-ContainerState {
         }
     }
 
-    Write-Host "Loading backup image from '$backupFile'..."
+    Write-Output "Loading backup image from '$backupFile'..."
     # podman load [options]
     # load      Load an image from a tar archive.
     # --input string   Specify the input file containing the saved image.
@@ -212,7 +219,7 @@ function Restore-ContainerState {
     $imageName = $null
     if ($loadOutput -match "Loaded image: (.+)") {
         $imageName = $matches[1].Trim()
-        Write-Host "Loaded image: $imageName"
+        Write-Output "Loaded image: $imageName"
     } else {
         Write-Error "Could not determine the loaded image name from output: $loadOutput"
         return $false
@@ -226,19 +233,19 @@ function Restore-ContainerState {
             $volumeBackupFile = Join-Path $BackupFolder "$volumeName-data.tar"
 
             if (Test-Path $volumeBackupFile) {
-                Write-Host "Found volume backup for '$volumeName': $volumeBackupFile"
+                Write-Output "Found volume backup for '$volumeName': $volumeBackupFile"
 
                 # Check if volume exists, create if not
                 $volumeExists = & $Engine volume ls --filter "name=$volumeName" --format "{{.Name}}"
                 if (-not $volumeExists) {
-                    Write-Host "Creating volume '$volumeName'..."
+                    Write-Output "Creating volume '$volumeName'..."
                     & $Engine volume create $volumeName
                 }
 
                 # Ask for confirmation before restoring volume
                 $restoreVolumeConfirm = Read-Host "Restore volume data for '$volumeName'? This will merge with existing data. (Y/N, default is Y)"
                 if ($restoreVolumeConfirm -ne "N") {
-                    Write-Host "Restoring volume '$volumeName' from '$volumeBackupFile'..."
+                    Write-Output "Restoring volume '$volumeName' from '$volumeBackupFile'..."
 
                     # Create a temporary container to restore the volume data
                     $tempContainerName = "restore-volume-$volumeName-$(Get-Random)"
@@ -247,16 +254,16 @@ function Restore-ContainerState {
                     & $Engine run --rm --volume ${volumeName}:/target --volume ${BackupFolder}:/backup --name $tempContainerName alpine tar -xf /backup/$(Split-Path $volumeBackupFile -Leaf) -C /target
 
                     if ($LASTEXITCODE -eq 0) {
-                        Write-Host "Successfully restored volume '$volumeName' from '$volumeBackupFile'" -ForegroundColor Green
+                        Write-Output "Successfully restored volume '$volumeName' from '$volumeBackupFile'" # Removed ForegroundColor Green
                     } else {
                         Write-Error "Failed to restore volume '$volumeName'"
                     }
                 } else {
-                    Write-Host "Skipping volume restore as requested."
+                    Write-Output "Skipping volume restore as requested."
                 }
             } else {
-                Write-Host "No volume backup found for '$volumeName' at '$volumeBackupFile'."
-                Write-Host "Will continue with container image restore only. Existing volume data will be preserved."
+                Write-Output "No volume backup found for '$volumeName' at '$volumeBackupFile'."
+                Write-Output "Will continue with container image restore only. Existing volume data will be preserved."
             }
         }
         # For other containers, we would need to determine volume names differently
@@ -267,7 +274,7 @@ function Restore-ContainerState {
 }
 
 #############################################
-# Function: Check-ImageUpdateAvailable
+# Function: Test-ImageUpdateAvailable
 # Description: Checks if a newer version of a container image is available
 #              from its registry. Works with multiple registries including
 #              docker.io, ghcr.io, and others.
@@ -276,8 +283,9 @@ function Restore-ContainerState {
 #   -ImageName: Full image name including registry (e.g., ghcr.io/open-webui/open-webui:main)
 # Returns: $true if an update is available, $false otherwise
 #############################################
-function Check-ImageUpdateAvailable {
+function Test-ImageUpdateAvailable { # Renamed function
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -286,12 +294,12 @@ function Check-ImageUpdateAvailable {
         [string]$ImageName
     )
 
-    Write-Host "Checking for updates to $ImageName..."
+    Write-Output "Checking for updates to $ImageName..."
 
     # First, check if we have the image locally
     $localImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
     if (-not $localImageInfo) {
-        Write-Host "Image '$ImageName' not found locally. Update is available." -ForegroundColor Yellow
+        Write-Output "Image '$ImageName' not found locally. Update is available." # Removed ForegroundColor Yellow
         return $true
     }
 
@@ -309,7 +317,7 @@ function Check-ImageUpdateAvailable {
         return $true
     }
 
-    Write-Host "Local image digest: $localDigest"
+    Write-Output "Local image digest: $localDigest"
 
     # Determine container engine type (docker or podman)
     $engineType = "docker"
@@ -318,7 +326,7 @@ function Check-ImageUpdateAvailable {
     }
 
     # Pull the image with latest tag but don't update the local image
-    Write-Host "Checking remote registry for latest version..."
+    Write-Output "Checking remote registry for latest version..."
 
     # Different approach for Docker vs Podman
     if ($engineType -eq "docker") {
@@ -392,14 +400,14 @@ function Check-ImageUpdateAvailable {
         return $true
     }
 
-    Write-Host "Remote image digest: $remoteDigest"
+    Write-Output "Remote image digest: $remoteDigest"
 
     # Compare digests
     if ($localDigest -ne $remoteDigest) {
-        Write-Host "Update available! Local and remote image digests differ." -ForegroundColor Green
+        Write-Output "Update available! Local and remote image digests differ." # Removed ForegroundColor Green
         return $true
     } else {
-        Write-Host "No update available. You have the latest version." -ForegroundColor Green
+        Write-Output "No update available. You have the latest version." # Removed ForegroundColor Green
         return $false
     }
 }
@@ -416,7 +424,8 @@ function Check-ImageUpdateAvailable {
 # Returns: $true if successful, $false otherwise
 #############################################
 function Update-Container {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -433,74 +442,91 @@ function Update-Container {
         [scriptblock]$RunFunction
     )
 
-    Write-Host "Initiating update for container '$ContainerName'..."
+    Write-Output "Initiating update for container '$ContainerName'..."
 
     # Step 1: Check if container exists
-    $containerInfo = & $Engine inspect $ContainerName 2>$null
+    # $containerInfo = & $Engine inspect $ContainerName 2>$null # Unused variable removed
+    & $Engine inspect $ContainerName 2>$null | Out-Null # Check existence without storing info
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "Container '$ContainerName' not found. Nothing to update." -ForegroundColor Yellow
+        Write-Output "Container '$ContainerName' not found. Nothing to update." # Removed ForegroundColor Yellow
         return $false
     }
 
     # Step 2: Check if an update is available
-    $updateAvailable = Check-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName
+    $updateAvailable = Test-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName # Use renamed function
     if (-not $updateAvailable) {
         $forceUpdate = Read-Host "No update available. Do you want to force an update anyway? (Y/N, default is N)"
         if ($forceUpdate -ne "Y") {
-            Write-Host "Update canceled. No changes made."
+            Write-Output "Update canceled. No changes made."
             return $false
         }
-        Write-Host "Proceeding with forced update..."
+        Write-Output "Proceeding with forced update..."
     }
 
     # Step 3: Optionally backup the container
     $createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
     if ($createBackup -ne "N") {
-        Write-Host "Creating backup of current container..."
-        Backup-ContainerState -Engine $Engine -ContainerName $ContainerName
+        if ($PSCmdlet.ShouldProcess($ContainerName, "Backup Container State")) {
+            Write-Output "Creating backup of current container..."
+            Backup-ContainerState -Engine $Engine -ContainerName $ContainerName
+        }
     }
 
     # Step 4: Remove the existing container
-    Write-Host "Removing existing container '$ContainerName' as part of the update..."
-    & $Engine rm --force $ContainerName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to remove container '$ContainerName'. Update aborted."
-        return $false
+    if ($PSCmdlet.ShouldProcess($ContainerName, "Remove Container for Update")) {
+        Write-Output "Removing existing container '$ContainerName' as part of the update..."
+        & $Engine rm --force $ContainerName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to remove container '$ContainerName'. Update aborted."
+            return $false
+        }
     }
 
     # Step 5: Pull the latest image
-    Write-Host "Pulling latest image '$ImageName'..."
-    & $Engine pull --platform $Platform $ImageName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to pull the latest image. Update aborted."
+    if ($PSCmdlet.ShouldProcess($ImageName, "Pull Latest Image")) {
+        Write-Output "Pulling latest image '$ImageName'..."
+        & $Engine pull --platform $Platform $ImageName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to pull the latest image. Update aborted."
 
-        # Offer to restore from backup if one was created
-        if ($createBackup -ne "N") {
-            $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-            if ($restore -ne "N") {
-                Restore-ContainerState -Engine $Engine -ContainerName $ContainerName
+            # Offer to restore from backup if one was created
+            if ($createBackup -ne "N") {
+                $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+                if ($restore -ne "N") {
+                    if ($PSCmdlet.ShouldProcess($ContainerName, "Restore Container State after Failed Update")) {
+                        Restore-ContainerState -Engine $Engine -ContainerName $ContainerName
+                    }
+                }
             }
+            return $false
         }
-        return $false
     }
 
     # Step 6: Run the container using the provided function
-    Write-Host "Starting updated container..."
-    try {
-        & $RunFunction
-        Write-Host "Container '$ContainerName' updated successfully!" -ForegroundColor Green
-        return $true
-    }
-    catch {
-        Write-Error "Failed to start updated container: $_"
-
-        # Offer to restore from backup if one was created
-        if ($createBackup -ne "N") {
-            $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-            if ($restore -ne "N") {
-                Restore-ContainerState -Engine $Engine -ContainerName $ContainerName
-            }
+    if ($PSCmdlet.ShouldProcess($ContainerName, "Start Updated Container")) {
+        Write-Output "Starting updated container..."
+        try {
+            & $RunFunction
+            Write-Output "Container '$ContainerName' updated successfully!" # Removed ForegroundColor Green
+            return $true
         }
-        return $false
+        catch {
+            Write-Error "Failed to start updated container: $_"
+
+            # Offer to restore from backup if one was created
+            if ($createBackup -ne "N") {
+                $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+                if ($restore -ne "N") {
+                    if ($PSCmdlet.ShouldProcess($ContainerName, "Restore Container State after Failed Start")) {
+                        Restore-ContainerState -Engine $Engine -ContainerName $ContainerName
+                    }
+                }
+            }
+            return $false
+        }
+    } else {
+        # If ShouldProcess returned false for starting the container
+        Write-Output "Update process completed (image pulled, old container removed), but new container start was skipped due to -WhatIf."
+        return $true # Consider it a success in terms of -WhatIf
     }
 }

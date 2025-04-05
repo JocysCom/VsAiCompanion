@@ -53,11 +53,11 @@ function Install-FirecrawlContainer {
     #############################################
     $existingNetwork = & $global:enginePath network ls --filter "name=^$global:networkName$" --format "{{.Name}}"
     if ($existingNetwork -ne $global:networkName) {
-        Write-Host "Creating Docker network '$global:networkName'..."
+        Write-Output "Creating Docker network '$global:networkName'..." # Replaced Write-Host
         & $global:enginePath network create $global:networkName
     }
     else {
-        Write-Host "Docker network '$global:networkName' already exists."
+        Write-Output "Docker network '$global:networkName' already exists." # Replaced Write-Host
     }
 
     #############################################
@@ -65,10 +65,10 @@ function Install-FirecrawlContainer {
     #############################################
     $existingRedis = & $global:enginePath ps --all --filter "name=^$global:redisContainerName$" --format "{{.ID}}"
     if ($existingRedis) {
-        Write-Host "Removing existing Redis container '$global:redisContainerName'..."
+        Write-Output "Removing existing Redis container '$global:redisContainerName'..." # Replaced Write-Host
         & $global:enginePath rm --force $global:redisContainerName
     }
-    Write-Host "Starting Redis container '$global:redisContainerName' on network '$global:networkName' with alias 'redis'..."
+    Write-Output "Starting Redis container '$global:redisContainerName' on network '$global:networkName' with alias 'redis'..." # Replaced Write-Host
     # Command: run (for Redis)
     #   --detach: Run container in background.
     #   --name: Assign a name to the container.
@@ -81,10 +81,10 @@ function Install-FirecrawlContainer {
         exit 1
     }
 
-    Write-Host "Waiting 10 seconds for Redis container to initialize..."
+    Write-Output "Waiting 10 seconds for Redis container to initialize..." # Replaced Write-Host
     Start-Sleep -Seconds 10
 
-    Write-Host "Testing Redis container connectivity on port 6379 before installing Firecrawl..."
+    Write-Output "Testing Redis container connectivity on port 6379 before installing Firecrawl..." # Replaced Write-Host
     if (-not (Test-TCPPort -ComputerName "localhost" -Port 6379 -serviceName "Firecrawl Redis")) {
         Write-Error "Redis connectivity test failed. Aborting Firecrawl installation."
         exit 1
@@ -93,8 +93,8 @@ function Install-FirecrawlContainer {
     #############################################
     # Step 3: Pull the Firecrawl Docker Image
     #############################################
-    if (-not (Check-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-        Write-Host "No backup restored. Pulling Firecrawl Docker image '$global:imageName'..."
+    if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
+        Write-Output "No backup restored. Pulling Firecrawl Docker image '$global:imageName'..." # Replaced Write-Host
         & $global:enginePath pull $global:imageName
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Docker pull failed for image '$global:imageName'."
@@ -102,7 +102,7 @@ function Install-FirecrawlContainer {
         }
     }
     else {
-        Write-Host "Using restored backup image '$global:imageName'."
+        Write-Output "Using restored backup image '$global:imageName'." # Replaced Write-Host
     }
 
     #############################################
@@ -110,18 +110,18 @@ function Install-FirecrawlContainer {
     #############################################
     $existingFirecrawl = & $global:enginePath ps --all --filter "name=^$global:firecrawlName$" --format "{{.ID}}"
     if ($existingFirecrawl) {
-        Write-Host "Removing existing Firecrawl container '$global:firecrawlName'..."
+        Write-Output "Removing existing Firecrawl container '$global:firecrawlName'..." # Replaced Write-Host
         & $global:enginePath rm --force $global:firecrawlName
     }
 
     #############################################
     # Step 5: Run the Firecrawl Container with Overridden Redis Settings
     #############################################
-    Write-Host "Starting Firecrawl container '$global:firecrawlName'..."
+    Write-Output "Starting Firecrawl container '$global:firecrawlName'..." # Replaced Write-Host
     # Create volume if it doesn't exist
     $existingVolume = & $global:enginePath volume ls --filter "name=$global:volumeName" --format "{{.Name}}"
     if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Host "Creating volume '$global:volumeName' for Firecrawl data..."
+        Write-Output "Creating volume '$global:volumeName' for Firecrawl data..." # Replaced Write-Host
         & $global:enginePath volume create $global:volumeName
     }
 
@@ -151,17 +151,17 @@ function Install-FirecrawlContainer {
     #############################################
     # Step 6: Wait and Test Connectivity
     #############################################
-    Write-Host "Waiting 20 seconds for containers to fully start..."
+    Write-Output "Waiting 20 seconds for containers to fully start..." # Replaced Write-Host
     Start-Sleep -Seconds 20
 
-    Write-Host "Testing Firecrawl API connectivity on port 3002..."
+    Write-Output "Testing Firecrawl API connectivity on port 3002..." # Replaced Write-Host
     Test-TCPPort -ComputerName "localhost" -Port 3002 -serviceName "Firecrawl API"
     Test-HTTPPort -Uri "http://localhost:3002" -serviceName "Firecrawl API"
 
-    Write-Host "Testing Redis container connectivity on port 6379..."
+    Write-Output "Testing Redis container connectivity on port 6379..." # Replaced Write-Host
     Test-TCPPort -ComputerName "localhost" -Port 6379 -serviceName "Firecrawl Redis"
 
-    Write-Host "Firecrawl is now running and accessible at http://localhost:3002"
+    Write-Output "Firecrawl is now running and accessible at http://localhost:3002" # Replaced Write-Host
 }
 
 <#
@@ -177,7 +177,7 @@ function Uninstall-FirecrawlContainer {
     # Remove the dedicated Redis container
     $existingRedis = & $global:enginePath ps -a --filter "name=^$global:redisContainerName$" --format "{{.ID}}"
     if ($existingRedis) {
-        Write-Host "Removing Redis container '$global:redisContainerName'..."
+        Write-Output "Removing Redis container '$global:redisContainerName'..." # Replaced Write-Host
         & $global:enginePath rm --force $global:redisContainerName
     }
 }
@@ -212,21 +212,38 @@ function Restore-FirecrawlContainer {
     The Redis container is left running.
 #>
 function Update-FirecrawlContainer {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
     $existingContainer = & $global:enginePath ps --all --filter "name=^$global:firecrawlName$" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing existing Firecrawl container..."
-        & $global:enginePath rm --force $global:firecrawlName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to remove existing Firecrawl container. Update aborted."
+        if ($PSCmdlet.ShouldProcess($global:firecrawlName, "Remove Existing Container")) {
+            Write-Output "Removing existing Firecrawl container..." # Replaced Write-Host
+            & $global:enginePath rm --force $global:firecrawlName
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Failed to remove existing Firecrawl container. Update aborted."
+                return
+            }
+        } else {
+            Write-Output "Skipping removal of existing container due to -WhatIf."
+            Write-Warning "Update cannot proceed without removing the existing container."
             return
         }
     }
-    Write-Host "Pulling latest Firecrawl image '$global:imageName'..."
-    & $global:enginePath pull $global:imageName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to pull latest image. Update aborted."
+
+    if ($PSCmdlet.ShouldProcess($global:imageName, "Pull Latest Image")) {
+        Write-Output "Pulling latest Firecrawl image '$global:imageName'..." # Replaced Write-Host
+        & $global:enginePath pull $global:imageName
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to pull latest image. Update aborted."
+            return
+        }
+    } else {
+        Write-Output "Skipping image pull due to -WhatIf."
+        Write-Warning "Update cannot proceed without pulling the latest image."
         return
     }
+
     # Re-run install logic, which will start Firecrawl and connect to existing Redis
     Install-FirecrawlContainer
 }
@@ -238,7 +255,11 @@ function Update-FirecrawlContainer {
     This functionality is not implemented.
 #>
 function Update-FirecrawlUserData {
-    Write-Host "Update User Data functionality is not implemented for Firecrawl container."
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
+    # No actions to wrap with ShouldProcess as it's not implemented
+    Write-Output "Update User Data functionality is not implemented for Firecrawl container." # Replaced Write-Host
 }
 
 <#
@@ -249,16 +270,16 @@ function Update-FirecrawlUserData {
     and updating user data. The exit option ("0") terminates the menu loop.
 #>
 function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "Firecrawl Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container (includes Redis)"
-    Write-Host "2. Uninstall container (includes Redis)"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update System"
-    Write-Host "6. Update User Data"
-    Write-Host "0. Exit menu"
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "Firecrawl Container Menu" # Replaced Write-Host
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "1. Install container (includes Redis)" # Replaced Write-Host
+    Write-Output "2. Uninstall container (includes Redis)" # Replaced Write-Host
+    Write-Output "3. Backup Live container" # Replaced Write-Host
+    Write-Output "4. Restore Live container" # Replaced Write-Host
+    Write-Output "5. Update System" # Replaced Write-Host
+    Write-Output "6. Update User Data" # Replaced Write-Host
+    Write-Output "0. Exit menu" # Replaced Write-Host
 }
 
 ################################################################################

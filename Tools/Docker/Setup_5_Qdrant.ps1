@@ -27,15 +27,15 @@ $global:containerName = "qdrant"
 $global:volumeName    = "qdrant_storage" # Define a volume name
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Ensure-Elevated
+    Test-AdminPrivileges # Use renamed function
     $global:enginePath = Get-DockerPath
-    Write-Host "Using Docker with executable: $global:enginePath"
+    Write-Output "Using Docker with executable: $global:enginePath" # Replaced Write-Host
     # For Docker, set DOCKER_HOST pointing to the Docker service pipe.
     $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 }
 else {
     $global:enginePath = Get-PodmanPath
-    Write-Host "Using Podman with executable: $global:enginePath"
+    Write-Output "Using Podman with executable: $global:enginePath" # Replaced Write-Host
     # If additional Podman-specific environment settings are needed, add them here.
 }
 
@@ -53,15 +53,15 @@ function Install-QdrantContainer {
     # Check/Create Volume
     $existingVolume = & $global:enginePath volume ls --filter "name=$global:volumeName" --format "{{.Name}}"
     if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Host "Creating volume '$global:volumeName' for Qdrant data..."
+        Write-Output "Creating volume '$global:volumeName' for Qdrant data..." # Replaced Write-Host
         & $global:enginePath volume create $global:volumeName
     } else {
-        Write-Host "Volume '$global:volumeName' already exists."
+        Write-Output "Volume '$global:volumeName' already exists." # Replaced Write-Host
     }
 
     # Check/Restore/Pull Image
-    if (-not (Check-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-        Write-Host "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..."
+    if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
+        Write-Output "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..." # Replaced Write-Host
         & $global:enginePath pull $global:imageName
         if ($LASTEXITCODE -ne 0) {
              Write-Error "$global:containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
@@ -69,18 +69,18 @@ function Install-QdrantContainer {
         }
     }
     else {
-        Write-Host "Using restored backup image '$global:imageName'."
+        Write-Output "Using restored backup image '$global:imageName'." # Replaced Write-Host
     }
 
     # Remove Existing Container
     $existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing existing container '$global:containerName'..."
+        Write-Output "Removing existing container '$global:containerName'..." # Replaced Write-Host
         & $global:enginePath rm --force $global:containerName
     }
 
     # Run Container
-    Write-Host "Starting Qdrant container..."
+    Write-Output "Starting Qdrant container..." # Replaced Write-Host
     $runOptions = @(
         "--detach",                             # Run container in background.
         "--name", $global:containerName,        # Assign the container a name.
@@ -95,12 +95,12 @@ function Install-QdrantContainer {
     }
 
     # Wait and Test
-    Write-Host "Waiting 20 seconds for the Qdrant container to fully start..."
+    Write-Output "Waiting 20 seconds for the Qdrant container to fully start..." # Replaced Write-Host
     Start-Sleep -Seconds 20
     Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
     Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
     Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
-    Write-Host "Qdrant is now running and accessible at http://localhost:6333"
+    Write-Output "Qdrant is now running and accessible at http://localhost:6333" # Replaced Write-Host
 }
 
 <#
@@ -110,7 +110,7 @@ function Install-QdrantContainer {
     Uses the generic Remove-ContainerAndVolume function.
 #>
 function Uninstall-QdrantContainer {
-    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 }
 
 <#
@@ -120,7 +120,7 @@ function Uninstall-QdrantContainer {
     Uses the Backup-ContainerState helper function to create a backup of the Qdrant container.
 #>
 function Backup-QdrantContainer {
-    Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
+    Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
 <#
@@ -130,7 +130,7 @@ function Backup-QdrantContainer {
     Uses the Restore-ContainerState helper function to restore the Qdrant container.
 #>
 function Restore-QdrantContainer {
-    Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
+    Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
 <#
@@ -140,6 +140,9 @@ function Restore-QdrantContainer {
     Removes any existing Qdrant container, pulls the latest image from the registry, and reinstalls the container.
 #>
 function Update-QdrantContainer {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
     # Define Run Function for Update-Container
      $runContainerFunction = {
         # Re-use install logic, but it needs access to global vars
@@ -149,7 +152,7 @@ function Update-QdrantContainer {
          Install-QdrantContainer
      }
 
-    # Use the shared update function
+    # Use the shared update function (which supports ShouldProcess)
      Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
 }
 
@@ -160,7 +163,11 @@ function Update-QdrantContainer {
     This functionality is not implemented.
 #>
 function Update-QdrantUserData {
-    Write-Host "Update User Data functionality is not implemented for Qdrant container."
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
+    # No actions to wrap with ShouldProcess as it's not implemented
+    Write-Output "Update User Data functionality is not implemented for Qdrant container." # Replaced Write-Host
 }
 
 <#
@@ -171,16 +178,16 @@ function Update-QdrantUserData {
     The exit option ("0") terminates the menu loop.
 #>
 function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "Qdrant Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update System"
-    Write-Host "6. Update User Data"
-    Write-Host "0. Exit menu"
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "Qdrant Container Menu" # Replaced Write-Host
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "1. Install container" # Replaced Write-Host
+    Write-Output "2. Uninstall container" # Replaced Write-Host
+    Write-Output "3. Backup Live container" # Replaced Write-Host
+    Write-Output "4. Restore Live container" # Replaced Write-Host
+    Write-Output "5. Update System" # Replaced Write-Host
+    Write-Output "6. Update User Data" # Replaced Write-Host
+    Write-Output "0. Exit menu" # Replaced Write-Host
 }
 
 ################################################################################

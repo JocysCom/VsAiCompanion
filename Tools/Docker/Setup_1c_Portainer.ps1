@@ -1,5 +1,5 @@
 ################################################################################
-# File         : Setup_3_Portainer.ps1
+# File         : Setup_1c_Portainer.ps1 # Corrected file name in header
 # Description  : Script to set up and run Portainer container using Docker/Podman.
 #                Provides installation, uninstallation, backup, restore, and
 #                update functionality for Portainer - a lightweight web UI for
@@ -23,9 +23,10 @@ Set-ScriptLocation
 #############################################
 # Global Variables
 #############################################
+# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Ensure-Elevated
+    Test-AdminPrivileges # Use renamed function
     $global:enginePath    = Get-DockerPath
     $global:pullOptions   = @()  # No extra options needed for Docker.
     $global:imageName     = "portainer/portainer-ce:latest"
@@ -55,14 +56,16 @@ $global:httpsPort = 9443
 function Get-PortainerContainerConfig {
     $containerInfo = & $global:enginePath inspect portainer 2>$null | ConvertFrom-Json
     if (-not $containerInfo) {
-        Write-Host "Container 'portainer' not found." -ForegroundColor Yellow
+        Write-Output "Container 'portainer' not found."
         return $null
     }
-    
+
     # Extract environment variables
     $envVars = @()
     try {
-        foreach ($env in $containerInfo.Config.Env) {
+        # Handle potential single vs multiple env vars
+        $envList = @($containerInfo.Config.Env)
+        foreach ($env in $envList) {
             # Only preserve Portainer-specific environment variables
             if ($env -match "^(PORTAINER_)") {
                 $envVars += $env
@@ -71,7 +74,7 @@ function Get-PortainerContainerConfig {
     } catch {
         Write-Warning "Could not parse existing environment variables: $_"
     }
-    
+
     # Return a custom object with the container information
     return [PSCustomObject]@{
         Image = $containerInfo.Config.Image
@@ -88,25 +91,32 @@ function Get-PortainerContainerConfig {
     Returns $true if successful, $false otherwise.
 #>
 function Remove-PortainerContainer {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
     $existingContainer = & $global:enginePath ps --all --filter "name=portainer" --format "{{.ID}}"
     if (-not $existingContainer) {
-        Write-Host "No Portainer container found to remove." -ForegroundColor Yellow
+        Write-Output "No Portainer container found to remove."
         return $true
     }
-    
-    Write-Host "Stopping and removing Portainer container..."
-    Write-Host "NOTE: This only removes the container, not the volume with user data." -ForegroundColor Yellow
-    
-    & $global:enginePath stop portainer 2>$null
-    & $global:enginePath rm portainer
-    
-    if ($LASTEXITCODE -eq 0) {
-        return $true
+
+    if ($PSCmdlet.ShouldProcess("portainer", "Stop and Remove Container")) {
+        Write-Output "Stopping and removing Portainer container..."
+        Write-Output "NOTE: This only removes the container, not the volume with user data."
+
+        & $global:enginePath stop portainer 2>$null
+        & $global:enginePath rm portainer
+
+        if ($LASTEXITCODE -eq 0) {
+            return $true
+        } else {
+            Write-Error "Failed to remove Portainer container."
+            return $false
+        }
     } else {
-        Write-Error "Failed to remove Portainer container."
-        return $false
+        return $false # Action skipped due to -WhatIf
     }
-}
+} # Corrected closing brace
 
 <#
 .SYNOPSIS
@@ -121,20 +131,21 @@ function Remove-PortainerContainer {
     Returns $true if successful, $false otherwise.
 #>
 function Start-PortainerContainer {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param(
         [Parameter(Mandatory=$true)]
         [string]$Image,
-        
+
         [Parameter(Mandatory=$false)]
         [array]$EnvVars = @(),
-        
+
         [Parameter(Mandatory=$false)]
         [int]$HttpPort = $global:httpPort,
-        
+
         [Parameter(Mandatory=$false)]
         [int]$HttpsPort = $global:httpsPort
     )
-    
+
     # Build the run command
     $runOptions = @(
         "--detach",                             # Run container in background.
@@ -165,32 +176,36 @@ function Start-PortainerContainer {
     }
 
     # Run the container
-    Write-Host "Starting Portainer container with image: $Image"
-    & $global:enginePath run $runOptions $Image
+    if ($PSCmdlet.ShouldProcess("portainer", "Start Container with Image '$Image'")) {
+        Write-Output "Starting Portainer container with image: $Image"
+        & $global:enginePath run $runOptions $Image
 
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "Waiting for container startup..."
-        Start-Sleep -Seconds 10
-        
-        # Test connectivity
-        $tcpTest = Test-TCPPort -ComputerName "localhost" -Port $HttpPort -serviceName "Portainer"
-        $httpTest = Test-HTTPPort -Uri "http://localhost:$HttpPort" -serviceName "Portainer"
-        
-        if ($tcpTest -and $httpTest) {
-            Write-Host "Portainer is now running and accessible at:" -ForegroundColor Green
-            Write-Host "  HTTP:  http://localhost:$HttpPort" -ForegroundColor Green
-            Write-Host "  HTTPS: https://localhost:$HttpsPort" -ForegroundColor Green
-            Write-Host "On first connection, you'll need to create an admin account." -ForegroundColor Cyan
-            return $true
+        if ($LASTEXITCODE -eq 0) {
+            Write-Output "Waiting for container startup..."
+            Start-Sleep -Seconds 10
+
+            # Test connectivity
+            $tcpTest = Test-TCPPort -ComputerName "localhost" -Port $HttpPort -serviceName "Portainer"
+            $httpTest = Test-HTTPPort -Uri "http://localhost:$HttpPort" -serviceName "Portainer"
+
+            if ($tcpTest -and $httpTest) {
+                Write-Output "Portainer is now running and accessible at:"
+                Write-Output "  HTTP:  http://localhost:$HttpPort"
+                Write-Output "  HTTPS: https://localhost:$HttpsPort"
+                Write-Output "On first connection, you'll need to create an admin account."
+                return $true
+            } else {
+                Write-Warning "Portainer container started but connectivity tests failed. Please check the container logs."
+                return $false
+            }
         } else {
-            Write-Warning "Portainer container started but connectivity tests failed. Please check the container logs."
+            Write-Error "Failed to start Portainer container."
             return $false
         }
     } else {
-        Write-Error "Failed to start Portainer container."
-        return $false
+        return $false # Action skipped due to -WhatIf
     }
-}
+} # Corrected closing brace
 
 <#
 .SYNOPSIS
@@ -200,11 +215,11 @@ function Start-PortainerContainer {
 .OUTPUTS
     Returns $true if successful, $false otherwise.
 #>
-function Pull-PortainerImage {
-    Write-Host "Pulling latest Portainer image '$global:imageName'..."
+function Get-PortainerImage { # Renamed function
+    Write-Output "Pulling latest Portainer image '$global:imageName'..."
     $pullCmd = @("pull") + $global:pullOptions + $global:imageName
     & $global:enginePath @pullCmd
-    
+
     if ($LASTEXITCODE -eq 0) {
         return $true
     } else {
@@ -226,25 +241,31 @@ function Install-PortainerContainer {
     # Check if volume 'portainer_data' already exists; if not, create it.
     $existingVolume = & $global:enginePath volume ls --filter "name=portainer_data" --format "{{.Name}}"
     if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Host "Creating volume 'portainer_data'..."
+        Write-Output "Creating volume 'portainer_data'..."
         & $global:enginePath volume create portainer_data
     }
     else {
-        Write-Host "Volume 'portainer_data' already exists. Skipping creation."
-        Write-Host "IMPORTANT: Using existing volume - all previous user data will be preserved." -ForegroundColor Green
+        Write-Output "Volume 'portainer_data' already exists. Skipping creation."
+        Write-Output "IMPORTANT: Using existing volume - all previous user data will be preserved."
     }
 
     # Check if the Portainer image is already available.
     $existingImage = & $global:enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -match "portainer" }
     if (-not $existingImage) {
-        if (-not (Check-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-            Write-Host "No backup restored. Pulling Portainer image '$global:imageName'..."
-            if (-not (Pull-PortainerImage)) {
+        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
+            Write-Output "No backup restored. Pulling Portainer image '$global:imageName'..."
+            if (-not (Get-PortainerImage)) { # Use renamed function
                 Write-Error "Image pull failed. Exiting..."
                 return
             }
         }
     }
+
+    # Remove existing container before starting new one
+    Remove-PortainerContainer # This now supports ShouldProcess
+
+    # Start the container
+    Start-PortainerContainer -Image $global:imageName # This now supports ShouldProcess
 }
 
 <#
@@ -254,7 +275,7 @@ function Install-PortainerContainer {
     Uses the generic Remove-ContainerAndVolume function.
 #>
 function Uninstall-PortainerContainer {
-    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data"
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" # This now supports ShouldProcess
 }
 
 <#
@@ -284,51 +305,64 @@ function Restore-PortainerContainer {
     Updates the Portainer container to the latest version while preserving all user data and configuration.
 #>
 function Update-PortainerContainer {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
     # Step 1: Check if container exists and get its configuration
     $config = Get-PortainerContainerConfig
     if (-not $config) {
-        Write-Host "No Portainer container found to update. Please install it first." -ForegroundColor Yellow
+        Write-Output "No Portainer container found to update. Please install it first."
         return
     }
-    
+
     # Step 2: Optionally backup the container
     $createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
     if ($createBackup -ne "N") {
-        Write-Host "Creating backup of current container..."
-        Backup-PortainerContainer
-    }
-    
-    # Step 3: Remove the existing container
-    if (-not (Remove-PortainerContainer)) {
-        Write-Error "Failed to remove existing container. Update aborted."
-        return
-    }
-    
-    # Step 4: Pull the latest image
-    if (-not (Pull-PortainerImage)) {
-        Write-Error "Failed to pull latest image. Update aborted."
-        
-        # Offer to restore from backup if one was created
-        if ($createBackup -ne "N") {
-            $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-            if ($restore -ne "N") {
-                Restore-PortainerContainer
-            }
+        if ($PSCmdlet.ShouldProcess("portainer", "Backup Container State")) {
+            Write-Output "Creating backup of current container..."
+            Backup-PortainerContainer
         }
+    }
+
+    # Step 3: Remove the existing container
+    if (-not (Remove-PortainerContainer)) { # This function now supports ShouldProcess
+        Write-Error "Failed to remove existing container or action skipped. Update aborted."
         return
     }
-    
-    # Step 5: Start a new container with the latest image and preserved configuration
-    if (Start-PortainerContainer -Image $global:imageName -EnvVars $config.EnvVars) {
-        Write-Host "Portainer container updated successfully!" -ForegroundColor Green
+
+    # Step 4: Pull the latest image
+    if ($PSCmdlet.ShouldProcess($global:imageName, "Pull Latest Image")) {
+        if (-not (Get-PortainerImage)) { # Use renamed function
+            Write-Error "Failed to pull latest image. Update aborted."
+
+            # Offer to restore from backup if one was created
+            if ($createBackup -ne "N") {
+                $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+                if ($restore -ne "N") {
+                    if ($PSCmdlet.ShouldProcess("portainer", "Restore Container State after Failed Update")) {
+                        Restore-PortainerContainer
+                    }
+                }
+            }
+            return
+        }
     } else {
-        Write-Error "Failed to start updated container."
-        
+         Write-Output "Skipping image pull due to -WhatIf."
+    }
+
+    # Step 5: Start a new container with the latest image and preserved configuration
+    if (Start-PortainerContainer -Image $global:imageName -EnvVars $config.EnvVars) { # This function now supports ShouldProcess
+        Write-Output "Portainer container updated successfully!"
+    } else {
+        Write-Error "Failed to start updated container or action skipped."
+
         # Offer to restore from backup if one was created
         if ($createBackup -ne "N") {
             $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
             if ($restore -ne "N") {
-                Restore-PortainerContainer
+                 if ($PSCmdlet.ShouldProcess("portainer", "Restore Container State after Failed Start")) {
+                    Restore-PortainerContainer
+                 }
             }
         }
     }
@@ -338,19 +372,19 @@ function Update-PortainerContainer {
 .SYNOPSIS
     Displays the main menu for Portainer container operations.
 .DESCRIPTION
-    Presents menu options (Install, Uninstall, Backup, Restore, Update);hhhh
+    Presents menu options (Install, Uninstall, Backup, Restore, Update);
     the exit option ("0") terminates the menu loop.
 #>
 function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "Portainer Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container (preserves user data)"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update container"
-    Write-Host "0. Exit menu"
+    Write-Output "==========================================="
+    Write-Output "Portainer Container Menu"
+    Write-Output "==========================================="
+    Write-Output "1. Install container"
+    Write-Output "2. Uninstall container (preserves user data)"
+    Write-Output "3. Backup Live container"
+    Write-Output "4. Restore Live container"
+    Write-Output "5. Update container"
+    Write-Output "0. Exit menu"
 }
 
 ################################################################################

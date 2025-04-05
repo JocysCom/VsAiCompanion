@@ -12,9 +12,10 @@
 ################################################################################
 
 #------------------------------
-# Function: Ensure-Elevated
+# Function: Test-AdminPrivileges
+# Description: Verify administrator privileges and exit if not elevated.
 #------------------------------
-function Ensure-Elevated {
+function Test-AdminPrivileges { # Renamed function
     if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
          Write-Error "Administrator privileges required. Please run this script as an Administrator."
          exit 1
@@ -23,8 +24,12 @@ function Ensure-Elevated {
 
 #------------------------------
 # Function: Set-ScriptLocation
+# Description: Set the script's working directory to the directory containing the script.
 #------------------------------
 function Set-ScriptLocation {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
     if ($PSScriptRoot -and $PSScriptRoot -ne "") {
         $scriptPath = $PSScriptRoot
     }
@@ -32,20 +37,22 @@ function Set-ScriptLocation {
         $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
     }
     if ($scriptPath) {
-        Set-Location $scriptPath
-        Write-Host "Script Path: $scriptPath"
+        if ($PSCmdlet.ShouldProcess($scriptPath, "Set Location")) {
+            Set-Location $scriptPath
+            Write-Output "Script Path set to: $scriptPath"
+        }
     }
     else {
-        Write-Host "Script Path not found. Current directory remains unchanged."
+        Write-Output "Script Path not found. Current directory remains unchanged."
     }
 }
 
 #------------------------------
-# Function: Download-File
-# Generic download function using Start-BitsTransfer (provides a fast download with a progress bar).
+# Function: Invoke-DownloadFile
+# Description: Generic download function using Start-BitsTransfer (with fallback to Invoke-WebRequest).
 # Supports both -SourceUrl and -url as parameter aliases.
 #------------------------------
-function Download-File {
+function Invoke-DownloadFile { # Renamed function
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -58,16 +65,16 @@ function Download-File {
     )
 
     if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
-        Write-Host "File already exists at $DestinationPath. Skipping download."
+        Write-Output "File already exists at $DestinationPath. Skipping download."
         return
     }
 
     # Check if BITS is available or if fallback is requested
     if ((Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) -and (-not $UseFallback)) {
-        Write-Host "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+        Write-Output "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
         try {
             Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
-            Write-Host "Download succeeded: $DestinationPath" -ForegroundColor Green
+            Write-Output "Download succeeded: $DestinationPath" # Removed ForegroundColor Green
             return
         }
         catch {
@@ -77,11 +84,11 @@ function Download-File {
 
     # Fallback to Invoke-WebRequest
     try {
-        Write-Host "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
+        Write-Output "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
         $ProgressPreference = 'SilentlyContinue'  # Speeds up Invoke-WebRequest significantly
         Invoke-WebRequest -Uri $SourceUrl -OutFile $DestinationPath -UseBasicParsing
         $ProgressPreference = 'Continue'  # Restore default
-        Write-Host "Download succeeded: $DestinationPath" -ForegroundColor Green
+        Write-Output "Download succeeded: $DestinationPath" # Removed ForegroundColor Green
     }
     catch {
         Write-Error "Failed to download file from $SourceUrl. Error details: $_"
@@ -90,11 +97,12 @@ function Download-File {
 }
 
 #------------------------------
-# Function: Check-Git
+# Function: Test-GitInstallation
+# Description: Check for Git installation and add to PATH if needed from common VS locations.
 #------------------------------
-function Check-Git {
+function Test-GitInstallation { # Renamed function
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        Write-Host "Git command not found in PATH. Attempting to locate Git via common installation paths..."
+        Write-Output "Git command not found in PATH. Attempting to locate Git via common installation paths..."
         $possibleGitPaths = @(
             "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd",
             "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
@@ -102,7 +110,7 @@ function Check-Git {
         foreach ($path in $possibleGitPaths) {
             if (Test-Path $path) {
                 $env:Path += ";" + $path
-                Write-Host "Added Git path: $path"
+                Write-Output "Added Git path: $path"
                 break
             }
         }
@@ -153,7 +161,7 @@ function Test-ApplicationInstalled {
         }
     }
     catch {
-        # Ignore errors with Get-Package
+        Write-Warning "Get-Package check failed for '$AppName': $_" # Added warning to empty catch
     }
 
     # Not found by any method
@@ -161,12 +169,13 @@ function Test-ApplicationInstalled {
 }
 
 #############################################
-# Function: Refresh-EnvironmentVariables
+# Function: Update-EnvironmentVariable
+# Description: Refreshes specific environment variables (like PATH) in the current session.
 #############################################
-function Refresh-EnvironmentVariables {
+function Update-EnvironmentVariable { # Renamed function
     <#
     .SYNOPSIS
-      Refreshes the current session's environment variables.
+      Refreshes the current session's PATH environment variable.
 
     .DESCRIPTION
       Re-reads the machine and user PATH from the registry and updates the current session.
@@ -175,8 +184,8 @@ function Refresh-EnvironmentVariables {
     $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
     $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
     $env:PATH = "$machinePath;$userPath"
-    Write-Host "Environment variables refreshed. Current PATH:"
-    Write-Host $env:PATH
+    Write-Output "Environment variables refreshed. Current PATH:"
+    Write-Output $env:PATH
 }
 
 #############################################
@@ -212,14 +221,14 @@ function Invoke-MenuLoop {
             }
         }
         elseif ($choice -eq $ExitChoice) {
-            Write-Host "Exiting menu."
+            Write-Output "Exiting menu."
         }
         else {
             Write-Warning "Invalid selection."
         }
 
         if ($choice -ne $ExitChoice) {
-             Write-Host "`nPress any key to continue..."
+             Write-Output "`nPress any key to continue..."
              $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
              Clear-Host
         }

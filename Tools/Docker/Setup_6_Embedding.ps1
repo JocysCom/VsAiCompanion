@@ -156,7 +156,7 @@ async def options_handler(path: str):
     Set-Content -Path (Join-Path $global:buildDir "requirements.txt") -Value $requirementsTxtContent
     Set-Content -Path (Join-Path $global:buildDir "embedding_api.py") -Value $embeddingApiContent
 
-    Write-Host "Building the Embedding API container image..."
+    Write-Output "Building the Embedding API container image..." # Replaced Write-Host
     # Build the container image using Podman.
     & $global:enginePath build --tag $global:imageTag "`"$global:buildDir`""
     if ($LASTEXITCODE -ne 0) {
@@ -179,11 +179,11 @@ function Install-EmbeddingContainer {
     # Remove existing container if it exists
     $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing existing container '$global:containerName'..."
+        Write-Output "Removing existing container '$global:containerName'..." # Replaced Write-Host
         & $global:enginePath rm --force $global:containerName
     }
 
-    Write-Host "Running the Embedding API container..."
+    Write-Output "Running the Embedding API container..." # Replaced Write-Host
     # Command: run
     #   --detach: runs the container in background.
     #   --name: assigns the container the name "embedding-api".
@@ -197,7 +197,7 @@ function Install-EmbeddingContainer {
     Start-Sleep -Seconds 10
     Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
     Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-    Write-Host "Embedding API is accessible at http://localhost:8000/v1/embeddings"
+    Write-Output "Embedding API is accessible at http://localhost:8000/v1/embeddings" # Replaced Write-Host
 }
 
 <#
@@ -208,23 +208,39 @@ function Install-EmbeddingContainer {
     container (if any), and runs a new container with the updated image.
 #>
 function Update-EmbeddingContainer {
-    Write-Host "Updating the Embedding API container..."
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
+    Write-Output "Updating the Embedding API container..." # Replaced Write-Host
+
     # Rebuild the container image.
-    Build-EmbeddingImage
+    if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Image")) {
+        Build-EmbeddingImage
+    } else {
+        Write-Warning "Skipping image build due to -WhatIf."
+        # Decide if update should proceed without build? For now, let's abort.
+        Write-Warning "Update cannot proceed without building the image."
+        return
+    }
 
     # Stop and remove existing container
     $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Stopping existing container..."
-        & $global:enginePath stop $global:containerName 2>$null | Out-Null
-        Write-Host "Removing existing container..."
-        & $global:enginePath rm $global:containerName
+        if ($PSCmdlet.ShouldProcess($global:containerName, "Stop Container")) {
+            Write-Output "Stopping existing container..." # Replaced Write-Host
+            & $global:enginePath stop $global:containerName 2>$null | Out-Null
+        }
+        if ($PSCmdlet.ShouldProcess($global:containerName, "Remove Container")) {
+            Write-Output "Removing existing container..." # Replaced Write-Host
+            & $global:enginePath rm $global:containerName
+        }
     }
 
     # Run the updated container
-    Write-Host "Running the updated Embedding API container..."
-    # Command: run
-    #   --detach: runs the container in background.
+    if ($PSCmdlet.ShouldProcess($global:containerName, "Run Updated Container")) {
+        Write-Output "Running the updated Embedding API container..." # Replaced Write-Host
+        # Command: run
+        #   --detach: runs the container in background.
     #   --name: assigns the container the name "embedding-api".
     #   --publish: maps host port 8000 to container port 8000.
     & $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageTag
@@ -236,8 +252,9 @@ function Update-EmbeddingContainer {
     Start-Sleep -Seconds 10
     Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
     Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-    Write-Host "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings"
-}
+    Write-Output "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings" # Replaced Write-Host
+} # Added missing closing brace for ShouldProcess block
+} # Closing brace for the function itself
 
 <#
 .SYNOPSIS
@@ -259,13 +276,13 @@ function Uninstall-EmbeddingContainer {
     The exit option ("0") terminates the menu loop.
 #>
 function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "Embedding API Container Menu (Podman Only)"
-    Write-Host "==========================================="
-    Write-Host "1. Install/Rebuild container"
-    Write-Host "2. Update container (Rebuild & Run)"
-    Write-Host "3. Uninstall container"
-    Write-Host "0. Exit menu"
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "Embedding API Container Menu (Podman Only)" # Replaced Write-Host
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "1. Install/Rebuild container" # Replaced Write-Host
+    Write-Output "2. Update container (Rebuild & Run)" # Replaced Write-Host
+    Write-Output "3. Uninstall container" # Replaced Write-Host
+    Write-Output "0. Exit menu" # Replaced Write-Host
 }
 
 ################################################################################

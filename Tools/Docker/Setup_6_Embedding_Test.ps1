@@ -25,7 +25,7 @@ try {
     ############################################################################
     # 1) Helper Functions: Decode embedding and compute cosine similarity.
     ############################################################################
-    Function Decode-Embedding {
+    Function ConvertFrom-Embedding { # Renamed function
         param(
             [Parameter(Mandatory)] [string] $EmbeddingBase64
         )
@@ -34,7 +34,7 @@ try {
             Write-Error "Failed to decode base64 string."
             return $null
         }
-        $floatCount = $bytes.Length / 4
+        # $floatCount = $bytes.Length / 4 # Removed unused variable
         $floats = New-Object System.Collections.Generic.List[float]
         for ($i = 0; $i -lt $bytes.Length; $i += 4) {
             [single]$val = [System.BitConverter]::ToSingle($bytes, $i)
@@ -98,7 +98,7 @@ try {
             return $null
         }
 
-        $floats = Decode-Embedding $response.data[0].embedding
+        $floats = ConvertFrom-Embedding $response.data[0].embedding # Use renamed function
         if (-not $floats) {
             Write-Error "Decoded embedding is empty for text: $textLine"
             return $null
@@ -109,7 +109,7 @@ try {
     ############################################################################
     # 2) Check TCP connectivity.
     ############################################################################
-    Write-Host "Checking TCP connectivity on port 8000..."
+    Write-Output "Checking TCP connectivity on port 8000..." # Replaced Write-Host
     $tcpOk = Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
     if (-not $tcpOk) {
         Write-Error "TCP connectivity check failed."
@@ -139,7 +139,7 @@ try {
     ############################################################################
     for ($i = 0; $i -lt $testLines.Count; $i++) {
         $text = $testLines[$i]
-        Write-Host "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'"
+        Write-Output "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'" # Replaced Write-Host
         $floats = Get-EmbeddingFromAPI -textLine $text -modelName $modelName
         if (-not $floats) {
             Write-Error "Failed to obtain embedding for '$text'."
@@ -156,7 +156,7 @@ try {
     ############################################################################
     # 5) Compare repeated lines for high similarity (threshold ≥ 0.9).
     ############################################################################
-    Write-Host "`nComparing repeated lines for consistency..."
+    Write-Output "`nComparing repeated lines for consistency..." # Replaced Write-Host
     $repeatIndices = @(0, 2, 5)
     for ($j = 0; $j -lt $repeatIndices.Count; $j++) {
         for ($k = $j + 1; $k -lt $repeatIndices.Count; $k++) {
@@ -166,7 +166,7 @@ try {
             $keyB = "Hello world|$idxB"
             if ($embeddings.ContainsKey($keyA) -and $embeddings.ContainsKey($keyB)) {
                 $sim = Get-CosineSimilarity -vecA $embeddings[$keyA] -vecB $embeddings[$keyB]
-                Write-Host (" - Cosine similarity for 'Hello world' (index $idxA) vs. (index $idxB): " + [Math]::Round($sim, 4))
+                Write-Output (" - Cosine similarity for 'Hello world' (index $idxA) vs. (index $idxB): " + [Math]::Round($sim, 4)) # Replaced Write-Host
                 if ($sim -lt 0.9) {
                     Write-Error ("Cosine similarity between repeated lines is below 0.9 (got $sim)")
                     $testPass = $false
@@ -184,7 +184,7 @@ try {
     $keyCoding = "I love coding|$codingIndex"
     if ($embeddings.ContainsKey($keyHello) -and $embeddings.ContainsKey($keyCoding)) {
         $cosSim = Get-CosineSimilarity -vecA $embeddings[$keyHello] -vecB $embeddings[$keyCoding]
-        Write-Host "`nCosine similarity between 'Hello' and 'I love coding': $cosSim"
+        Write-Output "`nCosine similarity between 'Hello' and 'I love coding': $cosSim" # Replaced Write-Host
         if ($cosSim -ge 0.7) {
             Write-Error "Expected similarity between 'Hello' and 'I love coding' to be below 0.7."
             $testPass = $false
@@ -197,9 +197,9 @@ catch {
     $testPass = $false
 }
 finally {
-    Write-Host ""
+    Write-Output "" # Replaced Write-Host
     if ($testPass) {
-        Write-Host "===== TEST PASS ====="
+        Write-Output "===== TEST PASS =====" # Replaced Write-Host
         exit 0
     }
     else {

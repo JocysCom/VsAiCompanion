@@ -47,7 +47,7 @@ $volumeName    = "open-webui" # Assuming volume name matches container name
 function Get-OpenWebUIContainerConfig {
     $containerInfo = & $enginePath inspect $containerName 2>$null | ConvertFrom-Json
     if (-not $containerInfo) {
-        Write-Host "Container '$containerName' not found." -ForegroundColor Yellow
+        Write-Output "Container '$containerName' not found." # Replaced Write-Host
         return $null
     }
 
@@ -115,13 +115,13 @@ function Get-OpenWebUIContainerConfig {
 .PARAMETER config
     Optional configuration object containing container settings. If not provided, default settings are used.
 #>
-function Run-Container {
+function Start-OpenWebUIContainer { # Renamed function
     param (
         [string]$action,
         [string]$successMessage,
         [PSCustomObject]$config = $null
     )
-    Write-Host "$action '$containerName'..."
+    Write-Output "$action '$containerName'..." # Replaced Write-Host
 
     # Build the run command with either provided config or defaults
     $runOptions = @("--platform")
@@ -201,13 +201,16 @@ function Run-Container {
         return $false
     }
 
-    Write-Host "Waiting 20 seconds for container startup..."
+    Write-Output "Waiting 20 seconds for container startup..." # Replaced Write-Host
     Start-Sleep -Seconds 20
 
     # Test connectivity
     $httpTest = Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
     $tcpTest = Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-    $wsTest = Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
+    # Removed unused variable assignments
+    Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
+    Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
+    Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
 
     # Create firewall rule if needed
     try {
@@ -216,7 +219,7 @@ function Run-Container {
         Write-Warning "Could not create firewall rule. You may need to manually allow port 3000."
     }
 
-    Write-Host $successMessage
+    Write-Output $successMessage # Replaced Write-Host
     return $true
 }
 
@@ -230,8 +233,8 @@ function Run-Container {
 #>
 function Install-OpenWebUIContainer {
     # Attempt to restore backup image; if not, pull latest image.
-    if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
-        Write-Host "No backup restored. Pulling Open WebUI image '$imageName'..."
+    if (-not (Test-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) { # Use renamed function
+        Write-Output "No backup restored. Pulling Open WebUI image '$imageName'..." # Replaced Write-Host
         # Pull command:
         # pull       Pull an image from a registry.
         # --platform string Specify the platform to pull the image for.
@@ -242,18 +245,18 @@ function Install-OpenWebUIContainer {
         }
     }
     else {
-        Write-Host "Using restored backup image '$imageName'."
+        Write-Output "Using restored backup image '$imageName'." # Replaced Write-Host
     }
     # Remove any existing container.
     $existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing existing container '$containerName'..."
+        Write-Output "Removing existing container '$containerName'..." # Replaced Write-Host
         # Remove container:
         # rm         Remove one or more containers.
         # --force    Force removal of a running container.
         & $enginePath rm --force $containerName
     }
-    Run-Container -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+    Start-OpenWebUIContainer -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines." # Use renamed function
 }
 
 <#
@@ -298,6 +301,9 @@ function Restore-OpenWebUIContainer {
     while preserving user data and configuration.
 #>
 function Update-OpenWebUIContainer {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
     # Define a script block that knows how to run the container with the right options
     $runContainerFunction = {
         $config = Get-OpenWebUIContainerConfig
@@ -308,13 +314,13 @@ function Update-OpenWebUIContainer {
         # Update the image in the config to use the latest one
         $config.Image = $imageName
 
-        $result = Run-Container -action "Starting updated container" -successMessage "OpenWebUI container has been successfully updated and is running at http://localhost:3000" -config $config
+        $result = Start-OpenWebUIContainer -action "Starting updated container" -successMessage "OpenWebUI container has been successfully updated and is running at http://localhost:3000" -config $config # Use renamed function
         if (-not $result) {
             throw "Failed to start updated container"
         }
     }
 
-    # Use the shared update function
+    # Use the shared update function (which supports ShouldProcess)
     Update-Container -Engine $enginePath -ContainerName $containerName -ImageName $imageName -RunFunction $runContainerFunction
 }
 
@@ -325,30 +331,34 @@ function Update-OpenWebUIContainer {
     This functionality is not implemented.
 #>
 function Update-OpenWebUIUserData {
-    Write-Host "Update User Data functionality is not implemented for OpenWebUI container."
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
+    # No actions to wrap with ShouldProcess as it's not implemented
+    Write-Output "Update User Data functionality is not implemented for OpenWebUI container." # Replaced Write-Host
 
     # Provide some helpful information
-    Write-Host "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container." -ForegroundColor Yellow
-    Write-Host "To back up user data, you can use the 'Backup Live container' option." -ForegroundColor Yellow
-    Write-Host "To modify user data directly, you would need to access the container with:" -ForegroundColor DarkYellow
-    Write-Host "  $enginePath exec -it $containerName /bin/bash" -ForegroundColor DarkYellow
+    Write-Output "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container." # Replaced Write-Host
+    Write-Output "To back up user data, you can use the 'Backup Live container' option." # Replaced Write-Host
+    Write-Output "To modify user data directly, you would need to access the container with:" # Replaced Write-Host
+    Write-Output "  $enginePath exec -it $containerName /bin/bash" # Replaced Write-Host
 }
 
 #############################################
 # Main Menu Loop using Generic Function
 #############################################
 function Show-OpenWebUIMenu {
-    Write-Host "==========================================="
-    Write-Host "Open WebUI Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update System"
-    Write-Host "6. Update User Data"
-    Write-Host "7. Check for Updates"
-    Write-Host "0. Exit"
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "Open WebUI Container Menu" # Replaced Write-Host
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "1. Install container" # Replaced Write-Host
+    Write-Output "2. Uninstall container" # Replaced Write-Host
+    Write-Output "3. Backup Live container" # Replaced Write-Host
+    Write-Output "4. Restore Live container" # Replaced Write-Host
+    Write-Output "5. Update System" # Replaced Write-Host
+    Write-Output "6. Update User Data" # Replaced Write-Host
+    Write-Output "7. Check for Updates" # Replaced Write-Host
+    Write-Output "0. Exit" # Replaced Write-Host
 }
 
 $menuActions = @{
@@ -358,7 +368,7 @@ $menuActions = @{
     "4" = { Restore-OpenWebUIContainer }
     "5" = { Update-OpenWebUIContainer }
     "6" = { Update-OpenWebUIUserData }
-    "7" = { Check-ImageUpdateAvailable -Engine $enginePath -ImageName $imageName }
+    "7" = { Test-ImageUpdateAvailable -Engine $enginePath -ImageName $imageName } # Use renamed function
 }
 
 Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-OpenWebUIMenu} -ActionMap $menuActions -ExitChoice "0"

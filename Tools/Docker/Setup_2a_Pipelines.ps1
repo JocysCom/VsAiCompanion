@@ -21,6 +21,7 @@ using namespace System.IO
 Set-ScriptLocation
 
 # Global variables used across functions.
+# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerName   = "pipelines"
 $global:volumeName      = "pipelines" # Assuming volume name matches container name
 $global:pipelinesFolder = ".\pipelines"
@@ -84,7 +85,7 @@ function ConvertTo-WSLPath {
     After running the container, waits for startup and tests connectivity.
 #>
 function Install-PipelinesContainer {
-    Write-Host "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
+    Write-Output "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main" # Replaced Write-Host
 
     # Set the custom image tag to the official pre-built image
     $customPipelineImageTag = "ghcr.io/open-webui/pipelines:main"
@@ -92,11 +93,11 @@ function Install-PipelinesContainer {
     # (Optional) Remove any existing container with the same name
     $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Pipelines container already exists. Removing it..."
+        Write-Output "Pipelines container already exists. Removing it..." # Replaced Write-Host
         & $global:enginePath rm --force $global:containerName
     }
 
-    Write-Host "Running Pipelines container..."
+    Write-Output "Running Pipelines container..." # Replaced Write-Host
 
     # Conditionally set the --add-host parameter if using Docker
     if ($global:containerEngine -eq "docker") {
@@ -110,13 +111,12 @@ function Install-PipelinesContainer {
     # Build the run arguments array
     $runArgs = @(
         '--detach',                                      # run in background
-        '--publish', '9099:9099'                          # port mapping
-    ) + $addHostParams + @(
+        '--publish', '9099:9099',                         # port mapping
         '--volume', "$($global:volumeName):/app/pipelines", # volume mapping for persistent data
         '--restart', 'always',                           # restart policy
         '--name', $global:containerName,                 # container name
         $customPipelineImageTag                          # pre-built image tag
-    )
+    ) + $addHostParams # Add conditional params at the end
 
     # Command: run
     #   --detach: Run container in background.
@@ -130,7 +130,7 @@ function Install-PipelinesContainer {
         Write-Error "Failed to run the Pipelines container."
         return
     }
-    Write-Host "Pipelines container is now running."
+    Write-Output "Pipelines container is now running." # Replaced Write-Host
 
     # Wait for the container to initialize, then test connectivity
     Start-Sleep -Seconds 20
@@ -150,7 +150,7 @@ function Backup-PipelinesContainer {
         Write-Error "Engine path not set. Please install the Pipelines container first."
         return
     }
-    Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
+    Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
 <#
@@ -165,7 +165,7 @@ function Restore-PipelinesContainer {
         Write-Error "Engine path not set. Please install the Pipelines container first."
         return
     }
-    Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
+    Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
 <#
@@ -175,7 +175,7 @@ function Restore-PipelinesContainer {
     Uses the generic Remove-ContainerAndVolume function.
 #>
 function Uninstall-PipelinesContainer {
-    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 }
 
 <#
@@ -205,7 +205,7 @@ function Add-PipelineToContainer {
     $fileName = "azure_openai_pipeline.py"
     # Create a temporary file path for the download (assume $global:downloadFolder is a Windows path)
     $tempFile = Join-Path $global:downloadFolder $fileName
-    Write-Host "Downloading pipeline from $PipelineUrl to $tempFile..."
+    Write-Output "Downloading pipeline from $PipelineUrl to $tempFile..." # Replaced Write-Host
     Invoke-WebRequest -Uri $PipelineUrl -OutFile $tempFile -UseBasicParsing
 
     # If using Podman, convert the Windows path to WSL path
@@ -216,22 +216,22 @@ function Add-PipelineToContainer {
         $hostPath = $tempFile
     }
 
-    Write-Host "Host Path: $hostPath"
+    Write-Output "Host Path: $hostPath" # Replaced Write-Host
 
-    #Write-Host "Removing any existing copy of $fileName in container '$ContainerName'..."
+    #Write-Output "Removing any existing copy of $fileName in container '$ContainerName'..." # Replaced Write-Host
     #& $global:enginePath exec $ContainerName rm -f "$DestinationDir/$fileName"
 
-    Write-Host "Copying downloaded pipeline into container '$ContainerName' at '$DestinationDir'..."
+    Write-Output "Copying downloaded pipeline into container '$ContainerName' at '$DestinationDir'..." # Replaced Write-Host
     & $global:enginePath machine ssh "podman cp '$hostPath' '$($ContainerName):$DestinationDir'"
 
-    Write-Host "Restarting container '$ContainerName' to load the new pipeline..."
+    Write-Output "Restarting container '$ContainerName' to load the new pipeline..." # Replaced Write-Host
     & $global:enginePath restart $ContainerName
 
     # Clean up the temporary file
     Remove-Item $tempFile -Force
-    Write-Host "Pipeline added successfully."
+    Write-Output "Pipeline added successfully." # Replaced Write-Host
 
-    Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+    Write-Output "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines." # Replaced Write-Host
 }
 
 <#
@@ -242,29 +242,47 @@ function Add-PipelineToContainer {
     and then reinstalls the container.
 #>
 function Update-PipelinesContainer {
-    Write-Host "Initiating update for Pipelines container..."
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
+    Write-Output "Initiating update for Pipelines container..." # Replaced Write-Host
 
     # Check and remove any current running instance of the container.
     $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Host "Removing existing container '$($global:containerName)' as part of the update..."
-        # Remove container command:
-        # rm         Remove one or more containers.
-        # --force    Force removal of a running container.
-        & $global:enginePath rm --force $global:containerName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to remove container '$($global:containerName)'. Update aborted."
-            return
+        if ($PSCmdlet.ShouldProcess($global:containerName, "Remove Existing Container")) {
+            Write-Output "Removing existing container '$($global:containerName)' as part of the update..." # Replaced Write-Host
+            # Remove container command:
+            # rm         Remove one or more containers.
+            # --force    Force removal of a running container.
+            & $global:enginePath rm --force $global:containerName
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Failed to remove container '$($global:containerName)'. Update aborted."
+                return
+            }
+        } else {
+             Write-Output "Skipping removal of existing container due to -WhatIf."
+             # Decide if update should proceed without removal? For now, let's abort.
+             Write-Warning "Update cannot proceed without removing the existing container."
+             return
         }
     }
 
-    Write-Host "Pulling the latest image..."
-    & $global:enginePath pull ghcr.io/open-webui/pipelines:main
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to pull the latest Pipelines image. Update aborted."
+    if ($PSCmdlet.ShouldProcess("ghcr.io/open-webui/pipelines:main", "Pull Latest Image")) {
+        Write-Output "Pulling the latest image..." # Replaced Write-Host
+        & $global:enginePath pull ghcr.io/open-webui/pipelines:main
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to pull the latest Pipelines image. Update aborted."
+            return
+        }
+    } else {
+        Write-Output "Skipping image pull due to -WhatIf."
+        # Decide if update should proceed without pulling? For now, let's abort.
+        Write-Warning "Update cannot proceed without pulling the latest image."
         return
     }
 
+    # Reinstall container (Install function handles ShouldProcess internally if needed)
     Install-PipelinesContainer
 }
 
@@ -275,7 +293,11 @@ function Update-PipelinesContainer {
     This functionality is not implemented.
 #>
 function Update-PipelinesUserData {
-    Write-Host "Update User Data functionality is not implemented for Pipelines container."
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    param()
+
+    # No actions to wrap with ShouldProcess as it's not implemented
+    Write-Output "Update User Data functionality is not implemented for Pipelines container." # Replaced Write-Host
 }
 
 <#
@@ -285,17 +307,17 @@ function Update-PipelinesUserData {
     Shows required menu items (1 to 4) and optional items (A, B, C), plus an exit option (0).
 #>
 function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "Pipelines Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "A. Add Azure Pipeline to Container"
-    Write-Host "B. Update System"
-    Write-Host "C. Update User Data"
-    Write-Host "0. Exit menu"
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "Pipelines Container Menu" # Replaced Write-Host
+    Write-Output "===========================================" # Replaced Write-Host
+    Write-Output "1. Install container" # Replaced Write-Host
+    Write-Output "2. Uninstall container" # Replaced Write-Host
+    Write-Output "3. Backup Live container" # Replaced Write-Host
+    Write-Output "4. Restore Live container" # Replaced Write-Host
+    Write-Output "A. Add Azure Pipeline to Container" # Replaced Write-Host
+    Write-Output "B. Update System" # Replaced Write-Host
+    Write-Output "C. Update User Data" # Replaced Write-Host
+    Write-Output "0. Exit menu" # Replaced Write-Host
 }
 
 ################################################################################

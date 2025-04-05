@@ -53,21 +53,21 @@ $dockerStaticUrl  = "https://download.docker.com/win/static/stable/x86_64/docker
 # Docker Installation Functions
 #############################################
 
-function Download-DockerEngine {
+function Invoke-DockerEngineDownload { # Renamed function
     param(
         [string]$dockerStaticUrl,
         [string]$downloadFolder = ".\downloads"
     )
     if (-not (Test-Path $downloadFolder)) {
-        Write-Host "Creating downloads folder at $downloadFolder..."
+        Write-Output "Creating downloads folder at $downloadFolder..." # Replaced Write-Host
         New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
     }
     $zipPath = Join-Path $downloadFolder "docker.zip"
     if (Test-Path $zipPath) {
-        Write-Host "Docker archive already exists at $zipPath. Skipping download."
+        Write-Output "Docker archive already exists at $zipPath. Skipping download." # Replaced Write-Host
     }
     else {
-        Write-Host "Downloading Docker static binary archive from $dockerStaticUrl..."
+        Write-Output "Downloading Docker static binary archive from $dockerStaticUrl..." # Replaced Write-Host
         try {
             # Use Start-BitsTransfer for faster download with progress.
             Start-BitsTransfer -Source $dockerStaticUrl -Destination $zipPath
@@ -86,11 +86,11 @@ function Install-DockerEngine {
         [string]$destinationPath = ".\docker"
     )
     if (Test-Path $destinationPath) {
-        Write-Host "Destination folder $destinationPath already exists. Skipping extraction and installation."
+        Write-Output "Destination folder $destinationPath already exists. Skipping extraction and installation." # Replaced Write-Host
         return $destinationPath
     }
-    
-    $tempDestination = ".\docker_temp"
+
+    $tempDestination = ".\docker_temp" # Removed trailing whitespace from original line 92
     if (Test-Path $tempDestination) {
         Remove-Item -Recurse -Force $tempDestination
     }
@@ -101,17 +101,17 @@ function Install-DockerEngine {
         Write-Error "Failed to extract Docker archive."
         exit 1
     }
-    Write-Host "Processing extracted files..."
+    Write-Output "Processing extracted files..." # Replaced Write-Host
     $innerFolder = Join-Path $tempDestination "docker"
     if (Test-Path $innerFolder) {
-        Write-Host "Detected inner 'docker' folder. Moving its contents to $destinationPath..."
+        Write-Output "Detected inner 'docker' folder. Moving its contents to $destinationPath..." # Replaced Write-Host
         New-Item -ItemType Directory -Path $destinationPath | Out-Null
         Get-ChildItem -Path $innerFolder | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination $destinationPath -Recurse -Force
         }
     }
     else {
-        Write-Host "No inner folder detected. Renaming extraction folder to $destinationPath..."
+        Write-Output "No inner folder detected. Renaming extraction folder to $destinationPath..." # Replaced Write-Host
         Rename-Item -Path $tempDestination -NewName "docker"
         return $destinationPath
     }
@@ -119,7 +119,7 @@ function Install-DockerEngine {
     return $destinationPath
 }
 
-function RegisterAndStart-DockerEngine {
+function Register-DockerEngineService { # Renamed function
     param(
         [string]$destinationPath = ".\docker"
     )
@@ -128,10 +128,10 @@ function RegisterAndStart-DockerEngine {
         Write-Error "dockerd.exe not found in $destinationPath. Installation may have failed."
         exit 1
     }
-    Write-Host "Checking if Docker Engine service is already registered..."
+    Write-Output "Checking if Docker Engine service is already registered..." # Replaced Write-Host
     $dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
-    if ($dockerService -eq $null) {
-        Write-Host "Registering Docker Engine as a service..."
+    if ($null -eq $dockerService) { # Corrected null comparison
+        Write-Output "Registering Docker Engine as a service..." # Replaced Write-Host
         & "$dockerdPath" --register-service
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Failed to register Docker service."
@@ -140,11 +140,11 @@ function RegisterAndStart-DockerEngine {
         $dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
     }
     else {
-        Write-Host "Docker service is already registered."
+        Write-Output "Docker service is already registered." # Replaced Write-Host
     }
 
     if ($dockerService.Status -ne 'Running') {
-        Write-Host "Starting Docker service..."
+        Write-Output "Starting Docker service..." # Replaced Write-Host
         Start-Service docker
         $dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
         if ($dockerService.Status -ne 'Running') {
@@ -153,7 +153,7 @@ function RegisterAndStart-DockerEngine {
         }
     }
     else {
-        Write-Host "Docker service is already running."
+        Write-Output "Docker service is already running." # Replaced Write-Host
     }
     Start-Sleep -Seconds 10
     $env:Path = "$(Resolve-Path $destinationPath);$env:Path"
@@ -169,20 +169,23 @@ function Test-DockerWorking {
     else {
         $dockerExe = Join-Path $destinationPath "docker.exe"
     }
-    Write-Host "Verifying Docker installation with hello-world image..."
+    Write-Output "Verifying Docker installation with hello-world image..." # Replaced Write-Host
     $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
-    
+    # Removed trailing whitespace from original line 174
+
     $existingHelloWorld = &$dockerExe images --filter "reference=hello-world" --format "{{.Repository}}"
     if (-not $existingHelloWorld) {
-        Write-Host "hello-world image not found locally. Pulling hello-world image..."
+        Write-Output "hello-world image not found locally. Pulling hello-world image..." # Replaced Write-Host
         &$dockerExe pull hello-world | Out-Null
     }
-    
+    # Removed trailing whitespace from original line 180
+
     $helloWorldContainerName = "hello-world-test"
     $existingContainer = &$dockerExe ps -a --filter "name=^$helloWorldContainerName$" --format "{{.ID}}"
-    
+    # Removed trailing whitespace from original line 183
+
     if (-not $existingContainer) {
-        Write-Host "No existing hello-world container found. Running a new one..."
+        Write-Output "No existing hello-world container found. Running a new one..." # Replaced Write-Host
         # docker run [options] IMAGE [COMMAND [ARG...]]
         # run         Run a command in a new container.
         # --name      Assign a name to the container.
@@ -194,32 +197,33 @@ function Test-DockerWorking {
         }
     }
     else {
-        Write-Host "hello-world container already exists. Skipping container creation."
+        Write-Output "hello-world container already exists. Skipping container creation." # Replaced Write-Host
     }
-    
-    Write-Host "Docker Engine is working successfully."
+    # Removed trailing whitespace from original line 199
+
+    Write-Output "Docker Engine is working successfully." # Replaced Write-Host
 }
 
-function Ensure-DockerInstalledAndWorking {
+function Test-DockerInstallation { # Renamed function
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-        Write-Host "Docker is not installed."
-        Write-Host "Select Docker installation method:"
-        Write-Host "1) Install Docker Desktop (requires winget)"
-        Write-Host "2) Install Docker Engine (static binary installation)"
+        Write-Output "Docker is not installed." # Replaced Write-Host
+        Write-Output "Select Docker installation method:" # Replaced Write-Host
+        Write-Output "1) Install Docker Desktop (requires winget)" # Replaced Write-Host
+        Write-Output "2) Install Docker Engine (static binary installation)" # Replaced Write-Host
         $installMethod = Read-Host "Enter your choice (1 or 2), default is 1"
         if ([string]::IsNullOrWhiteSpace($installMethod)) {
             $installMethod = "1"
         }
         if ($installMethod -eq "1") {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
-                Write-Host "Installing Docker Desktop using winget..."
+                Write-Output "Installing Docker Desktop using winget..." # Replaced Write-Host
                 winget install --id Docker.DockerDesktop -e --accept-package-agreements --accept-source-agreements
                 Start-Sleep -Seconds 60
                 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
                     Write-Error "Docker Desktop installation via winget failed. Please install Docker manually."
                     exit 1
                 }
-                Write-Host "Docker Desktop installed successfully."
+                Write-Output "Docker Desktop installed successfully." # Replaced Write-Host
             }
             else {
                 Write-Error "winget is not available for Docker Desktop installation. Please install Docker manually."
@@ -227,9 +231,9 @@ function Ensure-DockerInstalledAndWorking {
             }
         }
         elseif ($installMethod -eq "2") {
-            $zipPath = Download-DockerEngine -dockerStaticUrl $dockerStaticUrl
+            $zipPath = Invoke-DockerEngineDownload -dockerStaticUrl $dockerStaticUrl # Use renamed function
             $destinationPath = Install-DockerEngine -zipPath $zipPath -destinationPath ".\docker"
-            RegisterAndStart-DockerEngine -destinationPath $destinationPath
+            Register-DockerEngineService -destinationPath $destinationPath # Use renamed function
         }
         else {
             Write-Error "Invalid selection for Docker installation method."
@@ -237,31 +241,31 @@ function Ensure-DockerInstalledAndWorking {
         }
     }
     else {
-        Write-Host "Docker command found in PATH. Using existing Docker installation."
+        Write-Output "Docker command found in PATH. Using existing Docker installation." # Replaced Write-Host
     }
     Test-DockerWorking -destinationPath ".\docker"
 }
 
-function Ensure-DockerDaemonRunning {
-    Write-Host "Ensuring Docker daemon is reachable..."
+function Test-DockerDaemonStatus { # Renamed function
+    Write-Output "Ensuring Docker daemon is reachable..." # Replaced Write-Host
     $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
     $dockerInfo = docker info 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Docker daemon is not reachable. Please ensure Docker is running. Error details: $dockerInfo"
         exit 1
     }
-    Write-Host "Docker daemon is reachable."
+    Write-Output "Docker daemon is reachable." # Replaced Write-Host
 }
 
 #############################################
 # Main Script Logic for Docker Setup
 #############################################
 
-Check-WSLStatus
-Ensure-DockerInstalledAndWorking
-Ensure-DockerDaemonRunning
+Test-WSLStatus # Use renamed function
+Test-DockerInstallation # Use renamed function
+Test-DockerDaemonStatus # Use renamed function
 
 # Use the common Get-DockerPath function from Setup_0.ps1.
-$dockerPath = Get-DockerPath
+# $dockerPath = Get-DockerPath # Removed unused variable assignment
 
-Write-Host "Docker installation and verification completed successfully."
+Write-Output "Docker installation and verification completed successfully." # Replaced Write-Host
