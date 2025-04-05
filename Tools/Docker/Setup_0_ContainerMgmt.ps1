@@ -105,7 +105,7 @@ function Remove-ContainerAndVolume {
     # Check if container exists
     $existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
     if (-not $existingContainer) {
-        Write-Output "Container '$ContainerName' not found. Nothing to remove." # Removed ForegroundColor Yellow
+        Write-Output "Container '$ContainerName' not found. Nothing to remove."
         return $true # Indicate success as there's nothing to do
     }
 
@@ -127,14 +127,14 @@ function Remove-ContainerAndVolume {
     # Check if volume exists
     $existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
     if ($existingVolume) {
-        Write-Output "Data volume '$VolumeName' exists." # Removed ForegroundColor Yellow
+        Write-Output "Data volume '$VolumeName' exists."
         $removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
         if ($removeVolume -eq 'Y') {
             if ($PSCmdlet.ShouldProcess($VolumeName, "Remove Volume")) {
                 Write-Output "Removing volume '$VolumeName'..."
                 & $Engine volume rm $VolumeName
                 if ($LASTEXITCODE -eq 0) {
-                    Write-Output "Volume '$VolumeName' removed successfully." # Removed ForegroundColor Green
+                    Write-Output "Volume '$VolumeName' removed successfully."
                 } else {
                     Write-Error "Failed to remove volume '$VolumeName'."
                     # Continue even if volume removal fails, as container was removed
@@ -168,7 +168,7 @@ function Restore-ContainerState {
         [Parameter(Mandatory=$true)]
         [string]$ContainerName,
         [string]$BackupFolder = ".\Backup",
-        [switch]$RestoreVolumes = $false # Changed default to $false
+        [switch]$RestoreVolumes = $false
     )
 
     # First try the container-specific backup format
@@ -254,7 +254,7 @@ function Restore-ContainerState {
                     & $Engine run --rm --volume ${volumeName}:/target --volume ${BackupFolder}:/backup --name $tempContainerName alpine tar -xf /backup/$(Split-Path $volumeBackupFile -Leaf) -C /target
 
                     if ($LASTEXITCODE -eq 0) {
-                        Write-Output "Successfully restored volume '$volumeName' from '$volumeBackupFile'" # Removed ForegroundColor Green
+                        Write-Output "Successfully restored volume '$volumeName' from '$volumeBackupFile'"
                     } else {
                         Write-Error "Failed to restore volume '$volumeName'"
                     }
@@ -299,7 +299,7 @@ function Test-ImageUpdateAvailable { # Renamed function
     # First, check if we have the image locally
     $localImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
     if (-not $localImageInfo) {
-        Write-Output "Image '$ImageName' not found locally. Update is available." # Removed ForegroundColor Yellow
+        Write-Output "Image '$ImageName' not found locally. Update is available."
         return $true
     }
 
@@ -404,10 +404,10 @@ function Test-ImageUpdateAvailable { # Renamed function
 
     # Compare digests
     if ($localDigest -ne $remoteDigest) {
-        Write-Output "Update available! Local and remote image digests differ." # Removed ForegroundColor Green
+        Write-Output "Update available! Local and remote image digests differ."
         return $true
     } else {
-        Write-Output "No update available. You have the latest version." # Removed ForegroundColor Green
+        Write-Output "No update available. You have the latest version."
         return $false
     }
 }
@@ -445,15 +445,14 @@ function Update-Container {
     Write-Output "Initiating update for container '$ContainerName'..."
 
     # Step 1: Check if container exists
-    # $containerInfo = & $Engine inspect $ContainerName 2>$null # Unused variable removed
     & $Engine inspect $ContainerName 2>$null | Out-Null # Check existence without storing info
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "Container '$ContainerName' not found. Nothing to update." # Removed ForegroundColor Yellow
+        Write-Output "Container '$ContainerName' not found. Nothing to update."
         return $false
     }
 
     # Step 2: Check if an update is available
-    $updateAvailable = Test-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName # Use renamed function
+    $updateAvailable = Test-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName
     if (-not $updateAvailable) {
         $forceUpdate = Read-Host "No update available. Do you want to force an update anyway? (Y/N, default is N)"
         if ($forceUpdate -ne "Y") {
@@ -507,7 +506,7 @@ function Update-Container {
         Write-Output "Starting updated container..."
         try {
             & $RunFunction
-            Write-Output "Container '$ContainerName' updated successfully!" # Removed ForegroundColor Green
+            Write-Output "Container '$ContainerName' updated successfully!"
             return $true
         }
         catch {

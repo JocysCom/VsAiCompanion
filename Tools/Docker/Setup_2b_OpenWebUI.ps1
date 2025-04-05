@@ -205,9 +205,6 @@ function Start-OpenWebUIContainer { # Renamed function
     Start-Sleep -Seconds 20
 
     # Test connectivity
-    $httpTest = Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
-    $tcpTest = Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-    # Removed unused variable assignments
     Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
     Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
     Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
@@ -334,14 +331,14 @@ function Update-OpenWebUIUserData {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    # No actions to wrap with ShouldProcess as it's not implemented
-    Write-Output "Update User Data functionality is not implemented for OpenWebUI container." # Replaced Write-Host
-
-    # Provide some helpful information
-    Write-Output "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container." # Replaced Write-Host
-    Write-Output "To back up user data, you can use the 'Backup Live container' option." # Replaced Write-Host
-    Write-Output "To modify user data directly, you would need to access the container with:" # Replaced Write-Host
-    Write-Output "  $enginePath exec -it $containerName /bin/bash" # Replaced Write-Host
+    if ($PSCmdlet.ShouldProcess("Open WebUI container", "Display user data information")) {
+        # Provide some helpful information
+        Write-Output "Update User Data functionality is not implemented for OpenWebUI container." # Replaced Write-Host
+        Write-Output "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container." # Replaced Write-Host
+        Write-Output "To back up user data, you can use the 'Backup Live container' option." # Replaced Write-Host
+        Write-Output "To modify user data directly, you would need to access the container with:" # Replaced Write-Host
+        Write-Output "  $enginePath exec -it $containerName /bin/bash" # Replaced Write-Host
+    }
 }
 
 #############################################

@@ -48,7 +48,7 @@ function Backup-ContainerImage {
     & $Engine save --output $backupFile $ImageName
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Output "Successfully backed up image '$ImageName'" # Removed ForegroundColor Green as Write-Output doesn't support it directly
+        Write-Output "Successfully backed up image '$ImageName'"
         return $true
     }
     else {
@@ -126,7 +126,7 @@ function Restore-ContainerImage {
     $output = & $Engine load --input $BackupFile
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Output "Successfully restored image from '$BackupFile'." # Removed ForegroundColor Green
+        Write-Output "Successfully restored image from '$BackupFile'."
 
         # Attempt to parse the image name from the load output
         # Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
@@ -180,7 +180,7 @@ function Start-RestoredContainer {
     & $Engine run --detach --name $containerName $ImageName
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Output "Container '$containerName' started successfully." # Removed ForegroundColor Green
+        Write-Output "Container '$containerName' started successfully."
         return $true
     }
     else {

@@ -452,8 +452,10 @@ function Update-n8nUserData {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    # No actions to wrap with ShouldProcess as it's not implemented
-    Write-Output "Update User Data functionality is not implemented for n8n container."
+    if ($PSCmdlet.ShouldProcess("n8n container user data", "Update")) {
+        # Placeholder for future implementation
+        Write-Output "Update User Data functionality is not implemented for n8n container."
+    }
 }
 
 <#

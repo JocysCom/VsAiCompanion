@@ -143,12 +143,14 @@ function Update-NocoDBContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-     # Define Run Function for Update-Container
-     $runContainerFunction = {
-         Install-NocoDBContainer # Re-use install logic
-     }
-    # Use the shared update function (which supports ShouldProcess)
-     Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
+    if ($PSCmdlet.ShouldProcess("NocoDB container", "Update")) {
+        # Define Run Function for Update-Container
+        $runContainerFunction = {
+            Install-NocoDBContainer # Re-use install logic
+        }
+        # Use the shared update function (which supports ShouldProcess)
+        Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
+    }
 }
 
 #############################################

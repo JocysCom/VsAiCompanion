@@ -153,7 +153,9 @@ function Update-QdrantContainer {
      }
 
     # Use the shared update function (which supports ShouldProcess)
-     Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
+    if ($PSCmdlet.ShouldProcess("Qdrant Container", "Update to the latest version")) {
+        Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
+    }
 }
 
 <#
@@ -166,8 +168,10 @@ function Update-QdrantUserData {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    # No actions to wrap with ShouldProcess as it's not implemented
-    Write-Output "Update User Data functionality is not implemented for Qdrant container." # Replaced Write-Host
+    if ($PSCmdlet.ShouldProcess("Qdrant Container User Data", "Update user data")) {
+        # No actions to wrap with ShouldProcess as it's not implemented
+        Write-Output "Update User Data functionality is not implemented for Qdrant container." # Replaced Write-Host
+    }
 }
 
 <#

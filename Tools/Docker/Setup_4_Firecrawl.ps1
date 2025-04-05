@@ -258,8 +258,10 @@ function Update-FirecrawlUserData {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    # No actions to wrap with ShouldProcess as it's not implemented
-    Write-Output "Update User Data functionality is not implemented for Firecrawl container." # Replaced Write-Host
+    if ($PSCmdlet.ShouldProcess("Firecrawl User Data", "Update")) {
+        # No actions implemented yet
+        Write-Output "Update User Data functionality is not implemented for Firecrawl container." # Replaced Write-Host
+    }
 }
 
 <#

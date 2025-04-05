@@ -20,3 +20,11 @@ To maintain code quality and catch potential issues early, all PowerShell script
 
 **Rationale:**
 Using `PSScriptAnalyzer` helps enforce best practices, improve script reliability, and reduce potential runtime errors.
+
+## Rule: Avoid Adding Temporary/Explanatory Comments to Code
+
+**Description:**
+When modifying code (e.g., replacing functions, fixing errors, removing whitespace), do not add comments into the code itself that explain the modification action (e.g., `# Replaced Write-Host`, `# Removed trailing whitespace`, `# Fixed syntax error`). Such comments are temporary artifacts of the development/debugging process and should not be part of the final committed code.
+
+**Rationale:**
+Temporary or explanatory comments added during modification clutter the code, provide no long-term value, and can become outdated or misleading. Code changes should be understandable through the code itself and commit messages, not through temporary inline annotations.

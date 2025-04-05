@@ -296,8 +296,9 @@ function Update-PipelinesUserData {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    # No actions to wrap with ShouldProcess as it's not implemented
-    Write-Output "Update User Data functionality is not implemented for Pipelines container." # Replaced Write-Host
+    if ($PSCmdlet.ShouldProcess("Pipelines container user data", "Update")) {
+        Write-Output "Update User Data functionality is not implemented for Pipelines container." # Replaced Write-Host
+    }
 }
 
 <#
