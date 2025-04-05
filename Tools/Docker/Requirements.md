@@ -1,3 +1,26 @@
+# PowerShell Script Requirements Analysis
+
+**Purpose:** This document analyzes a collection of PowerShell setup scripts (`.ps1`) to identify common features, patterns, and potential inconsistencies. It serves as a basis for standardizing the scripts and ensuring consistent functionality.
+
+**Goals:**
+
+*   Identify and define common features across the PowerShell scripts using two-letter codes.
+*   Create a table summarizing which features are present in each script.
+*   Define specific requirements for key features (e.g., shared library reference, menu structure).
+*   Provide a reference for future script maintenance, standardization, and identification of missing features or inconsistencies.
+
+**System Prompt to Recreate:**
+
+```text
+Analyze all `.ps1` files in the current directory. Identify common features (like headers, shared library references, container installation, menu presence, specific function calls from Setup_0.ps1, etc.). Assign a unique two-letter code to each feature. Create a markdown file named `Requirements.md`. This file should contain:
+1. A "Features" section listing each two-letter code and its description.
+2. A table with script names in the first column and feature codes as subsequent column headers. Use the feature codes to mark the presence of a feature in each script row.
+3. A "Feature requirements" section detailing specific implementation requirements for key features (e.g., 'SR - Shared Library Reference', 'ME - Menu'). Include code examples where appropriate.
+Ensure the table uses the feature codes directly in the cells, not checkboxes or other symbols.
+```
+
+---
+
 ## Features
 
 HE - Have a header with file, name description and usage
