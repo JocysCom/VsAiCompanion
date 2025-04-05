@@ -48,26 +48,22 @@ $global:imageName = "nocodb/nocodb:latest"
 #              runs the container, and tests connectivity.
 #############################################
 function Install-NocoDBContainer {
-    Write-Output "Installing NocoDB container using image '$global:imageName'..." # Replaced Write-Host
+    Write-Output "Installing NocoDB container using image '$global:imageName'..."
 
-    # Check if the volume for NocoDB data exists; if not, create it.
-    $existingVolume = & $global:enginePath volume ls --filter "name=$global:volumeName" --format "{{.Name}}"
-    if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Output "Creating volume '$global:volumeName' for NocoDB data..." # Replaced Write-Host
-        & $global:enginePath volume create $global:volumeName
+    # Ensure the volume exists
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Renamed function
+        Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
+        return
     }
-    else {
-        Write-Output "Volume '$global:volumeName' already exists. Skipping creation." # Replaced Write-Host
-    }
+    Write-Output "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
-    # Check if the NocoDB image exists.
-    $existingImage = & $global:enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -like "nocodb/nocodb:*" }
+    # Check if image exists locally, restore from backup, or pull new
+    $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
     if (-not $existingImage) {
-        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
-            Write-Output "No backup restored. Pulling NocoDB image '$global:imageName'..." # Replaced Write-Host
-            $pullCmd = @("pull") + $global:pullOptions + $global:imageName
-            & $global:enginePath @pullCmd
-            if ($LASTEXITCODE -ne 0) {
+        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
+            Write-Output "No backup restored. Pulling NocoDB image '$global:imageName'..."
+            # Use shared pull function
+            if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
                 Write-Error "Failed to pull NocoDB image. Exiting..."
                 return
             }
@@ -143,14 +139,56 @@ function Update-NocoDBContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    if ($PSCmdlet.ShouldProcess("NocoDB container", "Update")) {
-        # Define Run Function for Update-Container
-        $runContainerFunction = {
-            Install-NocoDBContainer # Re-use install logic
-        }
-        # Use the shared update function (which supports ShouldProcess)
-        Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
+    # Check ShouldProcess before proceeding with the delegated update
+    if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
+        return
     }
+
+    # Define Run Function for Update-Container
+    $runContainerFunction = {
+        param(
+            [string]$EnginePath,
+            [string]$ContainerEngineType, # Not used
+            [string]$ContainerName,       # Should be $global:containerName
+            [string]$VolumeName,          # Should be $global:volumeName
+            [string]$ImageName            # The updated image name ($global:imageName)
+        )
+
+        # Ensure the volume exists (important if it was removed manually)
+        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) { # Renamed function
+            throw "Failed to ensure volume '$VolumeName' exists during update."
+        }
+
+        Write-Output "Starting updated NocoDB container '$ContainerName'..."
+
+        # Define run options (same as in Install-NocoDBContainer)
+        $runOptions = @(
+            "--detach",
+            "--publish", "8570:8080",
+            "--volume", "$($VolumeName):/usr/app/data",
+            "--name", $ContainerName
+        )
+
+        # Execute the command
+        & $EnginePath run @runOptions $ImageName
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to run updated NocoDB container '$ContainerName'."
+        }
+
+        # Wait and Test Connectivity (same as in Install-NocoDBContainer)
+        Write-Output "Waiting 20 seconds for container startup..."
+        Start-Sleep -Seconds 20
+        Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $ContainerName
+        Test-HTTPPort -Uri "http://localhost:8570" -serviceName $ContainerName
+        Write-Output "NocoDB container updated successfully."
+    }
+
+    # Use the shared update function (which supports ShouldProcess)
+    # Note: The ShouldProcess check is handled internally by Update-Container
+    Update-Container -Engine $global:enginePath `
+                     -ContainerName $global:containerName `
+                     -ImageName $global:imageName `
+                     -RunFunction $runContainerFunction.GetNewClosure() # Pass closure
 }
 
 #############################################

@@ -92,6 +92,7 @@ function Get-PortainerContainerConfig {
 #>
 function Remove-PortainerContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [OutputType([bool])] # Added OutputType
     param()
 
     $existingContainer = & $global:enginePath ps --all --filter "name=portainer" --format "{{.ID}}"
@@ -209,27 +210,6 @@ function Start-PortainerContainer {
 
 <#
 .SYNOPSIS
-    Pulls the latest Portainer image.
-.DESCRIPTION
-    Downloads the latest version of the Portainer image.
-.OUTPUTS
-    Returns $true if successful, $false otherwise.
-#>
-function Get-PortainerImage { # Renamed function
-    Write-Output "Pulling latest Portainer image '$global:imageName'..."
-    $pullCmd = @("pull") + $global:pullOptions + $global:imageName
-    & $global:enginePath @pullCmd
-
-    if ($LASTEXITCODE -eq 0) {
-        return $true
-    } else {
-        Write-Error "Failed to pull latest Portainer image."
-        return $false
-    }
-}
-
-<#
-.SYNOPSIS
     Installs the Portainer container.
 .DESCRIPTION
     Creates (if necessary) the volume 'portainer_data', pulls the Portainer image if not found
@@ -238,23 +218,20 @@ function Get-PortainerImage { # Renamed function
     waits for startup, and tests connectivity.
 #>
 function Install-PortainerContainer {
-    # Check if volume 'portainer_data' already exists; if not, create it.
-    $existingVolume = & $global:enginePath volume ls --filter "name=portainer_data" --format "{{.Name}}"
-    if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Output "Creating volume 'portainer_data'..."
-        & $global:enginePath volume create portainer_data
+    # Ensure the volume exists
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName "portainer_data")) { # Renamed function
+        Write-Error "Failed to ensure volume 'portainer_data' exists. Exiting..."
+        return
     }
-    else {
-        Write-Output "Volume 'portainer_data' already exists. Skipping creation."
-        Write-Output "IMPORTANT: Using existing volume - all previous user data will be preserved."
-    }
+    Write-Output "IMPORTANT: Using volume 'portainer_data' - existing user data will be preserved."
 
     # Check if the Portainer image is already available.
-    $existingImage = & $global:enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -match "portainer" }
+    $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}" # More reliable check
     if (-not $existingImage) {
-        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
+        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
             Write-Output "No backup restored. Pulling Portainer image '$global:imageName'..."
-            if (-not (Get-PortainerImage)) { # Use renamed function
+            # Use the shared Invoke-PullImage function
+            if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
                 Write-Error "Image pull failed. Exiting..."
                 return
             }
@@ -332,7 +309,8 @@ function Update-PortainerContainer {
 
     # Step 4: Pull the latest image
     if ($PSCmdlet.ShouldProcess($global:imageName, "Pull Latest Image")) {
-        if (-not (Get-PortainerImage)) { # Use renamed function
+        # Use the shared Invoke-PullImage function
+        if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
             Write-Error "Failed to pull latest image. Update aborted."
 
             # Offer to restore from backup if one was created

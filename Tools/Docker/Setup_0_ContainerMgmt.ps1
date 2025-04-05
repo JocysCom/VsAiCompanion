@@ -11,6 +11,131 @@
 #                . "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
 ################################################################################
 
+#############################################
+# Function: Ensure-ContainerNetwork
+# Description: Checks if a container network exists and creates it if it doesn't.
+# Parameters:
+#   -Engine: Path to the container engine executable.
+#   -NetworkName: Name of the network to check/create.
+# Returns: $true if network exists or was created, $false otherwise.
+#############################################
+function Confirm-ContainerNetwork { # Renamed from Ensure-ContainerNetwork
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+
+        [Parameter(Mandatory=$true)]
+        [string]$NetworkName
+    )
+
+    $existingNetwork = & $Engine network ls --filter "name=^$NetworkName$" --format "{{.Name}}"
+    if ($existingNetwork -ne $NetworkName) {
+        if ($PSCmdlet.ShouldProcess($NetworkName, "Create Network")) {
+            Write-Output "Creating container network '$NetworkName'..."
+            & $Engine network create $NetworkName
+            if ($LASTEXITCODE -eq 0) {
+                Write-Output "Network '$NetworkName' created successfully."
+                return $true
+            } else {
+                Write-Error "Failed to create network '$NetworkName'."
+                return $false
+            }
+        } else {
+            Write-Warning "Network creation skipped due to -WhatIf."
+            return $false # Indicate network doesn't exist if creation skipped
+        }
+    }
+    else {
+        Write-Output "Network '$NetworkName' already exists. Skipping creation."
+        return $true
+    }
+}
+
+#############################################
+# Function: Ensure-ContainerVolume
+# Description: Checks if a volume exists and creates it if it doesn't.
+# Parameters:
+#   -Engine: Path to the container engine executable.
+#   -VolumeName: Name of the volume to check/create.
+# Returns: $true if volume exists or was created, $false otherwise.
+#############################################
+function Confirm-ContainerVolume { # Renamed from Ensure-ContainerVolume
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+
+        [Parameter(Mandatory=$true)]
+        [string]$VolumeName
+    )
+
+    $existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
+    if ([string]::IsNullOrWhiteSpace($existingVolume)) {
+        if ($PSCmdlet.ShouldProcess($VolumeName, "Create Volume")) {
+            Write-Output "Creating volume '$VolumeName'..."
+            & $Engine volume create $VolumeName
+            if ($LASTEXITCODE -eq 0) {
+                Write-Output "Volume '$VolumeName' created successfully."
+                return $true
+            } else {
+                Write-Error "Failed to create volume '$VolumeName'."
+                return $false
+            }
+        } else {
+            Write-Warning "Volume creation skipped due to -WhatIf."
+            return $false # Indicate volume doesn't exist if creation skipped
+        }
+    }
+    else {
+        Write-Output "Volume '$VolumeName' already exists. Skipping creation."
+        return $true
+    }
+}
+
+#############################################
+# Function: Invoke-PullImage
+# Description: Pulls a container image using the specified engine.
+# Parameters:
+#   -Engine: Path to the container engine executable.
+#   -ImageName: Full name of the image to pull.
+#   -PullOptions: Optional array of additional options for the pull command (e.g., --platform, --tls-verify).
+# Returns: $true if pull was successful, $false otherwise.
+#############################################
+function Invoke-PullImage {
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Engine,
+
+        [Parameter(Mandatory=$true)]
+        [string]$ImageName,
+
+        [Parameter(Mandatory=$false)]
+        [array]$PullOptions = @()
+    )
+
+    if ($PSCmdlet.ShouldProcess($ImageName, "Pull Image")) {
+        Write-Output "Pulling image '$ImageName'..."
+        $pullCmd = @("pull") + $PullOptions + $ImageName
+        & $Engine @pullCmd
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Output "Image '$ImageName' pulled successfully."
+            return $true
+        } else {
+            Write-Error "Failed to pull image '$ImageName'."
+            return $false
+        }
+    } else {
+        Write-Warning "Image pull skipped due to -WhatIf."
+        return $false # Indicate failure if skipped
+    }
+}
+
 #--------------------------------------
 # Function: Backup-ContainerState
 # Description: Creates a backup of a live running container by committing its state

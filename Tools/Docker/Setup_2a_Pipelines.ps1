@@ -85,7 +85,14 @@ function ConvertTo-WSLPath {
     After running the container, waits for startup and tests connectivity.
 #>
 function Install-PipelinesContainer {
-    Write-Output "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main" # Replaced Write-Host
+    Write-Output "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
+
+    # Ensure the volume exists
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Renamed function
+        Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
+        return
+    }
+    Write-Output "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
     # Set the custom image tag to the official pre-built image
     $customPipelineImageTag = "ghcr.io/open-webui/pipelines:main"
@@ -205,8 +212,9 @@ function Add-PipelineToContainer {
     $fileName = "azure_openai_pipeline.py"
     # Create a temporary file path for the download (assume $global:downloadFolder is a Windows path)
     $tempFile = Join-Path $global:downloadFolder $fileName
-    Write-Output "Downloading pipeline from $PipelineUrl to $tempFile..." # Replaced Write-Host
-    Invoke-WebRequest -Uri $PipelineUrl -OutFile $tempFile -UseBasicParsing
+    Write-Output "Downloading pipeline from $PipelineUrl to $tempFile..."
+    # Use shared download function
+    Invoke-DownloadFile -SourceUrl $PipelineUrl -DestinationPath $tempFile -ForceDownload:$true # Force download as it's temporary
 
     # If using Podman, convert the Windows path to WSL path
     if ($global:containerEngine -eq "podman") {
@@ -238,52 +246,71 @@ function Add-PipelineToContainer {
 .SYNOPSIS
     Updates the Pipelines container.
 .DESCRIPTION
-    Stops and removes any existing container, pulls the latest image from ghcr.io/open-webui/pipelines:main,
-    and then reinstalls the container.
+    Uses the generic Update-Container function to handle the update process.
 #>
 function Update-PipelinesContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    Write-Output "Initiating update for Pipelines container..." # Replaced Write-Host
-
-    # Check and remove any current running instance of the container.
-    $existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
-    if ($existingContainer) {
-        if ($PSCmdlet.ShouldProcess($global:containerName, "Remove Existing Container")) {
-            Write-Output "Removing existing container '$($global:containerName)' as part of the update..." # Replaced Write-Host
-            # Remove container command:
-            # rm         Remove one or more containers.
-            # --force    Force removal of a running container.
-            & $global:enginePath rm --force $global:containerName
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "Failed to remove container '$($global:containerName)'. Update aborted."
-                return
-            }
-        } else {
-             Write-Output "Skipping removal of existing container due to -WhatIf."
-             # Decide if update should proceed without removal? For now, let's abort.
-             Write-Warning "Update cannot proceed without removing the existing container."
-             return
-        }
-    }
-
-    if ($PSCmdlet.ShouldProcess("ghcr.io/open-webui/pipelines:main", "Pull Latest Image")) {
-        Write-Output "Pulling the latest image..." # Replaced Write-Host
-        & $global:enginePath pull ghcr.io/open-webui/pipelines:main
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to pull the latest Pipelines image. Update aborted."
-            return
-        }
-    } else {
-        Write-Output "Skipping image pull due to -WhatIf."
-        # Decide if update should proceed without pulling? For now, let's abort.
-        Write-Warning "Update cannot proceed without pulling the latest image."
+    # Check ShouldProcess before proceeding with the delegated update
+    if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
         return
     }
 
-    # Reinstall container (Install function handles ShouldProcess internally if needed)
-    Install-PipelinesContainer
+    # Define the script block that knows how to run *this specific* container
+    $runPipelinesScriptBlock = {
+        param(
+            [string]$EnginePath,
+            [string]$ContainerEngineType,
+            [string]$ContainerName,
+            [string]$VolumeName,
+            [string]$ImageName # The updated image name passed by Update-Container
+        )
+
+        # Ensure the volume exists (important if it was removed manually)
+        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) { # Renamed function
+            throw "Failed to ensure volume '$VolumeName' exists during update."
+        }
+
+        # Conditionally set the --add-host parameter if using Docker
+        if ($ContainerEngineType -eq "docker") {
+            $addHostParams = @('--add-host', 'host.docker.internal:host-gateway')
+        }
+        else {
+            $addHostParams = @() # Podman doesn't need this
+        }
+
+        # Build the run arguments array
+        $runArgs = @(
+            '--detach',                                      # run in background
+            '--publish', '9099:9099',                         # port mapping
+            '--volume', "$($VolumeName):/app/pipelines",     # volume mapping
+            '--restart', 'always',                           # restart policy
+            '--name', $ContainerName,                        # container name
+            $ImageName                                       # Use the image name passed to the script block
+        ) + $addHostParams
+
+        Write-Output "Running updated Pipelines container with image '$ImageName'..."
+        & $EnginePath run @runArgs
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to run the updated Pipelines container."
+            # Throw an error to signal failure to Update-Container
+            throw "Failed to run the updated Pipelines container."
+        }
+        Write-Output "Pipelines container started."
+
+        # Wait for the container to initialize, then test connectivity
+        Write-Output "Waiting for container startup..."
+        Start-Sleep -Seconds 20
+        Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $ContainerName
+        Test-HTTPPort -Uri "http://localhost:9099" -serviceName $ContainerName
+    }
+
+    # Call the generic Update-Container function
+    Update-Container -Engine $global:enginePath `
+                     -ContainerName $global:containerName `
+                     -ImageName "ghcr.io/open-webui/pipelines:main" `
+                     -RunFunction $runPipelinesScriptBlock.GetNewClosure() # Pass closure to maintain scope
 }
 
 <#

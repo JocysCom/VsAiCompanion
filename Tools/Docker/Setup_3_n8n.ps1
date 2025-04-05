@@ -10,6 +10,7 @@
 
 using namespace System
 using namespace System.IO
+using namespace System.Diagnostics.CodeAnalysis # Added for SuppressMessageAttribute
 
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
@@ -119,6 +120,7 @@ function Get-n8nContainerConfig {
 #>
 function Remove-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [OutputType([bool])] # Added OutputType
     param()
 
     $existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
@@ -159,6 +161,7 @@ function Remove-n8nContainer {
 #>
 function Start-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [OutputType([bool])] # Added OutputType
     param(
         [Parameter(Mandatory=$true)]
         [string]$Image,
@@ -213,27 +216,6 @@ function Start-n8nContainer {
 
 <#
 .SYNOPSIS
-    Pulls the latest n8n image.
-.DESCRIPTION
-    Downloads the latest version of the n8n image.
-.OUTPUTS
-    Returns $true if successful, $false otherwise.
-#>
-function Get-n8nImage { # Renamed function
-    Write-Output "Pulling latest n8n image '$global:imageName'..."
-    $pullCmd = @("pull") + $global:pullOptions + $global:imageName
-    & $global:enginePath @pullCmd
-
-    if ($LASTEXITCODE -eq 0) {
-        return $true
-    } else {
-        Write-Error "Failed to pull latest n8n image."
-        return $false
-    }
-}
-
-<#
-.SYNOPSIS
     Installs the n8n container.
 .DESCRIPTION
     Creates (if necessary) the volume 'n8n_data', pulls the n8n image if not found
@@ -243,23 +225,20 @@ function Get-n8nImage { # Renamed function
     Core argument values are preserved.
 #>
 function Install-n8nContainer {
-    # Check if volume 'n8n_data' already exists; if not, create it.
-    $existingVolume = & $global:enginePath volume ls --filter "name=$global:volumeName" --format "{{.Name}}"
-    if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Output "Creating volume '$global:volumeName'..."
-        & $global:enginePath volume create $global:volumeName
+    # Ensure the volume exists
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Renamed function
+        Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
+        return
     }
-    else {
-        Write-Output "Volume '$global:volumeName' already exists. Skipping creation."
-        Write-Output "IMPORTANT: Using existing volume - all previous user data will be preserved."
-    }
+    Write-Output "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
 
-    # Check if the n8n image is already available.
-    $existingImage = & $global:enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -match "n8n" }
+    # Check if the n8n image is already available, restore from backup, or pull new.
+    $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
     if (-not $existingImage) {
-        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
+        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
             Write-Output "No backup restored. Pulling n8n image '$global:imageName'..."
-            if (-not (Get-n8nImage)) { # Use renamed function
+            # Use shared pull function
+            if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
                 Write-Error "Image pull failed. Exiting..."
                 return
             }
@@ -374,72 +353,61 @@ function Restore-n8nContainer {
 .SYNOPSIS
     Updates the n8n container without resetting user data.
 .DESCRIPTION
-    Updates the n8n container to the latest version while preserving all user data and configuration.
+    Uses the generic Update-Container function to handle the update process.
 #>
 function Update-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
-    # Step 1: Check if container exists and get its configuration
-    $config = Get-n8nContainerConfig
-    if (-not $config) {
-        Write-Output "No n8n container found to update. Please install it first."
-        return
-    }
+    # Define the script block that knows how to run *this specific* container
+    $runN8nScriptBlock = {
+        param(
+            [string]$EnginePath,
+            # The following parameters are part of the standard signature for Update-Container's script block,
+            # but are not directly used in this specific implementation as it relies on global variables
+            # or calls Start-n8nContainer which uses globals.
+            [SuppressMessageAttribute("PSReviewUnusedParameter", "")] # Suppress warning for this parameter
+            [string]$ContainerEngineType,
+            [SuppressMessageAttribute("PSReviewUnusedParameter", "")] # Suppress warning for this parameter
+            [string]$ContainerName,
+            [SuppressMessageAttribute("PSReviewUnusedParameter", "")] # Suppress warning for this parameter
+            [string]$VolumeName,
+            [string]$ImageName            # The updated image name passed by Update-Container
+        )
 
-    # Step 2: Optionally backup the container
-    $createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
-    if ($createBackup -ne "N") {
-        if ($PSCmdlet.ShouldProcess($global:containerName, "Backup Container State")) {
-            Write-Output "Creating backup of current container..."
-            Backup-n8nContainer
+        # Ensure the volume exists (important if it was removed manually)
+        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) { # Renamed function
+            throw "Failed to ensure volume '$VolumeName' exists during update."
+        }
+
+        # Get existing config to preserve environment variables (like domain)
+        # Note: This runs *after* the old container is removed, so it might need adjustment
+        # if Get-n8nContainerConfig relies on the running container.
+        # For now, assume it can get config or we use defaults.
+        $config = Get-n8nContainerConfig
+        if (-not $config) {
+             Write-Warning "Could not retrieve existing config during update. Using default environment variables."
+             $envVars = @(
+                "N8N_COMMUNITY_PACKAGES_ENABLED=true",
+                "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+             )
+        } else {
+            $envVars = $config.EnvVars
+        }
+
+        # Start the container using the specific Start-n8nContainer function
+        $result = Start-n8nContainer -Image $ImageName -EnvVars $envVars
+        if (-not $result) {
+            # Throw an error to signal failure to Update-Container
+            throw "Failed to start updated n8n container."
         }
     }
 
-    # Step 3: Remove the existing container
-    if (-not (Remove-n8nContainer)) { # This function now supports ShouldProcess
-        Write-Error "Failed to remove existing container or action skipped. Update aborted."
-        return
-    }
-
-    # Step 4: Pull the latest image
-    if ($PSCmdlet.ShouldProcess($global:imageName, "Pull Latest Image")) {
-        if (-not (Get-n8nImage)) { # Use renamed function
-            Write-Error "Failed to pull latest image. Update aborted."
-
-            # Offer to restore from backup if one was created
-            if ($createBackup -ne "N") {
-                $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-                if ($restore -ne "N") {
-                    if ($PSCmdlet.ShouldProcess($global:containerName, "Restore Container State after Failed Update")) {
-                        Restore-n8nContainer
-                    }
-                }
-            }
-            return
-        }
-    } else {
-        Write-Output "Skipping image pull due to -WhatIf."
-        Write-Warning "Update cannot proceed without pulling the latest image."
-        return
-    }
-
-    # Step 5: Start a new container with the latest image and preserved configuration
-    if (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars) { # This function now supports ShouldProcess
-        Write-Output "n8n container updated successfully!"
-    } else {
-        Write-Error "Failed to start updated container or action skipped."
-
-        # Offer to restore from backup if one was created
-        if ($createBackup -ne "N") {
-            $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-            if ($restore -ne "N") {
-                if ($PSCmdlet.ShouldProcess($global:containerName, "Restore Container State after Failed Start")) {
-                    Restore-n8nContainer
-                }
-            }
-        }
-    }
+    # Call the generic Update-Container function
+    Update-Container -Engine $global:enginePath `
+                     -ContainerName $global:containerName `
+                     -ImageName $global:imageName `
+                     -RunFunction $runN8nScriptBlock.GetNewClosure() # Pass closure
 }
 
 <#

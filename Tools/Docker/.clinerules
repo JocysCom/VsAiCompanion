@@ -16,10 +16,30 @@ To maintain code quality and catch potential issues early, all PowerShell script
 2. After modifying a `.ps1` file, run the analyzer on it:
    `Invoke-ScriptAnalyzer -Path .\path\to\your\script.ps1`
 3. Review the output for any warnings or errors.
-4. Address the identified issues before committing the changes.
+4. Address the identified issues before committing the changes. See the "Suppressing Acceptable Warnings" rule below for specific cases.
 
 **Rationale:**
 Using `PSScriptAnalyzer` helps enforce best practices, improve script reliability, and reduce potential runtime errors.
+
+## Rule: Suppressing Acceptable PSScriptAnalyzer Warnings
+
+**Description:**
+While `PSScriptAnalyzer` is valuable, certain warnings might be acceptable or expected given the project structure, particularly in scripts utilizing the `Invoke-MenuLoop` pattern with shared state or generic function signatures.
+
+**Acceptable Suppressions:**
+
+*   **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
+*   **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. *Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred.*
+
+**Procedure for Suppression (During Validation):**
+When validating a script where these specific warnings are expected and acceptable, use the `-ExcludeRule` parameter with `Invoke-ScriptAnalyzer`.
+
+**Example:**
+To validate `Setup_3_n8n.ps1` while ignoring expected global variable usage and unused parameters in the update script block:
+`Invoke-ScriptAnalyzer -Path .\Setup_3_n8n.ps1 -ExcludeRule PSAvoidGlobalVars, PSReviewUnusedParameter`
+
+**Rationale:**
+Suppressing these specific, understood warnings allows focusing on other potentially critical issues identified by the analyzer without being cluttered by expected noise inherent in the chosen design pattern (menu loop with shared state, generic function callbacks). Always ensure the suppression is justified and documented if necessary.
 
 ## Rule: Avoid Adding Temporary/Explanatory Comments to Code
 

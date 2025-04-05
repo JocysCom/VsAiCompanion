@@ -176,14 +176,11 @@ async def options_handler(path: str):
 function Install-EmbeddingContainer {
     Build-EmbeddingImage
 
-    # Remove existing container if it exists
-    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Output "Removing existing container '$global:containerName'..." # Replaced Write-Host
-        & $global:enginePath rm --force $global:containerName
-    }
+    # Remove existing container (and potentially volume if user created one with the same name)
+    # Pass container name as volume name; Remove-ContainerAndVolume will prompt if volume exists.
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 
-    Write-Output "Running the Embedding API container..." # Replaced Write-Host
+    Write-Output "Running the Embedding API container..."
     # Command: run
     #   --detach: runs the container in background.
     #   --name: assigns the container the name "embedding-api".
@@ -223,18 +220,9 @@ function Update-EmbeddingContainer {
         return
     }
 
-    # Stop and remove existing container
-    $existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
-    if ($existingContainer) {
-        if ($PSCmdlet.ShouldProcess($global:containerName, "Stop Container")) {
-            Write-Output "Stopping existing container..." # Replaced Write-Host
-            & $global:enginePath stop $global:containerName 2>$null | Out-Null
-        }
-        if ($PSCmdlet.ShouldProcess($global:containerName, "Remove Container")) {
-            Write-Output "Removing existing container..." # Replaced Write-Host
-            & $global:enginePath rm $global:containerName
-        }
-    }
+    # Remove existing container (and potentially volume) using shared function
+    # This handles ShouldProcess internally for removal.
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 
     # Run the updated container
     if ($PSCmdlet.ShouldProcess($global:containerName, "Run Updated Container")) {

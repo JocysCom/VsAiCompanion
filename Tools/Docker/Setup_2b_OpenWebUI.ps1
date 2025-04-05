@@ -116,6 +116,8 @@ function Get-OpenWebUIContainerConfig {
     Optional configuration object containing container settings. If not provided, default settings are used.
 #>
 function Start-OpenWebUIContainer { # Renamed function
+    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [OutputType([bool])] # Added OutputType
     param (
         [string]$action,
         [string]$successMessage,
@@ -194,7 +196,12 @@ function Start-OpenWebUIContainer { # Renamed function
     #   --restart always: Always restart the container unless explicitly stopped.
     #   --name: Assign a name to the container.
     # Run the container with all options
-    & $enginePath run @runOptions
+    if ($PSCmdlet.ShouldProcess($containerName, "Run Container with Image '$($config.Image -or $imageName)'")) {
+        & $enginePath run @runOptions
+    } else {
+        Write-Warning "Skipping container run due to -WhatIf."
+        return $false # Indicate failure if skipped
+    }
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to run container."
@@ -210,10 +217,14 @@ function Start-OpenWebUIContainer { # Renamed function
     Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
 
     # Create firewall rule if needed
-    try {
-        New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow -ErrorAction SilentlyContinue
-    } catch {
-        Write-Warning "Could not create firewall rule. You may need to manually allow port 3000."
+    if ($PSCmdlet.ShouldProcess("Port 3000", "Create Firewall Rule 'Allow WebSockets'")) {
+        try {
+            New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow -ErrorAction SilentlyContinue
+        } catch {
+            Write-Warning "Could not create firewall rule. You may need to manually allow port 3000."
+        }
+    } else {
+        Write-Warning "Skipping firewall rule creation due to -WhatIf."
     }
 
     Write-Output $successMessage # Replaced Write-Host
@@ -229,16 +240,25 @@ function Start-OpenWebUIContainer { # Renamed function
     Open WebUI settings is printed after the container is running.
 #>
 function Install-OpenWebUIContainer {
-    # Attempt to restore backup image; if not, pull latest image.
-    if (-not (Test-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) { # Use renamed function
-        Write-Output "No backup restored. Pulling Open WebUI image '$imageName'..." # Replaced Write-Host
-        # Pull command:
-        # pull       Pull an image from a registry.
-        # --platform string Specify the platform to pull the image for.
-        & $enginePath pull --platform linux/amd64 $imageName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Pull failed. Check internet connection or image URL."
-            return
+    # Ensure the volume exists
+    if (-not (Confirm-ContainerVolume -Engine $enginePath -VolumeName $volumeName)) { # Renamed function
+        Write-Error "Failed to ensure volume '$volumeName' exists. Exiting..."
+        return
+    }
+    Write-Output "IMPORTANT: Using volume '$volumeName' - existing user data will be preserved."
+
+    # Check if image exists locally, restore from backup, or pull new
+    $existingImage = & $enginePath images --filter "reference=$imageName" --format "{{.ID}}"
+    if (-not $existingImage) {
+        if (-not (Test-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
+            Write-Output "No backup restored. Pulling Open WebUI image '$imageName'..."
+            # Use shared pull function
+            if (-not (Invoke-PullImage -Engine $enginePath -ImageName $imageName -PullOptions @("--platform", "linux/amd64"))) {
+                Write-Error "Pull failed. Check internet connection or image URL."
+                return
+            }
+        } else {
+            Write-Output "Using restored backup image '$imageName'."
         }
     }
     else {

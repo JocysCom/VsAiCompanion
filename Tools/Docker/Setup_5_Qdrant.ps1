@@ -50,22 +50,25 @@ else {
     All original command arguments and workarounds are preserved.
 #>
 function Install-QdrantContainer {
-    # Check/Create Volume
-    $existingVolume = & $global:enginePath volume ls --filter "name=$global:volumeName" --format "{{.Name}}"
-    if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Output "Creating volume '$global:volumeName' for Qdrant data..." # Replaced Write-Host
-        & $global:enginePath volume create $global:volumeName
-    } else {
-        Write-Output "Volume '$global:volumeName' already exists." # Replaced Write-Host
+    # Ensure the volume exists
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Renamed function
+        Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
+        return
     }
+    Write-Output "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
-    # Check/Restore/Pull Image
-    if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use renamed function
-        Write-Output "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..." # Replaced Write-Host
-        & $global:enginePath pull $global:imageName
-        if ($LASTEXITCODE -ne 0) {
-             Write-Error "$global:containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
-             exit 1
+    # Check if image exists locally, restore from backup, or pull new
+    $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
+    if (-not $existingImage) {
+        if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
+            Write-Output "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..."
+            # Use shared pull function
+            if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName)) { # No specific pull options needed
+                Write-Error "$global:containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
+                exit 1
+            }
+        } else {
+            Write-Output "Using restored backup image '$global:imageName'."
         }
     }
     else {
@@ -143,19 +146,58 @@ function Update-QdrantContainer {
     [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
     param()
 
+    # Check ShouldProcess before proceeding with the delegated update
+    if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
+        return
+    }
+
     # Define Run Function for Update-Container
-     $runContainerFunction = {
-        # Re-use install logic, but it needs access to global vars
-        # This assumes Install-QdrantContainer handles removing old container if needed
-        # and uses the latest pulled image implicitly.
-        # A more robust approach might pass config, but Install is simple here.
-         Install-QdrantContainer
-     }
+    $runContainerFunction = {
+        param(
+            [string]$EnginePath,
+            [string]$ContainerEngineType, # Not used
+            [string]$ContainerName,       # Should be $global:containerName
+            [string]$VolumeName,          # Should be $global:volumeName
+            [string]$ImageName            # The updated image name ($global:imageName)
+        )
+
+        # Ensure the volume exists (important if it was removed manually)
+        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) { # Renamed function
+            throw "Failed to ensure volume '$VolumeName' exists during update."
+        }
+
+        Write-Output "Starting updated Qdrant container '$ContainerName'..."
+
+        # Define run options (same as in Install-QdrantContainer)
+        $runOptions = @(
+            "--detach",
+            "--name", $ContainerName,
+            "--publish", "6333:6333",
+            "--publish", "6334:6334",
+            "--volume", "$($VolumeName):/qdrant/storage"
+        )
+
+        # Execute the command
+        & $EnginePath run @runOptions $ImageName
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to run updated Qdrant container '$ContainerName'."
+        }
+
+        # Wait and Test Connectivity (same as in Install-QdrantContainer)
+        Write-Output "Waiting 20 seconds for the Qdrant container to fully start..."
+        Start-Sleep -Seconds 20
+        Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
+        Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
+        Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
+        Write-Output "Qdrant container updated successfully."
+    }
 
     # Use the shared update function (which supports ShouldProcess)
-    if ($PSCmdlet.ShouldProcess("Qdrant Container", "Update to the latest version")) {
-        Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName -RunFunction $runContainerFunction
-    }
+    # Note: The ShouldProcess check is handled internally by Update-Container
+    Update-Container -Engine $global:enginePath `
+                     -ContainerName $global:containerName `
+                     -ImageName $global:imageName `
+                     -RunFunction $runContainerFunction.GetNewClosure() # Pass closure
 }
 
 <#
