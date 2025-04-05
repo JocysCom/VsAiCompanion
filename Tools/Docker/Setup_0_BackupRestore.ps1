@@ -21,6 +21,7 @@
 #------------------------------
 function Backup-ContainerImage {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -33,21 +34,21 @@ function Backup-ContainerImage {
 
     if (-not (Test-Path $BackupFolder)) {
         New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
-        Write-Host "Created backup folder: $BackupFolder"
+        Write-Output "Created backup folder: $BackupFolder"
     }
 
     # Replace characters not allowed in file names (':' and '/' become '_')
     $safeName = $ImageName -replace "[:/]", "_"
     $backupFile = Join-Path $BackupFolder "$safeName.tar"
 
-    Write-Host "Backing up image '$ImageName' to '$backupFile'..."
+    Write-Output "Backing up image '$ImageName' to '$backupFile'..."
     # podman save [options] IMAGE
     # save      Save an image to a tar archive.
     # --output string   Specify the output file for saving the image.
     & $Engine save --output $backupFile $ImageName
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+        Write-Output "Successfully backed up image '$ImageName'" # Removed ForegroundColor Green as Write-Output doesn't support it directly
         return $true
     }
     else {
@@ -65,6 +66,7 @@ function Backup-ContainerImage {
 #------------------------------
 function Backup-ContainerImages {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -72,11 +74,11 @@ function Backup-ContainerImages {
         [string]$BackupFolder = ".\Backup"
     )
 
-    Write-Host "Retrieving list of images for $Engine..."
+    Write-Output "Retrieving list of images for $Engine..."
     $images = & $Engine images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -ne "<none>:<none>" }
 
     if (-not $images) {
-        Write-Host "No images found for $Engine."
+        Write-Output "No images found for $Engine."
         return $false
     }
 
@@ -87,7 +89,7 @@ function Backup-ContainerImages {
         }
     }
 
-    Write-Host "Backed up $successCount out of $($images.Count) images."
+    Write-Output "Backed up $successCount out of $($images.Count) images."
     return ($successCount -gt 0)
 }
 
@@ -101,6 +103,7 @@ function Backup-ContainerImages {
 #------------------------------
 function Restore-ContainerImage {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -116,29 +119,29 @@ function Restore-ContainerImage {
         return $false
     }
 
-    Write-Host "Restoring image from '$BackupFile'..."
+    Write-Output "Restoring image from '$BackupFile'..."
     # podman load [options]
     # load       Load an image from a tar archive.
     # --input string   Specify the input file containing the saved image.
     $output = & $Engine load --input $BackupFile
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "Successfully restored image from '$BackupFile'." -ForegroundColor Green
+        Write-Output "Successfully restored image from '$BackupFile'." # Removed ForegroundColor Green
 
         # Attempt to parse the image name from the load output
         # Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
         $imageName = $null
         if ($output -match "Loaded image:\s*(\S+)") {
             $imageName = $matches[1].Trim()
-            Write-Host "Parsed image name: $imageName"
+            Write-Output "Parsed image name: $imageName"
 
             if ($RunContainer) {
-                Run-RestoredContainer -Engine $Engine -ImageName $imageName
+                Start-RestoredContainer -Engine $Engine -ImageName $imageName
             }
             return $true
         }
         else {
-            Write-Host "Could not parse image name from the load output."
+            Write-Output "Could not parse image name from the load output."
             return $true
         }
     }
@@ -149,14 +152,15 @@ function Restore-ContainerImage {
 }
 
 #------------------------------
-# Function: Run-RestoredContainer
-# Description: Runs a container from a restored image.
+# Function: Start-RestoredContainer
+# Description: Starts a container from a restored image.
 # Parameters:
 #   -Engine: Path to the container engine (docker or podman)
 #   -ImageName: Name of the image to run
 #------------------------------
-function Run-RestoredContainer {
+function Start-RestoredContainer {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -168,7 +172,7 @@ function Run-RestoredContainer {
     # Generate a container name by replacing ':' and '/' with underscores
     $containerName = ($ImageName -replace "[:/]", "_") + "_container"
 
-    Write-Host "Starting container from image '$ImageName' with container name '$containerName'..."
+    Write-Output "Starting container from image '$ImageName' with container name '$containerName'..."
     # podman run [options] IMAGE [COMMAND [ARG...]]
     # run         Run a command in a new container.
     # --detach    Run container in background and print container ID.
@@ -176,7 +180,7 @@ function Run-RestoredContainer {
     & $Engine run --detach --name $containerName $ImageName
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "Container '$containerName' started successfully." -ForegroundColor Green
+        Write-Output "Container '$containerName' started successfully." # Removed ForegroundColor Green
         return $true
     }
     else {
@@ -195,6 +199,7 @@ function Run-RestoredContainer {
 #------------------------------
 function Restore-ContainerImages {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Engine,
@@ -205,13 +210,13 @@ function Restore-ContainerImages {
     )
 
     if (-not (Test-Path $BackupFolder)) {
-        Write-Host "Backup folder '$BackupFolder' does not exist. Nothing to restore."
+        Write-Output "Backup folder '$BackupFolder' does not exist. Nothing to restore."
         return $false
     }
 
     $tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*.tar"
     if (-not $tarFiles) {
-        Write-Host "No backup tar files found in '$BackupFolder'."
+        Write-Output "No backup tar files found in '$BackupFolder'."
         return $false
     }
 
@@ -222,20 +227,21 @@ function Restore-ContainerImages {
         }
     }
 
-    Write-Host "Restored $successCount out of $($tarFiles.Count) images."
+    Write-Output "Restored $successCount out of $($tarFiles.Count) images."
     return ($successCount -gt 0)
 }
 
 #------------------------------
-# Function: Check-AndRestoreBackup
+# Function: Test-AndRestoreBackup
 # Description: Checks if a backup exists for an image and offers to restore it.
 # Parameters:
 #   -Engine: Path to the container engine (docker or podman)
 #   -ImageName: Name of the image to check for backup
 #   -BackupFolder: Folder containing the backup tar files (default ".\Backup")
 #------------------------------
-function Check-AndRestoreBackup {
+function Test-AndRestoreBackup {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory = $true)]
         [string]$Engine,
@@ -251,17 +257,17 @@ function Check-AndRestoreBackup {
     $backupFile = Join-Path $BackupFolder "$safeName.tar"
 
     if (-not (Test-Path $backupFile)) {
-        Write-Host "No backup file found for image '$ImageName' in folder '$BackupFolder'."
+        Write-Output "No backup file found for image '$ImageName' in folder '$BackupFolder'."
         return $false
     }
 
-    Write-Host "Backup file found for image '$ImageName': $backupFile"
+    Write-Output "Backup file found for image '$ImageName': $backupFile"
     $choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
     if ($choice -and $choice.ToUpper() -eq "Y") {
         return (Restore-ContainerImage -Engine $Engine -BackupFile $backupFile)
     }
     else {
-        Write-Host "User opted not to restore backup for image '$ImageName'."
+        Write-Output "User opted not to restore backup for image '$ImageName'."
         return $false
     }
 }

@@ -1,0 +1,22 @@
+# Cline Rules for this Directory
+
+**Important:** Before modifying files in this directory, please consult the following files for essential context:
+
+-   **`ReadMe.md`**: Provides an overview of the project, the tools involved, and the purpose of each `Setup_*.ps1` script.
+-   **`Requirements.md`**: Details the coding standards, common features (identified by two-letter codes), and specific implementation requirements for the PowerShell scripts. Understanding these requirements is crucial for maintaining consistency.
+
+## Rule: Validate PowerShell Scripts After Modification
+
+**Description:**
+To maintain code quality and catch potential issues early, all PowerShell scripts (`*.ps1`) in this project should be validated using the `PSScriptAnalyzer` module after any modifications are made.
+
+**Procedure:**
+1. Ensure the `PSScriptAnalyzer` module is installed:
+   `Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -Confirm:$false`
+2. After modifying a `.ps1` file, run the analyzer on it:
+   `Invoke-ScriptAnalyzer -Path .\path\to\your\script.ps1`
+3. Review the output for any warnings or errors.
+4. Address the identified issues before committing the changes.
+
+**Rationale:**
+Using `PSScriptAnalyzer` helps enforce best practices, improve script reliability, and reduce potential runtime errors.

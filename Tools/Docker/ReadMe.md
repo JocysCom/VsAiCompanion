@@ -42,44 +42,35 @@ This solution uses containerization to simplify the installation, integration, a
 
 ## Folder Structure & Script Descriptions
 
-- **Setup_0.ps1**  
-  Contains the common helper functions used by all the other setup scripts.
+The PowerShell scripts are organized as follows:
 
-- **Setup_1_VM.ps1**  
-  Enables virtualization features on Windows (either WSL or Hyper-V) to support containerized applications.
+**Shared Helper Functions (`Setup_0_*.ps1`)**
+These scripts contain reusable functions imported by other setup scripts. They are not meant to be run directly.
+- **Setup_0_BackupRestore.ps1**: Functions for backing up and restoring container images and state.
+- **Setup_0_ContainerEngine.ps1**: Functions for selecting the container engine (Docker/Podman) and finding its path.
+- **Setup_0_ContainerMgmt.ps1**: Functions for common container management tasks (e.g., updating, removing).
+- **Setup_0_Core.ps1**: Core helper functions (e.g., ensuring elevation, setting script location, menu loop).
+- **Setup_0_Network.ps1**: Functions for testing network port connectivity (TCP, HTTP, WebSocket).
+- **Setup_0_WSL.ps1**: Functions related to checking WSL status.
+- **Setup_0.ps1**: (Likely obsolete/legacy) Contains older versions or a collection of helper functions. Should not be directly imported; use the specific `Setup_0_*.ps1` files instead.
 
-- **Setup_1a_Docker.ps1**  
-  Installs and configures Docker on Windows, ensuring that the container engine is ready to run your services.
+**Core Setup & Management (`Setup_1_*.ps1`)**
+These scripts handle the initial setup of the container environment and core management tools.
+- **Setup_1_WSL2.ps1**: Ensures Windows Subsystem for Linux (WSL2) is installed and configured, which is often required for Docker/Podman on Windows.
+- **Setup_1a_Docker.ps1**: Installs and configures Docker Desktop on Windows.
+- **Setup_1a_Podman.ps1**: Installs and configures Podman, including the CLI and optionally Podman Desktop.
+- **Setup_1a_Podman_ExportContainers.ps1**: Script specifically for exporting existing Podman containers (likely for backup purposes).
+- **Setup_1a_Podman_Restore.ps1**: Script specifically for restoring Podman containers from backups.
+- **Setup_1b_BackupRestore.ps1**: Provides a menu-driven interface for backing up or restoring container images using functions from `Setup_0_BackupRestore.ps1`.
+- **Setup_1c_Portainer.ps1**: Installs and configures the Portainer container management UI.
 
-- **Setup_1a_Podman.ps1**  
-  Manages the installation of Podman, including the command-line tool and optionally its Desktop UI, for running containers.
-
-- **Setup_1b_BackupRestore.ps1**  
-  Offers a menu-driven interface for backing up and restoring container images, ensuring your environments can be easily preserved or restored.
-
-- **Setup_1c_Portainer.ps1**  
-  Installs and configures Portainer, a lightweight management UI for Docker and Podman environments, making container management visual and intuitive.
-
-- **Setup_2a_Pipelines.ps1**  
-  Deploys the Pipelines Container to orchestrate your AI workflows reliably with minimal manual intervention.
-
-- **Setup_2b_OpenWebUI.ps1**  
-  Installs the Open WebUI container, providing an intuitive interface to monitor and manage your containerized services.
-
-- **Setup_3_n8n.ps1**  
-  Sets up and runs the n8n container to automate and manage workflows through its user-friendly visual interface.
-
-- **Setup_4_Firecrawl.ps1**  
-  Launches the Firecrawl container along with a dedicated Redis container, simplifying web data extraction and caching.
-
-- **Setup_5_Qdrant.ps1**  
-  Deploys the Qdrant vector database container to handle semantic data searches and high-dimensional data management.
-
-- **Setup_6_Embedding.ps1**  
-  Builds and runs the Embedding API container, allowing you to convert text into semantically rich vectors using advanced NLP models.
-
-- **Setup_6_Embedding_Test.ps1**  
-  Tests the functionality of the Embedding API, ensuring that text is correctly converted into embeddings.
-
-- **Setup_7_NocoDB.ps1**  
-  Manages the NocoDB container to provide a no-code solution for database management through an easy-to-use web interface.
+**Application Deployment (`Setup_2-7_*.ps1`)**
+These scripts handle the deployment and management of specific containerized applications.
+- **Setup_2a_Pipelines.ps1**: Deploys the Pipelines container for AI workflow orchestration.
+- **Setup_2b_OpenWebUI.ps1**: Installs the Open WebUI container for managing AI models and interfaces.
+- **Setup_3_n8n.ps1**: Installs the n8n container for workflow automation.
+- **Setup_4_Firecrawl.ps1**: Installs the Firecrawl container (and its Redis dependency) for web crawling.
+- **Setup_5_Qdrant.ps1**: Installs the Qdrant vector database container.
+- **Setup_6_Embedding.ps1**: Builds and runs the custom Embedding API container.
+- **Setup_6_Embedding_Test.ps1**: Tests the functionality of the deployed Embedding API.
+- **Setup_7_NocoDB.ps1**: Installs the NocoDB container for no-code database management.
