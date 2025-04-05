@@ -67,9 +67,9 @@ CW - Check WSL Status (Verifies WSL installation and required service status).
 | Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |
 | Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    |
 
-## Feature requirements:
+## Feature requirements
 
-### HE - Shared Library Reference
+### SR - References Setup_0.ps1 with shared functions.
 
 Script must include shared library:
 
@@ -78,7 +78,7 @@ Script must include shared library:
 . "$PSScriptRoot\Setup_0.ps1"
 ```
 
-### ME - Menu
+### ME - Have the container menu.
 
 Script must have at least 7 menu choices:
 
