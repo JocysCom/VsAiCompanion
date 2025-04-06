@@ -49,7 +49,7 @@ $global:enginePath = Get-PodmanPath # Explicitly use Podman
 	Invoke-EmbeddingImageBuild
 .NOTES
 	Relies on global variables $global:buildDir, $global:imageTag, $global:enginePath.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Invoke-EmbeddingImageBuild {
 	# Define file contents for the Embedding API application.
@@ -170,7 +170,7 @@ async def options_handler(path: str):
 	Set-Content -Path (Join-Path $global:buildDir "requirements.txt") -Value $requirementsTxtContent
 	Set-Content -Path (Join-Path $global:buildDir "embedding_api.py") -Value $embeddingApiContent
 
-	Write-Information "Building the Embedding API container image..."
+	Write-Host "Building the Embedding API container image..."
 	# Build the container image using Podman.
 	& $global:enginePath build --tag $global:imageTag "`"$global:buildDir`""
 	if ($LASTEXITCODE -ne 0) {
@@ -195,7 +195,7 @@ async def options_handler(path: str):
 .NOTES
 	Relies on Invoke-EmbeddingImageBuild, Remove-ContainerAndVolume, Test-HTTPPort, Test-TCPPort helper functions.
 	Uses global variables for names, paths, etc.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Install-EmbeddingContainer {
 	Invoke-EmbeddingImageBuild
@@ -204,7 +204,7 @@ function Install-EmbeddingContainer {
 	# Pass container name as volume name; Remove-ContainerAndVolume will prompt if volume exists.
 	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 
-	Write-Information "Running the Embedding API container..."
+	Write-Host "Running the Embedding API container..."
 	# Command: run
 	#   --detach: runs the container in background.
 	#   --name: assigns the container the name "embedding-api".
@@ -218,7 +218,7 @@ function Install-EmbeddingContainer {
 	Start-Sleep -Seconds 10
 	Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
 	Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-	Write-Information "Embedding API is accessible at http://localhost:8000/v1/embeddings"
+	Write-Host "Embedding API is accessible at http://localhost:8000/v1/embeddings"
 }
 
 #==============================================================================
@@ -238,13 +238,13 @@ function Install-EmbeddingContainer {
 .NOTES
 	Relies on Invoke-EmbeddingImageBuild, Remove-ContainerAndVolume, Test-HTTPPort, Test-TCPPort helper functions.
 	Uses global variables for names, paths, etc.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Update-EmbeddingContainer {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param()
 
-	Write-Information "Updating the Embedding API container..."
+	Write-Host "Updating the Embedding API container..."
 
 	# Rebuild the container image.
 	if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Image")) {
@@ -263,7 +263,7 @@ function Update-EmbeddingContainer {
 
 	# Run the updated container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Run Updated Container")) {
-		Write-Information "Running the updated Embedding API container..."
+		Write-Host "Running the updated Embedding API container..."
 		# Command: run
 		#   --detach: runs the container in background.
 		#   --name: assigns the container the name "embedding-api".
@@ -277,7 +277,7 @@ function Update-EmbeddingContainer {
 		Start-Sleep -Seconds 10
 		Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
 		Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-		Write-Information "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings"
+		Write-Host "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings"
 	}
 }
 

@@ -4,10 +4,10 @@ $ignitionPath = Join-Path $UserProfile ".config\containers\podman\machine\hyperv
 $diskImagePath = Join-Path $UserProfile ".local\share\containers\podman\machine\hyperv\podman-machine-default-amd64.vhdx"
 
 # Display the configuration paths
-Write-Information "Podman Machine Configuration Paths:"
-Write-Information "  Ignition File Path: $ignitionPath"
-Write-Information "  Disk Image (bootable) Path: $diskImagePath"
-Write-Information "---------------------------------------------"
+Write-Host "Podman Machine Configuration Paths:"
+Write-Host "  Ignition File Path: $ignitionPath"
+Write-Host "  Disk Image (bootable) Path: $diskImagePath"
+Write-Host "---------------------------------------------"
 
 # Verify that the disk image exists
 if (-not (Test-Path $diskImagePath)) {
@@ -21,33 +21,33 @@ if (-not (Test-Path $ignitionPath)) {
 }
 
 # List existing Podman system connections
-Write-Information ""
-Write-Information "Existing Podman System Connections:"
+Write-Host ""
+Write-Host "Existing Podman System Connections:"
 podman system connection ls
-Write-Information "---------------------------------------------"
+Write-Host "---------------------------------------------"
 
 # Check Hyper-V VM status for 'podman-machine-default'
-Write-Information ""
+Write-Host ""
 $vm = Get-VM -Name "podman-machine-default" -ErrorAction SilentlyContinue
 if ($null -ne $vm) {
-	Write-Information "Hyper-V VM 'podman-machine-default' status:"
-	Write-Information "  State:             $($vm.State)"
-	Write-Information "  CPU Usage (%):     $($vm.CPUUsage)"
-	Write-Information "  Memory Assigned:   $($vm.MemoryAssigned) MB"
-	Write-Information "  Uptime:            $($vm.Uptime)"
+	Write-Host "Hyper-V VM 'podman-machine-default' status:"
+	Write-Host "  State:             $($vm.State)"
+	Write-Host "  CPU Usage (%):     $($vm.CPUUsage)"
+	Write-Host "  Memory Assigned:   $($vm.MemoryAssigned) MB"
+	Write-Host "  Uptime:            $($vm.Uptime)"
 }
 else {
-	Write-Information "Hyper-V VM 'podman-machine-default' not found."
+	Write-Host "Hyper-V VM 'podman-machine-default' not found."
 }
-Write-Information "---------------------------------------------"
+Write-Host "---------------------------------------------"
 
 # Display menu options
-Write-Information ""
-Write-Information "Options:"
-Write-Information "1 - Initialize (or re-register) the Podman machine with existing data"
-Write-Information "2 - Start the Podman machine (if registered)"
-Write-Information "3 - Stop the Podman machine (if running)"
-Write-Information "4 - Start the Hyper-V VM (if it exists and is off)"
+Write-Host ""
+Write-Host "Options:"
+Write-Host "1 - Initialize (or re-register) the Podman machine with existing data"
+Write-Host "2 - Start the Podman machine (if registered)"
+Write-Host "3 - Stop the Podman machine (if running)"
+Write-Host "4 - Start the Hyper-V VM (if it exists and is off)"
 $choice = Read-Host "Enter your choice (1, 2, 3, or 4)"
 
 switch ($choice) {
@@ -55,15 +55,15 @@ switch ($choice) {
 		# Check if a connection for "podman-machine-default" already exists
 		$existingConnections = podman system connection ls 2>$null
 		if ($existingConnections -match "podman-machine-default") {
-			Write-Information "A connection for 'podman-machine-default' already exists."
+			Write-Host "A connection for 'podman-machine-default' already exists."
 			$removeChoice = Read-Host "Do you want to remove the existing connection? (y/n)"
 			if ($removeChoice -eq "y") {
-				Write-Information "Removing existing connection..."
+				Write-Host "Removing existing connection..."
 				podman system connection rm podman-machine-default
-				Write-Information "Existing connection removed."
+				Write-Host "Existing connection removed."
 			}
 			else {
-				Write-Information "Aborting initialization. You may choose option 2 to simply start the machine."
+				Write-Host "Aborting initialization. You may choose option 2 to simply start the machine."
 				exit 0
 			}
 		}
@@ -79,35 +79,35 @@ switch ($choice) {
 			$initArgs += "--ignition-path", $ignitionPath
 		}
 		$initArgs += "podman-machine-default"
-		Write-Information "Reinitializing the machine with the following command:"
-		Write-Information "podman $($initArgs -join ' ')"
+		Write-Host "Reinitializing the machine with the following command:"
+		Write-Host "podman $($initArgs -join ' ')"
 		& podman @initArgs
 	}
 	"2" {
 		$startArgs = @("machine", "start", "podman-machine-default")
-		Write-Information "Starting the Podman machine with the following command:"
-		Write-Information "podman $($startArgs -join ' ')"
+		Write-Host "Starting the Podman machine with the following command:"
+		Write-Host "podman $($startArgs -join ' ')"
 		& podman @startArgs
 	}
 	"3" {
 		$stopArgs = @("machine", "stop", "podman-machine-default")
-		Write-Information "Stopping the Podman machine with the following command:"
-		Write-Information "podman $($stopArgs -join ' ')"
+		Write-Host "Stopping the Podman machine with the following command:"
+		Write-Host "podman $($stopArgs -join ' ')"
 		& podman @stopArgs
 	}
 	"4" {
 		if ($null -ne $vm) {
 			if ($vm.State -eq "Off") {
-				Write-Information "Starting the Hyper-V VM 'podman-machine-default' using Start-VM ..."
+				Write-Host "Starting the Hyper-V VM 'podman-machine-default' using Start-VM ..."
 				Start-VM -Name "podman-machine-default"
-				Write-Information "Hyper-V VM started."
+				Write-Host "Hyper-V VM started."
 			}
 			else {
-				Write-Information "Hyper-V VM 'podman-machine-default' is already running (State: $($vm.State))."
+				Write-Host "Hyper-V VM 'podman-machine-default' is already running (State: $($vm.State))."
 			}
 		}
 		else {
-			Write-Information "Hyper-V VM 'podman-machine-default' not found. Cannot start it."
+			Write-Host "Hyper-V VM 'podman-machine-default' not found. Cannot start it."
 		}
 	}
 	default {

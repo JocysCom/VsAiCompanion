@@ -29,13 +29,13 @@ $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:enginePath = Get-DockerPath
-	Write-Information "Using Docker with executable: $global:enginePath"
+	Write-Host "Using Docker with executable: $global:enginePath"
 	# For Docker, set DOCKER_HOST pointing to the Docker service pipe.
 	$env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 }
 else {
 	$global:enginePath = Get-PodmanPath
-	Write-Information "Using Podman with executable: $global:enginePath"
+	Write-Host "Using Podman with executable: $global:enginePath"
 	# If additional Podman-specific environment settings are needed, add them here.
 }
 
@@ -59,7 +59,7 @@ else {
 	Orchestrates volume creation, image acquisition, cleanup, and container start.
 	Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
 	Test-TCPPort, Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Install-QdrantContainer {
 	# Ensure the volume exists
@@ -67,13 +67,13 @@ function Install-QdrantContainer {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
-	Write-Information "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
 	# Check if image exists locally, restore from backup, or pull new
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
 		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Information "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..."
+			Write-Host "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..."
 			# Use shared pull function
 			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName)) {
 				# No specific pull options needed
@@ -82,22 +82,22 @@ function Install-QdrantContainer {
 			}
 		}
 		else {
-			Write-Information "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$global:imageName'."
 		}
 	}
 	else {
-		Write-Information "Using restored backup image '$global:imageName'." # This line was duplicated in the original, keeping it for consistency unless told otherwise.
+		Write-Host "Using restored backup image '$global:imageName'." # This line was duplicated in the original, keeping it for consistency unless told otherwise.
 	}
 
 	# Remove Existing Container
 	$existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
 	if ($existingContainer) {
-		Write-Information "Removing existing container '$global:containerName'..."
+		Write-Host "Removing existing container '$global:containerName'..."
 		& $global:enginePath rm --force $global:containerName
 	}
 
 	# Run Container
-	Write-Information "Starting Qdrant container..."
+	Write-Host "Starting Qdrant container..."
 	$runOptions = @(
 		"--detach", # Run container in background.
 		"--name", $global:containerName, # Assign the container a name.
@@ -112,12 +112,12 @@ function Install-QdrantContainer {
 	}
 
 	# Wait and Test
-	Write-Information "Waiting 20 seconds for the Qdrant container to fully start..."
+	Write-Host "Waiting 20 seconds for the Qdrant container to fully start..."
 	Start-Sleep -Seconds 20
 	Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
 	Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
 	Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
-	Write-Information "Qdrant is now running and accessible at http://localhost:6333"
+	Write-Host "Qdrant is now running and accessible at http://localhost:6333"
 }
 
 #==============================================================================
@@ -204,7 +204,7 @@ function Restore-QdrantContainer {
 	# Update-Container -RunFunction ${function:Invoke-StartQdrantForUpdate}
 .NOTES
 	Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Invoke-StartQdrantForUpdate {
 	param(
@@ -220,7 +220,7 @@ function Invoke-StartQdrantForUpdate {
 		throw "Failed to ensure volume '$VolumeName' exists during update."
 	}
 
-	Write-Information "Starting updated Qdrant container '$ContainerName'..."
+	Write-Host "Starting updated Qdrant container '$ContainerName'..."
 
 	# Define run options (same as in Install-QdrantContainer)
 	$runOptions = @(
@@ -238,12 +238,12 @@ function Invoke-StartQdrantForUpdate {
 	}
 
 	# Wait and Test Connectivity (same as in Install-QdrantContainer)
-	Write-Information "Waiting 20 seconds for the Qdrant container to fully start..."
+	Write-Host "Waiting 20 seconds for the Qdrant container to fully start..."
 	Start-Sleep -Seconds 20
 	Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
 	Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
 	Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
-	Write-Information "Qdrant container updated successfully."
+	Write-Host "Qdrant container updated successfully."
 }
 
 #==============================================================================
@@ -305,7 +305,7 @@ function Update-QdrantUserData {
 
 	if ($PSCmdlet.ShouldProcess("Qdrant Container User Data", "Update user data")) {
 		# No actions to wrap with ShouldProcess as it's not implemented
-		Write-Information "Update User Data functionality is not implemented for Qdrant container."
+		Write-Host "Update User Data functionality is not implemented for Qdrant container."
 	}
 }
 

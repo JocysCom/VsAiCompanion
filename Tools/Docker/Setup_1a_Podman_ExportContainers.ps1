@@ -9,10 +9,10 @@
 # IMPORTANT: This script requires XFS filesystem support in WSL to access Podman containers
 
 
-Write-Information "[STEP: VHDX DETECTION]"
+Write-Host "[STEP: VHDX DETECTION]"
 $machineInfo = podman machine ls --format json | ConvertFrom-Json
 if ($machineInfo -and $machineInfo[0].State -eq "Running") {
-	Write-Information "Stopping running Podman machine..."
+	Write-Host "Stopping running Podman machine..."
 	podman machine stop
 }
 
@@ -23,21 +23,21 @@ if (!(Test-Path $VhdxPath)) {
 	Write-Error "VHDX image not found at '$VhdxPath'"
 	exit 1
 }
-Write-Information "VHDX image found at: $VhdxPath"
+Write-Host "VHDX image found at: $VhdxPath"
 
 # Define backup directory and file - using the current script directory
 $backupDir = Join-Path $(Get-Location).Path "Backup"
-Write-Information "Using current directory for backup: $backupDir"
+Write-Host "Using current directory for backup: $backupDir"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $backupFile = "$backupDir\podman_containers_$timestamp.tar.gz"
 
 # Check and install xfsprogs if needed
-Write-Information "[STEP: XFS SUPPORT CHECK]"
-Write-Information "Checking XFS support in WSL..."
+Write-Host "[STEP: XFS SUPPORT CHECK]"
+Write-Host "Checking XFS support in WSL..."
 $null = wsl grep -q xfs /proc/filesystems
 if ($LASTEXITCODE -ne 0) {
 	Write-Warning "[WARNING: XFS SUPPORT MISSING]"
-	Write-Information "Installing xfsprogs in WSL..."
+	Write-Host "Installing xfsprogs in WSL..."
 	$null = wsl sudo apt-get update
 	$null = wsl sudo apt-get install -y xfsprogs
 
@@ -49,14 +49,14 @@ if ($LASTEXITCODE -ne 0) {
 		exit 1
 	}
 }
-Write-Information "XFS support verified in WSL."
+Write-Host "XFS support verified in WSL."
 
-Write-Information "[STEP: MOUNTING VHDX]"
-Write-Information "Mounting VHDX Disk..."
+Write-Host "[STEP: MOUNTING VHDX]"
+Write-Host "Mounting VHDX Disk..."
 try {
 	$disk = Mount-VHD -Path $VhdxPath -PassThru -ErrorAction Stop | Get-Disk
 	$physicalDrive = "\\.\PhysicalDrive$($disk.Number)"
-	Write-Information "Mounted as Physical Drive: $physicalDrive"
+	Write-Host "Mounted as Physical Drive: $physicalDrive"
 }
 catch {
 	Write-Error "[ERROR: VHDX MOUNT FAILED]"
@@ -64,27 +64,27 @@ catch {
 	exit 1
 }
 
-Write-Information "[STEP: WSL DISK ATTACH]"
-Write-Information "Attaching the disk to WSL for analysis..."
+Write-Host "[STEP: WSL DISK ATTACH]"
+Write-Host "Attaching the disk to WSL for analysis..."
 wsl --mount $physicalDrive --bare
 
-Write-Information "[STEP: UNMOUNTING TEMPORARY ATTACHMENT]"
-Write-Information "Unmounting disk to prepare for partition mount..."
+Write-Host "[STEP: UNMOUNTING TEMPORARY ATTACHMENT]"
+Write-Host "Unmounting disk to prepare for partition mount..."
 wsl --unmount $physicalDrive
 
-Write-Information "[STEP: MOUNTING PARTITION]"
-Write-Information "Mounting Partition 4 with XFS filesystem..."
+Write-Host "[STEP: MOUNTING PARTITION]"
+Write-Host "Mounting Partition 4 with XFS filesystem..."
 wsl --mount $physicalDrive --partition 4 --type xfs
 
-Write-Information "[STEP: CHECKING MOUNT]"
-Write-Information "Verifying mounted filesystems:"
+Write-Host "[STEP: CHECKING MOUNT]"
+Write-Host "Verifying mounted filesystems:"
 wsl sudo lsblk -f
 
 # Check if the mount was successful
 $isMounted = wsl mount | Select-String "sdd4"
 if (-not $isMounted) {
 	Write-Warning "[WARNING: PARTITION MOUNT FAILED]"
-	Write-Information "Trying to mount manually..."
+	Write-Host "Trying to mount manually..."
 
 	# Create a mount point
 	$null = wsl sudo mkdir -p /mnt/podman_temp
@@ -99,28 +99,28 @@ if (-not $isMounted) {
 		Write-Error "Could not mount XFS partition. Please check dmesg:"
 		$dmesgOutput = wsl dmesg | Select-String -Pattern "xfs|mount"
 		$dmesgOutput | Select-Object -Last 10
-		Write-Information "Cleaning up..."
+		Write-Host "Cleaning up..."
 		wsl --unmount $physicalDrive
 		Dismount-VHD -Path $VhdxPath
 		exit 1
 	}
 	else {
-		Write-Information "Manual mount successful."
+		Write-Host "Manual mount successful."
 	}
 }
 
-Write-Information "[STEP: FINDING MOUNT POINT]"
+Write-Host "[STEP: FINDING MOUNT POINT]"
 # Extract the correct mountpoint - check for sdd4 specifically
 $mountInfo = wsl mount | Select-String "sdd4"
 if ($mountInfo) {
 	# Extract the mount point
 	if ($mountInfo -match "on\s+(/\S+)") {
 		$mountPoint = $Matches[1]
-		Write-Information "XFS Partition mount point found: $mountPoint"
+		Write-Host "XFS Partition mount point found: $mountPoint"
 	}
 	else {
 		$mountPoint = "/mnt/podman_temp"  # Fallback to our manual mount point
-		Write-Information "Using default mount point: $mountPoint"
+		Write-Host "Using default mount point: $mountPoint"
 	}
 }
 else {
@@ -128,13 +128,13 @@ else {
 	$mountInfo = wsl mount | Select-String "/dev/sd"
 	if ($mountInfo -match "on\s+(/mnt/\S+)") {
 		$mountPoint = $Matches[1]
-		Write-Information "Mount point found: $mountPoint"
+		Write-Host "Mount point found: $mountPoint"
 		Write-Warning "[WARNING: USING NON-XFS MOUNT]"
 	}
 	else {
 		Write-Error "[ERROR: MOUNT POINT NOT FOUND]"
 		Write-Error "Could not determine mountpoint automatically."
-		Write-Information "Available mount points:"
+		Write-Host "Available mount points:"
 		wsl mount | Select-String "/dev/"
 		$mountPoint = Read-Host "Please enter the mountpoint from the list above (e.g., /mnt/wsl/...)"
 
@@ -148,20 +148,20 @@ else {
 	}
 }
 
-Write-Information "[STEP: LOCATING CONTAINERS]"
+Write-Host "[STEP: LOCATING CONTAINERS]"
 # Check if /var/lib/containers exists in the mounted filesystem
 $containerPath = "$mountPoint/var/lib/containers"
 wsl sudo test -d "$containerPath"
 if ($LASTEXITCODE -ne 0) {
 	Write-Warning "[WARNING: STANDARD CONTAINER PATH NOT FOUND]"
-	Write-Information "Container directory not found at $containerPath"
-	Write-Information "Listing top-level directories in mount point:"
+	Write-Host "Container directory not found at $containerPath"
+	Write-Host "Listing top-level directories in mount point:"
 	wsl sudo ls -la "$mountPoint"
 
 	$customPath = Read-Host "Enter the path to containers relative to $mountPoint (e.g., 'var/lib/containers' or press Enter to search)"
 
 	if ([string]::IsNullOrWhiteSpace($customPath)) {
-		Write-Information "Searching for containers directory..."
+		Write-Host "Searching for containers directory..."
 		$foundPaths = wsl sudo find $mountPoint -name containers -type d
 		if ([string]::IsNullOrWhiteSpace($foundPaths)) {
 			Write-Error "[ERROR: NO CONTAINER DIRECTORIES FOUND]"
@@ -170,13 +170,13 @@ if ($LASTEXITCODE -ne 0) {
 			Dismount-VHD -Path $VhdxPath
 			exit 1
 		}
-		Write-Information "[INFO: POTENTIAL CONTAINER DIRECTORIES]"
-		Write-Information $foundPaths
+		Write-Host "[INFO: POTENTIAL CONTAINER DIRECTORIES]"
+		Write-Host $foundPaths
 		$customPath = Read-Host "Enter the full path to use or press Enter to exit"
 
 		if ([string]::IsNullOrWhiteSpace($customPath)) {
 			# Clean up
-			Write-Information "[INFO: USER CANCELLED]"
+			Write-Host "[INFO: USER CANCELLED]"
 			wsl --unmount $physicalDrive
 			Dismount-VHD -Path $VhdxPath
 			exit 1
@@ -187,13 +187,13 @@ if ($LASTEXITCODE -ne 0) {
 	}
 
 	$containerPath = $customPath
-	Write-Information "Using container path: $containerPath"
+	Write-Host "Using container path: $containerPath"
 }
 else {
-	Write-Information "Container directory found at standard location: $containerPath"
+	Write-Host "Container directory found at standard location: $containerPath"
 }
 
-Write-Information "[STEP: CREATING BACKUP]"
+Write-Host "[STEP: CREATING BACKUP]"
 # Convert Windows backup path to WSL path
 $driveLetter = (Split-Path -Qualifier $backupDir).Replace(":", "").ToLower()
 $pathWithoutDrive = (Split-Path -NoQualifier $backupDir).Replace("\", "/")
@@ -201,26 +201,26 @@ $wslBackupDir = "/mnt/$driveLetter$pathWithoutDrive"
 $wslBackupFile = "$wslBackupDir/podman_containers_$timestamp.tar.gz"
 
 # Create the backup
-Write-Information "Creating backup of container data to: $backupFile"
+Write-Host "Creating backup of container data to: $backupFile"
 $tarCommand = "sudo tar czf $wslBackupFile -C $containerPath ."
-Write-Information "Running tar command: $tarCommand"
+Write-Host "Running tar command: $tarCommand"
 wsl bash -c $tarCommand
 
 if ($LASTEXITCODE -eq 0) {
-	Write-Information "[SUCCESS: BACKUP COMPLETED]"
-	Write-Information "Backup saved to: $backupFile"
+	Write-Host "[SUCCESS: BACKUP COMPLETED]"
+	Write-Host "Backup saved to: $backupFile"
 }
 else {
 	Write-Error "[ERROR: BACKUP FAILED]"
 	Write-Error "Backup failed with exit code $LASTEXITCODE"
 }
 
-Write-Information "[STEP: CLEANUP]"
+Write-Host "[STEP: CLEANUP]"
 # Clean up
-Write-Information "Unmounting Physical Disk..."
+Write-Host "Unmounting Physical Disk..."
 wsl --unmount $physicalDrive
 
-Write-Information "Dismounting VHDX Disk..."
+Write-Host "Dismounting VHDX Disk..."
 Dismount-VHD -Path $VhdxPath
 
-Write-Information "[COMPLETE: OPERATION FINISHED]"
+Write-Host "[COMPLETE: OPERATION FINISHED]"

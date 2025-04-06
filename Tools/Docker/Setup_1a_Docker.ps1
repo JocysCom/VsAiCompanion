@@ -299,11 +299,11 @@ function Test-DockerWorking {
 	Requires administrative privileges for installation.
 	Requires winget if Docker Desktop installation is chosen.
 	Exits script on installation failure or invalid user selection.
-	Uses Write-Output/Write-Information for status messages.
+	Uses Write-Output/Write-Host for status messages.
 #>
 function Test-DockerInstallation {
 	if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-		Write-Information "Docker is not installed." # Changed to Information
+		Write-Host "Docker is not installed." # Changed to Host
 
 		# Define Menu Title and Items
 		$menuTitle = "Select Docker installation method"
@@ -317,14 +317,14 @@ function Test-DockerInstallation {
 		$menuActions = @{
 			"1" = {
 				if (Get-Command winget -ErrorAction SilentlyContinue) {
-					Write-Information "Installing Docker Desktop using winget..." # Changed to Information
+					Write-Host "Installing Docker Desktop using winget..." # Changed to Host
 					winget install --id Docker.DockerDesktop -e --accept-package-agreements --accept-source-agreements
 					Start-Sleep -Seconds 60
 					if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 						Write-Error "Docker Desktop installation via winget failed. Please install Docker manually."
 						exit 1 # Exit script on error
 					}
-					Write-Information "Docker Desktop installed successfully." # Changed to Information
+					Write-Host "Docker Desktop installed successfully." # Changed to Host
 					# Let the main script continue after successful install
 				}
 				else {
@@ -354,7 +354,7 @@ function Test-DockerInstallation {
 		}
 	}
 	else {
-		Write-Information "Docker command found in PATH. Using existing Docker installation." # Changed to Information
+		Write-Host "Docker command found in PATH. Using existing Docker installation." # Changed to Host
 	}
 	Test-DockerWorking -destinationPath ".\docker"
 }

@@ -60,7 +60,7 @@ $volumeName = "open-webui" # Assuming volume name matches container name
 function Get-OpenWebUIContainerConfig {
 	$containerInfo = & $enginePath inspect $containerName 2>$null | ConvertFrom-Json
 	if (-not $containerInfo) {
-		Write-Information "Container '$containerName' not found."
+		Write-Host "Container '$containerName' not found."
 		return $null
 	}
 
@@ -146,7 +146,7 @@ function Get-OpenWebUIContainerConfig {
 	$cfg = Get-OpenWebUIContainerConfig; Start-OpenWebUIContainer -action "Restarting container" -successMessage "Restarted!" -config $cfg
 .NOTES
 	Relies on Test-HTTPPort, Test-TCPPort, Test-WebSocketPort helper functions.
-	Uses Write-Information for status messages. Firewall rule creation uses New-NetFirewallRule.
+	Uses Write-Host for status messages. Firewall rule creation uses New-NetFirewallRule.
 #>
 function Start-OpenWebUIContainer {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -156,7 +156,7 @@ function Start-OpenWebUIContainer {
 		[string]$successMessage,
 		[PSCustomObject]$config = $null
 	)
-	Write-Information "$action '$containerName'..."
+	Write-Host "$action '$containerName'..."
 
 	# Build the run command with either provided config or defaults
 	$runOptions = @("--platform")
@@ -246,7 +246,7 @@ function Start-OpenWebUIContainer {
 		return $false
 	}
 
-	Write-Information "Waiting 20 seconds for container startup..."
+	Write-Host "Waiting 20 seconds for container startup..."
 	Start-Sleep -Seconds 20
 
 	# Test connectivity
@@ -267,7 +267,7 @@ function Start-OpenWebUIContainer {
 		Write-Warning "Skipping firewall rule creation due to -WhatIf."
 	}
 
-	Write-Information $successMessage
+	Write-Host $successMessage
 	return $true
 }
 
@@ -289,7 +289,7 @@ function Start-OpenWebUIContainer {
 	Orchestrates volume creation, image acquisition, cleanup, and container start.
 	Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
 	Start-OpenWebUIContainer helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Install-OpenWebUIContainer {
 	# Ensure the volume exists
@@ -297,13 +297,13 @@ function Install-OpenWebUIContainer {
 		Write-Error "Failed to ensure volume '$volumeName' exists. Exiting..."
 		return
 	}
-	Write-Information "IMPORTANT: Using volume '$volumeName' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$volumeName' - existing user data will be preserved."
 
 	# Check if image exists locally, restore from backup, or pull new
 	$existingImage = & $enginePath images --filter "reference=$imageName" --format "{{.ID}}"
 	if (-not $existingImage) {
 		if (-not (Test-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
-			Write-Information "No backup restored. Pulling Open WebUI image '$imageName'..."
+			Write-Host "No backup restored. Pulling Open WebUI image '$imageName'..."
 			# Use shared pull function
 			if (-not (Invoke-PullImage -Engine $enginePath -ImageName $imageName -PullOptions @("--platform", "linux/amd64"))) {
 				Write-Error "Pull failed. Check internet connection or image URL."
@@ -311,16 +311,16 @@ function Install-OpenWebUIContainer {
 			}
 		}
 		else {
-			Write-Information "Using restored backup image '$imageName'."
+			Write-Host "Using restored backup image '$imageName'."
 		}
 	}
 	else {
-		Write-Information "Using restored backup image '$imageName'."
+		Write-Host "Using restored backup image '$imageName'."
 	}
 	# Remove any existing container.
 	$existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
 	if ($existingContainer) {
-		Write-Information "Removing existing container '$containerName'..."
+		Write-Host "Removing existing container '$containerName'..."
 		# Remove container:
 		# rm         Remove one or more containers.
 		# --force    Force removal of a running container.
@@ -442,7 +442,7 @@ function Update-OpenWebUIContainer {
 	Update-OpenWebUIUserData
 .NOTES
 	This function needs implementation if specific user data update procedures are required.
-	Uses Write-Information for output.
+	Uses Write-Host for output.
 #>
 function Update-OpenWebUIUserData {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -450,11 +450,11 @@ function Update-OpenWebUIUserData {
 
 	if ($PSCmdlet.ShouldProcess("Open WebUI container", "Display user data information")) {
 		# Provide some helpful information
-		Write-Information "Update User Data functionality is not implemented for OpenWebUI container."
-		Write-Information "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container."
-		Write-Information "To back up user data, you can use the 'Backup Live container' option."
-		Write-Information "To modify user data directly, you would need to access the container with:"
-		Write-Information "  $enginePath exec -it $containerName /bin/bash"
+		Write-Host "Update User Data functionality is not implemented for OpenWebUI container."
+		Write-Host "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container."
+		Write-Host "To back up user data, you can use the 'Backup Live container' option."
+		Write-Host "To modify user data directly, you would need to access the container with:"
+		Write-Host "  $enginePath exec -it $containerName /bin/bash"
 	}
 }
 

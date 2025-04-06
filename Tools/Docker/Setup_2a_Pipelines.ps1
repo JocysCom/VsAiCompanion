@@ -106,17 +106,17 @@ function ConvertTo-WSLPath {
 	Install-PipelinesContainer
 .NOTES
 	Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Install-PipelinesContainer {
-	Write-Information "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
+	Write-Host "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
 
 	# Ensure the volume exists
 	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
-	Write-Information "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
 	# Set the custom image tag to the official pre-built image
 	$customPipelineImageTag = "ghcr.io/open-webui/pipelines:main"
@@ -124,11 +124,11 @@ function Install-PipelinesContainer {
 	# (Optional) Remove any existing container with the same name
 	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
 	if ($existingContainer) {
-		Write-Information "Pipelines container already exists. Removing it..."
+		Write-Host "Pipelines container already exists. Removing it..."
 		& $global:enginePath rm --force $global:containerName
 	}
 
-	Write-Information "Running Pipelines container..."
+	Write-Host "Running Pipelines container..."
 
 	# Conditionally set the --add-host parameter if using Docker
 	if ($global:containerEngine -eq "docker") {
@@ -161,7 +161,7 @@ function Install-PipelinesContainer {
 		Write-Error "Failed to run the Pipelines container."
 		return
 	}
-	Write-Information "Pipelines container is now running."
+	Write-Host "Pipelines container is now running."
 
 	# Wait for the container to initialize, then test connectivity
 	Start-Sleep -Seconds 20
@@ -258,7 +258,7 @@ function Uninstall-PipelinesContainer {
 .NOTES
 	Relies on Invoke-DownloadFile and ConvertTo-WSLPath helper functions.
 	Uses 'podman machine ssh "podman cp ..."' for copying, which requires the Podman machine to be running.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Add-PipelineToContainer {
 	param(
@@ -273,7 +273,7 @@ function Add-PipelineToContainer {
 	$fileName = "azure_openai_pipeline.py"
 	# Create a temporary file path for the download (assume $global:downloadFolder is a Windows path)
 	$tempFile = Join-Path $global:downloadFolder $fileName
-	Write-Information "Downloading pipeline from $PipelineUrl to $tempFile..."
+	Write-Host "Downloading pipeline from $PipelineUrl to $tempFile..."
 	# Use shared download function
 	Invoke-DownloadFile -SourceUrl $PipelineUrl -DestinationPath $tempFile -ForceDownload:$true # Force download as it's temporary
 
@@ -285,22 +285,22 @@ function Add-PipelineToContainer {
 		$hostPath = $tempFile
 	}
 
-	Write-Information "Host Path: $hostPath"
+	Write-Host "Host Path: $hostPath"
 
-	#Write-Information "Removing any existing copy of $fileName in container '$ContainerName'..."
+	#Write-Host "Removing any existing copy of $fileName in container '$ContainerName'..."
 	#& $global:enginePath exec $ContainerName rm -f "$DestinationDir/$fileName"
 
-	Write-Information "Copying downloaded pipeline into container '$ContainerName' at '$DestinationDir'..."
+	Write-Host "Copying downloaded pipeline into container '$ContainerName' at '$DestinationDir'..."
 	& $global:enginePath machine ssh "podman cp '$hostPath' '$($ContainerName):$DestinationDir'"
 
-	Write-Information "Restarting container '$ContainerName' to load the new pipeline..."
+	Write-Host "Restarting container '$ContainerName' to load the new pipeline..."
 	& $global:enginePath restart $ContainerName
 
 	# Clean up the temporary file
 	Remove-Item $tempFile -Force
-	Write-Information "Pipeline added successfully."
+	Write-Host "Pipeline added successfully."
 
-	Write-Information "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+	Write-Host "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
 #==============================================================================
@@ -331,7 +331,7 @@ function Add-PipelineToContainer {
 	# Update-Container -RunFunction ${function:Invoke-StartPipelinesForUpdate}
 .NOTES
 	Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Invoke-StartPipelinesForUpdate {
 	param(
@@ -365,17 +365,17 @@ function Invoke-StartPipelinesForUpdate {
 		$ImageName                                       # Use the image name passed to the script block
 	) + $addHostParams
 
-	Write-Information "Running updated Pipelines container with image '$ImageName'..."
+	Write-Host "Running updated Pipelines container with image '$ImageName'..."
 	& $EnginePath run @runArgs
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run the updated Pipelines container."
 		# Throw an error to signal failure to Update-Container
 		throw "Failed to run the updated Pipelines container."
 	}
-	Write-Information "Pipelines container started."
+	Write-Host "Pipelines container started."
 
 	# Wait for the container to initialize, then test connectivity
-	Write-Information "Waiting for container startup..."
+	Write-Host "Waiting for container startup..."
 	Start-Sleep -Seconds 20
 	Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $ContainerName
 	Test-HTTPPort -Uri "http://localhost:9099" -serviceName $ContainerName
@@ -439,7 +439,7 @@ function Update-PipelinesUserData {
 	param()
 
 	if ($PSCmdlet.ShouldProcess("Pipelines container user data", "Update")) {
-		Write-Information "Update User Data functionality is not implemented for Pipelines container."
+		Write-Host "Update User Data functionality is not implemented for Pipelines container."
 	}
 }
 

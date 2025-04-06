@@ -12,8 +12,8 @@ using namespace System
 using namespace System.IO
 using namespace System.Diagnostics.CodeAnalysis
 
-# Set Information Preference to show Write-Information messages by default
-$InformationPreference = 'Continue'
+# Set Information Preference (commented out as Write-Host is used now)
+# $InformationPreference = 'Continue'
 
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
@@ -74,7 +74,7 @@ else {
 function Get-n8nContainerConfig {
 	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
 	if (-not $containerInfo) {
-		Write-Information "Container '$global:containerName' not found."
+		Write-Host "Container '$global:containerName' not found."
 		return $null
 	}
 
@@ -153,13 +153,13 @@ function Remove-n8nContainer {
 
 	$existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
 	if (-not $existingContainer) {
-		Write-Information "No n8n container found to remove."
+		Write-Host "No n8n container found to remove."
 		return $true
 	}
 
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Stop and Remove Container")) {
-		Write-Information "Stopping and removing n8n container..."
-		Write-Information "NOTE: This only removes the container, not the volume with user data."
+		Write-Host "Stopping and removing n8n container..."
+		Write-Host "NOTE: This only removes the container, not the volume with user data."
 
 		& $global:enginePath stop $global:containerName 2>$null
 		& $global:enginePath rm $global:containerName
@@ -230,11 +230,11 @@ function Start-n8nContainer {
 
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
-		Write-Information "Starting n8n container with image: $Image"
+		Write-Host "Starting n8n container with image: $Image"
 		& $global:enginePath run $runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {
-			Write-Information "Waiting for container startup..."
+			Write-Host "Waiting for container startup..."
 			Start-Sleep -Seconds 20
 
 			# Test connectivity
@@ -242,8 +242,8 @@ function Start-n8nContainer {
 			$httpTest = Test-HTTPPort -Uri "http://localhost:5678" -serviceName "n8n"
 
 			if ($tcpTest -and $httpTest) {
-				Write-Information "n8n is now running and accessible at http://localhost:5678"
-				Write-Information "If accessing from another container, use 'http://host.docker.internal:5678' as the URL."
+				Write-Host "n8n is now running and accessible at http://localhost:5678"
+				Write-Host "If accessing from another container, use 'http://host.docker.internal:5678' as the URL."
 				return $true
 			}
 			else {
@@ -290,13 +290,13 @@ function Install-n8nContainer {
 		Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
 		return
 	}
-	Write-Information "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
 
 	# Check if the n8n image is already available, restore from backup, or pull new.
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
 		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Information "No backup restored. Pulling n8n image '$global:imageName'..."
+			Write-Host "No backup restored. Pulling n8n image '$global:imageName'..."
 			# Use shared pull function
 			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
 				Write-Error "Image pull failed. Exiting..."
@@ -304,11 +304,11 @@ function Install-n8nContainer {
 			}
 		}
 		else {
-			Write-Information "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$global:imageName'."
 		}
 	}
 	else {
-		Write-Information "n8n image already exists. Skipping pull."
+		Write-Host "n8n image already exists. Skipping pull."
 	}
 
 	# Remove any existing container
@@ -367,15 +367,15 @@ function Uninstall-n8nContainer {
 	Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
 #>
 function Backup-n8nContainer {
-	Write-Information "Backing up n8n container..."
+	Write-Host "Backing up n8n container..."
 
 	# Debug output to verify the container name being passed
-	Write-Information "DEBUG: Passing container name '$global:containerName' to Backup-ContainerState"
+	Write-Host "DEBUG: Passing container name '$global:containerName' to Backup-ContainerState"
 
 	# Call Backup-ContainerState with the explicit container name string
 	if (Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName) {
 		# This function supports ShouldProcess
-		Write-Information "n8n container backed up successfully."
+		Write-Host "n8n container backed up successfully."
 		return $true
 	}
 	else {
@@ -402,7 +402,7 @@ function Backup-n8nContainer {
 	and Start-n8nContainer helper functions. Supports -WhatIf via helper functions.
 #>
 function Restore-n8nContainer {
-	Write-Information "Attempting to restore n8n container and its data volume from backup..."
+	Write-Host "Attempting to restore n8n container and its data volume from backup..."
 
 	# First load the image from backup and restore volumes if available
 	$imageName = Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName -RestoreVolumes # This function supports ShouldProcess
@@ -418,7 +418,7 @@ function Restore-n8nContainer {
 	# Get configuration from existing container or use defaults
 	$config = Get-n8nContainerConfig
 	if (-not $config) {
-		Write-Information "No existing configuration found, using defaults."
+		Write-Host "No existing configuration found, using defaults."
 		$config = [PSCustomObject]@{
 			Image   = $imageName
 			EnvVars = @(
@@ -435,7 +435,7 @@ function Restore-n8nContainer {
 	# Start the container using the restored image and existing configuration
 	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
 		# This function supports ShouldProcess
-		Write-Information "n8n container successfully restored and started."
+		Write-Host "n8n container successfully restored and started."
 	}
 	else {
 		Write-Error "Failed to start restored n8n container."
@@ -571,7 +571,7 @@ function Update-n8nUserData {
 
 	if ($PSCmdlet.ShouldProcess("n8n container user data", "Update")) {
 		# Placeholder for future implementation
-		Write-Information "Update User Data functionality is not implemented for n8n container."
+		Write-Host "Update User Data functionality is not implemented for n8n container."
 	}
 }
 
@@ -600,7 +600,7 @@ function Restart-n8nContainer {
 	# Get current container configuration
 	$config = Get-n8nContainerConfig
 	if (-not $config) {
-		Write-Information "No n8n container found to restart. Please install it first."
+		Write-Host "No n8n container found to restart. Please install it first."
 		return
 	}
 
@@ -614,7 +614,7 @@ function Restart-n8nContainer {
 	# Start a new container with the same image and configuration
 	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
 		# This function now supports ShouldProcess
-		Write-Information "n8n container restarted successfully with community packages enabled!"
+		Write-Host "n8n container restarted successfully with community packages enabled!"
 	}
 	else {
 		Write-Error "Failed to restart container or action skipped."

@@ -36,17 +36,17 @@ Set-ScriptLocation
 	# Ensures WSL 2 is the default and attempts to convert existing distros.
 .NOTES
 	Requires administrative privileges to set default version or convert distributions.
-	Uses Write-Information for status messages and Write-Error for failures.
+	Uses Write-Host for status messages and Write-Error for failures.
 	Relies on parsing the output of 'wsl.exe -l -v'.
 #>
 function Enable-WSL2 {
 	[CmdletBinding()]
 	param()
 
-	Write-Information "Setting WSL default version to 2..."
+	Write-Host "Setting WSL default version to 2..."
 	$setDefaultOutput = wsl.exe --set-default-version 2 2>&1
 	if ($LASTEXITCODE -eq 0) {
-		Write-Information "WSL default version set to 2."
+		Write-Host "WSL default version set to 2."
 	}
 	else {
 		Write-Error "Failed to set WSL default version. Output: $setDefaultOutput"
@@ -61,20 +61,20 @@ function Enable-WSL2 {
 	}
 
 	if ($wslListOutput -match "has no installed distributions") {
-		Write-Information "No WSL distributions found. Installing default distribution..."
+		Write-Host "No WSL distributions found. Installing default distribution..."
 		$installOutput = wsl.exe --install 2>&1
 		if ($LASTEXITCODE -eq 0) {
-			Write-Information "Default WSL distribution installation initiated successfully."
+			Write-Host "Default WSL distribution installation initiated successfully."
 		}
 		else {
 			Write-Error "Failed to install default WSL distribution. Output: $installOutput"
 		}
 	}
 	else {
-		Write-Information "WSL distribution(s) detected."
-		Write-Information "Currently installed WSL distributions:"
-		Write-Information $wslListOutput
-		Write-Information "Verifying that they use WSL2..."
+		Write-Host "WSL distribution(s) detected."
+		Write-Host "Currently installed WSL distributions:"
+		Write-Host $wslListOutput
+		Write-Host "Verifying that they use WSL2..."
 
 		$lines = $wslListOutput -split "`r?`n"
 		$wsl1Found = $false
@@ -82,10 +82,10 @@ function Enable-WSL2 {
 			if ($line -match "^\s*(\S+)\s+\S+\s+1\s*$") {
 				$wsl1Found = $true
 				$distro = $Matches[1]
-				Write-Information "Distribution $distro is using WSL1. Converting to WSL2..."
+				Write-Host "Distribution $distro is using WSL1. Converting to WSL2..."
 				$convertOutput = wsl.exe --set-version $distro 2 2>&1
 				if ($LASTEXITCODE -eq 0) {
-					Write-Information "Successfully converted $distro to WSL2."
+					Write-Host "Successfully converted $distro to WSL2."
 				}
 				else {
 					Write-Error "Failed to convert $distro to WSL2. Output: $convertOutput"
@@ -93,7 +93,7 @@ function Enable-WSL2 {
 			}
 		}
 		if (-not $wsl1Found) {
-			Write-Information "All installed WSL distributions are using WSL2."
+			Write-Host "All installed WSL distributions are using WSL2."
 		}
 	}
 }
@@ -113,33 +113,33 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
-		Write-Information "Enabling/Verifying WSL..."
+		Write-Host "Enabling/Verifying WSL..."
 		# Call existing function to check and enable WSL, then ensure WSL2 is set up.
 		Test-WSLStatus
 		Enable-WSL2
-		Write-Information "WSL setup completed successfully."
+		Write-Host "WSL setup completed successfully."
 		exit 0 # Exit script after successful action
 	}
 	"2" = {
-		Write-Information "Enabling Hyper-V..."
+		Write-Host "Enabling Hyper-V..."
 		try {
 			# Check if the Hyper-V feature is already enabled.
 			$hyperVFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -ErrorAction SilentlyContinue
 			if ($hyperVFeature -and $hyperVFeature.State -eq "Enabled") {
-				Write-Information "Hyper-V is already enabled."
+				Write-Host "Hyper-V is already enabled."
 			}
 			else {
-				Write-Information "Hyper-V is not enabled. Enabling the Microsoft-Hyper-V-All feature..."
+				Write-Host "Hyper-V is not enabled. Enabling the Microsoft-Hyper-V-All feature..."
 				Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -All -NoRestart | Out-Null
 				if ($?) {
-					Write-Information "Hyper-V has been enabled. A system restart may be required."
+					Write-Host "Hyper-V has been enabled. A system restart may be required."
 				}
 				else {
 					Write-Error "Failed to enable Hyper-V."
 					exit 1 # Exit script on error
 				}
 			}
-			Write-Information "Hyper-V setup completed successfully."
+			Write-Host "Hyper-V setup completed successfully."
 			exit 0 # Exit script after successful action
 		}
 		catch {
@@ -155,4 +155,4 @@ $menuActions = @{
 Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
 
 # This line will only be reached if the user enters '0' or an invalid choice repeatedly until they enter '0'.
-Write-Information "Exited without making a selection."
+Write-Host "Exited without making a selection."

@@ -60,23 +60,23 @@ $global:imageName = "nocodb/nocodb:latest"
 	Orchestrates volume creation, image acquisition, cleanup, and container start.
 	Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
 	Test-TCPPort, Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Install-NocoDBContainer {
-	Write-Information "Installing NocoDB container using image '$global:imageName'..."
+	Write-Host "Installing NocoDB container using image '$global:imageName'..."
 
 	# Ensure the volume exists
 	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
-	Write-Information "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
 	# Check if image exists locally, restore from backup, or pull new
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
 		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Information "No backup restored. Pulling NocoDB image '$global:imageName'..."
+			Write-Host "No backup restored. Pulling NocoDB image '$global:imageName'..."
 			# Use shared pull function
 			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
 				Write-Error "Failed to pull NocoDB image. Exiting..."
@@ -84,17 +84,17 @@ function Install-NocoDBContainer {
 			}
 		}
 		else {
-			Write-Information "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$global:imageName'."
 		}
 	}
 	else {
-		Write-Information "NocoDB image already exists. Skipping pull."
+		Write-Host "NocoDB image already exists. Skipping pull."
 	}
 
 	# Remove any existing container with the same name.
 	$existingContainer = & $global:enginePath ps --all --filter "name=^$global:containerName$" --format "{{.ID}}"
 	if ($existingContainer) {
-		Write-Information "Removing existing container '$global:containerName'..."
+		Write-Host "Removing existing container '$global:containerName'..."
 		& $global:enginePath rm --force $global:containerName
 	}
 
@@ -106,19 +106,19 @@ function Install-NocoDBContainer {
 		"--name", $global:containerName         # Set container name.
 	)
 
-	Write-Information "Starting NocoDB container..."
+	Write-Host "Starting NocoDB container..."
 	& $global:enginePath run $runOptions $global:imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run NocoDB container."
 		return
 	}
 
-	Write-Information "Waiting 20 seconds for container startup..."
+	Write-Host "Waiting 20 seconds for container startup..."
 	Start-Sleep -Seconds 20
 	Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $global:containerName
 	Test-HTTPPort -Uri "http://localhost:8570" -serviceName $global:containerName
-	Write-Information "NocoDB is now running and accessible at http://localhost:8570"
-	Write-Information "If accessing NocoDB from another container (e.g. from n8n), use 'http://host.docker.internal:8570' as the URL."
+	Write-Host "NocoDB is now running and accessible at http://localhost:8570"
+	Write-Host "If accessing NocoDB from another container (e.g. from n8n), use 'http://host.docker.internal:8570' as the URL."
 }
 
 #==============================================================================
@@ -205,7 +205,7 @@ function Restore-NocoDBContainer {
 	# Update-Container -RunFunction ${function:Invoke-StartNocoDBForUpdate}
 .NOTES
 	Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Invoke-StartNocoDBForUpdate {
 	param(
@@ -221,7 +221,7 @@ function Invoke-StartNocoDBForUpdate {
 		throw "Failed to ensure volume '$VolumeName' exists during update."
 	}
 
-	Write-Information "Starting updated NocoDB container '$ContainerName'..."
+	Write-Host "Starting updated NocoDB container '$ContainerName'..."
 
 	# Define run options (same as in Install-NocoDBContainer)
 	$runOptions = @(
@@ -238,11 +238,11 @@ function Invoke-StartNocoDBForUpdate {
 	}
 
 	# Wait and Test Connectivity (same as in Install-NocoDBContainer)
-	Write-Information "Waiting 20 seconds for container startup..."
+	Write-Host "Waiting 20 seconds for container startup..."
 	Start-Sleep -Seconds 20
 	Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $ContainerName
 	Test-HTTPPort -Uri "http://localhost:8570" -serviceName $ContainerName
-	Write-Information "NocoDB container updated successfully."
+	Write-Host "NocoDB container updated successfully."
 }
 
 #==============================================================================

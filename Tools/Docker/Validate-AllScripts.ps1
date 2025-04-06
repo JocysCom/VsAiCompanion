@@ -12,13 +12,13 @@
 	.\Validate-AllScripts.ps1
 #>
 
-# Set Information Preference to show Write-Information messages by default
-$InformationPreference = 'Continue'
+# Set Information Preference (commented out as Write-Host is used now)
+# $InformationPreference = 'Continue'
 
 # Get the directory where the script is located
 $scriptDir = $PSScriptRoot
 
-Write-Information "Starting script validation in directory: $scriptDir" 6>&1
+Write-Host "Starting script validation in directory: $scriptDir"
 
 # Get all PowerShell script files in the directory
 $scriptFiles = Get-ChildItem -Path $scriptDir -Filter *.ps1 -File
@@ -28,7 +28,7 @@ if (-not $scriptFiles) {
 	exit 0
 }
 
-Write-Information "Found $($scriptFiles.Count) script(s) to validate." 6>&1
+Write-Host "Found $($scriptFiles.Count) script(s) to validate."
 
 # Define the rules to exclude
 $excludedRules = @(
@@ -42,11 +42,11 @@ $anyErrorsFound = $false
 
 # Loop through each script file and run the analyzer
 foreach ($file in $scriptFiles) {
-	Write-Information "--------------------------------------------------" 6>&1
-	Write-Information "Validating: $($file.FullName)" 6>&1
-	Write-Information "--------------------------------------------------" 6>&1
+	Write-Host "--------------------------------------------------"
+	Write-Host "Validating: $($file.FullName)"
+	Write-Host "--------------------------------------------------"
 	try {
-		# Redirect streams 6(Info), 3(Warn) to 1(Success) for capture
+		# Redirect streams 3(Warn) to 1(Success) for capture (Info stream 6 removed)
 		$results = Invoke-ScriptAnalyzer -Path $file.FullName -ExcludeRule $excludedRules -ErrorAction Stop 6>&1 3>&1
 		if ($results) {
 			Write-Warning "Issues found in $($file.Name):" 3>&1 # Redirect warning
@@ -54,7 +54,7 @@ foreach ($file in $scriptFiles) {
 			$anyErrorsFound = $true
 		}
 		else {
-			Write-Information "No issues found in $($file.Name)." 6>&1 # Redirect info
+			Write-Host "No issues found in $($file.Name)." # Redirect info removed
 		}
 	}
 	catch {
@@ -62,17 +62,17 @@ foreach ($file in $scriptFiles) {
 		Write-Error "Failed to analyze $($file.Name): $_" 2>&1
 		$anyErrorsFound = $true
 	}
-	Write-Information "" 6>&1 # Add a blank line for readability (redirected)
+	Write-Host "" # Add a blank line for readability (redirected removed)
 }
 
-Write-Information "==================================================" 6>&1
+Write-Host "=================================================="
 if ($anyErrorsFound) {
 	Write-Warning "Validation complete. Some issues were found." 3>&1
 }
 else {
-	Write-Information "Validation complete. No issues found." 6>&1
+	Write-Host "Validation complete. No issues found."
 }
-Write-Information "==================================================" 6>&1
+Write-Host "=================================================="
 
 # Optional: Pause at the end if running interactively
 # if ($Host.Name -eq 'ConsoleHost') {

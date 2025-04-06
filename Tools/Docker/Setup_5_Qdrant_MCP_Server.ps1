@@ -62,7 +62,7 @@ function Confirm-SourceCode {
 	Test-GitInstallation # Check if Git is available
 
 	if (-not (Test-Path $global:srcDir)) {
-		Write-Information "Cloning Qdrant MCP Server repository from '$($global:repoUrl)'..."
+		Write-Host "Cloning Qdrant MCP Server repository from '$($global:repoUrl)'..."
 		git clone $global:repoUrl $global:srcDir
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to clone repository."
@@ -70,7 +70,7 @@ function Confirm-SourceCode {
 		}
 	}
 	else {
-		Write-Information "Source code directory found at '$($global:srcDir)'. Checking for updates..."
+		Write-Host "Source code directory found at '$($global:srcDir)'. Checking for updates..."
 		Push-Location $global:srcDir
 		git pull
 		Pop-Location
@@ -94,7 +94,7 @@ function Confirm-SourceCode {
 	Invoke-QdrantMCPServerImageBuild -WhatIf
 .NOTES
 	Relies on global variables $global:srcDir, $global:imageTag, $global:enginePath.
-	Uses Write-Information for status messages.
+	Uses Write-Host for status messages.
 #>
 function Invoke-QdrantMCPServerImageBuild {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -107,13 +107,13 @@ function Invoke-QdrantMCPServerImageBuild {
 	}
 
 	if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Container Image from '$($global:srcDir)'")) {
-		Write-Information "Building Qdrant MCP Server image '$($global:imageTag)'..."
+		Write-Host "Building Qdrant MCP Server image '$($global:imageTag)'..."
 		& $global:enginePath build --tag $global:imageTag $global:srcDir
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to build Qdrant MCP Server image."
 			return $false
 		}
-		Write-Information "Image built successfully."
+		Write-Host "Image built successfully."
 		return $true
 	}
  else {
@@ -176,7 +176,7 @@ function Install-QdrantMCPServerContainer {
 	$qdrantApiKey = Read-Host "Enter Qdrant API Key (if required, otherwise leave blank)"
 
 	# Step 6: Run the container
-	Write-Information "Starting Qdrant MCP Server container '$($global:containerName)'..."
+	Write-Host "Starting Qdrant MCP Server container '$($global:containerName)'..."
 	$runOptions = @(
 		"--detach",
 		"--name", $global:containerName,
@@ -196,12 +196,12 @@ function Install-QdrantMCPServerContainer {
 	}
 
 	# Step 7: Wait and Test
-	Write-Information "Waiting 15 seconds for the container to start..."
+	Write-Host "Waiting 15 seconds for the container to start..."
 	Start-Sleep -Seconds 15
 	Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Qdrant MCP Server"
 	# Add HTTP test if the server has a root endpoint or health check
 	# Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Qdrant MCP Server"
-	Write-Information "Qdrant MCP Server container started. Check logs for details."
+	Write-Host "Qdrant MCP Server container started. Check logs for details."
 }
 
 #==============================================================================
@@ -285,7 +285,7 @@ function Update-QdrantMCPServerContainer {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param()
 
-	Write-Information "Initiating update for Qdrant MCP Server..."
+	Write-Host "Initiating update for Qdrant MCP Server..."
 
 	# Step 1: Update source code
 	if ($PSCmdlet.ShouldProcess($global:srcDir, "Pull Git Repository")) {
@@ -308,7 +308,7 @@ function Update-QdrantMCPServerContainer {
 	# Step 3: Re-install (which handles removal and running with prompts)
 	# We call Install directly as it contains the logic to remove the old container
 	# and run the new one with potentially updated ENV vars.
-	Write-Information "Re-installing container with updated image..."
+	Write-Host "Re-installing container with updated image..."
 	Install-QdrantMCPServerContainer
 }
 
