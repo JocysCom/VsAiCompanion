@@ -27,7 +27,7 @@ $global:containerName = "qdrant"
 $global:volumeName    = "qdrant_storage" # Define a volume name
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges
+    Test-AdminPrivilege
     $global:enginePath = Get-DockerPath
     Write-Information "Using Docker with executable: $global:enginePath"
     # For Docker, set DOCKER_HOST pointing to the Docker service pipe.

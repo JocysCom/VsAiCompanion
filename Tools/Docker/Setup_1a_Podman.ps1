@@ -17,7 +17,7 @@ $diskLocation = ""      # Default disk location (empty means use default user pr
 . "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Test-WSLStatus
 
 # Optionally ensure the script is running as Administrator and set the working directory.
-#Test-AdminPrivileges
+#Test-AdminPrivilege
 Set-ScriptLocation
 
 # Ensure the script stops immediately if any error occurs.

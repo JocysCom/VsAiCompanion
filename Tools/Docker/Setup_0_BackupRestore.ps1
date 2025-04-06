@@ -2,11 +2,11 @@
 # File         : Setup_0_BackupRestore.ps1
 # Description  : Contains container image backup/restore functions:
 #                - Backup-ContainerImage: Backup a single image.
-#                - Backup-ContainerImages: Backup all images.
+#                - Invoke-ContainerImageBackup: Backup all images. (Formerly Backup-ContainerImages)
 #                - Restore-ContainerImage: Restore a single image.
-#                - Run-RestoredContainer: Helper to run a restored image.
-#                - Restore-ContainerImages: Restore all images from a folder.
-#                - Check-AndRestoreBackup: Check for backup and prompt to restore.
+#                - Start-RestoredContainer: Helper to run a restored image.
+#                - Invoke-ContainerImageRestore: Restore all images from a folder. (Formerly Restore-ContainerImages)
+#                - Test-AndRestoreBackup: Check for backup and prompt to restore.
 # Usage        : Dot-source this script in other setup scripts:
 #                . "$PSScriptRoot\Setup_0_BackupRestore.ps1"
 ################################################################################
@@ -61,13 +61,13 @@ function Backup-ContainerImage {
 }
 
 #------------------------------
-# Function: Backup-ContainerImages
+# Function: Invoke-ContainerImageBackup
 # Description: Backs up all container images to tar files.
 # Parameters:
 #   -Engine: Path to the container engine (docker or podman)
 #   -BackupFolder: Folder to store the backup files (default ".\Backup")
 #------------------------------
-function Backup-ContainerImages {
+function Invoke-ContainerImageBackup {
     [CmdletBinding()]
     [OutputType([bool])]
     param(
@@ -89,6 +89,7 @@ function Backup-ContainerImages {
 
     $successCount = 0
     foreach ($image in $images) {
+        # Call the singular version
         if (Backup-ContainerImage -Engine $Engine -ImageName $image -BackupFolder $BackupFolder) {
             $successCount++
         }
@@ -152,6 +153,7 @@ function Restore-ContainerImage {
         else {
             # Use Write-Information for status messages
             Write-Information "Could not parse image name from the load output."
+            # Still return true as the image was loaded, just couldn't parse name
             return $true
         }
     }
@@ -184,32 +186,41 @@ function Start-RestoredContainer {
 
     # Use Write-Information for status messages
     Write-Information "Starting container from image '$ImageName' with container name '$containerName'..."
-    # podman run [options] IMAGE [COMMAND [ARG...]]
-    # run         Run a command in a new container.
-    # --detach    Run container in background and print container ID.
-    # --name      Assign a name to the container.
-    & $Engine run --detach --name $containerName $ImageName
 
-    if ($LASTEXITCODE -eq 0) {
-        # Use Write-Information for status messages
-        Write-Information "Container '$containerName' started successfully."
-        return $true
-    }
+    # Check if the action should be performed
+    if ($PSCmdlet.ShouldProcess("container '$containerName' from image '$ImageName'", "Start")) {
+        # podman run [options] IMAGE [COMMAND [ARG...]]
+        # run         Run a command in a new container.
+        # --detach    Run container in background and print container ID.
+        # --name      Assign a name to the container.
+        & $Engine run --detach --name $containerName $ImageName
+
+        if ($LASTEXITCODE -eq 0) {
+            # Use Write-Information for status messages
+            Write-Information "Container '$containerName' started successfully."
+            return $true
+        }
+        else {
+            Write-Error "Failed to start container from image '$ImageName'."
+            return $false
+        }
+    } # Closing brace for ShouldProcess block
     else {
-        Write-Error "Failed to start container from image '$ImageName'."
+        # If ShouldProcess returns false (e.g., user chose "No" or used -WhatIf)
+        Write-Information "Skipped starting container '$containerName' due to ShouldProcess."
         return $false
     }
-}
+} # Closing brace for function Start-RestoredContainer
 
 #------------------------------
-# Function: Restore-ContainerImages
+# Function: Invoke-ContainerImageRestore
 # Description: Restores all container images from tar files in a folder.
 # Parameters:
 #   -Engine: Path to the container engine (docker or podman)
 #   -BackupFolder: Folder containing the backup tar files (default ".\Backup")
 #   -RunContainers: Whether to run containers from the restored images
 #------------------------------
-function Restore-ContainerImages {
+function Invoke-ContainerImageRestore {
     [CmdletBinding()]
     [OutputType([bool])]
     param(
@@ -236,6 +247,7 @@ function Restore-ContainerImages {
 
     $successCount = 0
     foreach ($file in $tarFiles) {
+        # Call the singular version
         if (Restore-ContainerImage -Engine $Engine -BackupFile $file.FullName -RunContainer:$RunContainers) {
             $successCount++
         }
@@ -281,6 +293,7 @@ function Test-AndRestoreBackup {
     Write-Information "Backup file found for image '$ImageName': $backupFile"
     $choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
     if ($choice -and $choice.ToUpper() -eq "Y") {
+        # Call the singular version
         return (Restore-ContainerImage -Engine $Engine -BackupFile $backupFile)
     }
     else {

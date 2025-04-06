@@ -12,10 +12,10 @@
 ################################################################################
 
 #------------------------------
-# Function: Test-AdminPrivileges
+# Function: Test-AdminPrivilege
 # Description: Verify administrator privileges and exit if not elevated.
 #------------------------------
-function Test-AdminPrivileges {
+function Test-AdminPrivilege {
     if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
          Write-Error "Administrator privileges required. Please run this script as an Administrator."
          exit 1
@@ -182,6 +182,9 @@ function Test-ApplicationInstalled {
 # Description: Refreshes specific environment variables (like PATH) in the current session.
 #############################################
 function Update-EnvironmentVariable {
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param()
+
     <#
     .SYNOPSIS
       Refreshes the current session's PATH environment variable.
@@ -190,12 +193,19 @@ function Update-EnvironmentVariable {
       Re-reads the machine and user PATH from the registry and updates the current session.
       This allows newly installed executables (such as podman) to be found without restarting PowerShell.
     #>
-    $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
-    $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
-    $env:PATH = "$machinePath;$userPath"
-    # Use Write-Information for status messages
-    Write-Information "Environment variables refreshed. Current PATH:"
-    Write-Information $env:PATH
+
+    # Check if the action should be performed
+    if ($PSCmdlet.ShouldProcess("current session environment variables", "Update PATH")) {
+        $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
+        $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
+        $env:PATH = "$machinePath;$userPath"
+        # Use Write-Information for status messages
+        Write-Information "Environment variables refreshed. Current PATH:"
+        Write-Information $env:PATH
+    }
+    else {
+        Write-Information "Skipped refreshing environment variables due to ShouldProcess."
+    }
 }
 
 #############################################

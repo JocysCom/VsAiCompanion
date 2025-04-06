@@ -28,7 +28,7 @@ $global:containerName = "nocodb"
 $global:volumeName    = "nocodb_data"
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges
+    Test-AdminPrivilege
     $global:enginePath = Get-DockerPath
     $global:pullOptions = @()  # No additional options for Docker.
 }

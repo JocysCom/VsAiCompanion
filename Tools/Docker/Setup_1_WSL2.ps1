@@ -16,7 +16,7 @@ using namespace System.IO
 . "$PSScriptRoot\Setup_0_WSL.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
-Test-AdminPrivileges
+Test-AdminPrivilege
 Set-ScriptLocation
 
 #---------------------------------------------

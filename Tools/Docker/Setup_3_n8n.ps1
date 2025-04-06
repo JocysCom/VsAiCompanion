@@ -38,7 +38,7 @@ if (-not $global:containerEngine) {
     exit 1
 }
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges
+    Test-AdminPrivilege
     $global:enginePath    = Get-DockerPath
     $global:pullOptions   = @()  # No extra options needed for Docker.
     $global:imageName     = "docker.n8n.io/n8nio/n8n:latest"

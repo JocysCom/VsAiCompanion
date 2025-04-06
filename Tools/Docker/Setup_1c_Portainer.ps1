@@ -26,7 +26,7 @@ Set-ScriptLocation
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges
+    Test-AdminPrivilege
     $global:enginePath    = Get-DockerPath
     $global:pullOptions   = @()  # No extra options needed for Docker.
     $global:imageName     = "portainer/portainer-ce:latest"

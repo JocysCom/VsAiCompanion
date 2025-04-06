@@ -34,7 +34,7 @@ $global:collectionName= "mcp-default-collection" # Default collection name
 
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges
+    Test-AdminPrivilege
     $global:enginePath = Get-DockerPath
 }
 else {
@@ -77,7 +77,7 @@ function Confirm-SourceCode {
 .OUTPUTS
     Returns $true if build is successful, $false otherwise.
 #>
-function Build-QdrantMCPServerImage {
+function Invoke-QdrantMCPServerImageBuild {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
     param()
@@ -117,7 +117,7 @@ function Install-QdrantMCPServerContainer {
     }
 
     # Step 2: Build the image
-    if (-not (Build-QdrantMCPServerImage)) {
+    if (-not (Invoke-QdrantMCPServerImageBuild)) {
         Write-Warning "Image build failed or was skipped. Cannot proceed with installation."
         return
     }
@@ -218,7 +218,7 @@ function Update-QdrantMCPServerContainer {
     }
 
     # Step 2: Rebuild the image
-    if (-not (Build-QdrantMCPServerImage)) { # Handles ShouldProcess internally
+    if (-not (Invoke-QdrantMCPServerImageBuild)) {
         Write-Error "Image build failed or skipped. Update aborted."
         return
     }

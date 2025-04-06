@@ -37,8 +37,8 @@ do {
     $choice = Read-Host "Enter your choice (1, 2, or 0)"
 
     switch ($choice) {
-        "1" { Backup-ContainerImages -Engine $containerEngine }
-        "2" { Restore-ContainerImages -Engine $containerEngine -RunContainers }
+        "1" { Invoke-ContainerImageBackup -Engine $containerEngine }
+        "2" { Invoke-ContainerImageRestore -Engine $containerEngine -RunContainers }
         "0" { Write-Information "Exiting..."; break }
         default { Write-Warning "Invalid selection. Please enter 1, 2, or 0." }
     }

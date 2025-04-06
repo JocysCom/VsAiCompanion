@@ -37,7 +37,7 @@ $global:enginePath = Get-PodmanPath # Explicitly use Podman
     Populates the build context directory with the Dockerfile, requirements.txt, and embedding_api.py.
     Then builds the container image with the tag "embedding-api" using Podman.
 #>
-function Build-EmbeddingImage {
+function Invoke-EmbeddingImageBuild {
     # Define file contents for the Embedding API application.
     $dockerfileContent = @"
 FROM python:3.9-slim
@@ -174,7 +174,7 @@ async def options_handler(path: str):
     After starting the container, the script waits for initialization and tests connectivity.
 #>
 function Install-EmbeddingContainer {
-    Build-EmbeddingImage
+    Invoke-EmbeddingImageBuild
 
     # Remove existing container (and potentially volume if user created one with the same name)
     # Pass container name as volume name; Remove-ContainerAndVolume will prompt if volume exists.
@@ -212,7 +212,7 @@ function Update-EmbeddingContainer {
 
     # Rebuild the container image.
     if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Image")) {
-        Build-EmbeddingImage
+        Invoke-EmbeddingImageBuild
     } else {
         Write-Warning "Skipping image build due to -WhatIf."
         # Decide if update should proceed without build? For now, let's abort.
