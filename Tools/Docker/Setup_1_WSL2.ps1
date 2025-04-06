@@ -41,7 +41,6 @@ Set-ScriptLocation
 #>
 function Enable-WSL2 {
 	[CmdletBinding()]
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
 	param()
 
 	Write-Information "Setting WSL default version to 2..."

@@ -928,7 +928,6 @@ function Update-Container {
 #>
 function Show-ContainerStatus {
 	[CmdletBinding()]
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$ContainerName,

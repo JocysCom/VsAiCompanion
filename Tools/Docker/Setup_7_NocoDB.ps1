@@ -284,38 +284,23 @@ function Update-NocoDBContainer {
 		-RunFunction ${function:Invoke-StartNocoDBForUpdate} # Pass function reference
 }
 
-#==============================================================================
-# Function: Show-ContainerMenu
-#==============================================================================
-<#
-.SYNOPSIS
-	Displays the main menu options for NocoDB container management.
-.DESCRIPTION
-	Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update, Exit)
-	to the console using Write-Output.
-.EXAMPLE
-	Show-ContainerMenu
-.NOTES
-	Uses Write-Output for direct console display.
-#>
-function Show-ContainerMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
-	Write-Host "==========================================="
-	Write-Host "NocoDB Container Management Menu"
-	Write-Host "==========================================="
-	Write-Host "1. Show Info & Test Connection"
-	Write-Host "2. Install container"
-	Write-Host "3. Uninstall container"
-	Write-Host "4. Backup container"
-	Write-Host "5. Restore container"
-	Write-Host "6. Update container"
-	Write-Host "0. Exit menu"
-	Write-Host "-------------------------------------------"
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
+
+# Define Menu Title and Items
+$menuTitle = "NocoDB Container Management Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container"
+	"4" = "Backup container"
+	"5" = "Restore container"
+	"6" = "Update container"
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
 $menuActions = @{
 	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
@@ -330,6 +315,8 @@ $menuActions = @{
 	"4" = { Backup-NocoDBContainer }
 	"5" = { Restore-NocoDBContainer }
 	"6" = { Update-NocoDBContainer }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
-Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"

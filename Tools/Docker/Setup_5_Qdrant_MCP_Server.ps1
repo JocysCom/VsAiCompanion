@@ -8,7 +8,6 @@
 
 using namespace System
 using namespace System.IO
-using namespace System.Diagnostics.CodeAnalysis # For SuppressMessageAttribute
 
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
@@ -313,38 +312,23 @@ function Update-QdrantMCPServerContainer {
 	Install-QdrantMCPServerContainer
 }
 
-#==============================================================================
-# Function: Show-ContainerMenu
-#==============================================================================
-<#
-.SYNOPSIS
-	Displays the main menu options for Qdrant MCP Server container management.
-.DESCRIPTION
-	Writes the available menu options (Show Info, Install/Rebuild, Uninstall, Backup, Restore, Update, Exit)
-	to the console using Write-Output.
-.EXAMPLE
-	Show-ContainerMenu
-.NOTES
-	Uses Write-Output for direct console display.
-#>
-function Show-ContainerMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
-	Write-Host "==========================================="
-	Write-Host "Qdrant MCP Server Container Menu"
-	Write-Host "==========================================="
-	Write-Host "1. Show Info & Test Connection"
-	Write-Host "2. Install/Rebuild container"
-	Write-Host "3. Uninstall container"
-	Write-Host "4. Backup container state"
-	Write-Host "5. Restore container state"
-	Write-Host "6. Update container (Pull source & Rebuild)"
-	Write-Host "0. Exit menu"
-	Write-Host "-------------------------------------------"
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
+
+# Define Menu Title and Items
+$menuTitle = "Qdrant MCP Server Container Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install/Rebuild container"
+	"3" = "Uninstall container"
+	"4" = "Backup container state"
+	"5" = "Restore container state"
+	"6" = "Update container (Pull source & Rebuild)"
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
 $menuActions = @{
 	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
@@ -364,6 +348,8 @@ $menuActions = @{
 	"4" = { Backup-QdrantMCPServerContainer }
 	"5" = { Restore-QdrantMCPServerContainer }
 	"6" = { Update-QdrantMCPServerContainer }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
-Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"

@@ -309,39 +309,24 @@ function Update-QdrantUserData {
 	}
 }
 
-#==============================================================================
-# Function: Show-ContainerMenu
-#==============================================================================
-<#
-.SYNOPSIS
-	Displays the main menu options for Qdrant container management.
-.DESCRIPTION
-	Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update System,
-	Update User Data, Exit) to the console using Write-Output.
-.EXAMPLE
-	Show-ContainerMenu
-.NOTES
-	Uses Write-Output for direct console display.
-#>
-function Show-ContainerMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
-	Write-Host "==========================================="
-	Write-Host "Qdrant Container Menu"
-	Write-Host "==========================================="
-	Write-Host "1. Show Info & Test Connection"
-	Write-Host "2. Install container"
-	Write-Host "3. Uninstall container"
-	Write-Host "4. Backup Live container"
-	Write-Host "5. Restore Live container"
-	Write-Host "6. Update System"
-	Write-Host "7. Update User Data"
-	Write-Host "0. Exit menu"
-	Write-Host "-------------------------------------------"
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
+
+# Define Menu Title and Items
+$menuTitle = "Qdrant Container Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container"
+	"4" = "Backup Live container"
+	"5" = "Restore Live container"
+	"6" = "Update System"
+	"7" = "Update User Data"
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
 $menuActions = @{
 	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
@@ -358,6 +343,8 @@ $menuActions = @{
 	"5" = { Restore-QdrantContainer }
 	"6" = { Update-QdrantContainer }
 	"7" = { Update-QdrantUserData }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
-Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"

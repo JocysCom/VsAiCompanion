@@ -354,7 +354,6 @@ function Install-PodmanCLI {
 	Uses Read-Host for user input.
 #>
 function Select-DiskLocation {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
 	Write-Host "==========================================="
 	Write-Host "Select disk location machine virtual disk:"
 	Write-Host "==========================================="

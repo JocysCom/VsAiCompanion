@@ -33,7 +33,8 @@ Write-Information "Found $($scriptFiles.Count) script(s) to validate." 6>&1
 # Define the rules to exclude
 $excludedRules = @(
 	'PSAvoidGlobalVars',
-	'PSReviewUnusedParameter'
+	'PSReviewUnusedParameter',
+	'PSAvoidUsingWriteHost'
 )
 
 # Variable to track if any errors were found

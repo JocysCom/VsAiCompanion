@@ -28,7 +28,6 @@ using namespace System.IO
 	Uses Write-Information for output.
 #>
 function Show-MainMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
 	Write-Host "==========================================="
 	Write-Host "Container Images Backup and Restore Menu"
 	Write-Host "==========================================="

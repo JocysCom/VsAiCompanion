@@ -292,25 +292,33 @@ function Update-EnvironmentVariable {
 .SYNOPSIS
 	Provides a generic, reusable menu loop structure.
 .DESCRIPTION
-	Repeatedly executes a provided script block to display menu options, prompts the user
+	Displays a menu with a title and options derived from an ordered hashtable, prompts the user
 	for input, and executes a corresponding action script block based on a provided mapping.
 	The loop continues until the user enters the specified exit choice.
-.PARAMETER ShowMenuScriptBlock
-	A script block responsible for displaying the menu options to the user. Mandatory.
+.PARAMETER MenuTitle
+	The title to display above the menu options. Mandatory.
+.PARAMETER MenuItems
+	An ordered hashtable where keys are the menu choice strings (e.g., "1", "a") and values are
+	the descriptive text for each menu option. Mandatory.
 .PARAMETER ActionMap
-	A hashtable where keys are the menu choice strings entered by the user, and values are
-	the script blocks to execute for that choice. Mandatory.
+	A hashtable where keys are the menu choice strings entered by the user (must match keys in MenuItems),
+	and values are the script blocks to execute for that choice. Mandatory.
 .PARAMETER ExitChoice
 	The string the user must enter to exit the menu loop. Defaults to "0".
 .EXAMPLE
-	$menu = { Write-Host "1. Option 1"; Write-Host "2. Option 2"; Write-Host "0. Exit" }
-	$actions = @{
-		"1" = { Write-Host "Executing Option 1..." }
-		"2" = { Write-Host "Executing Option 2..." }
+	$title = "My Awesome Menu"
+	$items = [ordered]@{
+		"1" = "Do Thing One"
+		"2" = "Do Thing Two"
+		"0" = "Exit"
 	}
-	Invoke-MenuLoop -ShowMenuScriptBlock $menu -ActionMap $actions -ExitChoice "0"
+	$actions = @{
+		"1" = { Write-Host "Executing Thing One..." }
+		"2" = { Write-Host "Executing Thing Two..." }
+	}
+	Invoke-MenuLoop -MenuTitle $title -MenuItems $items -ActionMap $actions -ExitChoice "0"
 .NOTES
-	Uses Read-Host for input.
+	Uses Write-Host for menu display and Read-Host for input.
 	Uses dot sourcing (`. $ActionMap[$choice]`) to execute action script blocks in the current scope.
 	Includes basic error handling for action execution.
 	Clears the host and prompts user before showing the menu again (except on exit).
@@ -320,7 +328,10 @@ function Invoke-MenuLoop {
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $true)]
-		[scriptblock]$ShowMenuScriptBlock,
+		[string]$MenuTitle,
+
+		[Parameter(Mandatory = $true)]
+		[System.Collections.Specialized.OrderedDictionary]$MenuItems, # Use [ordered] or this type
 
 		[Parameter(Mandatory = $true)]
 		[hashtable]$ActionMap,
@@ -329,9 +340,21 @@ function Invoke-MenuLoop {
 	)
 
 	do {
-		& $ShowMenuScriptBlock
+		# Display Menu Title
+		Write-Host "===========================================" -ForegroundColor Yellow
+		Write-Host $MenuTitle -ForegroundColor White
+		Write-Host "===========================================" -ForegroundColor Yellow
+
+		# Display Menu Items from Ordered Hashtable
+		foreach ($key in $MenuItems.Keys) {
+			Write-Host ("{0}. {1}" -f $key, $MenuItems[$key]) -ForegroundColor Cyan
+		}
+		Write-Host "-------------------------------------------" -ForegroundColor Yellow
+
+		# Get User Choice
 		$choice = Read-Host "Enter your choice"
 
+		# Execute Action or Exit
 		if ($ActionMap.ContainsKey($choice)) {
 			try {
 				. $ActionMap[$choice] # Use dot sourcing to execute in current scope

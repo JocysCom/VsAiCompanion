@@ -303,36 +303,21 @@ function Uninstall-EmbeddingContainer {
 	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 }
 
-#==============================================================================
-# Function: Show-ContainerMenu
-#==============================================================================
-<#
-.SYNOPSIS
-	Displays the main menu options for Embedding API container management.
-.DESCRIPTION
-	Writes the available menu options (Show Info, Install/Rebuild, Update, Uninstall, Exit)
-	to the console using Write-Output. Notes that this script uses Podman only.
-.EXAMPLE
-	Show-ContainerMenu
-.NOTES
-	Uses Write-Output for direct console display.
-#>
-function Show-ContainerMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
-	Write-Host "==========================================="
-	Write-Host "Embedding API Container Menu (Podman Only)"
-	Write-Host "==========================================="
-	Write-Host "1. Show Info & Test Connection"
-	Write-Host "2. Install/Rebuild container"
-	Write-Host "3. Update container (Rebuild & Run)"
-	Write-Host "4. Uninstall container"
-	Write-Host "0. Exit menu"
-	Write-Host "-------------------------------------------"
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
+
+# Define Menu Title and Items
+$menuTitle = "Embedding API Container Menu (Podman Only)"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install/Rebuild container"
+	"3" = "Update container (Rebuild & Run)"
+	"4" = "Uninstall container"
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
 $menuActions = @{
 	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
@@ -347,6 +332,8 @@ $menuActions = @{
 	"2" = { Install-EmbeddingContainer }
 	"3" = { Update-EmbeddingContainer }
 	"4" = { Uninstall-EmbeddingContainer }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
-Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"

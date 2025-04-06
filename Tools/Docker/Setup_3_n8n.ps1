@@ -471,7 +471,6 @@ function Restore-n8nContainer {
 	# Update-Container -RunFunction ${function:Invoke-StartN8nForUpdate}
 .NOTES
 	Relies on Confirm-ContainerVolume, Get-n8nContainerConfig, Start-n8nContainer helper functions.
-	Uses Write-Information for status messages. Includes [SuppressMessageAttribute] for unused standard parameters.
 #>
 function Invoke-StartN8nForUpdate {
 	param(
@@ -479,11 +478,8 @@ function Invoke-StartN8nForUpdate {
 		# The following parameters are part of the standard signature for Update-Container's script block,
 		# but are not directly used in this specific implementation as it relies on global variables
 		# or calls Start-n8nContainer which uses globals.
-		[SuppressMessageAttribute("PSReviewUnusedParameter", "")]
 		[string]$ContainerEngineType,
-		[SuppressMessageAttribute("PSReviewUnusedParameter", "")]
 		[string]$ContainerName,
-		[SuppressMessageAttribute("PSReviewUnusedParameter", "")]
 		[string]$VolumeName,
 		[string]$ImageName            # The updated image name passed by Update-Container
 	)
@@ -625,40 +621,25 @@ function Restart-n8nContainer {
 	}
 }
 
-#==============================================================================
-# Function: Show-ContainerMenu
-#==============================================================================
-<#
-.SYNOPSIS
-	Displays the main menu options for n8n container management.
-.DESCRIPTION
-	Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update System,
-	Update User Data, Restart w/ Community Pkgs, Exit) to the console using Write-Output.
-.EXAMPLE
-	Show-ContainerMenu
-.NOTES
-	Uses Write-Output for direct console display.
-#>
-function Show-ContainerMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
-	Write-Host "==========================================="
-	Write-Host "n8n Container Menu"
-	Write-Host "==========================================="
-	Write-Host "1. Show Info & Test Connection"
-	Write-Host "2. Install container"
-	Write-Host "3. Uninstall container (preserves user data)"
-	Write-Host "4. Backup Live container"
-	Write-Host "5. Restore Live container"
-	Write-Host "6. Update System"
-	Write-Host "7. Update User Data"
-	Write-Host "8. Restart with Community Packages Enabled"
-	Write-Host "0. Exit menu"
-	Write-Host "-------------------------------------------"
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
+
+# Define Menu Title and Items
+$menuTitle = "n8n Container Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container (preserves user data)"
+	"4" = "Backup Live container"
+	"5" = "Restore Live container"
+	"6" = "Update System"
+	"7" = "Update User Data"
+	"8" = "Restart with Community Packages Enabled"
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
 $menuActions = @{
 	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
@@ -675,6 +656,8 @@ $menuActions = @{
 	"6" = { Update-n8nContainer }
 	"7" = { Update-n8nUserData }
 	"8" = { Restart-n8nContainer }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
-Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
