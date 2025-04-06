@@ -95,7 +95,9 @@ function Enable-WSL2 {
 # Section: Virtualization Feature Selection
 ###############################################################################
 
+Write-Host "==========================================="
 Write-Host "Select virtualization feature to enable:"
+Write-Host "==========================================="
 Write-Host "1. Windows Subsystem for Linux (WSL)"
 Write-Host "2. Hyper-V"
 $choice = Read-Host "Enter your choice (1 or 2, default is 1)"

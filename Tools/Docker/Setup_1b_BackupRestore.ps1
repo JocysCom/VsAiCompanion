@@ -14,11 +14,12 @@ using namespace System.IO
 
 # Function: Show-MainMenu displays backup/restore options.
 function Show-MainMenu {
+	Write-Host "==========================================="
     Write-Host "Container Images Backup and Restore Menu"
-    Write-Host "------------------------------------------"
+	Write-Host "==========================================="
     Write-Host "1. Backup all images"
     Write-Host "2. Restore all images from backup and run"
-    Write-Host "3. Exit"
+    Write-Host "0. Exit"
 }
 
 # MAIN SCRIPT EXECUTION
@@ -33,18 +34,18 @@ if (-not (Get-Command $containerEngine -ErrorAction SilentlyContinue)) {
 
 do {
     Show-MainMenu
-    $choice = Read-Host "Enter your choice (1, 2, or 3)"
+    $choice = Read-Host "Enter your choice (1, 2, or 0)"
 
     switch ($choice) {
         "1" { Backup-ContainerImages -Engine $containerEngine }
         "2" { Restore-ContainerImages -Engine $containerEngine -RunContainers }
-        "3" { Write-Information "Exiting..."; break }
-        default { Write-Warning "Invalid selection. Please enter 1, 2, or 3." }
+        "0" { Write-Information "Exiting..."; break }
+        default { Write-Warning "Invalid selection. Please enter 1, 2, or 0." }
     }
 
-    if ($choice -ne "3") {
+    if ($choice -ne "0") {
         Write-Host "`nPress any key to continue..."
         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Clear-Host
     }
-} while ($choice -ne "3")
+} while ($choice -ne "0")

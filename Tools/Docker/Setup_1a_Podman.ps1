@@ -251,7 +251,9 @@ function Install-PodmanCLI {
 # This determines where the VHDX (virtual disk) file will be stored
 #############################################
 function Select-DiskLocation {
-    Write-Host "Select disk location for Podman machine virtual disk:"
+	Write-Host "==========================================="
+    Write-Host "Select disk location machine virtual disk:"
+	Write-Host "==========================================="
     Write-Host "1. Default location (user profile)"
     Write-Host "2. Custom location"
     $locationChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
@@ -822,16 +824,18 @@ function Remove-PodmanComponent {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
+	Write-Host "==========================================="
     Write-Host "Select component to remove:"
+	Write-Host "==========================================="
     Write-Host "1. Remove Podman Service only"
     Write-Host "2. Remove Podman Machine only"
     Write-Host "3. [Not Implemented] Uninstall Podman Desktop only"
     Write-Host "4. [Not Implemented] Uninstall Podman CLI"
-    Write-Host "5. Exit without removing anything"
+    Write-Host "0. Exit without removing anything"
 
-    $removeOption = Read-Host "Enter option (1-5, default is 5)"
+    $removeOption = Read-Host "Enter option (1-5, default is 0)"
     if ([string]::IsNullOrWhiteSpace($removeOption)) {
-        $removeOption = "5"
+        $removeOption = "0"
     }
 
     switch ($removeOption) {
