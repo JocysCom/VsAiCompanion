@@ -163,104 +163,104 @@ Function Get-EmbeddingFromAPI {
 	
 try {
 
-    ############################################################################
-    # 1) Check TCP connectivity.
-    ############################################################################
-    Write-Information "Checking TCP connectivity on port 8000..."
-    $tcpOk = Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-    if (-not $tcpOk) {
-        Write-Error "TCP connectivity check failed."
-        $testPass = $false
-        throw "Connection test failed."
-    }
+	############################################################################
+	# 1) Check TCP connectivity.
+	############################################################################
+	Write-Information "Checking TCP connectivity on port 8000..."
+	$tcpOk = Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
+	if (-not $tcpOk) {
+		Write-Error "TCP connectivity check failed."
+		$testPass = $false
+		throw "Connection test failed."
+	}
 
-    ############################################################################
-    # 2) Define test lines (including repetitions).
-    ############################################################################
-    # The API model is 'sentence-transformers/all-mpnet-base-v2'.
-    $modelName = "sentence-transformers/all-mpnet-base-v2"
-    $testLines = @(
-        "Hello world",
-        "Hello",
-        "Hello world",  # repeated line
-        "I love coding",
-        "What is code?",
-        "Hello world"   # another repeat
-    )
+	############################################################################
+	# 2) Define test lines (including repetitions).
+	############################################################################
+	# The API model is 'sentence-transformers/all-mpnet-base-v2'.
+	$modelName = "sentence-transformers/all-mpnet-base-v2"
+	$testLines = @(
+		"Hello world",
+		"Hello",
+		"Hello world", # repeated line
+		"I love coding",
+		"What is code?",
+		"Hello world"   # another repeat
+	)
 
-    # Hashtable to store embeddings keyed by "text|index" to differentiate duplicates.
-    $embeddings = @{}
+	# Hashtable to store embeddings keyed by "text|index" to differentiate duplicates.
+	$embeddings = @{}
 
-    ############################################################################
-    # 3) Request embeddings for each test line.
-    ############################################################################
-    for ($i = 0; $i -lt $testLines.Count; $i++) {
-        $text = $testLines[$i]
-        Write-Information "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'"
-        $floats = Get-EmbeddingFromAPI -textLine $text -modelName $modelName
-        if (-not $floats) {
-            Write-Error "Failed to obtain embedding for '$text'."
-            $testPass = $false
-            continue
-        }
-        if ($floats.Count -lt 1) {
-            Write-Error "Embedding for '$text' is empty."
-            $testPass = $false
-        }
-        $embeddings["$text|$i"] = $floats
-    }
+	############################################################################
+	# 3) Request embeddings for each test line.
+	############################################################################
+	for ($i = 0; $i -lt $testLines.Count; $i++) {
+		$text = $testLines[$i]
+		Write-Information "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'"
+		$floats = Get-EmbeddingFromAPI -textLine $text -modelName $modelName
+		if (-not $floats) {
+			Write-Error "Failed to obtain embedding for '$text'."
+			$testPass = $false
+			continue
+		}
+		if ($floats.Count -lt 1) {
+			Write-Error "Embedding for '$text' is empty."
+			$testPass = $false
+		}
+		$embeddings["$text|$i"] = $floats
+	}
 
-    ############################################################################
-    # 4) Compare repeated lines for high similarity (threshold = 0.9).
-    ############################################################################
-    Write-Information "`nComparing repeated lines for consistency..."
-    $repeatIndices = @(0, 2, 5)
-    for ($j = 0; $j -lt $repeatIndices.Count; $j++) {
-        for ($k = $j + 1; $k -lt $repeatIndices.Count; $k++) {
-            $idxA = $repeatIndices[$j]
-            $idxB = $repeatIndices[$k]
-            $keyA = "Hello world|$idxA"
-            $keyB = "Hello world|$idxB"
-            if ($embeddings.ContainsKey($keyA) -and $embeddings.ContainsKey($keyB)) {
-                $sim = Get-CosineSimilarity -vecA $embeddings[$keyA] -vecB $embeddings[$keyB]
-                Write-Information (" - Cosine similarity for 'Hello world' (index $idxA) vs. (index $idxB): " + [Math]::Round($sim, 4))
-                if ($sim -lt 0.9) {
-                    Write-Error ("Cosine similarity between repeated lines is below 0.9 (got $sim)")
-                    $testPass = $false
-                }
-            }
-        }
-    }
+	############################################################################
+	# 4) Compare repeated lines for high similarity (threshold = 0.9).
+	############################################################################
+	Write-Information "`nComparing repeated lines for consistency..."
+	$repeatIndices = @(0, 2, 5)
+	for ($j = 0; $j -lt $repeatIndices.Count; $j++) {
+		for ($k = $j + 1; $k -lt $repeatIndices.Count; $k++) {
+			$idxA = $repeatIndices[$j]
+			$idxB = $repeatIndices[$k]
+			$keyA = "Hello world|$idxA"
+			$keyB = "Hello world|$idxB"
+			if ($embeddings.ContainsKey($keyA) -and $embeddings.ContainsKey($keyB)) {
+				$sim = Get-CosineSimilarity -vecA $embeddings[$keyA] -vecB $embeddings[$keyB]
+				Write-Information (" - Cosine similarity for 'Hello world' (index $idxA) vs. (index $idxB): " + [Math]::Round($sim, 4))
+				if ($sim -lt 0.9) {
+					Write-Error ("Cosine similarity between repeated lines is below 0.9 (got $sim)")
+					$testPass = $false
+				}
+			}
+		}
+	}
 
-    ############################################################################
-    # 5) Compare distinct lines for lower similarity (expect < 0.7).
-    ############################################################################
-    $helloIndex = 1  # "Hello"
-    $codingIndex = 3 # "I love coding"
-    $keyHello = "Hello|$helloIndex"
-    $keyCoding = "I love coding|$codingIndex"
-    if ($embeddings.ContainsKey($keyHello) -and $embeddings.ContainsKey($keyCoding)) {
-        $cosSim = Get-CosineSimilarity -vecA $embeddings[$keyHello] -vecB $embeddings[$keyCoding]
-        Write-Information "`nCosine similarity between 'Hello' and 'I love coding': $cosSim"
-        if ($cosSim -ge 0.7) {
-            Write-Error "Expected similarity between 'Hello' and 'I love coding' to be below 0.7."
-            $testPass = $false
-        }
-    }
+	############################################################################
+	# 5) Compare distinct lines for lower similarity (expect < 0.7).
+	############################################################################
+	$helloIndex = 1  # "Hello"
+	$codingIndex = 3 # "I love coding"
+	$keyHello = "Hello|$helloIndex"
+	$keyCoding = "I love coding|$codingIndex"
+	if ($embeddings.ContainsKey($keyHello) -and $embeddings.ContainsKey($keyCoding)) {
+		$cosSim = Get-CosineSimilarity -vecA $embeddings[$keyHello] -vecB $embeddings[$keyCoding]
+		Write-Information "`nCosine similarity between 'Hello' and 'I love coding': $cosSim"
+		if ($cosSim -ge 0.7) {
+			Write-Error "Expected similarity between 'Hello' and 'I love coding' to be below 0.7."
+			$testPass = $false
+		}
+	}
 
 }
 catch {
-    Write-Error "`nAn exception occurred: $_"
-    $testPass = $false
+	Write-Error "`nAn exception occurred: $_"
+	$testPass = $false
 }
 finally {
-    Write-Information ""
-    if ($testPass) {
-        Write-Information "===== TEST PASS ====="
-        exit 0
-    }
-    else {
-        Write-Error "===== TEST FAIL ====="
-        exit 1
-    }
+	Write-Information ""
+	if ($testPass) {
+		Write-Information "===== TEST PASS ====="
+		exit 0
+	}
+	else {
+		Write-Error "===== TEST FAIL ====="
+		exit 1
+	}
 }

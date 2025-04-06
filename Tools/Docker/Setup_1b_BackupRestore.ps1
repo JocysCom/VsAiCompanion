@@ -17,23 +17,23 @@ using namespace System.IO
 #==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu options for the container image backup and restore script.
+	Displays the main menu options for the container image backup and restore script.
 .DESCRIPTION
-    Writes the available menu options (Backup all, Restore all and run, Exit) to the
-    information stream for the user.
+	Writes the available menu options (Backup all, Restore all and run, Exit) to the
+	information stream for the user.
 .EXAMPLE
-    Show-MainMenu
-    # Displays the menu options to the console.
+	Show-MainMenu
+	# Displays the menu options to the console.
 .NOTES
-    Uses Write-Information for output.
+	Uses Write-Information for output.
 #>
 function Show-MainMenu {
 	Write-Information "==========================================="
-    Write-Information "Container Images Backup and Restore Menu"
+	Write-Information "Container Images Backup and Restore Menu"
 	Write-Information "==========================================="
-    Write-Information "1. Backup all images"
-    Write-Information "2. Restore all images from backup and run"
-    Write-Information "0. Exit"
+	Write-Information "1. Backup all images"
+	Write-Information "2. Restore all images from backup and run"
+	Write-Information "0. Exit"
 }
 
 # MAIN SCRIPT EXECUTION
@@ -42,24 +42,24 @@ $containerEngine = Select-ContainerEngine
 
 # Verify the chosen container engine is available in PATH.
 if (-not (Get-Command $containerEngine -ErrorAction SilentlyContinue)) {
-    Write-Error "$containerEngine command not found in PATH. Please install $containerEngine or ensure it's available."
-    exit 1
+	Write-Error "$containerEngine command not found in PATH. Please install $containerEngine or ensure it's available."
+	exit 1
 }
 
 do {
-    Show-MainMenu
-    $choice = Read-Host "Enter your choice (1, 2, or 0)"
+	Show-MainMenu
+	$choice = Read-Host "Enter your choice (1, 2, or 0)"
 
-    switch ($choice) {
-        "1" { Invoke-ContainerImageBackup -Engine $containerEngine }
-        "2" { Invoke-ContainerImageRestore -Engine $containerEngine -RunContainers }
-        "0" { Write-Information "Exiting..."; break }
-        default { Write-Warning "Invalid selection. Please enter 1, 2, or 0." }
-    }
+	switch ($choice) {
+		"1" { Invoke-ContainerImageBackup -Engine $containerEngine }
+		"2" { Invoke-ContainerImageRestore -Engine $containerEngine -RunContainers }
+		"0" { Write-Information "Exiting..."; break }
+		default { Write-Warning "Invalid selection. Please enter 1, 2, or 0." }
+	}
 
-    if ($choice -ne "0") {
-        Write-Information "`nPress any key to continue..."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        Clear-Host
-    }
+	if ($choice -ne "0") {
+		Write-Information "`nPress any key to continue..."
+		$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+		Clear-Host
+	}
 } while ($choice -ne "0")

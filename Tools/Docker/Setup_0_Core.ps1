@@ -16,21 +16,21 @@
 #==============================================================================
 <#
 .SYNOPSIS
-    Verify administrator privileges and exit if not elevated.
+	Verify administrator privileges and exit if not elevated.
 .DESCRIPTION
-    Checks if the current user has administrator privileges. If not, it writes an error
-    and exits the script with status code 1.
+	Checks if the current user has administrator privileges. If not, it writes an error
+	and exits the script with status code 1.
 .EXAMPLE
-    Test-AdminPrivilege
-    # Script continues if elevated, otherwise exits.
+	Test-AdminPrivilege
+	# Script continues if elevated, otherwise exits.
 .NOTES
-    Uses [Security.Principal.WindowsPrincipal] and IsInRole.
+	Uses [Security.Principal.WindowsPrincipal] and IsInRole.
 #>
 function Test-AdminPrivilege {
-    if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-         Write-Error "Administrator privileges required. Please run this script as an Administrator."
-         exit 1
-    }
+	if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+		Write-Error "Administrator privileges required. Please run this script as an Administrator."
+		exit 1
+	}
 }
 
 #==============================================================================
@@ -38,39 +38,39 @@ function Test-AdminPrivilege {
 #==============================================================================
 <#
 .SYNOPSIS
-    Sets the script's working directory to the directory containing the script.
+	Sets the script's working directory to the directory containing the script.
 .DESCRIPTION
-    Determines the script's parent directory using $PSScriptRoot or $MyInvocation.MyCommand.Path
-    and changes the current location to that directory using Set-Location.
-    Supports -WhatIf via CmdletBinding.
+	Determines the script's parent directory using $PSScriptRoot or $MyInvocation.MyCommand.Path
+	and changes the current location to that directory using Set-Location.
+	Supports -WhatIf via CmdletBinding.
 .EXAMPLE
-    Set-ScriptLocation
-    # Current directory is now the script's directory.
+	Set-ScriptLocation
+	# Current directory is now the script's directory.
 .NOTES
-    Handles cases where $PSScriptRoot might be empty.
-    Uses Write-Information for status messages.
+	Handles cases where $PSScriptRoot might be empty.
+	Uses Write-Information for status messages.
 #>
 function Set-ScriptLocation {
-    [CmdletBinding(SupportsShouldProcess=$true)]
-    param()
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
 
-    if ($PSScriptRoot -and $PSScriptRoot -ne "") {
-        $scriptPath = $PSScriptRoot
-    }
-    else {
-        $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-    }
-    if ($scriptPath) {
-        if ($PSCmdlet.ShouldProcess($scriptPath, "Set Location")) {
-            Set-Location $scriptPath
-            # Use Write-Information for status messages
-            Write-Information "Script Path set to: $scriptPath"
-        }
-    }
-    else {
-        # Use Write-Information for status messages
-        Write-Information "Script Path not found. Current directory remains unchanged."
-    }
+	if ($PSScriptRoot -and $PSScriptRoot -ne "") {
+		$scriptPath = $PSScriptRoot
+	}
+	else {
+		$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+	}
+	if ($scriptPath) {
+		if ($PSCmdlet.ShouldProcess($scriptPath, "Set Location")) {
+			Set-Location $scriptPath
+			# Use Write-Information for status messages
+			Write-Information "Script Path set to: $scriptPath"
+		}
+	}
+	else {
+		# Use Write-Information for status messages
+		Write-Information "Script Path not found. Current directory remains unchanged."
+	}
 }
 
 #==============================================================================
@@ -78,75 +78,75 @@ function Set-ScriptLocation {
 #==============================================================================
 <#
 .SYNOPSIS
-    Downloads a file from a URL, preferring BITS transfer with a fallback to Invoke-WebRequest.
+	Downloads a file from a URL, preferring BITS transfer with a fallback to Invoke-WebRequest.
 .DESCRIPTION
-    Downloads a file specified by -SourceUrl to the -DestinationPath.
-    Uses Start-BitsTransfer if available and not overridden by -UseFallback.
-    Falls back to Invoke-WebRequest if BITS fails or is unavailable.
-    Skips download if the destination file exists and -ForceDownload is not specified.
+	Downloads a file specified by -SourceUrl to the -DestinationPath.
+	Uses Start-BitsTransfer if available and not overridden by -UseFallback.
+	Falls back to Invoke-WebRequest if BITS fails or is unavailable.
+	Skips download if the destination file exists and -ForceDownload is not specified.
 .PARAMETER SourceUrl
-    The URL of the file to download. Alias: -url.
+	The URL of the file to download. Alias: -url.
 .PARAMETER DestinationPath
-    The local path where the file should be saved.
+	The local path where the file should be saved.
 .PARAMETER ForceDownload
-    Switch parameter. If present, forces the download even if the destination file exists.
+	Switch parameter. If present, forces the download even if the destination file exists.
 .PARAMETER UseFallback
-    Switch parameter. If present, forces the use of Invoke-WebRequest instead of Start-BitsTransfer.
+	Switch parameter. If present, forces the use of Invoke-WebRequest instead of Start-BitsTransfer.
 .EXAMPLE
-    Invoke-DownloadFile -SourceUrl "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip"
+	Invoke-DownloadFile -SourceUrl "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip"
 .EXAMPLE
-    Invoke-DownloadFile -url "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip" -ForceDownload -UseFallback
+	Invoke-DownloadFile -url "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip" -ForceDownload -UseFallback
 .NOTES
-    Uses Write-Information for status messages.
-    Temporarily sets $ProgressPreference to 'SilentlyContinue' for Invoke-WebRequest to improve speed.
+	Uses Write-Information for status messages.
+	Temporarily sets $ProgressPreference to 'SilentlyContinue' for Invoke-WebRequest to improve speed.
 #>
 function Invoke-DownloadFile {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [Alias("url")]
-        [string]$SourceUrl,
-        [Parameter(Mandatory=$true)]
-        [string]$DestinationPath,
-        [switch]$ForceDownload,  # Optional switch to force re-download
-        [switch]$UseFallback
-    )
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[Alias("url")]
+		[string]$SourceUrl,
+		[Parameter(Mandatory = $true)]
+		[string]$DestinationPath,
+		[switch]$ForceDownload, # Optional switch to force re-download
+		[switch]$UseFallback
+	)
 
-    if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
-        # Use Write-Information for status messages
-        Write-Information "File already exists at $DestinationPath. Skipping download."
-        return
-    }
+	if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
+		# Use Write-Information for status messages
+		Write-Information "File already exists at $DestinationPath. Skipping download."
+		return
+	}
 
-    # Check if BITS is available or if fallback is requested
-    if ((Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) -and (-not $UseFallback)) {
-        # Use Write-Information for status messages
-        Write-Information "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
-        try {
-            Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
-            # Use Write-Information for status messages
-            Write-Information "Download succeeded: $DestinationPath"
-            return
-        }
-        catch {
-            Write-Warning "BITS transfer failed: $_. Trying fallback method..."
-        }
-    }
+	# Check if BITS is available or if fallback is requested
+	if ((Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) -and (-not $UseFallback)) {
+		# Use Write-Information for status messages
+		Write-Information "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+		try {
+			Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
+			# Use Write-Information for status messages
+			Write-Information "Download succeeded: $DestinationPath"
+			return
+		}
+		catch {
+			Write-Warning "BITS transfer failed: $_. Trying fallback method..."
+		}
+	}
 
-    # Fallback to Invoke-WebRequest
-    try {
-        # Use Write-Information for status messages
-        Write-Information "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
-        $ProgressPreference = 'SilentlyContinue'  # Speeds up Invoke-WebRequest significantly
-        Invoke-WebRequest -Uri $SourceUrl -OutFile $DestinationPath -UseBasicParsing
-        $ProgressPreference = 'Continue'  # Restore default
-        # Use Write-Information for status messages
-        Write-Information "Download succeeded: $DestinationPath"
-    }
-    catch {
-        Write-Error "Failed to download file from $SourceUrl. Error details: $_"
-        exit 1
-    }
+	# Fallback to Invoke-WebRequest
+	try {
+		# Use Write-Information for status messages
+		Write-Information "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
+		$ProgressPreference = 'SilentlyContinue'  # Speeds up Invoke-WebRequest significantly
+		Invoke-WebRequest -Uri $SourceUrl -OutFile $DestinationPath -UseBasicParsing
+		$ProgressPreference = 'Continue'  # Restore default
+		# Use Write-Information for status messages
+		Write-Information "Download succeeded: $DestinationPath"
+	}
+	catch {
+		Write-Error "Failed to download file from $SourceUrl. Error details: $_"
+		exit 1
+	}
 }
 
 #==============================================================================
@@ -154,40 +154,40 @@ function Invoke-DownloadFile {
 #==============================================================================
 <#
 .SYNOPSIS
-    Checks if Git is available in the PATH and attempts to add it from common Visual Studio locations if not found.
+	Checks if Git is available in the PATH and attempts to add it from common Visual Studio locations if not found.
 .DESCRIPTION
-    Verifies if the 'git' command can be resolved using Get-Command.
-    If not found, it checks predefined paths within typical Visual Studio installations.
-    If found in one of these paths, it appends that path to the current session's $env:Path.
-    If Git still cannot be found, it writes an error and exits the script.
+	Verifies if the 'git' command can be resolved using Get-Command.
+	If not found, it checks predefined paths within typical Visual Studio installations.
+	If found in one of these paths, it appends that path to the current session's $env:Path.
+	If Git still cannot be found, it writes an error and exits the script.
 .EXAMPLE
-    Test-GitInstallation
-    # Script continues if Git is found or added, otherwise exits.
+	Test-GitInstallation
+	# Script continues if Git is found or added, otherwise exits.
 .NOTES
-    The list of predefined paths might need updating for different VS versions or installations.
-    Uses Write-Information for status messages.
+	The list of predefined paths might need updating for different VS versions or installations.
+	Uses Write-Information for status messages.
 #>
 function Test-GitInstallation {
-    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        # Use Write-Information for status messages
-        Write-Information "Git command not found in PATH. Attempting to locate Git via common installation paths..."
-        $possibleGitPaths = @(
-            "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd",
-            "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
-        )
-        foreach ($path in $possibleGitPaths) {
-            if (Test-Path $path) {
-                $env:Path += ";" + $path
-                # Use Write-Information for status messages
-                Write-Information "Added Git path: $path"
-                break
-            }
-        }
-        if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-            Write-Error "Git command not found. Please install Git and ensure it's in your PATH."
-            exit 1
-        }
-    }
+	if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+		# Use Write-Information for status messages
+		Write-Information "Git command not found in PATH. Attempting to locate Git via common installation paths..."
+		$possibleGitPaths = @(
+			"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd",
+			"C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
+		)
+		foreach ($path in $possibleGitPaths) {
+			if (Test-Path $path) {
+				$env:Path += ";" + $path
+				# Use Write-Information for status messages
+				Write-Information "Added Git path: $path"
+				break
+			}
+		}
+		if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+			Write-Error "Git command not found. Please install Git and ensure it's in your PATH."
+			exit 1
+		}
+	}
 }
 
 #==============================================================================
@@ -195,57 +195,57 @@ function Test-GitInstallation {
 #==============================================================================
 <#
 .SYNOPSIS
-    Determines whether a specified application is installed by checking the registry and Get-Package.
+	Determines whether a specified application is installed by checking the registry and Get-Package.
 .DESCRIPTION
-    Checks standard Uninstall registry keys (HKLM, HKLM WOW6432Node, HKCU) for display names matching the AppName (with wildcards).
-    If not found in the registry, it attempts to use Get-Package as a fallback.
+	Checks standard Uninstall registry keys (HKLM, HKLM WOW6432Node, HKCU) for display names matching the AppName (with wildcards).
+	If not found in the registry, it attempts to use Get-Package as a fallback.
 .PARAMETER AppName
-    The application name to search for (supports wildcards like '*AppName*'). Mandatory.
+	The application name to search for (supports wildcards like '*AppName*'). Mandatory.
 .EXAMPLE
-    if (Test-ApplicationInstalled -AppName "Docker Desktop") { Write-Host "Docker is installed." }
+	if (Test-ApplicationInstalled -AppName "Docker Desktop") { Write-Host "Docker is installed." }
 .EXAMPLE
-    $isVSCodeInstalled = Test-ApplicationInstalled -AppName "*Visual Studio Code*"
+	$isVSCodeInstalled = Test-ApplicationInstalled -AppName "*Visual Studio Code*"
 .NOTES
-    Prioritizes registry check for performance.
-    Get-Package check is used as a fallback and might fail depending on execution policy or module availability.
-    Returns $true if found, $false otherwise.
+	Prioritizes registry check for performance.
+	Get-Package check is used as a fallback and might fail depending on execution policy or module availability.
+	Returns $true if found, $false otherwise.
 #>
 function Test-ApplicationInstalled {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$AppName
-    )
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory)]
+		[string]$AppName
+	)
 
-    # First check registry for performance
-    $uninstallPaths = @(
-        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
-    )
+	# First check registry for performance
+	$uninstallPaths = @(
+		"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+		"HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+		"HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+	)
 
-    foreach ($path in $uninstallPaths) {
-        try {
-            $apps = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue |
-                    Where-Object { $_.DisplayName -like "*$AppName*" }
-            if ($apps) { return $true }
-        }
-        catch { continue }
-    }
+	foreach ($path in $uninstallPaths) {
+		try {
+			$apps = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue |
+			Where-Object { $_.DisplayName -like "*$AppName*" }
+			if ($apps) { return $true }
+		}
+		catch { continue }
+	}
 
-    # Only if registry check fails, try Get-Package as fallback
-    try {
-        $package = Get-Package -Name "$AppName*" -ErrorAction SilentlyContinue
-        if ($package) {
-            return $true
-        }
-    }
-    catch {
-        Write-Warning "Get-Package check failed for '$AppName': $_"
-    }
+	# Only if registry check fails, try Get-Package as fallback
+	try {
+		$package = Get-Package -Name "$AppName*" -ErrorAction SilentlyContinue
+		if ($package) {
+			return $true
+		}
+	}
+	catch {
+		Write-Warning "Get-Package check failed for '$AppName': $_"
+	}
 
-    # Not found by any method
-    return $false
+	# Not found by any method
+	return $false
 }
 
 #==============================================================================
@@ -253,36 +253,36 @@ function Test-ApplicationInstalled {
 #==============================================================================
 <#
 .SYNOPSIS
-    Refreshes the current session's PATH environment variable from registry values.
+	Refreshes the current session's PATH environment variable from registry values.
 .DESCRIPTION
-    Re-reads the machine and user PATH environment variables directly from the registry using
-    [System.Environment]::GetEnvironmentVariable() and concatenates them to update the
-    current PowerShell session's $env:PATH. This allows newly installed applications added
-    to the system PATH to be recognized without restarting the PowerShell session.
-    Supports -WhatIf via CmdletBinding.
+	Re-reads the machine and user PATH environment variables directly from the registry using
+	[System.Environment]::GetEnvironmentVariable() and concatenates them to update the
+	current PowerShell session's $env:PATH. This allows newly installed applications added
+	to the system PATH to be recognized without restarting the PowerShell session.
+	Supports -WhatIf via CmdletBinding.
 .EXAMPLE
-    Update-EnvironmentVariable
-    # The $env:PATH in the current session is updated.
+	Update-EnvironmentVariable
+	# The $env:PATH in the current session is updated.
 .NOTES
-    Uses Write-Information for status messages.
+	Uses Write-Information for status messages.
 #>
 function Update-EnvironmentVariable {
-    [CmdletBinding(SupportsShouldProcess=$true)]
-    param()
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
 
 
-    # Check if the action should be performed
-    if ($PSCmdlet.ShouldProcess("current session environment variables", "Update PATH")) {
-        $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
-        $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
-        $env:PATH = "$machinePath;$userPath"
-        # Use Write-Information for status messages
-        Write-Information "Environment variables refreshed. Current PATH:"
-        Write-Information $env:PATH
-    }
-    else {
-        Write-Information "Skipped refreshing environment variables due to ShouldProcess."
-    }
+	# Check if the action should be performed
+	if ($PSCmdlet.ShouldProcess("current session environment variables", "Update PATH")) {
+		$machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
+		$userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
+		$env:PATH = "$machinePath;$userPath"
+		# Use Write-Information for status messages
+		Write-Information "Environment variables refreshed. Current PATH:"
+		Write-Information $env:PATH
+	}
+	else {
+		Write-Information "Skipped refreshing environment variables due to ShouldProcess."
+	}
 }
 
 #==============================================================================
@@ -290,69 +290,69 @@ function Update-EnvironmentVariable {
 #==============================================================================
 <#
 .SYNOPSIS
-    Provides a generic, reusable menu loop structure.
+	Provides a generic, reusable menu loop structure.
 .DESCRIPTION
-    Repeatedly executes a provided script block to display menu options, prompts the user
-    for input, and executes a corresponding action script block based on a provided mapping.
-    The loop continues until the user enters the specified exit choice.
+	Repeatedly executes a provided script block to display menu options, prompts the user
+	for input, and executes a corresponding action script block based on a provided mapping.
+	The loop continues until the user enters the specified exit choice.
 .PARAMETER ShowMenuScriptBlock
-    A script block responsible for displaying the menu options to the user. Mandatory.
+	A script block responsible for displaying the menu options to the user. Mandatory.
 .PARAMETER ActionMap
-    A hashtable where keys are the menu choice strings entered by the user, and values are
-    the script blocks to execute for that choice. Mandatory.
+	A hashtable where keys are the menu choice strings entered by the user, and values are
+	the script blocks to execute for that choice. Mandatory.
 .PARAMETER ExitChoice
-    The string the user must enter to exit the menu loop. Defaults to "0".
+	The string the user must enter to exit the menu loop. Defaults to "0".
 .EXAMPLE
-    $menu = { Write-Host "1. Option 1"; Write-Host "2. Option 2"; Write-Host "0. Exit" }
-    $actions = @{
-        "1" = { Write-Host "Executing Option 1..." }
-        "2" = { Write-Host "Executing Option 2..." }
-    }
-    Invoke-MenuLoop -ShowMenuScriptBlock $menu -ActionMap $actions -ExitChoice "0"
+	$menu = { Write-Host "1. Option 1"; Write-Host "2. Option 2"; Write-Host "0. Exit" }
+	$actions = @{
+		"1" = { Write-Host "Executing Option 1..." }
+		"2" = { Write-Host "Executing Option 2..." }
+	}
+	Invoke-MenuLoop -ShowMenuScriptBlock $menu -ActionMap $actions -ExitChoice "0"
 .NOTES
-    Uses Read-Host for input.
-    Uses dot sourcing (`. $ActionMap[$choice]`) to execute action script blocks in the current scope.
-    Includes basic error handling for action execution.
-    Clears the host and prompts user before showing the menu again (except on exit).
-    Uses Write-Information for status messages.
+	Uses Read-Host for input.
+	Uses dot sourcing (`. $ActionMap[$choice]`) to execute action script blocks in the current scope.
+	Includes basic error handling for action execution.
+	Clears the host and prompts user before showing the menu again (except on exit).
+	Uses Write-Information for status messages.
 #>
 function Invoke-MenuLoop {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [scriptblock]$ShowMenuScriptBlock,
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[scriptblock]$ShowMenuScriptBlock,
 
-        [Parameter(Mandatory=$true)]
-        [hashtable]$ActionMap,
+		[Parameter(Mandatory = $true)]
+		[hashtable]$ActionMap,
 
-        [string]$ExitChoice = "0"
-    )
+		[string]$ExitChoice = "0"
+	)
 
-    do {
-        & $ShowMenuScriptBlock
-        $choice = Read-Host "Enter your choice"
+	do {
+		& $ShowMenuScriptBlock
+		$choice = Read-Host "Enter your choice"
 
-        if ($ActionMap.ContainsKey($choice)) {
-            try {
-                . $ActionMap[$choice] # Use dot sourcing to execute in current scope
-            }
-            catch {
-                Write-Error "An error occurred executing action for choice '$choice': $_"
-            }
-        }
-        elseif ($choice -eq $ExitChoice) {
-            # Use Write-Information for status messages
-            Write-Information "Exiting menu."
-        }
-        else {
-            Write-Warning "Invalid selection."
-        }
+		if ($ActionMap.ContainsKey($choice)) {
+			try {
+				. $ActionMap[$choice] # Use dot sourcing to execute in current scope
+			}
+			catch {
+				Write-Error "An error occurred executing action for choice '$choice': $_"
+			}
+		}
+		elseif ($choice -eq $ExitChoice) {
+			# Use Write-Information for status messages
+			Write-Information "Exiting menu."
+		}
+		else {
+			Write-Warning "Invalid selection."
+		}
 
-        if ($choice -ne $ExitChoice) {
-             # Use Write-Information for status messages
-             Write-Information "`nPress any key to continue..."
-             $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-             Clear-Host
-        }
-    } while ($choice -ne $ExitChoice)
+		if ($choice -ne $ExitChoice) {
+			# Use Write-Information for status messages
+			Write-Information "`nPress any key to continue..."
+			$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+			Clear-Host
+		}
+	} while ($choice -ne $ExitChoice)
 }

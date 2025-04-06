@@ -11,5 +11,8 @@ indent_style = space
 indent_size = 4
 
 # For PowerShell scripts use tabs
+# VS Code should automatically use tabs for indentation in .ps1 files with this setting.
 [*.ps1]
 indent_style = tab
+tab_width = 4
+trim_trailing_whitespace = true
