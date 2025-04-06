@@ -111,8 +111,7 @@ function Select-ContainerEngine {
 		"1" = { $script:selectedEngine = "docker" }
 		"2" = {	$script:selectedEngine = "podman" }
 	}
-	# Assing to null to avoid adding to the return.
-	$null = Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0" -DefaultChoice "1"
+	Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0" -DefaultChoice "1"
 	# Return the engine selected by the action block (or $null if '0' or invalid)
 	return $script:selectedEngine
 }

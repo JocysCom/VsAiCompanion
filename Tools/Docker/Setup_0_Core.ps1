@@ -319,7 +319,8 @@ function Update-EnvironmentVariable {
 	Clears the host and prompts user before showing the menu again (except on exit).
 #>
 function Invoke-MenuLoop {
-	[OutputType([string])]
+	# Set type to null to avoid outputting extra information.
+	[OutputType([System.Void])]
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $true)]
@@ -364,10 +365,10 @@ function Invoke-MenuLoop {
 			catch {
 				Write-Error "An error occurred executing action for choice '$choice': $_"
 			}
-			return $choice;
+			return
 		} elseif ($null -ne $ExitChoice -and $ExitChoice -eq $choice) {
 			Write-Host "Exiting menu." -ForegroundColor Green
-			return $choice;
+			return
 		}
 		Write-Warning "Invalid selection."
 	} while ($choice -ne $ExitChoice)
