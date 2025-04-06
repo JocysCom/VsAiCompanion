@@ -52,7 +52,6 @@ These scripts contain reusable functions imported by other setup scripts. They a
 - **Setup_0_Core.ps1**: Core helper functions (e.g., ensuring elevation, setting script location, menu loop).
 - **Setup_0_Network.ps1**: Functions for testing network port connectivity (TCP, HTTP, WebSocket).
 - **Setup_0_WSL.ps1**: Functions related to checking WSL status.
-- **Setup_0.ps1**: (Likely obsolete/legacy) Contains older versions or a collection of helper functions. Should not be directly imported; use the specific `Setup_0_*.ps1` files instead.
 
 **Core Setup & Management (`Setup_1_*.ps1`)**
 These scripts handle the initial setup of the container environment and core management tools.
