@@ -319,6 +319,7 @@ function Update-EnvironmentVariable {
 	Clears the host and prompts user before showing the menu again (except on exit).
 #>
 function Invoke-MenuLoop {
+	[OutputType([string])]
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $true)]
@@ -350,7 +351,7 @@ function Invoke-MenuLoop {
 		}
 		Write-Host "-------------------------------------------" -ForegroundColor Yellow
 		$message = "Enter your choice"
-		$choice = Read-Host $message
+		[string]$choice = Read-Host $message
 		if ([string]::IsNullOrEmpty($choice)) {
 			$choice = $DefaultChoice
 		}

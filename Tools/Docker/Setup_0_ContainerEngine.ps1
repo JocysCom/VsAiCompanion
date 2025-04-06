@@ -97,7 +97,7 @@ function Get-PodmanPath {
 	Returns $null for invalid or empty input, allowing the caller to handle exit/retry logic.
 #>
 function Select-ContainerEngine {
-	[OutputType([string])] # Explicitly declare return type as string
+	[OutputType([string])]
 	param() # Add empty param block for OutputType attribute
 	# Define Menu Title and Items
 	$menuTitle = "Select container engine"
@@ -106,12 +106,13 @@ function Select-ContainerEngine {
 		"2" = "Podman"
 		"0" = "Exit menu"
 	}
-	$selectedEngine = $null # Variable to store the result
+	$script:selectedEngine = $null # Variable to store the result
 	$menuActions = @{
-		"1" = { $script:selectedEngine = "podman" }
+		"1" = { $script:selectedEngine = "docker" }
 		"2" = {	$script:selectedEngine = "podman" }
 	}
-	Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0" -DefaultChoice "1"
+	# Assing to null to avoid adding to the return.
+	$null = Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0" -DefaultChoice "1"
 	# Return the engine selected by the action block (or $null if '0' or invalid)
-	return $selectedEngine
+	return $script:selectedEngine
 }

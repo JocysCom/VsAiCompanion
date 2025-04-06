@@ -32,12 +32,15 @@ $global:qdrantUrl = "http://localhost:6333" # Default Qdrant URL (assuming local
 $global:collectionName = "mcp-default-collection" # Default collection name
 
 $global:containerEngine = Select-ContainerEngine
+# Check if the selected container engine is supported and set the path accordingly.
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:enginePath = Get-DockerPath
 }
-else {
+elseif ($global:containerEngine -eq "podman") {
 	$global:enginePath = Get-PodmanPath
+}else{
+	exit 1
 }
 
 #==============================================================================
@@ -353,3 +356,4 @@ $menuActions = @{
 
 # Invoke the Menu Loop
 Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+hhhhhhhh
