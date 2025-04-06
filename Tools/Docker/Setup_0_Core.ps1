@@ -48,7 +48,6 @@ function Test-AdminPrivilege {
 	# Current directory is now the script's directory.
 .NOTES
 	Handles cases where $PSScriptRoot might be empty.
-	Uses Write-Information for status messages.
 #>
 function Set-ScriptLocation {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -63,13 +62,13 @@ function Set-ScriptLocation {
 	if ($scriptPath) {
 		if ($PSCmdlet.ShouldProcess($scriptPath, "Set Location")) {
 			Set-Location $scriptPath
-			# Use Write-Information for status messages
-			Write-Information "Script Path set to: $scriptPath"
+			# Use Write-Host for status messages
+			Write-Host "Script Path set to: $scriptPath"
 		}
 	}
 	else {
-		# Use Write-Information for status messages
-		Write-Information "Script Path not found. Current directory remains unchanged."
+		# Use Write-Host for status messages
+		Write-Host "Script Path not found. Current directory remains unchanged."
 	}
 }
 
@@ -97,7 +96,6 @@ function Set-ScriptLocation {
 .EXAMPLE
 	Invoke-DownloadFile -url "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip" -ForceDownload -UseFallback
 .NOTES
-	Uses Write-Information for status messages.
 	Temporarily sets $ProgressPreference to 'SilentlyContinue' for Invoke-WebRequest to improve speed.
 #>
 function Invoke-DownloadFile {
@@ -113,19 +111,19 @@ function Invoke-DownloadFile {
 	)
 
 	if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
-		# Use Write-Information for status messages
-		Write-Information "File already exists at $DestinationPath. Skipping download."
+		# Use Write-Host for status messages
+		Write-Host "File already exists at $DestinationPath. Skipping download."
 		return
 	}
 
 	# Check if BITS is available or if fallback is requested
 	if ((Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) -and (-not $UseFallback)) {
-		# Use Write-Information for status messages
-		Write-Information "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+		# Use Write-Host for status messages
+		Write-Host "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
 		try {
 			Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
-			# Use Write-Information for status messages
-			Write-Information "Download succeeded: $DestinationPath"
+			# Use Write-Host for status messages
+			Write-Host "Download succeeded: $DestinationPath"
 			return
 		}
 		catch {
@@ -135,13 +133,13 @@ function Invoke-DownloadFile {
 
 	# Fallback to Invoke-WebRequest
 	try {
-		# Use Write-Information for status messages
-		Write-Information "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
+		# Use Write-Host for status messages
+		Write-Host "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
 		$ProgressPreference = 'SilentlyContinue'  # Speeds up Invoke-WebRequest significantly
 		Invoke-WebRequest -Uri $SourceUrl -OutFile $DestinationPath -UseBasicParsing
 		$ProgressPreference = 'Continue'  # Restore default
-		# Use Write-Information for status messages
-		Write-Information "Download succeeded: $DestinationPath"
+		# Use Write-Host for status messages
+		Write-Host "Download succeeded: $DestinationPath"
 	}
 	catch {
 		Write-Error "Failed to download file from $SourceUrl. Error details: $_"
@@ -165,12 +163,11 @@ function Invoke-DownloadFile {
 	# Script continues if Git is found or added, otherwise exits.
 .NOTES
 	The list of predefined paths might need updating for different VS versions or installations.
-	Uses Write-Information for status messages.
 #>
 function Test-GitInstallation {
 	if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-		# Use Write-Information for status messages
-		Write-Information "Git command not found in PATH. Attempting to locate Git via common installation paths..."
+		# Use Write-Host for status messages
+		Write-Host "Git command not found in PATH. Attempting to locate Git via common installation paths..."
 		$possibleGitPaths = @(
 			"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd",
 			"C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
@@ -178,8 +175,8 @@ function Test-GitInstallation {
 		foreach ($path in $possibleGitPaths) {
 			if (Test-Path $path) {
 				$env:Path += ";" + $path
-				# Use Write-Information for status messages
-				Write-Information "Added Git path: $path"
+				# Use Write-Host for status messages
+				Write-Host "Added Git path: $path"
 				break
 			}
 		}
@@ -263,8 +260,6 @@ function Test-ApplicationInstalled {
 .EXAMPLE
 	Update-EnvironmentVariable
 	# The $env:PATH in the current session is updated.
-.NOTES
-	Uses Write-Information for status messages.
 #>
 function Update-EnvironmentVariable {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -276,12 +271,12 @@ function Update-EnvironmentVariable {
 		$machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
 		$userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
 		$env:PATH = "$machinePath;$userPath"
-		# Use Write-Information for status messages
-		Write-Information "Environment variables refreshed. Current PATH:"
-		Write-Information $env:PATH
+		# Use Write-Host for status messages
+		Write-Host "Environment variables refreshed. Current PATH:"
+		Write-Host $env:PATH
 	}
 	else {
-		Write-Information "Skipped refreshing environment variables due to ShouldProcess."
+		Write-Host "Skipped refreshing environment variables due to ShouldProcess."
 	}
 }
 
@@ -322,7 +317,6 @@ function Update-EnvironmentVariable {
 	Uses dot sourcing (`. $ActionMap[$choice]`) to execute action script blocks in the current scope.
 	Includes basic error handling for action execution.
 	Clears the host and prompts user before showing the menu again (except on exit).
-	Uses Write-Information for status messages.
 #>
 function Invoke-MenuLoop {
 	[CmdletBinding()]
@@ -336,7 +330,9 @@ function Invoke-MenuLoop {
 		[Parameter(Mandatory = $true)]
 		[hashtable]$ActionMap,
 
-		[string]$ExitChoice = "0"
+		[string]$ExitChoice = $null,
+
+		[string]$DefaultChoice = $null
 	)
 
 	do {
@@ -344,38 +340,34 @@ function Invoke-MenuLoop {
 		Write-Host "===========================================" -ForegroundColor Yellow
 		Write-Host $MenuTitle -ForegroundColor White
 		Write-Host "===========================================" -ForegroundColor Yellow
-
 		# Display Menu Items from Ordered Hashtable
 		foreach ($key in $MenuItems.Keys) {
-			Write-Host ("{0}. {1}" -f $key, $MenuItems[$key]) -ForegroundColor Cyan
+			$line = ("{0}. {1}" -f $key, $MenuItems[$key])
+			if ($key -eq $DefaultChoice) {
+				$line += " (Default)"
+			}
+			Write-Host $line -ForegroundColor Cyan
 		}
 		Write-Host "-------------------------------------------" -ForegroundColor Yellow
-
-		# Get User Choice
-		$choice = Read-Host "Enter your choice"
-
+		$message = "Enter your choice"
+		$choice = Read-Host $message
+		if ([string]::IsNullOrEmpty($choice)) {
+			$choice = $DefaultChoice
+		}
 		# Execute Action or Exit
 		if ($ActionMap.ContainsKey($choice)) {
+			Write-Host "Choice: $($MenuItems[$choice])" -ForegroundColor Green
 			try {
 				. $ActionMap[$choice] # Use dot sourcing to execute in current scope
 			}
 			catch {
 				Write-Error "An error occurred executing action for choice '$choice': $_"
 			}
+			return $choice;
+		} elseif ($null -ne $ExitChoice -and $ExitChoice -eq $choice) {
+			Write-Host "Exiting menu." -ForegroundColor Green
+			return $choice;
 		}
-		elseif ($choice -eq $ExitChoice) {
-			# Use Write-Information for status messages
-			Write-Information "Exiting menu."
-		}
-		else {
-			Write-Warning "Invalid selection."
-		}
-
-		if ($choice -ne $ExitChoice) {
-			# Use Write-Information for status messages
-			Write-Information "`nPress any key to continue..."
-			$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-			Clear-Host
-		}
+		Write-Warning "Invalid selection."
 	} while ($choice -ne $ExitChoice)
 }

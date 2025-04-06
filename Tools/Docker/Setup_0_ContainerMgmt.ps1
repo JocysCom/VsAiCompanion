@@ -31,7 +31,6 @@
 .EXAMPLE
 	Confirm-ContainerNetwork -Engine "podman" -NetworkName "my-app-network"
 .NOTES
-	Uses Write-Information for status messages.
 	Relies on 'engine network ls' and 'engine network create'.
 #>
 function Confirm-ContainerNetwork {
@@ -48,12 +47,12 @@ function Confirm-ContainerNetwork {
 	$existingNetwork = & $Engine network ls --filter "name=^$NetworkName$" --format "{{.Name}}"
 	if ($existingNetwork -ne $NetworkName) {
 		if ($PSCmdlet.ShouldProcess($NetworkName, "Create Network")) {
-			# Use Write-Information for status messages
-			Write-Information "Creating container network '$NetworkName'..."
+			# Use Write-Host for status messages
+			Write-Host "Creating container network '$NetworkName'..."
 			& $Engine network create $NetworkName
 			if ($LASTEXITCODE -eq 0) {
-				# Use Write-Information for status messages
-				Write-Information "Network '$NetworkName' created successfully."
+				# Use Write-Host for status messages
+				Write-Host "Network '$NetworkName' created successfully."
 				return $true
 			}
 			else {
@@ -67,8 +66,8 @@ function Confirm-ContainerNetwork {
 		}
 	}
 	else {
-		# Use Write-Information for status messages
-		Write-Information "Network '$NetworkName' already exists. Skipping creation."
+		# Use Write-Host for status messages
+		Write-Host "Network '$NetworkName' already exists. Skipping creation."
 		return $true
 	}
 }
@@ -92,7 +91,6 @@ function Confirm-ContainerNetwork {
 .EXAMPLE
 	Confirm-ContainerVolume -Engine "docker" -VolumeName "my-db-data"
 .NOTES
-	Uses Write-Information for status messages.
 	Relies on 'engine volume ls' and 'engine volume create'.
 #>
 function Confirm-ContainerVolume {
@@ -109,12 +107,12 @@ function Confirm-ContainerVolume {
 	$existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
 	if ([string]::IsNullOrWhiteSpace($existingVolume)) {
 		if ($PSCmdlet.ShouldProcess($VolumeName, "Create Volume")) {
-			# Use Write-Information for status messages
-			Write-Information "Creating volume '$VolumeName'..."
+			# Use Write-Host for status messages
+			Write-Host "Creating volume '$VolumeName'..."
 			& $Engine volume create $VolumeName
 			if ($LASTEXITCODE -eq 0) {
-				# Use Write-Information for status messages
-				Write-Information "Volume '$VolumeName' created successfully."
+				# Use Write-Host for status messages
+				Write-Host "Volume '$VolumeName' created successfully."
 				return $true
 			}
 			else {
@@ -128,8 +126,8 @@ function Confirm-ContainerVolume {
 		}
 	}
 	else {
-		# Use Write-Information for status messages
-		Write-Information "Volume '$VolumeName' already exists. Skipping creation."
+		# Use Write-Host for status messages
+		Write-Host "Volume '$VolumeName' already exists. Skipping creation."
 		return $true
 	}
 }
@@ -159,7 +157,6 @@ function Confirm-ContainerVolume {
 .EXAMPLE
 	Invoke-PullImage -Engine "docker" -ImageName "mysql:8.0" -PullOptions @("--platform", "linux/amd64")
 .NOTES
-	Uses Write-Information for status messages.
 	Uses splatting (@pullCmd) to pass arguments to the engine.
 #>
 function Invoke-PullImage {
@@ -177,14 +174,14 @@ function Invoke-PullImage {
 	)
 
 	if ($PSCmdlet.ShouldProcess($ImageName, "Pull Image")) {
-		# Use Write-Information for status messages
-		Write-Information "Pulling image '$ImageName'..."
+		# Use Write-Host for status messages
+		Write-Host "Pulling image '$ImageName'..."
 		$pullCmd = @("pull") + $PullOptions + $ImageName
 		& $Engine @pullCmd
 
 		if ($LASTEXITCODE -eq 0) {
-			# Use Write-Information for status messages
-			Write-Information "Image '$ImageName' pulled successfully."
+			# Use Write-Host for status messages
+			Write-Host "Image '$ImageName' pulled successfully."
 			return $true
 		}
 		else {
@@ -221,7 +218,6 @@ function Invoke-PullImage {
 .EXAMPLE
 	Backup-ContainerState -Engine "docker" -ContainerName "my-web-app" -BackupFolder "C:\ContainerBackups"
 .NOTES
-	Uses Write-Information for status messages.
 	Does not currently handle backing up associated volumes within this function.
 	Uses $LASTEXITCODE to check the success of engine commands.
 #>
@@ -236,8 +232,8 @@ function Backup-ContainerState {
 
 	if (-not (Test-Path $BackupFolder)) {
 		New-Item -ItemType Directory -Path $BackupFolder -Force | Out-Null
-		# Use Write-Information for status messages
-		Write-Information "Created backup folder: $BackupFolder"
+		# Use Write-Host for status messages
+		Write-Host "Created backup folder: $BackupFolder"
 	}
 
 	# Check if the container exists.
@@ -247,14 +243,14 @@ function Backup-ContainerState {
 		return $false
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "DEBUG: Container name is '$ContainerName'"
+	# Use Write-Host for status messages
+	Write-Host "DEBUG: Container name is '$ContainerName'"
 
 	# Create a simple image tag without any container- prefix that might be causing issues
 	$backupImageTag = "backup-$ContainerName"
 
-	# Use Write-Information for status messages
-	Write-Information "Committing container '$ContainerName' to image '$backupImageTag'..."
+	# Use Write-Host for status messages
+	Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
 	# podman commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
 	# commit    Create a new image from a container's changes.
 	& $Engine commit $ContainerName $backupImageTag
@@ -270,15 +266,15 @@ function Backup-ContainerState {
 	}
 	$backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
 
-	# Use Write-Information for status messages
-	Write-Information "Saving backup image '$backupImageTag' to '$backupFile'..."
+	# Use Write-Host for status messages
+	Write-Host "Saving backup image '$backupImageTag' to '$backupFile'..."
 	# podman save [options] IMAGE
 	# save      Save an image to a tar archive.
 	# --output string   Specify the output file for saving the image.
 	& $Engine save --output $backupFile $backupImageTag
 	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Information for status messages
-		Write-Information "Backup successfully saved to '$backupFile'."
+		# Use Write-Host for status messages
+		Write-Host "Backup successfully saved to '$backupFile'."
 		return $true
 	}
 	else {
@@ -310,7 +306,6 @@ function Backup-ContainerState {
 .EXAMPLE
 	Remove-ContainerAndVolume -Engine "podman" -ContainerName "old-app" -VolumeName "old-app-data"
 .NOTES
-	Uses Write-Information for status messages.
 	User interaction for volume removal is handled via Read-Host.
 	Uses $LASTEXITCODE to check the success of engine commands.
 #>
@@ -331,43 +326,43 @@ function Remove-ContainerAndVolume {
 	# Check if container exists
 	$existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
 	if (-not $existingContainer) {
-		# Use Write-Information for status messages
-		Write-Information "Container '$ContainerName' not found. Nothing to remove."
+		# Use Write-Host for status messages
+		Write-Host "Container '$ContainerName' not found. Nothing to remove."
 		return $true # Indicate success as there's nothing to do
 	}
 
 	if ($PSCmdlet.ShouldProcess($ContainerName, "Stop Container")) {
-		# Use Write-Information for status messages
-		Write-Information "Stopping container '$ContainerName'..."
+		# Use Write-Host for status messages
+		Write-Host "Stopping container '$ContainerName'..."
 		& $Engine stop $ContainerName 2>$null | Out-Null
 	}
 
 	if ($PSCmdlet.ShouldProcess($ContainerName, "Remove Container")) {
-		# Use Write-Information for status messages
-		Write-Information "Removing container '$ContainerName'..."
+		# Use Write-Host for status messages
+		Write-Host "Removing container '$ContainerName'..."
 		& $Engine rm --force $ContainerName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to remove container '$ContainerName'."
 			return $false
 		}
-		# Use Write-Information for status messages
-		Write-Information "Container '$ContainerName' removed successfully."
+		# Use Write-Host for status messages
+		Write-Host "Container '$ContainerName' removed successfully."
 	}
 
 	# Check if volume exists
 	$existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
 	if ($existingVolume) {
-		# Use Write-Information for status messages
-		Write-Information "Data volume '$VolumeName' exists."
+		# Use Write-Host for status messages
+		Write-Host "Data volume '$VolumeName' exists."
 		$removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
 		if ($removeVolume -eq 'Y') {
 			if ($PSCmdlet.ShouldProcess($VolumeName, "Remove Volume")) {
-				# Use Write-Information for status messages
-				Write-Information "Removing volume '$VolumeName'..."
+				# Use Write-Host for status messages
+				Write-Host "Removing volume '$VolumeName'..."
 				& $Engine volume rm $VolumeName
 				if ($LASTEXITCODE -eq 0) {
-					# Use Write-Information for status messages
-					Write-Information "Volume '$VolumeName' removed successfully."
+					# Use Write-Host for status messages
+					Write-Host "Volume '$VolumeName' removed successfully."
 				}
 				else {
 					Write-Error "Failed to remove volume '$VolumeName'."
@@ -376,13 +371,13 @@ function Remove-ContainerAndVolume {
 			}
 		}
 		else {
-			# Use Write-Information for status messages
-			Write-Information "Volume '$VolumeName' was not removed."
+			# Use Write-Host for status messages
+			Write-Host "Volume '$VolumeName' was not removed."
 		}
 	}
 	else {
-		# Use Write-Information for status messages
-		Write-Information "Volume '$VolumeName' not found."
+		# Use Write-Host for status messages
+		Write-Host "Volume '$VolumeName' not found."
 	}
 
 	return $true
@@ -420,7 +415,6 @@ function Remove-ContainerAndVolume {
 .EXAMPLE
 	Restore-ContainerState -Engine "podman" -ContainerName "n8n" -RestoreVolumes
 .NOTES
-	Uses Write-Information for status messages.
 	Volume restore logic is currently hardcoded for 'n8n' and 'n8n_data'.
 	Relies on parsing output from 'engine load'.
 	Uses $LASTEXITCODE to check the success of engine commands.
@@ -441,10 +435,10 @@ function Restore-ContainerState {
 
 	# If container-specific backup not found, try to find a matching image backup
 	if (-not (Test-Path $backupFile)) {
-		# Use Write-Information for status messages
-		Write-Information "Container-specific backup file '$backupFile' not found."
-		# Use Write-Information for status messages
-		Write-Information "Looking for image backups that might match this container..."
+		# Use Write-Host for status messages
+		Write-Host "Container-specific backup file '$backupFile' not found."
+		# Use Write-Host for status messages
+		Write-Host "Looking for image backups that might match this container..."
 
 		# Get all tar files in the backup folder
 		$tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*.tar"
@@ -458,8 +452,8 @@ function Restore-ContainerState {
 			# Check if this backup file might be for the container we're looking for
 			if ($potentialImageName -match $ContainerName) {
 				$matchingBackup = $file.FullName
-				# Use Write-Information for status messages
-				Write-Information "Found potential matching backup: $matchingBackup"
+				# Use Write-Host for status messages
+				Write-Host "Found potential matching backup: $matchingBackup"
 				break
 			}
 		}
@@ -473,8 +467,8 @@ function Restore-ContainerState {
 		}
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Loading backup image from '$backupFile'..."
+	# Use Write-Host for status messages
+	Write-Host "Loading backup image from '$backupFile'..."
 	# podman load [options]
 	# load      Load an image from a tar archive.
 	# --input string   Specify the input file containing the saved image.
@@ -488,8 +482,8 @@ function Restore-ContainerState {
 	$imageName = $null
 	if ($loadOutput -match "Loaded image: (.+)") {
 		$imageName = $matches[1].Trim()
-		# Use Write-Information for status messages
-		Write-Information "Loaded image: $imageName"
+		# Use Write-Host for status messages
+		Write-Host "Loaded image: $imageName"
 	}
 	else {
 		Write-Error "Could not determine the loaded image name from output: $loadOutput"
@@ -504,22 +498,22 @@ function Restore-ContainerState {
 			$volumeBackupFile = Join-Path $BackupFolder "$volumeName-data.tar"
 
 			if (Test-Path $volumeBackupFile) {
-				# Use Write-Information for status messages
-				Write-Information "Found volume backup for '$volumeName': $volumeBackupFile"
+				# Use Write-Host for status messages
+				Write-Host "Found volume backup for '$volumeName': $volumeBackupFile"
 
 				# Check if volume exists, create if not
 				$volumeExists = & $Engine volume ls --filter "name=$volumeName" --format "{{.Name}}"
 				if (-not $volumeExists) {
-					# Use Write-Information for status messages
-					Write-Information "Creating volume '$volumeName'..."
+					# Use Write-Host for status messages
+					Write-Host "Creating volume '$volumeName'..."
 					& $Engine volume create $volumeName
 				}
 
 				# Ask for confirmation before restoring volume
 				$restoreVolumeConfirm = Read-Host "Restore volume data for '$volumeName'? This will merge with existing data. (Y/N, default is Y)"
 				if ($restoreVolumeConfirm -ne "N") {
-					# Use Write-Information for status messages
-					Write-Information "Restoring volume '$volumeName' from '$volumeBackupFile'..."
+					# Use Write-Host for status messages
+					Write-Host "Restoring volume '$volumeName' from '$volumeBackupFile'..."
 
 					# Create a temporary container to restore the volume data
 					$tempContainerName = "restore-volume-$volumeName-$(Get-Random)"
@@ -528,23 +522,23 @@ function Restore-ContainerState {
 					& $Engine run --rm --volume ${volumeName}:/target --volume ${BackupFolder}:/backup --name $tempContainerName alpine tar -xf /backup/$(Split-Path $volumeBackupFile -Leaf) -C /target
 
 					if ($LASTEXITCODE -eq 0) {
-						# Use Write-Information for status messages
-						Write-Information "Successfully restored volume '$volumeName' from '$volumeBackupFile'"
+						# Use Write-Host for status messages
+						Write-Host "Successfully restored volume '$volumeName' from '$volumeBackupFile'"
 					}
 					else {
 						Write-Error "Failed to restore volume '$volumeName'"
 					}
 				}
 				else {
-					# Use Write-Information for status messages
-					Write-Information "Skipping volume restore as requested."
+					# Use Write-Host for status messages
+					Write-Host "Skipping volume restore as requested."
 				}
 			}
 			else {
-				# Use Write-Information for status messages
-				Write-Information "No volume backup found for '$volumeName' at '$volumeBackupFile'."
-				# Use Write-Information for status messages
-				Write-Information "Will continue with container image restore only. Existing volume data will be preserved."
+				# Use Write-Host for status messages
+				Write-Host "No volume backup found for '$volumeName' at '$volumeBackupFile'."
+				# Use Write-Host for status messages
+				Write-Host "Will continue with container image restore only. Existing volume data will be preserved."
 			}
 		}
 		# For other containers, we would need to determine volume names differently
@@ -574,7 +568,6 @@ function Restore-ContainerState {
 .EXAMPLE
 	if (Test-ImageUpdateAvailable -Engine "podman" -ImageName "docker.io/library/alpine:latest") { Invoke-PullImage ... }
 .NOTES
-	Uses Write-Information for status messages.
 	Attempts multiple methods to get remote digest for robustness (docker manifest, skopeo, podman pull).
 	Assumes update needed if digests cannot be reliably determined.
 #>
@@ -589,14 +582,14 @@ function Test-ImageUpdateAvailable {
 		[string]$ImageName
 	)
 
-	# Use Write-Information for status messages
-	Write-Information "Checking for updates to $ImageName..."
+	# Use Write-Host for status messages
+	Write-Host "Checking for updates to $ImageName..."
 
 	# First, check if we have the image locally
 	$localImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
 	if (-not $localImageInfo) {
-		# Use Write-Information for status messages
-		Write-Information "Image '$ImageName' not found locally. Update is available."
+		# Use Write-Host for status messages
+		Write-Host "Image '$ImageName' not found locally. Update is available."
 		return $true
 	}
 
@@ -616,8 +609,8 @@ function Test-ImageUpdateAvailable {
 		return $true
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Local image digest: $localDigest"
+	# Use Write-Host for status messages
+	Write-Host "Local image digest: $localDigest"
 
 	# Determine container engine type (docker or podman)
 	$engineType = "docker"
@@ -626,8 +619,8 @@ function Test-ImageUpdateAvailable {
 	}
 
 	# Pull the image with latest tag but don't update the local image
-	# Use Write-Information for status messages
-	Write-Information "Checking remote registry for latest version..."
+	# Use Write-Host for status messages
+	Write-Host "Checking remote registry for latest version..."
 
 	# Different approach for Docker vs Podman
 	if ($engineType -eq "docker") {
@@ -706,18 +699,18 @@ function Test-ImageUpdateAvailable {
 		return $true
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Remote image digest: $remoteDigest"
+	# Use Write-Host for status messages
+	Write-Host "Remote image digest: $remoteDigest"
 
 	# Compare digests
 	if ($localDigest -ne $remoteDigest) {
-		# Use Write-Information for status messages
-		Write-Information "Update available! Local and remote image digests differ."
+		# Use Write-Host for status messages
+		Write-Host "Update available! Local and remote image digests differ."
 		return $true
 	}
 	else {
-		# Use Write-Information for status messages
-		Write-Information "No update available. You have the latest version."
+		# Use Write-Host for status messages
+		Write-Host "No update available. You have the latest version."
 		return $false
 	}
 }
@@ -756,7 +749,6 @@ function Test-ImageUpdateAvailable {
 	$runMyApp = { & $enginePath run --name my-app -p 8080:80 -v my-app-data:/data $imageName }
 	Update-Container -Engine "docker" -ContainerName "my-app" -ImageName "my-registry/my-app:latest" -RunFunction $runMyApp
 .NOTES
-	Uses Write-Information for status messages.
 	Relies on several other functions: Test-ImageUpdateAvailable, Backup-ContainerState, Restore-ContainerState.
 	User interaction handled via Read-Host for backup and force update prompts.
 #>
@@ -779,14 +771,14 @@ function Update-Container {
 		[scriptblock]$RunFunction
 	)
 
-	# Use Write-Information for status messages
-	Write-Information "Initiating update for container '$ContainerName'..."
+	# Use Write-Host for status messages
+	Write-Host "Initiating update for container '$ContainerName'..."
 
 	# Step 1: Check if container exists
 	& $Engine inspect $ContainerName 2>$null | Out-Null # Check existence without storing info
 	if ($LASTEXITCODE -ne 0) {
-		# Use Write-Information for status messages
-		Write-Information "Container '$ContainerName' not found. Nothing to update."
+		# Use Write-Host for status messages
+		Write-Host "Container '$ContainerName' not found. Nothing to update."
 		return $false
 	}
 
@@ -795,28 +787,28 @@ function Update-Container {
 	if (-not $updateAvailable) {
 		$forceUpdate = Read-Host "No update available. Do you want to force an update anyway? (Y/N, default is N)"
 		if ($forceUpdate -ne "Y") {
-			# Use Write-Information for status messages
-			Write-Information "Update canceled. No changes made."
+			# Use Write-Host for status messages
+			Write-Host "Update canceled. No changes made."
 			return $false
 		}
-		# Use Write-Information for status messages
-		Write-Information "Proceeding with forced update..."
+		# Use Write-Host for status messages
+		Write-Host "Proceeding with forced update..."
 	}
 
 	# Step 3: Optionally backup the container
 	$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 	if ($createBackup -ne "N") {
 		if ($PSCmdlet.ShouldProcess($ContainerName, "Backup Container State")) {
-			# Use Write-Information for status messages
-			Write-Information "Creating backup of current container..."
+			# Use Write-Host for status messages
+			Write-Host "Creating backup of current container..."
 			Backup-ContainerState -Engine $Engine -ContainerName $ContainerName
 		}
 	}
 
 	# Step 4: Remove the existing container
 	if ($PSCmdlet.ShouldProcess($ContainerName, "Remove Container for Update")) {
-		# Use Write-Information for status messages
-		Write-Information "Removing existing container '$ContainerName' as part of the update..."
+		# Use Write-Host for status messages
+		Write-Host "Removing existing container '$ContainerName' as part of the update..."
 		& $Engine rm --force $ContainerName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to remove container '$ContainerName'. Update aborted."
@@ -826,8 +818,8 @@ function Update-Container {
 
 	# Step 5: Pull the latest image
 	if ($PSCmdlet.ShouldProcess($ImageName, "Pull Latest Image")) {
-		# Use Write-Information for status messages
-		Write-Information "Pulling latest image '$ImageName'..."
+		# Use Write-Host for status messages
+		Write-Host "Pulling latest image '$ImageName'..."
 		& $Engine pull --platform $Platform $ImageName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to pull the latest image. Update aborted."
@@ -847,12 +839,12 @@ function Update-Container {
 
 	# Step 6: Run the container using the provided function
 	if ($PSCmdlet.ShouldProcess($ContainerName, "Start Updated Container")) {
-		# Use Write-Information for status messages
-		Write-Information "Starting updated container..."
+		# Use Write-Host for status messages
+		Write-Host "Starting updated container..."
 		try {
 			& $RunFunction
-			# Use Write-Information for status messages
-			Write-Information "Container '$ContainerName' updated successfully!"
+			# Use Write-Host for status messages
+			Write-Host "Container '$ContainerName' updated successfully!"
 			return $true
 		}
 		catch {
@@ -872,8 +864,8 @@ function Update-Container {
 	}
 	else {
 		# If ShouldProcess returned false for starting the container
-		# Use Write-Information for status messages
-		Write-Information "Update process completed (image pulled, old container removed), but new container start was skipped due to -WhatIf."
+		# Use Write-Host for status messages
+		Write-Host "Update process completed (image pulled, old container removed), but new container start was skipped due to -WhatIf."
 		return $true # Consider it a success in terms of -WhatIf
 	}
 }
@@ -924,7 +916,6 @@ function Update-Container {
 .NOTES
 	Relies on Test-TCPPort, Test-HTTPPort (from Setup_0_Network.ps1).
 	Relies on Test-WebSocketPort (from Setup_0_Network.ps1). Checks for its existence before calling.
-	Uses Write-Host for direct console output formatting.
 #>
 function Show-ContainerStatus {
 	[CmdletBinding()]

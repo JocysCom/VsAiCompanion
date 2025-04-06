@@ -377,7 +377,7 @@ function Select-DiskLocation {
 
 			# Validate the path format
 			if ([string]::IsNullOrWhiteSpace($customPath)) {
-				Write-Information "No path provided. Using default location."
+				Write-Host "No path provided. Using default location."
 				$script:selectedPath = ""
 			}
 			else {

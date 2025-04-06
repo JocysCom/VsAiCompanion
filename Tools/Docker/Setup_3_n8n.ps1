@@ -201,7 +201,6 @@ function Remove-n8nContainer {
 	Start-n8nContainer -Image "docker.io/n8nio/n8n:latest" -EnvVars @("N8N_ENCRYPTION_KEY=secret")
 .NOTES
 	Relies on Test-TCPPort and Test-HTTPPort helper functions.
-	Uses Write-Information for status messages.
 #>
 function Start-n8nContainer {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -282,7 +281,6 @@ function Start-n8nContainer {
 	Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
 	Remove-n8nContainer, and Start-n8nContainer helper functions.
 	Requires user interaction via Read-Host for domain configuration.
-	Uses Write-Information for status messages.
 #>
 function Install-n8nContainer {
 	# Ensure the volume exists

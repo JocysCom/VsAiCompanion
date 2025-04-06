@@ -32,7 +32,6 @@
 .EXAMPLE
 	Backup-ContainerImage -Engine "podman" -ImageName "docker.io/library/alpine:latest" -BackupFolder "C:\MyBackups"
 .NOTES
-	Uses Write-Information for status messages.
 	Uses $LASTEXITCODE to check the success of the engine's save command.
 #>
 function Backup-ContainerImage {
@@ -50,24 +49,24 @@ function Backup-ContainerImage {
 
 	if (-not (Test-Path $BackupFolder)) {
 		New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
-		# Use Write-Information for status messages
-		Write-Information "Created backup folder: $BackupFolder"
+		# Use Write-Host for status messages
+		Write-Host "Created backup folder: $BackupFolder"
 	}
 
 	# Replace characters not allowed in file names (':' and '/' become '_')
 	$safeName = $ImageName -replace "[:/]", "_"
 	$backupFile = Join-Path $BackupFolder "$safeName.tar"
 
-	# Use Write-Information for status messages
-	Write-Information "Backing up image '$ImageName' to '$backupFile'..."
+	# Use Write-Host for status messages
+	Write-Host "Backing up image '$ImageName' to '$backupFile'..."
 	# podman save [options] IMAGE
 	# save      Save an image to a tar archive.
 	# --output string   Specify the output file for saving the image.
 	& $Engine save --output $backupFile $ImageName
 
 	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Information for status messages
-		Write-Information "Successfully backed up image '$ImageName'"
+		# Use Write-Host for status messages
+		Write-Host "Successfully backed up image '$ImageName'"
 		return $true
 	}
 	else {
@@ -95,7 +94,6 @@ function Backup-ContainerImage {
 .EXAMPLE
 	Invoke-ContainerImageBackup -Engine "docker" -BackupFolder "D:\DockerBackups"
 .NOTES
-	Uses Write-Information for status messages.
 	Relies on the output format of 'engine images --format "{{.Repository}}:{{.Tag}}"''.
 	Formerly named Backup-ContainerImages.
 #>
@@ -109,13 +107,13 @@ function Invoke-ContainerImageBackup {
 		[string]$BackupFolder = ".\Backup"
 	)
 
-	# Use Write-Information for status messages
-	Write-Information "Retrieving list of images for $Engine..."
+	# Use Write-Host for status messages
+	Write-Host "Retrieving list of images for $Engine..."
 	$images = & $Engine images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -ne "<none>:<none>" }
 
 	if (-not $images) {
-		# Use Write-Information for status messages
-		Write-Information "No images found for $Engine."
+		# Use Write-Host for status messages
+		Write-Host "No images found for $Engine."
 		return $false
 	}
 
@@ -127,8 +125,8 @@ function Invoke-ContainerImageBackup {
 		}
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Backed up $successCount out of $($images.Count) images."
+	# Use Write-Host for status messages
+	Write-Host "Backed up $successCount out of $($images.Count) images."
 	return ($successCount -gt 0)
 }
 
@@ -156,7 +154,6 @@ function Invoke-ContainerImageBackup {
 .EXAMPLE
 	Restore-ContainerImage -Engine "docker" -BackupFile "D:\DockerBackups\nginx_latest.tar" -RunContainer
 .NOTES
-	Uses Write-Information for status messages.
 	Relies on the output format of 'engine load --input ...' to parse the image name (e.g., "Loaded image: ...").
 	Uses $LASTEXITCODE to check the success of the engine's load command.
 #>
@@ -178,24 +175,24 @@ function Restore-ContainerImage {
 		return $false
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Restoring image from '$BackupFile'..."
+	# Use Write-Host for status messages
+	Write-Host "Restoring image from '$BackupFile'..."
 	# podman load [options]
 	# load       Load an image from a tar archive.
 	# --input string   Specify the input file containing the saved image.
 	$output = & $Engine load --input $BackupFile
 
 	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Information for status messages
-		Write-Information "Successfully restored image from '$BackupFile'."
+		# Use Write-Host for status messages
+		Write-Host "Successfully restored image from '$BackupFile'."
 
 		# Attempt to parse the image name from the load output
 		# Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
 		$imageName = $null
 		if ($output -match "Loaded image:\s*(\S+)") {
 			$imageName = $matches[1].Trim()
-			# Use Write-Information for status messages
-			Write-Information "Parsed image name: $imageName"
+			# Use Write-Host for status messages
+			Write-Host "Parsed image name: $imageName"
 
 			if ($RunContainer) {
 				Start-RestoredContainer -Engine $Engine -ImageName $imageName
@@ -203,8 +200,8 @@ function Restore-ContainerImage {
 			return $true
 		}
 		else {
-			# Use Write-Information for status messages
-			Write-Information "Could not parse image name from the load output."
+			# Use Write-Host for status messages
+			Write-Host "Could not parse image name from the load output."
 			# Still return true as the image was loaded, just couldn't parse name
 			return $true
 		}
@@ -234,7 +231,6 @@ function Restore-ContainerImage {
 .EXAMPLE
 	Start-RestoredContainer -Engine "podman" -ImageName "docker.io/library/alpine:latest"
 .NOTES
-	Uses Write-Information for status messages.
 	Uses $LASTEXITCODE to check the success of the engine's run command.
 #>
 function Start-RestoredContainer {
@@ -251,8 +247,8 @@ function Start-RestoredContainer {
 	# Generate a container name by replacing ':' and '/' with underscores
 	$containerName = ($ImageName -replace "[:/]", "_") + "_container"
 
-	# Use Write-Information for status messages
-	Write-Information "Starting container from image '$ImageName' with container name '$containerName'..."
+	# Use Write-Host for status messages
+	Write-Host "Starting container from image '$ImageName' with container name '$containerName'..."
 
 	# Check if the action should be performed
 	if ($PSCmdlet.ShouldProcess("container '$containerName' from image '$ImageName'", "Start")) {
@@ -263,8 +259,8 @@ function Start-RestoredContainer {
 		& $Engine run --detach --name $containerName $ImageName
 
 		if ($LASTEXITCODE -eq 0) {
-			# Use Write-Information for status messages
-			Write-Information "Container '$containerName' started successfully."
+			# Use Write-Host for status messages
+			Write-Host "Container '$containerName' started successfully."
 			return $true
 		}
 		else {
@@ -274,7 +270,7 @@ function Start-RestoredContainer {
 	} # Closing brace for ShouldProcess block
 	else {
 		# If ShouldProcess returns false (e.g., user chose "No" or used -WhatIf)
-		Write-Information "Skipped starting container '$containerName' due to ShouldProcess."
+		Write-Host "Skipped starting container '$containerName' due to ShouldProcess."
 		return $false
 	}
 } # Closing brace for function Start-RestoredContainer
@@ -301,10 +297,7 @@ function Start-RestoredContainer {
 	Invoke-ContainerImageRestore -Engine "docker" -BackupFolder "D:\DockerBackups"
 .EXAMPLE
 	Invoke-ContainerImageRestore -Engine "podman" -RunContainers
-.NOTES
-	Uses Write-Information for status messages.
-	Formerly named Restore-ContainerImages.
-#>
+h#>
 function Invoke-ContainerImageRestore {
 	[CmdletBinding()]
 	[OutputType([bool])]
@@ -318,15 +311,15 @@ function Invoke-ContainerImageRestore {
 	)
 
 	if (-not (Test-Path $BackupFolder)) {
-		# Use Write-Information for status messages
-		Write-Information "Backup folder '$BackupFolder' does not exist. Nothing to restore."
+		# Use Write-Host for status messages
+		Write-Host "Backup folder '$BackupFolder' does not exist. Nothing to restore."
 		return $false
 	}
 
 	$tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*.tar"
 	if (-not $tarFiles) {
-		# Use Write-Information for status messages
-		Write-Information "No backup tar files found in '$BackupFolder'."
+		# Use Write-Host for status messages
+		Write-Host "No backup tar files found in '$BackupFolder'."
 		return $false
 	}
 
@@ -338,8 +331,8 @@ function Invoke-ContainerImageRestore {
 		}
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Restored $successCount out of $($tarFiles.Count) images."
+	# Use Write-Host for status messages
+	Write-Host "Restored $successCount out of $($tarFiles.Count) images."
 	return ($successCount -gt 0)
 }
 
@@ -365,7 +358,6 @@ function Invoke-ContainerImageRestore {
 .EXAMPLE
 	Test-AndRestoreBackup -Engine "podman" -ImageName "docker.io/library/alpine:latest"
 .NOTES
-	Uses Write-Information for status messages.
 	User interaction is handled via Read-Host.
 #>
 function Test-AndRestoreBackup {
@@ -386,21 +378,21 @@ function Test-AndRestoreBackup {
 	$backupFile = Join-Path $BackupFolder "$safeName.tar"
 
 	if (-not (Test-Path $backupFile)) {
-		# Use Write-Information for status messages
-		Write-Information "No backup file found for image '$ImageName' in folder '$BackupFolder'."
+		# Use Write-Host for status messages
+		Write-Host "No backup file found for image '$ImageName' in folder '$BackupFolder'."
 		return $false
 	}
 
-	# Use Write-Information for status messages
-	Write-Information "Backup file found for image '$ImageName': $backupFile"
+	# Use Write-Host for status messages
+	Write-Host "Backup file found for image '$ImageName': $backupFile"
 	$choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
 	if ($choice -and $choice.ToUpper() -eq "Y") {
 		# Call the singular version
 		return (Restore-ContainerImage -Engine $Engine -BackupFile $backupFile)
 	}
 	else {
-		# Use Write-Information for status messages
-		Write-Information "User opted not to restore backup for image '$ImageName'."
+		# Use Write-Host for status messages
+		Write-Host "User opted not to restore backup for image '$ImageName'."
 		return $false
 	}
 }

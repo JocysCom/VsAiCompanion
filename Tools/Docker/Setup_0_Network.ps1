@@ -34,7 +34,6 @@
 	Test-TCPPort -ComputerName "db.example.com" -Port 5432 -ServiceName "Database" -TimeoutMilliseconds 10000
 .NOTES
 	Uses System.Net.Sockets.TcpClient for the connection attempt.
-	Uses Write-Information for success messages and Write-Error for failures.
 #>
 function Test-TCPPort {
 	param(
@@ -58,8 +57,7 @@ function Test-TCPPort {
 			if (-not $ip) {
 				throw "No IP address could be found for $ComputerName."
 			}
-			# Use Write-Information for status messages
-			Write-Information "Using IPv6 address for connection test: $ip"
+			Write-Host "Using IPv6 address for connection test: $ip"
 		}
 
 		$client = New-Object System.Net.Sockets.TcpClient
@@ -67,8 +65,7 @@ function Test-TCPPort {
 		$connected = $async.AsyncWaitHandle.WaitOne($TimeoutMilliseconds, $false)
 
 		if ($connected -and $client.Connected) {
-			# Use Write-Information for status messages
-			Write-Information "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
+			Write-Host "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
 			$client.Close()
 			return $true
 		}
@@ -103,7 +100,6 @@ function Test-TCPPort {
 	Test-HTTPPort -Uri "http://localhost:5000/api/health" -ServiceName "API Health Check"
 .NOTES
 	Uses Invoke-WebRequest with -UseBasicParsing and a 15-second timeout.
-	Uses Write-Information for success messages and Write-Error for failures.
 #>
 function Test-HTTPPort {
 	param(
@@ -115,8 +111,8 @@ function Test-HTTPPort {
 	try {
 		$response = Invoke-WebRequest -Uri $Uri -UseBasicParsing -TimeoutSec 15
 		if ($response.StatusCode -eq 200) {
-			# Use Write-Information for status messages
-			Write-Information "$serviceName HTTP test succeeded at $Uri."
+			# Use Write-Host for status messages
+			Write-Host "$serviceName HTTP test succeeded at $Uri."
 			return $true
 		}
 		else {
@@ -153,7 +149,6 @@ function Test-HTTPPort {
 .NOTES
 	Requires .NET Core or PowerShell 7+ for native WebSocket support.
 	Uses a 5-second timeout for the connection attempt.
-	Uses Write-Information for success messages and Write-Error for failures.
 #>
 function Test-WebSocketPort {
 	param(
@@ -175,8 +170,8 @@ function Test-WebSocketPort {
 
 		# Wait for 5 seconds max
 		if ([System.Threading.Tasks.Task]::WaitAll(@($task), 5000)) {
-			# Use Write-Information for status messages
-			Write-Information "$serviceName WebSocket test succeeded at $Uri."
+			# Use Write-Host for status messages
+			Write-Host "$serviceName WebSocket test succeeded at $Uri."
 			$client.Dispose()
 			return $true
 		}
