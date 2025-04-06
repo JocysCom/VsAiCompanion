@@ -29,7 +29,7 @@ $global:downloadFolder  = ".\downloads"
 $global:enginePath      = $null
 $global:containerEngine = $null
 
-# After the dot-sourcing of Setup_0.ps1, add this code to ensure the engine is selected:
+# Ensure the engine is selected.
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
     $global:enginePath = Get-DockerPath

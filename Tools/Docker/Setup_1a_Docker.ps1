@@ -380,6 +380,4 @@ Test-WSLStatus
 Test-DockerInstallation
 Test-DockerDaemonStatus
 
-# Use the common Get-DockerPath function from Setup_0.ps1.
-
 Write-Output "Docker installation and verification completed successfully."
