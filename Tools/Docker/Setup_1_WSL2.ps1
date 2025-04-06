@@ -41,6 +41,7 @@ Set-ScriptLocation
 #>
 function Enable-WSL2 {
 	[CmdletBinding()]
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
 	param()
 
 	Write-Information "Setting WSL default version to 2..."
@@ -102,11 +103,12 @@ function Enable-WSL2 {
 # Section: Virtualization Feature Selection
 ###############################################################################
 
-Write-Information "==========================================="
-Write-Information "Select virtualization feature to enable:"
-Write-Information "==========================================="
-Write-Information "1. Windows Subsystem for Linux (WSL)"
-Write-Information "2. Hyper-V"
+Write-Host "==========================================="
+Write-Host "Select virtualization feature to enable:"
+Write-Host "==========================================="
+Write-Host "1. Windows Subsystem for Linux (WSL)"
+Write-Host "2. Hyper-V"
+Write-Host "-------------------------------------------"
 $choice = Read-Host "Enter your choice (1 or 2, default is 1)"
 
 if ([string]::IsNullOrWhiteSpace($choice)) {

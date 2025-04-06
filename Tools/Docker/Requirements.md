@@ -165,17 +165,18 @@ Scripts with a menu must define a `Show-ContainerMenu` function that displays th
 
 ```PowerShell
 function Show-ContainerMenu {
-    Write-Information "==========================================="
-    Write-Information "[Specific Container Name] Menu"
-    Write-Information "==========================================="
-    Write-Information "1. Install container"
-    Write-Information "2. Uninstall container"
-    Write-Information "3. Backup Live container"
-    Write-Information "4. Restore Live container"
-    Write-Information "5. Update System"
-    # Write-Information "6. Update User Data" # Optional
-    # Write-Information "[Letter]. [Custom Action]" # Optional custom actions
-    Write-Information "0. Exit menu"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "[Specific Container Name] Menu"
+	Write-Host "==========================================="
+	Write-Host "1. Install container"
+	Write-Host "2. Uninstall container"
+	Write-Host "3. Backup Live container"
+	Write-Host "4. Restore Live container"
+	Write-Host "5. Update System"
+	# Write-Host "6. Update User Data" # Optional
+	# Write-Host "[Letter]. [Custom Action]" # Optional custom actions
+	Write-Host "0. Exit menu"
 }
 ```
 

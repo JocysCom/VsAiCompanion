@@ -28,12 +28,14 @@ using namespace System.IO
 	Uses Write-Information for output.
 #>
 function Show-MainMenu {
-	Write-Information "==========================================="
-	Write-Information "Container Images Backup and Restore Menu"
-	Write-Information "==========================================="
-	Write-Information "1. Backup all images"
-	Write-Information "2. Restore all images from backup and run"
-	Write-Information "0. Exit"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "Container Images Backup and Restore Menu"
+	Write-Host "==========================================="
+	Write-Host "1. Backup all images"
+	Write-Host "2. Restore all images from backup and run"
+	Write-Host "0. Exit"
+	Write-Host "-------------------------------------------"
 }
 
 # MAIN SCRIPT EXECUTION

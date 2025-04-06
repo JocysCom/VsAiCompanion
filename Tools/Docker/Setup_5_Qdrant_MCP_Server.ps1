@@ -328,16 +328,18 @@ function Update-QdrantMCPServerContainer {
 	Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
-	Write-Output "==========================================="
-	Write-Output "Qdrant MCP Server Container Menu"
-	Write-Output "==========================================="
-	Write-Output "1. Show Info & Test Connection"
-	Write-Output "2. Install/Rebuild container"
-	Write-Output "3. Uninstall container"
-	Write-Output "4. Backup container state"
-	Write-Output "5. Restore container state"
-	Write-Output "6. Update container (Pull source & Rebuild)"
-	Write-Output "0. Exit menu"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "Qdrant MCP Server Container Menu"
+	Write-Host "==========================================="
+	Write-Host "1. Show Info & Test Connection"
+	Write-Host "2. Install/Rebuild container"
+	Write-Host "3. Uninstall container"
+	Write-Host "4. Backup container state"
+	Write-Host "5. Restore container state"
+	Write-Host "6. Update container (Pull source & Rebuild)"
+	Write-Host "0. Exit menu"
+	Write-Host "-------------------------------------------"
 }
 
 ################################################################################

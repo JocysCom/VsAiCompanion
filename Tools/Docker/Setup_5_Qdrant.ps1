@@ -324,17 +324,19 @@ function Update-QdrantUserData {
 	Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
-	Write-Output "==========================================="
-	Write-Output "Qdrant Container Menu"
-	Write-Output "==========================================="
-	Write-Output "1. Show Info & Test Connection"
-	Write-Output "2. Install container"
-	Write-Output "3. Uninstall container"
-	Write-Output "4. Backup Live container"
-	Write-Output "5. Restore Live container"
-	Write-Output "6. Update System"
-	Write-Output "7. Update User Data"
-	Write-Output "0. Exit menu"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "Qdrant Container Menu"
+	Write-Host "==========================================="
+	Write-Host "1. Show Info & Test Connection"
+	Write-Host "2. Install container"
+	Write-Host "3. Uninstall container"
+	Write-Host "4. Backup Live container"
+	Write-Host "5. Restore Live container"
+	Write-Host "6. Update System"
+	Write-Host "7. Update User Data"
+	Write-Host "0. Exit menu"
+	Write-Host "-------------------------------------------"
 }
 
 ################################################################################

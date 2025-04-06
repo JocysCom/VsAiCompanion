@@ -473,18 +473,20 @@ function Update-OpenWebUIUserData {
 	Uses Write-Output for direct console display.
 #>
 function Show-OpenWebUIMenu {
-	Write-Output "==========================================="
-	Write-Output "Open WebUI Container Menu"
-	Write-Output "==========================================="
-	Write-Output "1. Show Info & Test Connection"
-	Write-Output "2. Install container"
-	Write-Output "3. Uninstall container"
-	Write-Output "4. Backup Live container"
-	Write-Output "5. Restore Live container"
-	Write-Output "6. Update System"
-	Write-Output "7. Update User Data"
-	Write-Output "8. Check for Updates"
-	Write-Output "0. Exit"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "Open WebUI Container Menu"
+	Write-Host "==========================================="
+	Write-Host "1. Show Info & Test Connection"
+	Write-Host "2. Install container"
+	Write-Host "3. Uninstall container"
+	Write-Host "4. Backup Live container"
+	Write-Host "5. Restore Live container"
+	Write-Host "6. Update System"
+	Write-Host "7. Update User Data"
+	Write-Host "8. Check for Updates"
+	Write-Host "0. Exit"
+	Write-Host "-------------------------------------------"
 }
 
 $menuActions = @{

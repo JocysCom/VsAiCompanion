@@ -94,7 +94,6 @@ function Get-PodmanPath {
 	$selectedEngine = Select-ContainerEngine
 	if ($selectedEngine) { Write-Host "You selected $selectedEngine" }
 .NOTES
-	Uses Write-Information for the menu display.
 	Returns $null for invalid or empty input, allowing the caller to handle exit/retry logic.
 #>
 function Select-ContainerEngine {
@@ -102,10 +101,12 @@ function Select-ContainerEngine {
 	param() # Add empty param block for OutputType attribute
 
 	# Use Write-Information for prompts so they don't pollute the output stream and are controllable
-	Write-Information "Select container engine"
-	Write-Information "------------------------------------------"
-	Write-Information "1. Docker"
-	Write-Information "2. Podman"
+	Write-Host "==========================================="
+	Write-Host "Select container engine"
+	Write-Host "==========================================="
+	Write-Host "1. Docker"
+	Write-Host "2. Podman"
+	Write-Host "-------------------------------------------"
 	# Use a simpler prompt
 	$selection = Read-Host "Select Container Engine"
 

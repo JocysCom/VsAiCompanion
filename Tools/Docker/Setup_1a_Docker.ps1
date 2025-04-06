@@ -303,12 +303,13 @@ function Test-DockerWorking {
 #>
 function Test-DockerInstallation {
 	if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-		Write-Information "Docker is not installed."
-		Write-Information "==========================================="
-		Write-Information "Select Docker installation method:"
-		Write-Information "==========================================="
-		Write-Information "1. Install Docker Desktop (requires winget)"
-		Write-Information "2. Install Docker Engine (static binary installation)"
+		Write-Host "Docker is not installed."
+		Write-Host "==========================================="
+		Write-Host "Select Docker installation method:"
+		Write-Host "==========================================="
+		Write-Host "1. Install Docker Desktop (requires winget)"
+		Write-Host "2. Install Docker Engine (static binary installation)"
+		Write-Host "-------------------------------------------"
 		$installMethod = Read-Host "Enter your choice (1 or 2), default is 1"
 		if ([string]::IsNullOrWhiteSpace($installMethod)) {
 			$installMethod = "1"

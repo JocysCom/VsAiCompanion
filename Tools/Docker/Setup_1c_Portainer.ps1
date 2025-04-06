@@ -462,16 +462,18 @@ function Update-PortainerContainer {
 	Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
-	Write-Output "==========================================="
-	Write-Output "Portainer Container Menu"
-	Write-Output "==========================================="
-	Write-Output "1. Show Info & Test Connection"
-	Write-Output "2. Install container"
-	Write-Output "3. Uninstall container (preserves user data)"
-	Write-Output "4. Backup Live container"
-	Write-Output "5. Restore Live container"
-	Write-Output "6. Update container"
-	Write-Output "0. Exit menu"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "Portainer Container Menu"
+	Write-Host "==========================================="
+	Write-Host "1. Show Info & Test Connection"
+	Write-Host "2. Install container"
+	Write-Host "3. Uninstall container (preserves user data)"
+	Write-Host "4. Backup Live container"
+	Write-Host "5. Restore Live container"
+	Write-Host "6. Update container"
+	Write-Host "0. Exit menu"
+	Write-Host "-------------------------------------------"
 }
 
 ################################################################################

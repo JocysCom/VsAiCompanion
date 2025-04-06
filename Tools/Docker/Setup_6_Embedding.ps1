@@ -318,14 +318,16 @@ function Uninstall-EmbeddingContainer {
 	Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
-	Write-Output "==========================================="
-	Write-Output "Embedding API Container Menu (Podman Only)"
-	Write-Output "==========================================="
-	Write-Output "1. Show Info & Test Connection"
-	Write-Output "2. Install/Rebuild container"
-	Write-Output "3. Update container (Rebuild & Run)"
-	Write-Output "4. Uninstall container"
-	Write-Output "0. Exit menu"
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+	Write-Host "==========================================="
+	Write-Host "Embedding API Container Menu (Podman Only)"
+	Write-Host "==========================================="
+	Write-Host "1. Show Info & Test Connection"
+	Write-Host "2. Install/Rebuild container"
+	Write-Host "3. Update container (Rebuild & Run)"
+	Write-Host "4. Uninstall container"
+	Write-Host "0. Exit menu"
+	Write-Host "-------------------------------------------"
 }
 
 ################################################################################
