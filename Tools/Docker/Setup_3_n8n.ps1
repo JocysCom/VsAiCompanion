@@ -32,6 +32,11 @@ Set-ScriptLocation
 $global:containerName = "n8n"
 $global:volumeName    = "n8n_data"
 $global:containerEngine = Select-ContainerEngine
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+    Write-Warning "No container engine selected. Exiting script."
+    exit 1
+}
 if ($global:containerEngine -eq "docker") {
     Test-AdminPrivileges
     $global:enginePath    = Get-DockerPath

@@ -56,21 +56,25 @@ function Select-ContainerEngine {
     param() # Add empty param block for OutputType attribute
 
     # Use Write-Information for prompts so they don't pollute the output stream and are controllable
-    Write-Information "Select container engine:"
-    Write-Information "1) Docker"
-    Write-Information "2) Podman"
-    # Make the prompt more descriptive
-    $selection = Read-Host "Select Container Engine (1=Docker, 2=Podman, default=1)"
+    Write-Information "Select container engine"
+    Write-Information "------------------------------------------"
+    Write-Information "1. Docker"
+    Write-Information "2. Podman"
+    # Use a simpler prompt
+    $selection = Read-Host "Select Container Engine:"
+
+    # Check if input is empty or whitespace, return null to signal exit
     if ([string]::IsNullOrWhiteSpace($selection)) {
-        $selection = "1"
+        return $null
     }
+
+    # Return the selected engine or null for invalid input
     switch ($selection) {
         "1" { return "docker" }
         "2" { return "podman" }
         default {
-            # Use Write-Information for prompts so they don't pollute the output stream and are controllable
-            Write-Information "Invalid selection, defaulting to Docker."
-            return "docker"
+            Write-Warning "Invalid selection." # Inform user of invalid choice
+            return $null # Return null for invalid choice
         }
     }
 }

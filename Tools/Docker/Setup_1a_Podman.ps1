@@ -252,8 +252,8 @@ function Install-PodmanCLI {
 #############################################
 function Select-DiskLocation {
     Write-Host "Select disk location for Podman machine virtual disk:"
-    Write-Host "1) Default location (user profile)"
-    Write-Host "2) Custom location"
+    Write-Host "1. Default location (user profile)"
+    Write-Host "2. Custom location"
     $locationChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
 
     if ([string]::IsNullOrWhiteSpace($locationChoice) -or $locationChoice -eq "1") {
@@ -823,11 +823,11 @@ function Remove-PodmanComponent {
     param()
 
     Write-Host "Select component to remove:"
-    Write-Host "1) Remove Podman Service only"
-    Write-Host "2) Remove Podman Machine only"
-    Write-Host "3) [Not Implemented] Uninstall Podman Desktop only"
-    Write-Host "4) [Not Implemented] Uninstall Podman CLI"
-    Write-Host "5) Exit without removing anything"
+    Write-Host "1. Remove Podman Service only"
+    Write-Host "2. Remove Podman Machine only"
+    Write-Host "3. [Not Implemented] Uninstall Podman Desktop only"
+    Write-Host "4. [Not Implemented] Uninstall Podman CLI"
+    Write-Host "5. Exit without removing anything"
 
     $removeOption = Read-Host "Enter option (1-5, default is 5)"
     if ([string]::IsNullOrWhiteSpace($removeOption)) {
@@ -888,20 +888,20 @@ Write-Host "=================================================="
 Write-Host "PODMAN SETUP AND MANAGEMENT"
 Write-Host "=================================================="
 Write-Host "Select an option:"
-Write-Host "1) Check Podman Status"
+Write-Host "1. Check Podman Status"
 Write-Host "   - Displays the current status of Podman components"
-Write-Host "2) Install Podman CLI"
+Write-Host "2. Install Podman CLI"
 Write-Host "   - Installs the Podman command-line tool"
-Write-Host "3) Install Podman Desktop (UI)"
+Write-Host "3. Install Podman Desktop (UI)"
 Write-Host "   - Installs the Podman Desktop manager (Requires only CLI)"
-Write-Host "4) Initialize Podman Machine"
+Write-Host "4. Initialize Podman Machine"
 Write-Host "   - Creates and starts a Podman machine (Requires CLI)"
 Write-Host "   - This creates a VHDX file with Linux + Podman inside"
-Write-Host "5) Move Podman Machine"
+Write-Host "5. Move Podman Machine"
 Write-Host "   - Moves a Podman machine image to a new location"
-Write-Host "6) Register Podman Service"
+Write-Host "6. Register Podman Service"
 Write-Host "   - Creates a Windows service to auto-start Podman (Requires Machine)"
-Write-Host "7) Remove Podman Components"
+Write-Host "7. Remove Podman Components"
 Write-Host "   - Options to remove service, machine, or uninstall software"
 Write-Host "=================================================="
 

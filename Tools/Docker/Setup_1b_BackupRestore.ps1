@@ -16,9 +16,9 @@ using namespace System.IO
 function Show-MainMenu {
     Write-Host "Container Images Backup and Restore Menu"
     Write-Host "------------------------------------------"
-    Write-Host "1) Backup all images"
-    Write-Host "2) Restore all images from backup and run"
-    Write-Host "3) Exit"
+    Write-Host "1. Backup all images"
+    Write-Host "2. Restore all images from backup and run"
+    Write-Host "3. Exit"
 }
 
 # MAIN SCRIPT EXECUTION
