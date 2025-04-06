@@ -207,11 +207,85 @@ function Restore-FirecrawlContainer {
 
 <#
 .SYNOPSIS
+    Helper function called by Update-Container to start the Firecrawl container after an update.
+.DESCRIPTION
+    This function encapsulates the specific logic required to start the Firecrawl container,
+    assuming the network and Redis container are already running. It ensures the volume exists,
+    sets environment variables, runs the container, and tests connectivity.
+    It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
+.PARAMETER EnginePath
+    Path to the container engine executable (Docker).
+.PARAMETER ContainerEngineType
+    Type of the container engine ('docker'). (Passed by Update-Container, not directly used).
+.PARAMETER ContainerName
+    Name of the container being updated (e.g., 'firecrawl').
+.PARAMETER VolumeName
+    Name of the volume associated with the container (e.g., 'firecrawl_data').
+.PARAMETER ImageName
+    The new image name/tag to use for the updated container.
+.OUTPUTS
+    Throws an error if the container fails to start.
+#>
+function Invoke-StartFirecrawlForUpdate {
+    param(
+        [string]$EnginePath,
+        [string]$ContainerEngineType, # Not used directly, assumes Docker based on script context
+        [string]$ContainerName,       # Should be $global:firecrawlName
+        [string]$VolumeName,          # Should be $global:volumeName
+        [string]$ImageName            # The updated image name ($global:imageName)
+    )
+
+    # Assume Network and Redis are already running from the initial install
+
+    # Ensure the volume exists (important if it was removed manually)
+    if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+        throw "Failed to ensure volume '$VolumeName' exists during update."
+    }
+
+    Write-Information "Starting updated Firecrawl container '$ContainerName'..."
+
+    # Define run options (same as in Install-FirecrawlContainer)
+    # Note: Uses $global:networkName, assuming it's accessible or should be passed if not.
+    # For now, relying on the global scope as the original script block did.
+    $runOptions = @(
+        "--detach",
+        "--publish", "3002:3002",
+        "--restart", "always",
+        "--network", $global:networkName, # Use global network name
+        "--name", $ContainerName,
+        "--volume", "$($VolumeName):/app/data",
+        "--env", "OPENAI_API_KEY=dummy",
+        "--env", "REDIS_URL=redis://redis:6379",
+        "--env", "REDIS_RATE_LIMIT_URL=redis://redis:6379",
+        "--env", "REDIS_HOST=redis",
+        "--env", "REDIS_PORT=6379",
+        "--env", "POSTHOG_API_KEY="
+    )
+
+    # Execute the command
+    & $EnginePath run @runOptions $ImageName
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to run updated Firecrawl container '$ContainerName'."
+    }
+
+    # Wait and Test Connectivity (same as in Install-FirecrawlContainer)
+    Write-Information "Waiting 20 seconds for container to fully start..."
+    Start-Sleep -Seconds 20
+    Write-Information "Testing Firecrawl API connectivity on port 3002..."
+    Test-TCPPort -ComputerName "localhost" -Port 3002 -serviceName "Firecrawl API"
+    Test-HTTPPort -Uri "http://localhost:3002" -serviceName "Firecrawl API"
+    Write-Information "Testing Redis container connectivity on port 6379..."
+    Test-TCPPort -ComputerName "localhost" -Port 6379 -serviceName "Firecrawl Redis"
+    Write-Information "Firecrawl container updated successfully."
+}
+
+<#
+.SYNOPSIS
     Updates the Firecrawl container.
 .DESCRIPTION
     Uses the generic Update-Container function. The Redis container is left running.
-    The RunFunction script block re-uses parts of the Install-FirecrawlContainer logic
-    to start only the Firecrawl container, assuming Redis and the network are already present.
+    Passes a reference to the specific 'Invoke-StartFirecrawlForUpdate' function
+    to handle the container startup logic after the image pull.
 #>
 function Update-FirecrawlContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -222,63 +296,17 @@ function Update-FirecrawlContainer {
         return
     }
 
-    # Define the script block to run the updated Firecrawl container
-    $runFirecrawlScriptBlock = {
-        param(
-            [string]$EnginePath,
-            [string]$ContainerEngineType, # Not used
-            [string]$ContainerName,       # Should be $global:firecrawlName
-            [string]$VolumeName,          # Should be $global:volumeName
-            [string]$ImageName            # The updated image name ($global:imageName)
-        )
-
-        # Assume Network and Redis are already running from the initial install
-
-        # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-            throw "Failed to ensure volume '$VolumeName' exists during update."
-        }
-
-        Write-Information "Starting updated Firecrawl container '$ContainerName'..."
-
-        # Define run options (same as in Install-FirecrawlContainer)
-        $runOptions = @(
-            "--detach",
-            "--publish", "3002:3002",
-            "--restart", "always",
-            "--network", $global:networkName, # Use global network name
-            "--name", $ContainerName,
-            "--volume", "$($VolumeName):/app/data",
-            "--env", "OPENAI_API_KEY=dummy",
-            "--env", "REDIS_URL=redis://redis:6379",
-            "--env", "REDIS_RATE_LIMIT_URL=redis://redis:6379",
-            "--env", "REDIS_HOST=redis",
-            "--env", "REDIS_PORT=6379",
-            "--env", "POSTHOG_API_KEY="
-        )
-
-        # Execute the command
-        & $EnginePath run @runOptions $ImageName
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to run updated Firecrawl container '$ContainerName'."
-        }
-
-        # Wait and Test Connectivity (same as in Install-FirecrawlContainer)
-        Write-Information "Waiting 20 seconds for container to fully start..."
-        Start-Sleep -Seconds 20
-        Write-Information "Testing Firecrawl API connectivity on port 3002..."
-        Test-TCPPort -ComputerName "localhost" -Port 3002 -serviceName "Firecrawl API"
-        Test-HTTPPort -Uri "http://localhost:3002" -serviceName "Firecrawl API"
-        Write-Information "Testing Redis container connectivity on port 6379..."
-        Test-TCPPort -ComputerName "localhost" -Port 6379 -serviceName "Firecrawl Redis"
-        Write-Information "Firecrawl container updated successfully."
-    }
+    # Previously, a script block was defined here and passed using .GetNewClosure().
+    # .GetNewClosure() creates a copy of the script block that captures the current
+    # state of variables in its scope, ensuring the generic Update-Container function
+    # executes it with the correct context from this script.
+    # We now use a dedicated function (Invoke-StartFirecrawlForUpdate) instead for better structure.
 
     # Call the generic Update-Container function
     Update-Container -Engine $global:enginePath `
                      -ContainerName $global:firecrawlName `
                      -ImageName $global:imageName `
-                     -RunFunction $runFirecrawlScriptBlock.GetNewClosure() # Pass closure
+                     -RunFunction ${function:Invoke-StartFirecrawlForUpdate} # Pass function reference
 }
 
 <#

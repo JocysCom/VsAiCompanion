@@ -359,63 +359,89 @@ function Restore-n8nContainer {
 
 <#
 .SYNOPSIS
+    Helper function called by Update-Container to start the n8n container after an update.
+.DESCRIPTION
+    This function encapsulates the specific logic required to start the n8n container,
+    including ensuring the volume exists, retrieving configuration, and calling Start-n8nContainer.
+    It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
+.PARAMETER EnginePath
+    Path to the container engine executable.
+.PARAMETER ContainerEngineType
+    Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, may not be used directly if relying on globals).
+.PARAMETER ContainerName
+    Name of the container being updated. (Passed by Update-Container, may not be used directly if relying on globals).
+.PARAMETER VolumeName
+    Name of the volume associated with the container. (Passed by Update-Container, may not be used directly if relying on globals).
+.PARAMETER ImageName
+    The new image name/tag to use for the updated container.
+.OUTPUTS
+    Throws an error if the container fails to start.
+#>
+function Invoke-StartN8nForUpdate {
+    param(
+        [string]$EnginePath,
+        # The following parameters are part of the standard signature for Update-Container's script block,
+        # but are not directly used in this specific implementation as it relies on global variables
+        # or calls Start-n8nContainer which uses globals.
+        [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
+        [string]$ContainerEngineType,
+        [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
+        [string]$ContainerName,
+        [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
+        [string]$VolumeName,
+        [string]$ImageName            # The updated image name passed by Update-Container
+    )
+
+    # Ensure the volume exists (important if it was removed manually)
+    # Use the VolumeName parameter passed by Update-Container for consistency
+    if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+        throw "Failed to ensure volume '$VolumeName' exists during update."
+    }
+
+    # Get existing config to preserve environment variables (like domain)
+    $config = Get-n8nContainerConfig
+    if (-not $config) {
+         Write-Warning "Could not retrieve existing config during update. Using default environment variables."
+         $envVars = @(
+            "N8N_COMMUNITY_PACKAGES_ENABLED=true",
+            "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+         )
+    } else {
+        $envVars = $config.EnvVars
+    }
+
+    # Start the container using the specific Start-n8nContainer function
+    # Pass the updated image name received as a parameter
+    $result = Start-n8nContainer -Image $ImageName -EnvVars $envVars
+    if (-not $result) {
+        # Throw an error to signal failure to Update-Container
+        throw "Failed to start updated n8n container."
+    }
+}
+
+<#
+.SYNOPSIS
     Updates the n8n container without resetting user data.
 .DESCRIPTION
-    Uses the generic Update-Container function to handle the update process.
+    Uses the generic Update-Container function to handle the update process,
+    passing a reference to the specific 'Invoke-StartN8nForUpdate' function
+    to handle the container startup logic after the image pull.
 #>
 function Update-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
-    # Define the script block that knows how to run *this specific* container
-    $runN8nScriptBlock = {
-        param(
-            [string]$EnginePath,
-            # The following parameters are part of the standard signature for Update-Container's script block,
-            # but are not directly used in this specific implementation as it relies on global variables
-            # or calls Start-n8nContainer which uses globals.
-            [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
-            [string]$ContainerEngineType,
-            [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
-            [string]$ContainerName,
-            [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
-            [string]$VolumeName,
-            [string]$ImageName            # The updated image name passed by Update-Container
-        )
-
-        # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-            throw "Failed to ensure volume '$VolumeName' exists during update."
-        }
-
-        # Get existing config to preserve environment variables (like domain)
-        # Note: This runs *after* the old container is removed, so it might need adjustment
-        # if Get-n8nContainerConfig relies on the running container.
-        # For now, assume it can get config or we use defaults.
-        $config = Get-n8nContainerConfig
-        if (-not $config) {
-             Write-Warning "Could not retrieve existing config during update. Using default environment variables."
-             $envVars = @(
-                "N8N_COMMUNITY_PACKAGES_ENABLED=true",
-                "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-             )
-        } else {
-            $envVars = $config.EnvVars
-        }
-
-        # Start the container using the specific Start-n8nContainer function
-        $result = Start-n8nContainer -Image $ImageName -EnvVars $envVars
-        if (-not $result) {
-            # Throw an error to signal failure to Update-Container
-            throw "Failed to start updated n8n container."
-        }
-    }
+    # Previously, a script block was defined here and passed using .GetNewClosure().
+    # .GetNewClosure() creates a copy of the script block that captures the current
+    # state of variables in its scope, ensuring the generic Update-Container function
+    # executes it with the correct context from this script.
+    # We now use a dedicated function (Invoke-StartN8nForUpdate) instead for better structure.
 
     # Call the generic Update-Container function
     Update-Container -Engine $global:enginePath `
                      -ContainerName $global:containerName `
                      -ImageName $global:imageName `
-                     -RunFunction $runN8nScriptBlock.GetNewClosure() # Pass closure
+                     -RunFunction ${function:Invoke-StartN8nForUpdate} # Pass function reference
 }
 
 <#

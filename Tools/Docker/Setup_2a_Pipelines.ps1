@@ -244,9 +244,79 @@ function Add-PipelineToContainer {
 
 <#
 .SYNOPSIS
+    Helper function called by Update-Container to start the Pipelines container after an update.
+.DESCRIPTION
+    This function encapsulates the specific logic required to start the Pipelines container,
+    including ensuring the volume exists, setting engine-specific parameters, and running the container.
+    It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
+.PARAMETER EnginePath
+    Path to the container engine executable.
+.PARAMETER ContainerEngineType
+    Type of the container engine ('docker' or 'podman').
+.PARAMETER ContainerName
+    Name of the container being updated.
+.PARAMETER VolumeName
+    Name of the volume associated with the container.
+.PARAMETER ImageName
+    The new image name/tag to use for the updated container.
+.OUTPUTS
+    Throws an error if the container fails to start.
+#>
+function Invoke-StartPipelinesForUpdate {
+    param(
+        [string]$EnginePath,
+        [string]$ContainerEngineType,
+        [string]$ContainerName,
+        [string]$VolumeName,
+        [string]$ImageName # The updated image name passed by Update-Container
+    )
+
+    # Ensure the volume exists (important if it was removed manually)
+    if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+        throw "Failed to ensure volume '$VolumeName' exists during update."
+    }
+
+    # Conditionally set the --add-host parameter if using Docker
+    if ($ContainerEngineType -eq "docker") {
+        $addHostParams = @('--add-host', 'host.docker.internal:host-gateway')
+    }
+    else {
+        $addHostParams = @() # Podman doesn't need this
+    }
+
+    # Build the run arguments array
+    $runArgs = @(
+        '--detach',                                      # run in background
+        '--publish', '9099:9099',                         # port mapping
+        '--volume', "$($VolumeName):/app/pipelines",     # volume mapping
+        '--restart', 'always',                           # restart policy
+        '--name', $ContainerName,                        # container name
+        $ImageName                                       # Use the image name passed to the script block
+    ) + $addHostParams
+
+    Write-Information "Running updated Pipelines container with image '$ImageName'..."
+    & $EnginePath run @runArgs
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to run the updated Pipelines container."
+        # Throw an error to signal failure to Update-Container
+        throw "Failed to run the updated Pipelines container."
+    }
+    Write-Information "Pipelines container started."
+
+    # Wait for the container to initialize, then test connectivity
+    Write-Information "Waiting for container startup..."
+    Start-Sleep -Seconds 20
+    Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $ContainerName
+    Test-HTTPPort -Uri "http://localhost:9099" -serviceName $ContainerName
+}
+
+<#
+.SYNOPSIS
     Updates the Pipelines container.
 .DESCRIPTION
-    Uses the generic Update-Container function to handle the update process.
+    Uses the generic Update-Container function to handle the update process,
+    passing a reference to the specific 'Invoke-StartPipelinesForUpdate' function
+    to handle the container startup logic after the image pull.
 #>
 function Update-PipelinesContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -257,60 +327,17 @@ function Update-PipelinesContainer {
         return
     }
 
-    # Define the script block that knows how to run *this specific* container
-    $runPipelinesScriptBlock = {
-        param(
-            [string]$EnginePath,
-            [string]$ContainerEngineType,
-            [string]$ContainerName,
-            [string]$VolumeName,
-            [string]$ImageName # The updated image name passed by Update-Container
-        )
-
-        # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-            throw "Failed to ensure volume '$VolumeName' exists during update."
-        }
-
-        # Conditionally set the --add-host parameter if using Docker
-        if ($ContainerEngineType -eq "docker") {
-            $addHostParams = @('--add-host', 'host.docker.internal:host-gateway')
-        }
-        else {
-            $addHostParams = @() # Podman doesn't need this
-        }
-
-        # Build the run arguments array
-        $runArgs = @(
-            '--detach',                                      # run in background
-            '--publish', '9099:9099',                         # port mapping
-            '--volume', "$($VolumeName):/app/pipelines",     # volume mapping
-            '--restart', 'always',                           # restart policy
-            '--name', $ContainerName,                        # container name
-            $ImageName                                       # Use the image name passed to the script block
-        ) + $addHostParams
-
-        Write-Information "Running updated Pipelines container with image '$ImageName'..."
-        & $EnginePath run @runArgs
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to run the updated Pipelines container."
-            # Throw an error to signal failure to Update-Container
-            throw "Failed to run the updated Pipelines container."
-        }
-        Write-Information "Pipelines container started."
-
-        # Wait for the container to initialize, then test connectivity
-        Write-Information "Waiting for container startup..."
-        Start-Sleep -Seconds 20
-        Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $ContainerName
-        Test-HTTPPort -Uri "http://localhost:9099" -serviceName $ContainerName
-    }
+    # Previously, a script block was defined here and passed using .GetNewClosure().
+    # .GetNewClosure() creates a copy of the script block that captures the current
+    # state of variables in its scope, ensuring the generic Update-Container function
+    # executes it with the correct context from this script.
+    # We now use a dedicated function (Invoke-StartPipelinesForUpdate) instead for better structure.
 
     # Call the generic Update-Container function
     Update-Container -Engine $global:enginePath `
                      -ContainerName $global:containerName `
                      -ImageName "ghcr.io/open-webui/pipelines:main" `
-                     -RunFunction $runPipelinesScriptBlock.GetNewClosure() # Pass closure to maintain scope
+                     -RunFunction ${function:Invoke-StartPipelinesForUpdate} # Pass function reference
 }
 
 <#

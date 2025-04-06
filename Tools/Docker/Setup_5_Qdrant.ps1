@@ -138,9 +138,72 @@ function Restore-QdrantContainer {
 
 <#
 .SYNOPSIS
+    Helper function called by Update-Container to start the Qdrant container after an update.
+.DESCRIPTION
+    This function encapsulates the specific logic required to start the Qdrant container,
+    including ensuring the volume exists, running the container with correct ports and volume,
+    and testing connectivity.
+    It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
+.PARAMETER EnginePath
+    Path to the container engine executable.
+.PARAMETER ContainerEngineType
+    Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, not directly used).
+.PARAMETER ContainerName
+    Name of the container being updated (e.g., 'qdrant').
+.PARAMETER VolumeName
+    Name of the volume associated with the container (e.g., 'qdrant_storage').
+.PARAMETER ImageName
+    The new image name/tag to use for the updated container.
+.OUTPUTS
+    Throws an error if the container fails to start.
+#>
+function Invoke-StartQdrantForUpdate {
+    param(
+        [string]$EnginePath,
+        [string]$ContainerEngineType, # Not used
+        [string]$ContainerName,       # Should be $global:containerName
+        [string]$VolumeName,          # Should be $global:volumeName
+        [string]$ImageName            # The updated image name ($global:imageName)
+    )
+
+    # Ensure the volume exists (important if it was removed manually)
+    if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+        throw "Failed to ensure volume '$VolumeName' exists during update."
+    }
+
+    Write-Information "Starting updated Qdrant container '$ContainerName'..."
+
+    # Define run options (same as in Install-QdrantContainer)
+    $runOptions = @(
+        "--detach",
+        "--name", $ContainerName,
+        "--publish", "6333:6333",
+        "--publish", "6334:6334",
+        "--volume", "$($VolumeName):/qdrant/storage"
+    )
+
+    # Execute the command
+    & $EnginePath run @runOptions $ImageName
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to run updated Qdrant container '$ContainerName'."
+    }
+
+    # Wait and Test Connectivity (same as in Install-QdrantContainer)
+    Write-Information "Waiting 20 seconds for the Qdrant container to fully start..."
+    Start-Sleep -Seconds 20
+    Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
+    Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
+    Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
+    Write-Information "Qdrant container updated successfully."
+}
+
+<#
+.SYNOPSIS
     Updates the Qdrant container.
 .DESCRIPTION
-    Removes any existing Qdrant container, pulls the latest image from the registry, and reinstalls the container.
+    Uses the generic Update-Container function to handle the update process,
+    passing a reference to the specific 'Invoke-StartQdrantForUpdate' function
+    to handle the container startup logic after the image pull.
 #>
 function Update-QdrantContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -151,53 +214,17 @@ function Update-QdrantContainer {
         return
     }
 
-    # Define Run Function for Update-Container
-    $runContainerFunction = {
-        param(
-            [string]$EnginePath,
-            [string]$ContainerEngineType, # Not used
-            [string]$ContainerName,       # Should be $global:containerName
-            [string]$VolumeName,          # Should be $global:volumeName
-            [string]$ImageName            # The updated image name ($global:imageName)
-        )
-
-        # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-            throw "Failed to ensure volume '$VolumeName' exists during update."
-        }
-
-        Write-Information "Starting updated Qdrant container '$ContainerName'..."
-
-        # Define run options (same as in Install-QdrantContainer)
-        $runOptions = @(
-            "--detach",
-            "--name", $ContainerName,
-            "--publish", "6333:6333",
-            "--publish", "6334:6334",
-            "--volume", "$($VolumeName):/qdrant/storage"
-        )
-
-        # Execute the command
-        & $EnginePath run @runOptions $ImageName
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to run updated Qdrant container '$ContainerName'."
-        }
-
-        # Wait and Test Connectivity (same as in Install-QdrantContainer)
-        Write-Information "Waiting 20 seconds for the Qdrant container to fully start..."
-        Start-Sleep -Seconds 20
-        Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
-        Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
-        Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
-        Write-Information "Qdrant container updated successfully."
-    }
+    # Previously, a script block was defined here and passed using .GetNewClosure().
+    # .GetNewClosure() creates a copy of the script block that captures the current
+    # state of variables in its scope, ensuring the generic Update-Container function
+    # executes it with the correct context from this script.
+    # We now use a dedicated function (Invoke-StartQdrantForUpdate) instead for better structure.
 
     # Use the shared update function (which supports ShouldProcess)
-    # Note: The ShouldProcess check is handled internally by Update-Container
     Update-Container -Engine $global:enginePath `
                      -ContainerName $global:containerName `
                      -ImageName $global:imageName `
-                     -RunFunction $runContainerFunction.GetNewClosure() # Pass closure
+                     -RunFunction ${function:Invoke-StartQdrantForUpdate} # Pass function reference
 }
 
 <#

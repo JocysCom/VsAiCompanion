@@ -131,9 +131,54 @@ function Restore-NocoDBContainer {
 }
 
 #############################################
+# Function: Invoke-StartNocoDBForUpdate
+# Description: Helper function called by Update-Container to start the NocoDB container after an update.
+#              Encapsulates the logic for ensuring volume, running the container, and testing connectivity.
+# Parameters: Standard parameters expected by Update-Container's -RunFunction.
+# Outputs: Throws an error if the container fails to start.
+#############################################
+function Invoke-StartNocoDBForUpdate {
+    param(
+        [string]$EnginePath,
+        [string]$ContainerEngineType, # Not used
+        [string]$ContainerName,       # Should be $global:containerName
+        [string]$VolumeName,          # Should be $global:volumeName
+        [string]$ImageName            # The updated image name ($global:imageName)
+    )
+
+    # Ensure the volume exists (important if it was removed manually)
+    if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+        throw "Failed to ensure volume '$VolumeName' exists during update."
+    }
+
+    Write-Information "Starting updated NocoDB container '$ContainerName'..."
+
+    # Define run options (same as in Install-NocoDBContainer)
+    $runOptions = @(
+        "--detach",
+        "--publish", "8570:8080",
+        "--volume", "$($VolumeName):/usr/app/data",
+        "--name", $ContainerName
+    )
+
+    # Execute the command
+    & $EnginePath run @runOptions $ImageName
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to run updated NocoDB container '$ContainerName'."
+    }
+
+    # Wait and Test Connectivity (same as in Install-NocoDBContainer)
+    Write-Information "Waiting 20 seconds for container startup..."
+    Start-Sleep -Seconds 20
+    Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $ContainerName
+    Test-HTTPPort -Uri "http://localhost:8570" -serviceName $ContainerName
+    Write-Information "NocoDB container updated successfully."
+}
+
+#############################################
 # Function: Update-NocoDBContainer
-# Description: Updates the NocoDB container by removing the existing one,
-#              pulling the latest image, and reinstalling the container.
+# Description: Updates the NocoDB container using the generic Update-Container function,
+#              passing a reference to the specific 'Invoke-StartNocoDBForUpdate' function.
 #############################################
 function Update-NocoDBContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -144,51 +189,17 @@ function Update-NocoDBContainer {
         return
     }
 
-    # Define Run Function for Update-Container
-    $runContainerFunction = {
-        param(
-            [string]$EnginePath,
-            [string]$ContainerEngineType, # Not used
-            [string]$ContainerName,       # Should be $global:containerName
-            [string]$VolumeName,          # Should be $global:volumeName
-            [string]$ImageName            # The updated image name ($global:imageName)
-        )
-
-        # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-            throw "Failed to ensure volume '$VolumeName' exists during update."
-        }
-
-        Write-Information "Starting updated NocoDB container '$ContainerName'..."
-
-        # Define run options (same as in Install-NocoDBContainer)
-        $runOptions = @(
-            "--detach",
-            "--publish", "8570:8080",
-            "--volume", "$($VolumeName):/usr/app/data",
-            "--name", $ContainerName
-        )
-
-        # Execute the command
-        & $EnginePath run @runOptions $ImageName
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to run updated NocoDB container '$ContainerName'."
-        }
-
-        # Wait and Test Connectivity (same as in Install-NocoDBContainer)
-        Write-Information "Waiting 20 seconds for container startup..."
-        Start-Sleep -Seconds 20
-        Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $ContainerName
-        Test-HTTPPort -Uri "http://localhost:8570" -serviceName $ContainerName
-        Write-Information "NocoDB container updated successfully."
-    }
+    # Previously, a script block was defined here and passed using .GetNewClosure().
+    # .GetNewClosure() creates a copy of the script block that captures the current
+    # state of variables in its scope, ensuring the generic Update-Container function
+    # executes it with the correct context from this script.
+    # We now use a dedicated function (Invoke-StartNocoDBForUpdate) instead for better structure.
 
     # Use the shared update function (which supports ShouldProcess)
-    # Note: The ShouldProcess check is handled internally by Update-Container
     Update-Container -Engine $global:enginePath `
                      -ContainerName $global:containerName `
                      -ImageName $global:imageName `
-                     -RunFunction $runContainerFunction.GetNewClosure() # Pass closure
+                     -RunFunction ${function:Invoke-StartNocoDBForUpdate} # Pass function reference
 }
 
 #############################################
