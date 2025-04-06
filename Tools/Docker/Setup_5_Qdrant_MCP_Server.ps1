@@ -34,7 +34,7 @@ $global:collectionName= "mcp-default-collection" # Default collection name
 
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges # Use renamed function
+    Test-AdminPrivileges
     $global:enginePath = Get-DockerPath
 }
 else {
@@ -51,7 +51,7 @@ else {
 .OUTPUTS
     Returns $true if the source code is present, $false otherwise.
 #>
-function Confirm-SourceCode { # Renamed from Ensure-SourceCode
+function Confirm-SourceCode {
     Test-GitInstallation # Check if Git is available
 
     if (-not (Test-Path $global:srcDir)) {
@@ -112,7 +112,7 @@ function Build-QdrantMCPServerImage {
 #>
 function Install-QdrantMCPServerContainer {
     # Step 1: Ensure source code is available
-    if (-not (Confirm-SourceCode)) { # Renamed function
+    if (-not (Confirm-SourceCode)) {
         return
     }
 
@@ -209,7 +209,7 @@ function Update-QdrantMCPServerContainer {
 
     # Step 1: Update source code
     if ($PSCmdlet.ShouldProcess($global:srcDir, "Pull Git Repository")) {
-        if (-not (Confirm-SourceCode)) { # Renamed function; Ensure-SourceCode also does git pull
+        if (-not (Confirm-SourceCode)) { # Ensure-SourceCode also does git pull
             Write-Error "Failed to update source code. Update aborted."
             return
         }
@@ -238,11 +238,12 @@ function Show-ContainerMenu {
     Write-Output "==========================================="
     Write-Output "Qdrant MCP Server Container Menu"
     Write-Output "==========================================="
-    Write-Output "1. Install/Rebuild container"
-    Write-Output "2. Uninstall container"
-    Write-Output "3. Backup container state"
-    Write-Output "4. Restore container state"
-    Write-Output "5. Update container (Pull source & Rebuild)"
+    Write-Output "1. Show Info & Test Connection"
+    Write-Output "2. Install/Rebuild container"
+    Write-Output "3. Uninstall container"
+    Write-Output "4. Backup container state"
+    Write-Output "5. Restore container state"
+    Write-Output "6. Update container (Pull source & Rebuild)"
     Write-Output "0. Exit menu"
 }
 
@@ -250,11 +251,24 @@ function Show-ContainerMenu {
 # Main Menu Loop using Generic Function
 ################################################################################
 $menuActions = @{
-    "1" = { Install-QdrantMCPServerContainer }
-    "2" = { Uninstall-QdrantMCPServerContainer }
-    "3" = { Backup-QdrantMCPServerContainer }
-    "4" = { Restore-QdrantMCPServerContainer }
-    "5" = { Update-QdrantMCPServerContainer }
+    "1" = {
+        Show-ContainerStatus -ContainerName $global:containerName `
+                             -ContainerEngine $global:containerEngine `
+                             -EnginePath $global:enginePath `
+                             -DisplayName "Qdrant MCP Server" `
+                             -TcpPort 8000 `
+                             # -HttpPort 8000 # Add if server has a root/health endpoint
+                             -AdditionalInfo @{
+                                 "Source Dir" = $global:srcDir;
+                                 "Qdrant URL" = $global:qdrantUrl;
+                                 "Collection" = $global:collectionName
+                             }
+    }
+    "2" = { Install-QdrantMCPServerContainer }
+    "3" = { Uninstall-QdrantMCPServerContainer }
+    "4" = { Backup-QdrantMCPServerContainer }
+    "5" = { Restore-QdrantMCPServerContainer }
+    "6" = { Update-QdrantMCPServerContainer }
 }
 
 Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

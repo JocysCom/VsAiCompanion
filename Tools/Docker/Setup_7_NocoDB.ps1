@@ -28,7 +28,7 @@ $global:containerName = "nocodb"
 $global:volumeName    = "nocodb_data"
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges # Use renamed function
+    Test-AdminPrivileges
     $global:enginePath = Get-DockerPath
     $global:pullOptions = @()  # No additional options for Docker.
 }
@@ -51,7 +51,7 @@ function Install-NocoDBContainer {
     Write-Output "Installing NocoDB container using image '$global:imageName'..."
 
     # Ensure the volume exists
-    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Renamed function
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
         Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
         return
     }
@@ -69,17 +69,17 @@ function Install-NocoDBContainer {
             }
         }
         else {
-            Write-Output "Using restored backup image '$global:imageName'." # Replaced Write-Host
+            Write-Output "Using restored backup image '$global:imageName'."
         }
     }
     else {
-        Write-Output "NocoDB image already exists. Skipping pull." # Replaced Write-Host
+        Write-Output "NocoDB image already exists. Skipping pull."
     }
 
     # Remove any existing container with the same name.
     $existingContainer = & $global:enginePath ps --all --filter "name=^$global:containerName$" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Output "Removing existing container '$global:containerName'..." # Replaced Write-Host
+        Write-Output "Removing existing container '$global:containerName'..."
         & $global:enginePath rm --force $global:containerName
     }
 
@@ -91,19 +91,19 @@ function Install-NocoDBContainer {
         "--name", $global:containerName         # Set container name.
     )
 
-    Write-Output "Starting NocoDB container..." # Replaced Write-Host
+    Write-Output "Starting NocoDB container..."
     & $global:enginePath run $runOptions $global:imageName
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to run NocoDB container."
-        return # Changed exit 1 to return for better menu flow
+        return
     }
 
-    Write-Output "Waiting 20 seconds for container startup..." # Replaced Write-Host
+    Write-Output "Waiting 20 seconds for container startup..."
     Start-Sleep -Seconds 20
     Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $global:containerName
     Test-HTTPPort -Uri "http://localhost:8570" -serviceName $global:containerName
-    Write-Output "NocoDB is now running and accessible at http://localhost:8570" # Replaced Write-Host
-    Write-Output "If accessing NocoDB from another container (e.g. from n8n), use 'http://host.docker.internal:8570' as the URL." # Replaced Write-Host
+    Write-Output "NocoDB is now running and accessible at http://localhost:8570"
+    Write-Output "If accessing NocoDB from another container (e.g. from n8n), use 'http://host.docker.internal:8570' as the URL."
 }
 
 #############################################
@@ -111,7 +111,7 @@ function Install-NocoDBContainer {
 # Description: Removes the NocoDB container and optionally the data volume.
 #############################################
 function Uninstall-NocoDBContainer {
-    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
+    Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 }
 
 #############################################
@@ -119,7 +119,7 @@ function Uninstall-NocoDBContainer {
 # Description: Backs up the live NocoDB container.
 #############################################
 function Backup-NocoDBContainer {
-    Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
+    Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
 #############################################
@@ -127,7 +127,7 @@ function Backup-NocoDBContainer {
 # Description: Restores the NocoDB container from a backup.
 #############################################
 function Restore-NocoDBContainer {
-    Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
+    Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
 #############################################
@@ -136,7 +136,7 @@ function Restore-NocoDBContainer {
 #              pulling the latest image, and reinstalling the container.
 #############################################
 function Update-NocoDBContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     # Check ShouldProcess before proceeding with the delegated update
@@ -155,7 +155,7 @@ function Update-NocoDBContainer {
         )
 
         # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) { # Renamed function
+        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
             throw "Failed to ensure volume '$VolumeName' exists during update."
         }
 
@@ -196,26 +196,35 @@ function Update-NocoDBContainer {
 # Description: Displays the main menu for NocoDB container management.
 #############################################
 function Show-ContainerMenu {
-    Write-Output "===========================================" # Replaced Write-Host
-    Write-Output "NocoDB Container Management Menu" # Replaced Write-Host
-    Write-Output "===========================================" # Replaced Write-Host
-    Write-Output "1. Install container" # Replaced Write-Host
-    Write-Output "2. Uninstall container" # Replaced Write-Host
-    Write-Output "3. Backup container" # Replaced Write-Host
-    Write-Output "4. Restore container" # Replaced Write-Host
-    Write-Output "5. Update container" # Replaced Write-Host
-    Write-Output "0. Exit menu" # Replaced Write-Host
+    Write-Output "==========================================="
+    Write-Output "NocoDB Container Management Menu"
+    Write-Output "==========================================="
+    Write-Output "1. Show Info & Test Connection"
+    Write-Output "2. Install container"
+    Write-Output "3. Uninstall container"
+    Write-Output "4. Backup container"
+    Write-Output "5. Restore container"
+    Write-Output "6. Update container"
+    Write-Output "0. Exit menu"
 }
 
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
 $menuActions = @{
-    "1" = { Install-NocoDBContainer }
-    "2" = { Uninstall-NocoDBContainer }
-    "3" = { Backup-NocoDBContainer }
-    "4" = { Restore-NocoDBContainer }
-    "5" = { Update-NocoDBContainer }
+    "1" = {
+        Show-ContainerStatus -ContainerName $global:containerName `
+                             -ContainerEngine $global:containerEngine `
+                             -EnginePath $global:enginePath `
+                             -DisplayName "NocoDB" `
+                             -TcpPort 8570 `
+                             -HttpPort 8570
+    }
+    "2" = { Install-NocoDBContainer }
+    "3" = { Uninstall-NocoDBContainer }
+    "4" = { Backup-NocoDBContainer }
+    "5" = { Restore-NocoDBContainer }
+    "6" = { Update-NocoDBContainer }
 }
 
 Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

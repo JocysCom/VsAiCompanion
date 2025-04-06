@@ -17,7 +17,7 @@ $diskLocation = ""      # Default disk location (empty means use default user pr
 . "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Test-WSLStatus
 
 # Optionally ensure the script is running as Administrator and set the working directory.
-#Test-AdminPrivileges # Use renamed function if needed
+#Test-AdminPrivileges
 Set-ScriptLocation
 
 # Ensure the script stops immediately if any error occurs.
@@ -100,7 +100,7 @@ function CheckPodmanMachineRunning {
 # Returns: $true if Podman Desktop is installed, $false otherwise.
 #############################################
 function CheckPodmanDesktopInstalled {
-    return (Test-ApplicationInstalled "Podman Desktop") # Use renamed function
+    return (Test-ApplicationInstalled "Podman Desktop")
 }
 
 #############################################
@@ -221,14 +221,14 @@ function Install-PodmanCLI {
 
     # Download the installer
     $exePath = Join-Path $downloadFolder "podman-5.4.0-setup.exe"
-    Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath # Use renamed function
+    Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath
 
     # Launch the installer
     Write-Output "Launching Podman installer..."
     Start-Process -FilePath $exePath -Wait
 
     # Refresh environment variables so that the new installation can be located
-    Update-EnvironmentVariable # Use renamed function
+    Update-EnvironmentVariable
 
     # Verify installation
     if (CheckPodmanCliAvailable) {
@@ -306,7 +306,7 @@ function Select-DiskLocation {
 #############################################
 function Initialize-PodmanMachine {
     # Ensure that WSL and required Windows features are enabled
-    Test-WSLStatus # Use renamed function
+    Test-WSLStatus
 
     # Verify a Linux distribution is installed via WSL
     Write-Output "Verifying that a Linux distribution is installed via wsl.exe..."
@@ -322,7 +322,7 @@ function Initialize-PodmanMachine {
 
     # Execute the command to create the machine
     Write-Output "Executing: podman $($initArgs -join ' ')"
-    $initOutput = & podman @initArgs 2>&1 # Replaced Invoke-Expression
+    $initOutput = & podman @initArgs 2>&1
     Write-Output $initOutput
 
     if ($LASTEXITCODE -ne 0) {
@@ -407,7 +407,7 @@ function Move-PodmanMachineImage {
     $destinationDrive = [System.IO.Path]::GetPathRoot($DestinationPath)
     # Extract just the drive letter with colon (e.g., "D:")
     $driveLetter = $destinationDrive.Substring(0, 2)
-    $freeSpace = (Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='$driveLetter'").FreeSpace # Replaced Get-WmiObject
+    $freeSpace = (Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='$driveLetter'").FreeSpace
     $freeSpaceGB = [math]::Round($freeSpace / 1GB, 2)
     Write-Output "Free space on destination drive ($driveLetter): $freeSpaceGB GB"
 
@@ -564,7 +564,7 @@ function Move-PodmanMachineImage {
 # This boots the Linux OS in the VHDX file using WSL2.
 #############################################
 function Start-PodmanMachine {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [string]$MachineName = "default"
     )
@@ -651,7 +651,6 @@ function Install-PodmanService {
 
     # Create startup batch file with more robust startup logic
     $batchFilePath = Join-Path $destinationFolder "start-podman.bat"
-    # Corrected Here-String syntax and content
     $batchContent = @"
 @echo off
 echo [%date% %time%] Podman machine startup service triggered >> "%TEMP%\podman-service.log"
@@ -751,7 +750,7 @@ function Install-PodmanDesktop {
 
     # Download the installer
     $exePath = Join-Path $downloadFolder "podman-desktop-1.16.2-setup-x64.exe"
-    Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath # Use renamed function
+    Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath
 
     # Launch the installer without waiting
     Write-Output "Launching Podman Desktop installer..."
@@ -786,7 +785,7 @@ function Install-PodmanDesktop {
 # Stops and removes the Podman service if it exists.
 #############################################
 function Remove-PodmanService {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     $serviceName = "PodmanMachineStart"
@@ -820,8 +819,8 @@ function Remove-PodmanService {
 # Function: Remove-PodmanComponent
 # Provides options to remove various Podman components.
 #############################################
-function Remove-PodmanComponent { # Renamed function
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+function Remove-PodmanComponent {
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     Write-Output "Select component to remove:"
@@ -907,8 +906,8 @@ Write-Output "7) Remove Podman Components"
 Write-Output "   - Options to remove service, machine, or uninstall software"
 Write-Output "=================================================="
 
-$installOption = Read-Host "Enter your choice (1-7). Default is 1 if empty" # Updated range and default
-if ([string]::IsNullOrEmpty($installOption)) { $installOption = "1" } # Updated default
+$installOption = Read-Host "Enter your choice (1-7). Default is 1 if empty"
+if ([string]::IsNullOrEmpty($installOption)) { $installOption = "1" }
 
 switch ($installOption) {
     "1" {
@@ -937,7 +936,7 @@ switch ($installOption) {
         Install-PodmanService
     }
     "7" {
-        Remove-PodmanComponent # Use renamed function
+        Remove-PodmanComponent
     }
     default {
         Write-Error "Invalid selection. Exiting."

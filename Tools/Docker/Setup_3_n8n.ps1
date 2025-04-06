@@ -10,7 +10,10 @@
 
 using namespace System
 using namespace System.IO
-using namespace System.Diagnostics.CodeAnalysis # Added for SuppressMessageAttribute
+using namespace System.Diagnostics.CodeAnalysis
+
+# Set Information Preference to show Write-Information messages by default
+$InformationPreference = 'Continue'
 
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
@@ -30,7 +33,7 @@ $global:containerName = "n8n"
 $global:volumeName    = "n8n_data"
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges # Use renamed function
+    Test-AdminPrivileges
     $global:enginePath    = Get-DockerPath
     $global:pullOptions   = @()  # No extra options needed for Docker.
     $global:imageName     = "docker.n8n.io/n8nio/n8n:latest"
@@ -119,8 +122,8 @@ function Get-n8nContainerConfig {
     Returns $true if successful, $false otherwise.
 #>
 function Remove-n8nContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
-    [OutputType([bool])] # Added OutputType
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
     param()
 
     $existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
@@ -160,8 +163,8 @@ function Remove-n8nContainer {
     Returns $true if successful, $false otherwise.
 #>
 function Start-n8nContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
-    [OutputType([bool])] # Added OutputType
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Image,
@@ -226,7 +229,7 @@ function Start-n8nContainer {
 #>
 function Install-n8nContainer {
     # Ensure the volume exists
-    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Renamed function
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
         Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
         return
     }
@@ -356,7 +359,7 @@ function Restore-n8nContainer {
     Uses the generic Update-Container function to handle the update process.
 #>
 function Update-n8nContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     # Define the script block that knows how to run *this specific* container
@@ -366,17 +369,17 @@ function Update-n8nContainer {
             # The following parameters are part of the standard signature for Update-Container's script block,
             # but are not directly used in this specific implementation as it relies on global variables
             # or calls Start-n8nContainer which uses globals.
-            [SuppressMessageAttribute("PSReviewUnusedParameter", "")] # Suppress warning for this parameter
+            [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
             [string]$ContainerEngineType,
-            [SuppressMessageAttribute("PSReviewUnusedParameter", "")] # Suppress warning for this parameter
+            [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
             [string]$ContainerName,
-            [SuppressMessageAttribute("PSReviewUnusedParameter", "")] # Suppress warning for this parameter
+            [SuppressMessageAttribute("PSReviewUnusedParameter", "")]
             [string]$VolumeName,
             [string]$ImageName            # The updated image name passed by Update-Container
         )
 
         # Ensure the volume exists (important if it was removed manually)
-        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) { # Renamed function
+        if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
             throw "Failed to ensure volume '$VolumeName' exists during update."
         }
 
@@ -417,7 +420,7 @@ function Update-n8nContainer {
     This functionality is not yet implemented.
 #>
 function Update-n8nUserData {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     if ($PSCmdlet.ShouldProcess("n8n container user data", "Update")) {
@@ -435,7 +438,7 @@ function Update-n8nUserData {
     all user data while allowing configuration changes.
 #>
 function Restart-n8nContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     # Get current container configuration
@@ -470,13 +473,14 @@ function Show-ContainerMenu {
     Write-Output "==========================================="
     Write-Output "n8n Container Menu"
     Write-Output "==========================================="
-    Write-Output "1. Install container"
-    Write-Output "2. Uninstall container (preserves user data)"
-    Write-Output "3. Backup Live container"
-    Write-Output "4. Restore Live container"
-    Write-Output "5. Update System"
-    Write-Output "6. Update User Data"
-    Write-Output "7. Restart with Community Packages Enabled"
+    Write-Output "1. Show Info & Test Connection"
+    Write-Output "2. Install container"
+    Write-Output "3. Uninstall container (preserves user data)"
+    Write-Output "4. Backup Live container"
+    Write-Output "5. Restore Live container"
+    Write-Output "6. Update System"
+    Write-Output "7. Update User Data"
+    Write-Output "8. Restart with Community Packages Enabled"
     Write-Output "0. Exit menu"
 }
 
@@ -484,13 +488,21 @@ function Show-ContainerMenu {
 # Main Menu Loop using Generic Function
 ################################################################################
 $menuActions = @{
-    "1" = { Install-n8nContainer }
-    "2" = { Uninstall-n8nContainer }
-    "3" = { Backup-n8nContainer }
-    "4" = { Restore-n8nContainer }
-    "5" = { Update-n8nContainer }
-    "6" = { Update-n8nUserData }
-    "7" = { Restart-n8nContainer }
+    "1" = {
+        Show-ContainerStatus -ContainerName $global:containerName `
+                             -ContainerEngine $global:containerEngine `
+                             -EnginePath $global:enginePath `
+                             -DisplayName "n8n" `
+                             -TcpPort 5678 `
+                             -HttpPort 5678
+    }
+    "2" = { Install-n8nContainer }
+    "3" = { Uninstall-n8nContainer }
+    "4" = { Backup-n8nContainer }
+    "5" = { Restore-n8nContainer }
+    "6" = { Update-n8nContainer }
+    "7" = { Update-n8nUserData }
+    "8" = { Restart-n8nContainer }
 }
 
 Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

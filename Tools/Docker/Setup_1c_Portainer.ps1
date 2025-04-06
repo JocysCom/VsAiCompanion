@@ -1,5 +1,5 @@
 ################################################################################
-# File         : Setup_1c_Portainer.ps1 # Corrected file name in header
+# File         : Setup_1c_Portainer.ps1
 # Description  : Script to set up and run Portainer container using Docker/Podman.
 #                Provides installation, uninstallation, backup, restore, and
 #                update functionality for Portainer - a lightweight web UI for
@@ -26,7 +26,7 @@ Set-ScriptLocation
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivileges # Use renamed function
+    Test-AdminPrivileges
     $global:enginePath    = Get-DockerPath
     $global:pullOptions   = @()  # No extra options needed for Docker.
     $global:imageName     = "portainer/portainer-ce:latest"
@@ -91,8 +91,8 @@ function Get-PortainerContainerConfig {
     Returns $true if successful, $false otherwise.
 #>
 function Remove-PortainerContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
-    [OutputType([bool])] # Added OutputType
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    [OutputType([bool])]
     param()
 
     $existingContainer = & $global:enginePath ps --all --filter "name=portainer" --format "{{.ID}}"
@@ -117,7 +117,7 @@ function Remove-PortainerContainer {
     } else {
         return $false # Action skipped due to -WhatIf
     }
-} # Corrected closing brace
+}
 
 <#
 .SYNOPSIS
@@ -132,7 +132,7 @@ function Remove-PortainerContainer {
     Returns $true if successful, $false otherwise.
 #>
 function Start-PortainerContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [Parameter(Mandatory=$true)]
         [string]$Image,
@@ -206,7 +206,7 @@ function Start-PortainerContainer {
     } else {
         return $false # Action skipped due to -WhatIf
     }
-} # Corrected closing brace
+}
 
 <#
 .SYNOPSIS
@@ -219,14 +219,14 @@ function Start-PortainerContainer {
 #>
 function Install-PortainerContainer {
     # Ensure the volume exists
-    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName "portainer_data")) { # Renamed function
+    if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName "portainer_data")) {
         Write-Error "Failed to ensure volume 'portainer_data' exists. Exiting..."
         return
     }
     Write-Output "IMPORTANT: Using volume 'portainer_data' - existing user data will be preserved."
 
     # Check if the Portainer image is already available.
-    $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}" # More reliable check
+    $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
     if (-not $existingImage) {
         if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
             Write-Output "No backup restored. Pulling Portainer image '$global:imageName'..."
@@ -282,7 +282,7 @@ function Restore-PortainerContainer {
     Updates the Portainer container to the latest version while preserving all user data and configuration.
 #>
 function Update-PortainerContainer {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     # Step 1: Check if container exists and get its configuration
@@ -357,11 +357,12 @@ function Show-ContainerMenu {
     Write-Output "==========================================="
     Write-Output "Portainer Container Menu"
     Write-Output "==========================================="
-    Write-Output "1. Install container"
-    Write-Output "2. Uninstall container (preserves user data)"
-    Write-Output "3. Backup Live container"
-    Write-Output "4. Restore Live container"
-    Write-Output "5. Update container"
+    Write-Output "1. Show Info & Test Connection"
+    Write-Output "2. Install container"
+    Write-Output "3. Uninstall container (preserves user data)"
+    Write-Output "4. Backup Live container"
+    Write-Output "5. Restore Live container"
+    Write-Output "6. Update container"
     Write-Output "0. Exit menu"
 }
 
@@ -369,11 +370,20 @@ function Show-ContainerMenu {
 # Main Menu Loop using Generic Function
 ################################################################################
 $menuActions = @{
-    "1" = { Install-PortainerContainer }
-    "2" = { Uninstall-PortainerContainer }
-    "3" = { Backup-PortainerContainer }
-    "4" = { Restore-PortainerContainer }
-    "5" = { Update-PortainerContainer }
+    "1" = {
+        # Pass the global variable directly to the restored -ContainerEngine parameter
+        Show-ContainerStatus -ContainerName "portainer" `
+                             -ContainerEngine $global:containerEngine `
+                             -EnginePath $global:enginePath `
+                             -DisplayName "Portainer" `
+                             -TcpPort $global:httpPort `
+                             -HttpPort $global:httpPort
+    }
+    "2" = { Install-PortainerContainer }
+    "3" = { Uninstall-PortainerContainer }
+    "4" = { Backup-PortainerContainer }
+    "5" = { Restore-PortainerContainer }
+    "6" = { Update-PortainerContainer }
 }
 
 Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"

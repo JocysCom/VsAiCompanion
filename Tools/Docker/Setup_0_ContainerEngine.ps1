@@ -52,10 +52,15 @@ function Get-PodmanPath {
 # Function: Select-ContainerEngine prompts the user to choose Docker or Podman.
 #------------------------------
 function Select-ContainerEngine {
-    Write-Output "Select container engine:"
-    Write-Output "1) Docker"
-    Write-Output "2) Podman"
-    $selection = Read-Host "Enter your choice (1 or 2, default is 1)"
+    [OutputType([string])] # Explicitly declare return type as string
+    param() # Add empty param block for OutputType attribute
+
+    # Use Write-Information for prompts so they don't pollute the output stream and are controllable
+    Write-Information "Select container engine:"
+    Write-Information "1) Docker"
+    Write-Information "2) Podman"
+    # Make the prompt more descriptive
+    $selection = Read-Host "Select Container Engine (1=Docker, 2=Podman, default=1)"
     if ([string]::IsNullOrWhiteSpace($selection)) {
         $selection = "1"
     }
@@ -63,7 +68,8 @@ function Select-ContainerEngine {
         "1" { return "docker" }
         "2" { return "podman" }
         default {
-            Write-Output "Invalid selection, defaulting to Docker."
+            # Use Write-Information for prompts so they don't pollute the output stream and are controllable
+            Write-Information "Invalid selection, defaulting to Docker."
             return "docker"
         }
     }

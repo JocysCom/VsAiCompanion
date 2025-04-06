@@ -19,7 +19,7 @@ function Test-TCPPort {
         [int] $Port,
         [Parameter(Mandatory=$true)]
         [string] $serviceName,
-        [int] $TimeoutMilliseconds = 5000  # Added configurable timeout
+        [int] $TimeoutMilliseconds = 5000
     )
 
     try {
@@ -33,7 +33,8 @@ function Test-TCPPort {
             if (-not $ip) {
                 throw "No IP address could be found for $ComputerName."
             }
-            Write-Output "Using IPv6 address for connection test: $ip" # Removed ForegroundColor Yellow
+            # Use Write-Information for status messages
+            Write-Information "Using IPv6 address for connection test: $ip"
         }
 
         $client = New-Object System.Net.Sockets.TcpClient
@@ -41,7 +42,8 @@ function Test-TCPPort {
         $connected = $async.AsyncWaitHandle.WaitOne($TimeoutMilliseconds, $false)
 
         if ($connected -and $client.Connected) {
-            Write-Output "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
+            # Use Write-Information for status messages
+            Write-Information "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
             $client.Close()
             return $true
         } else {
@@ -69,7 +71,8 @@ function Test-HTTPPort {
     try {
         $response = Invoke-WebRequest -Uri $Uri -UseBasicParsing -TimeoutSec 15
         if ($response.StatusCode -eq 200) {
-            Write-Output "$serviceName HTTP test succeeded at $Uri."
+            # Use Write-Information for status messages
+            Write-Information "$serviceName HTTP test succeeded at $Uri."
             return $true
         }
         else {
@@ -107,7 +110,8 @@ function Test-WebSocketPort {
 
         # Wait for 5 seconds max
         if ([System.Threading.Tasks.Task]::WaitAll(@($task), 5000)) {
-            Write-Output "$serviceName WebSocket test succeeded at $Uri."
+            # Use Write-Information for status messages
+            Write-Information "$serviceName WebSocket test succeeded at $Uri."
             $client.Dispose()
             return $true
         }

@@ -49,26 +49,27 @@ CI - Check Image Update Available (Checks if a newer version of a container imag
 CW - Check WSL Status (Verifies WSL installation and required service status).
 ML - Menu Loop (Uses the generic Invoke-MenuLoop function).
 RM - Remove Container (Uses the generic Remove-ContainerAndVolume function).
+ST - Show/Test Status (Displays container info, status, and tests connectivity using Show-ContainerStatus).
 
-| Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM |
-|--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
-| Setup_0_\*.ps1                       | HE |    |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM |
+| Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
+|--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| Setup_0_\*.ps1                       | HE |    |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
 | Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW |    |    |
 | Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW |    |    |
 | Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME |    | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    | RS | RV |    | CW | ML | RM |
 | Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |    |    |
 | Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    | ML |    |
 | Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    |    |    |    |    |    | SE |    |    |    |    | BC |    | RC |    |    |    |    |    | ML |    |
-| Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
-| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL | DF |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
-| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI | CW | ML | RM |
-| Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
-| Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
-| Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
-| Setup_5_Qdrant_MCP_Server.ps1        | HE | SR | CS | IM | ME | EL | SL |    | CG | GP | PP | SE |    | TC |    |    |    | BS |    | UP | RS |    |    |    | ML | RM |
-| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    |    |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM |
+| Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL | DF |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI | CW | ML | RM | ST |
+| Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_5_Qdrant_MCP_Server.ps1        | HE | SR | CS | IM | ME | EL | SL |    | CG | GP | PP | SE |    | TC |    |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
+| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    |    |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM | ST |
 | Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM |
+| Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
 
 ## Feature requirements
 
@@ -204,3 +205,31 @@ Scripts should use the generic `Remove-ContainerAndVolume` function from `Setup_
 function Uninstall-SpecificContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "specific-container" -VolumeName "specific-volume"
 }
+
+### ST - Show/Test Status
+
+Scripts implementing this feature provide a menu option (typically '1') to display the container's current status and test its connectivity. This is achieved by calling the `Show-ContainerStatus` function from `Setup_0_ContainerMgmt.ps1`.
+
+**Requirements:**
+*   The script must dot-source `Setup_0_ContainerMgmt.ps1`.
+*   If network tests (TCP, HTTP, WS) are included in the status check, `Setup_0_Network.ps1` must also be dot-sourced *before* `Setup_0_ContainerMgmt.ps1`.
+*   The `Show-ContainerMenu` function must be updated to include the "Show Info & Test Connection" option, and subsequent options must be renumbered.
+*   The `$menuActions` hashtable must be updated to map the corresponding menu choice (e.g., "1") to a script block that calls `Show-ContainerStatus`.
+*   The call to `Show-ContainerStatus` should pass the necessary parameters, typically using the script's global variables for `$ContainerName`, `$ContainerEngine`, `$EnginePath`, and specific ports/paths/additional info relevant to the container being managed.
+
+**Example (`$menuActions` entry):**
+```PowerShell
+$menuActions = @{
+    "1" = {
+        Show-ContainerStatus -ContainerName $global:containerName `
+                             -ContainerEngine $global:containerEngine `
+                             -EnginePath $global:enginePath `
+                             -DisplayName "Specific Container" `
+                             -TcpPort [TCP_PORT] `
+                             -HttpPort [HTTP_PORT] `
+                             # -WsPort [WS_PORT] ` # Optional
+                             # -AdditionalInfo @{ "Key" = "Value" } # Optional
+    }
+    # ... other renumbered actions ...
+}
+```

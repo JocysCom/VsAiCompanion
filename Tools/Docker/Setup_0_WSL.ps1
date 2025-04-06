@@ -10,8 +10,9 @@
 # WSL and Service Health Functions
 #############################################
 
-function Test-WSLStatus { # Renamed function
-    Write-Output "Verifying WSL installation and required service status..."
+function Test-WSLStatus {
+    # Use Write-Information for status messages
+    Write-Information "Verifying WSL installation and required service status..."
 
     # Check if the wsl command is available
     if (!(Get-Command wsl -ErrorAction SilentlyContinue)) {
@@ -21,7 +22,8 @@ function Test-WSLStatus { # Renamed function
 
     # Check WSL version - we need WSL2
     $wslVersionInfo = wsl --version 2>&1
-    Write-Output "WSL Version Info:`n$wslVersionInfo"
+    # Use Write-Information for status messages
+    Write-Information "WSL Version Info:`n$wslVersionInfo"
 
     # Check if running WSL 2
     $wslVersion = wsl --status | Select-String -Pattern "Default Version: (\d+)" | ForEach-Object { $_.Matches.Groups[1].Value }
@@ -35,7 +37,8 @@ function Test-WSLStatus { # Renamed function
                  Write-Error "Failed to set WSL 2 as default. Please do this manually."
                  exit 1
              }
-             Write-Output "WSL 2 has been set as the default." # Removed ForegroundColor Green
+             # Use Write-Information for status messages
+             Write-Information "WSL 2 has been set as the default."
          } else {
              Write-Error "WSL 2 is required but not set as default. Exiting."
             exit 1
@@ -48,9 +51,11 @@ function Test-WSLStatus { # Renamed function
          Write-Warning "The Microsoft-Windows-Subsystem-Linux feature is not enabled."
           $choice = Read-Host "Do you want to enable it automatically? (Y/N)"
           if ($choice -and $choice.ToUpper() -eq "Y") {
-              Write-Output "Enabling WSL feature..."
+              # Use Write-Information for status messages
+              Write-Information "Enabling WSL feature..."
               dism.exe /Online /Enable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /All /NoRestart | Out-Null
-              Write-Output "WSL feature enabled. A system restart may be required to activate changes."
+              # Use Write-Information for status messages
+              Write-Information "WSL feature enabled. A system restart may be required to activate changes."
           } else {
               Write-Error "The Microsoft-Windows-Subsystem-Linux feature is required. Exiting."
              exit 1
@@ -63,14 +68,17 @@ function Test-WSLStatus { # Renamed function
          Write-Warning "The VirtualMachinePlatform feature is not enabled."
           $choice = Read-Host "Do you want to enable it automatically? (Y/N)"
           if ($choice -and $choice.ToUpper() -eq "Y") {
-              Write-Output "Enabling VirtualMachinePlatform feature..."
+              # Use Write-Information for status messages
+              Write-Information "Enabling VirtualMachinePlatform feature..."
               dism.exe /Online /Enable-Feature /FeatureName:VirtualMachinePlatform /All /NoRestart | Out-Null
-              Write-Output "VirtualMachinePlatform feature enabled. A system restart may be required to activate changes."
+              # Use Write-Information for status messages
+              Write-Information "VirtualMachinePlatform feature enabled. A system restart may be required to activate changes."
           } else {
               Write-Error "The VirtualMachinePlatform feature is required. Exiting."
              exit 1
           }
      }
 
-     Write-Output "WSL and required Windows features are enabled."
+     # Use Write-Information for status messages
+     Write-Information "WSL and required Windows features are enabled."
  }

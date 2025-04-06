@@ -15,7 +15,7 @@
 # Function: Test-AdminPrivileges
 # Description: Verify administrator privileges and exit if not elevated.
 #------------------------------
-function Test-AdminPrivileges { # Renamed function
+function Test-AdminPrivileges {
     if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
          Write-Error "Administrator privileges required. Please run this script as an Administrator."
          exit 1
@@ -27,7 +27,7 @@ function Test-AdminPrivileges { # Renamed function
 # Description: Set the script's working directory to the directory containing the script.
 #------------------------------
 function Set-ScriptLocation {
-    [CmdletBinding(SupportsShouldProcess=$true)] # Added SupportsShouldProcess
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
     if ($PSScriptRoot -and $PSScriptRoot -ne "") {
@@ -39,11 +39,13 @@ function Set-ScriptLocation {
     if ($scriptPath) {
         if ($PSCmdlet.ShouldProcess($scriptPath, "Set Location")) {
             Set-Location $scriptPath
-            Write-Output "Script Path set to: $scriptPath"
+            # Use Write-Information for status messages
+            Write-Information "Script Path set to: $scriptPath"
         }
     }
     else {
-        Write-Output "Script Path not found. Current directory remains unchanged."
+        # Use Write-Information for status messages
+        Write-Information "Script Path not found. Current directory remains unchanged."
     }
 }
 
@@ -52,7 +54,7 @@ function Set-ScriptLocation {
 # Description: Generic download function using Start-BitsTransfer (with fallback to Invoke-WebRequest).
 # Supports both -SourceUrl and -url as parameter aliases.
 #------------------------------
-function Invoke-DownloadFile { # Renamed function
+function Invoke-DownloadFile {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -61,20 +63,23 @@ function Invoke-DownloadFile { # Renamed function
         [Parameter(Mandatory=$true)]
         [string]$DestinationPath,
         [switch]$ForceDownload,  # Optional switch to force re-download
-        [switch]$UseFallback     # New parameter to force fallback method
+        [switch]$UseFallback
     )
 
     if ((Test-Path $DestinationPath) -and (-not $ForceDownload)) {
-        Write-Output "File already exists at $DestinationPath. Skipping download."
+        # Use Write-Information for status messages
+        Write-Information "File already exists at $DestinationPath. Skipping download."
         return
     }
 
     # Check if BITS is available or if fallback is requested
     if ((Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) -and (-not $UseFallback)) {
-        Write-Output "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
+        # Use Write-Information for status messages
+        Write-Information "Downloading file from $SourceUrl to $DestinationPath using Start-BitsTransfer..."
         try {
             Start-BitsTransfer -Source $SourceUrl -Destination $DestinationPath
-            Write-Output "Download succeeded: $DestinationPath" # Removed ForegroundColor Green
+            # Use Write-Information for status messages
+            Write-Information "Download succeeded: $DestinationPath"
             return
         }
         catch {
@@ -84,11 +89,13 @@ function Invoke-DownloadFile { # Renamed function
 
     # Fallback to Invoke-WebRequest
     try {
-        Write-Output "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
+        # Use Write-Information for status messages
+        Write-Information "Downloading file from $SourceUrl to $DestinationPath using Invoke-WebRequest..."
         $ProgressPreference = 'SilentlyContinue'  # Speeds up Invoke-WebRequest significantly
         Invoke-WebRequest -Uri $SourceUrl -OutFile $DestinationPath -UseBasicParsing
         $ProgressPreference = 'Continue'  # Restore default
-        Write-Output "Download succeeded: $DestinationPath" # Removed ForegroundColor Green
+        # Use Write-Information for status messages
+        Write-Information "Download succeeded: $DestinationPath"
     }
     catch {
         Write-Error "Failed to download file from $SourceUrl. Error details: $_"
@@ -100,9 +107,10 @@ function Invoke-DownloadFile { # Renamed function
 # Function: Test-GitInstallation
 # Description: Check for Git installation and add to PATH if needed from common VS locations.
 #------------------------------
-function Test-GitInstallation { # Renamed function
+function Test-GitInstallation {
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        Write-Output "Git command not found in PATH. Attempting to locate Git via common installation paths..."
+        # Use Write-Information for status messages
+        Write-Information "Git command not found in PATH. Attempting to locate Git via common installation paths..."
         $possibleGitPaths = @(
             "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd",
             "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd"
@@ -110,7 +118,8 @@ function Test-GitInstallation { # Renamed function
         foreach ($path in $possibleGitPaths) {
             if (Test-Path $path) {
                 $env:Path += ";" + $path
-                Write-Output "Added Git path: $path"
+                # Use Write-Information for status messages
+                Write-Information "Added Git path: $path"
                 break
             }
         }
@@ -161,7 +170,7 @@ function Test-ApplicationInstalled {
         }
     }
     catch {
-        Write-Warning "Get-Package check failed for '$AppName': $_" # Added warning to empty catch
+        Write-Warning "Get-Package check failed for '$AppName': $_"
     }
 
     # Not found by any method
@@ -172,7 +181,7 @@ function Test-ApplicationInstalled {
 # Function: Update-EnvironmentVariable
 # Description: Refreshes specific environment variables (like PATH) in the current session.
 #############################################
-function Update-EnvironmentVariable { # Renamed function
+function Update-EnvironmentVariable {
     <#
     .SYNOPSIS
       Refreshes the current session's PATH environment variable.
@@ -184,8 +193,9 @@ function Update-EnvironmentVariable { # Renamed function
     $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
     $userPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
     $env:PATH = "$machinePath;$userPath"
-    Write-Output "Environment variables refreshed. Current PATH:"
-    Write-Output $env:PATH
+    # Use Write-Information for status messages
+    Write-Information "Environment variables refreshed. Current PATH:"
+    Write-Information $env:PATH
 }
 
 #############################################
@@ -214,21 +224,23 @@ function Invoke-MenuLoop {
 
         if ($ActionMap.ContainsKey($choice)) {
             try {
-                & $ActionMap[$choice]
+                . $ActionMap[$choice] # Use dot sourcing to execute in current scope
             }
             catch {
                 Write-Error "An error occurred executing action for choice '$choice': $_"
             }
         }
         elseif ($choice -eq $ExitChoice) {
-            Write-Output "Exiting menu."
+            # Use Write-Information for status messages
+            Write-Information "Exiting menu."
         }
         else {
             Write-Warning "Invalid selection."
         }
 
         if ($choice -ne $ExitChoice) {
-             Write-Output "`nPress any key to continue..."
+             # Use Write-Information for status messages
+             Write-Information "`nPress any key to continue..."
              $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
              Clear-Host
         }
