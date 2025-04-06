@@ -153,7 +153,7 @@ try {
     }
 
     ############################################################################
-    # 5) Compare repeated lines for high similarity (threshold ≥ 0.9).
+    # 5) Compare repeated lines for high similarity (threshold = 0.9).
     ############################################################################
     Write-Information "`nComparing repeated lines for consistency..."
     $repeatIndices = @(0, 2, 5)

@@ -41,12 +41,12 @@ if ($null -ne $vm) {
 Write-Information "---------------------------------------------"
 
 # Display menu options
-Write-Host ""
-Write-Host "Options:"
-Write-Host "1 - Initialize (or re-register) the Podman machine with existing data"
-Write-Host "2 - Start the Podman machine (if registered)"
-Write-Host "3 - Stop the Podman machine (if running)"
-Write-Host "4 - Start the Hyper-V VM (if it exists and is off)"
+Write-Information ""
+Write-Information "Options:"
+Write-Information "1 - Initialize (or re-register) the Podman machine with existing data"
+Write-Information "2 - Start the Podman machine (if registered)"
+Write-Information "3 - Stop the Podman machine (if running)"
+Write-Information "4 - Start the Hyper-V VM (if it exists and is off)"
 $choice = Read-Host "Enter your choice (1, 2, 3, or 4)"
 
 switch ($choice) {

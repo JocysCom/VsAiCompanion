@@ -61,7 +61,7 @@ function Select-ContainerEngine {
     Write-Information "1. Docker"
     Write-Information "2. Podman"
     # Use a simpler prompt
-    $selection = Read-Host "Select Container Engine:"
+    $selection = Read-Host "Select Container Engine"
 
     # Check if input is empty or whitespace, return null to signal exit
     if ([string]::IsNullOrWhiteSpace($selection)) {

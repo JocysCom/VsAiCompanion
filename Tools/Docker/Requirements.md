@@ -161,21 +161,21 @@ Scripts providing Backup, Restore, and Update functionality via the menu should 
 
 ### ME - Menu Display Function
 
-Scripts with a menu must define a `Show-ContainerMenu` function that displays the available options clearly. The standard menu should include Install, Uninstall, Backup, Restore, Update System, Update User Data (if applicable), and Exit.
+Scripts with a menu must define a `Show-ContainerMenu` function that displays the available options clearly. The standard menu should include Install, Uninstall, Backup, Restore, Update System, Update User Data (if applicable), and Exit. `Exit` and similar options must be assigned to `0`.
 
 ```PowerShell
 function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "[Specific Container Name] Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update System"
-    # Write-Host "6. Update User Data" # Optional
-    # Write-Host "[Letter]. [Custom Action]" # Optional custom actions
-    Write-Host "0. Exit menu"
+    Write-Information "==========================================="
+    Write-Information "[Specific Container Name] Menu"
+    Write-Information "==========================================="
+    Write-Information "1. Install container"
+    Write-Information "2. Uninstall container"
+    Write-Information "3. Backup Live container"
+    Write-Information "4. Restore Live container"
+    Write-Information "5. Update System"
+    # Write-Information "6. Update User Data" # Optional
+    # Write-Information "[Letter]. [Custom Action]" # Optional custom actions
+    Write-Information "0. Exit menu"
 }
 ```
 

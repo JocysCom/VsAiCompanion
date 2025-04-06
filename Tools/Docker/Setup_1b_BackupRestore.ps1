@@ -14,12 +14,12 @@ using namespace System.IO
 
 # Function: Show-MainMenu displays backup/restore options.
 function Show-MainMenu {
-	Write-Host "==========================================="
-    Write-Host "Container Images Backup and Restore Menu"
-	Write-Host "==========================================="
-    Write-Host "1. Backup all images"
-    Write-Host "2. Restore all images from backup and run"
-    Write-Host "0. Exit"
+	Write-Information "==========================================="
+    Write-Information "Container Images Backup and Restore Menu"
+	Write-Information "==========================================="
+    Write-Information "1. Backup all images"
+    Write-Information "2. Restore all images from backup and run"
+    Write-Information "0. Exit"
 }
 
 # MAIN SCRIPT EXECUTION
@@ -44,7 +44,7 @@ do {
     }
 
     if ($choice -ne "0") {
-        Write-Host "`nPress any key to continue..."
+        Write-Information "`nPress any key to continue..."
         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Clear-Host
     }

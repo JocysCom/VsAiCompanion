@@ -169,7 +169,7 @@ function Restore-ContainerImage {
 #   -ImageName: Name of the image to run
 #------------------------------
 function Start-RestoredContainer {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
     param(
         [Parameter(Mandatory=$true)]
