@@ -39,11 +39,11 @@ do {
         "1" { Backup-ContainerImages -Engine $containerEngine }
         "2" { Restore-ContainerImages -Engine $containerEngine -RunContainers }
         "3" { Write-Information "Exiting..."; break }
-        default { Write-Warning "Invalid selection. Please enter 1, 2, or 3." } # Changed to Warning
+        default { Write-Warning "Invalid selection. Please enter 1, 2, or 3." }
     }
 
     if ($choice -ne "3") {
-        Write-Host "`nPress any key to continue..." # Changed to Host for prompt
+        Write-Host "`nPress any key to continue..."
         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Clear-Host
     }

@@ -150,7 +150,7 @@ function DisplayPodmanStatus {
                     }
                 }
             } catch {
-                Write-Warning "Podman Machine: ERROR CHECKING STATUS" # Changed to Warning
+                Write-Warning "Podman Machine: ERROR CHECKING STATUS"
             }
         } else {
             Write-Information "Podman Machine: NOT AVAILABLE"
@@ -251,13 +251,13 @@ function Install-PodmanCLI {
 # This determines where the VHDX (virtual disk) file will be stored
 #############################################
 function Select-DiskLocation {
-    Write-Host "Select disk location for Podman machine virtual disk:" # Changed to Host
-    Write-Host "1) Default location (user profile)" # Changed to Host
-    Write-Host "2) Custom location" # Changed to Host
+    Write-Host "Select disk location for Podman machine virtual disk:"
+    Write-Host "1) Default location (user profile)"
+    Write-Host "2) Custom location"
     $locationChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
 
     if ([string]::IsNullOrWhiteSpace($locationChoice) -or $locationChoice -eq "1") {
-        Write-Information "Using default disk location" # Changed to Information
+        Write-Information "Using default disk location"
         return ""  # Return empty string to use default location
     }
     elseif ($locationChoice -eq "2") {
@@ -280,12 +280,12 @@ function Select-DiskLocation {
                 Write-Warning "Drive $drive does not exist. Please ensure it's available before continuing."
                 $confirm = Read-Host "Continue with this path anyway? (Y/N, default is N)"
                 if ($confirm -ne "Y") {
-                    Write-Information "Using default disk location instead." # Changed to Information
+                    Write-Information "Using default disk location instead."
                     return ""
                 }
             }
 
-            Write-Information "Custom disk location selected: $customPath" # Changed to Information
+            Write-Information "Custom disk location selected: $customPath"
             return $customPath
         }
         catch {
@@ -294,7 +294,7 @@ function Select-DiskLocation {
         }
     }
     else {
-        Write-Information "Invalid selection. Using default disk location." # Changed to Information
+        Write-Information "Invalid selection. Using default disk location."
         return ""
     }
 }
@@ -323,7 +323,7 @@ function Initialize-PodmanMachine {
     # Execute the command to create the machine
     Write-Information "Executing: podman $($initArgs -join ' ')"
     $initOutput = & podman @initArgs 2>&1
-    Write-Information $initOutput # Changed to Information
+    Write-Information $initOutput
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to initialize Podman machine. Output: $initOutput"
@@ -358,7 +358,6 @@ function Initialize-PodmanMachine {
 # 4. Import the copied VHDX in-place
 # 5. Start the Podman machine
 #############################################
-# Fix for the Move-PodmanMachineImage function in Setup_1a_Podman.ps1
 
 function Move-PodmanMachineImage {
     param(
@@ -380,7 +379,7 @@ function Move-PodmanMachineImage {
     # Verify the machine is stopped by checking WSL status
     Write-Information "Verifying machine is stopped using 'wsl -l -v'..."
     $wslStatus = & wsl -l -v 2>&1
-    Write-Information $wslStatus # Changed to Information
+    Write-Information $wslStatus
 
     # Check if the machine is actually stopped
     $machineStatus = $wslStatus | Select-String -Pattern $wslDistName -SimpleMatch
@@ -823,12 +822,12 @@ function Remove-PodmanComponent {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
-    Write-Host "Select component to remove:" # Changed to Host
-    Write-Host "1) Remove Podman Service only" # Changed to Host
-    Write-Host "2) Remove Podman Machine only" # Changed to Host
-    Write-Host "3) [Not Implemented] Uninstall Podman Desktop only" # Changed to Host
-    Write-Host "4) [Not Implemented] Uninstall Podman CLI" # Changed to Host
-    Write-Host "5) Exit without removing anything" # Changed to Host
+    Write-Host "Select component to remove:"
+    Write-Host "1) Remove Podman Service only"
+    Write-Host "2) Remove Podman Machine only"
+    Write-Host "3) [Not Implemented] Uninstall Podman Desktop only"
+    Write-Host "4) [Not Implemented] Uninstall Podman CLI"
+    Write-Host "5) Exit without removing anything"
 
     $removeOption = Read-Host "Enter option (1-5, default is 5)"
     if ([string]::IsNullOrWhiteSpace($removeOption)) {
@@ -877,7 +876,7 @@ function Remove-PodmanComponent {
             Write-Information "No components will be removed."
         }
         default {
-            Write-Warning "Invalid option. No components will be removed." # Changed to Warning
+            Write-Warning "Invalid option. No components will be removed."
         }
     }
 }
@@ -885,26 +884,26 @@ function Remove-PodmanComponent {
 #############################################
 # Main Script Execution - Logical Menu
 #############################################
-Write-Host "==================================================" # Changed to Host
-Write-Host "PODMAN SETUP AND MANAGEMENT" # Changed to Host
-Write-Host "==================================================" # Changed to Host
-Write-Host "Select an option:" # Changed to Host
-Write-Host "1) Check Podman Status" # Changed to Host
-Write-Host "   - Displays the current status of Podman components" # Changed to Host
-Write-Host "2) Install Podman CLI" # Changed to Host
-Write-Host "   - Installs the Podman command-line tool" # Changed to Host
-Write-Host "3) Install Podman Desktop (UI)" # Changed to Host
-Write-Host "   - Installs the Podman Desktop manager (Requires only CLI)" # Changed to Host
-Write-Host "4) Initialize Podman Machine" # Changed to Host
-Write-Host "   - Creates and starts a Podman machine (Requires CLI)" # Changed to Host
-Write-Host "   - This creates a VHDX file with Linux + Podman inside" # Changed to Host
-Write-Host "5) Move Podman Machine" # Changed to Host
-Write-Host "   - Moves a Podman machine image to a new location" # Changed to Host
-Write-Host "6) Register Podman Service" # Changed to Host
-Write-Host "   - Creates a Windows service to auto-start Podman (Requires Machine)" # Changed to Host
-Write-Host "7) Remove Podman Components" # Changed to Host
-Write-Host "   - Options to remove service, machine, or uninstall software" # Changed to Host
-Write-Host "==================================================" # Changed to Host
+Write-Host "=================================================="
+Write-Host "PODMAN SETUP AND MANAGEMENT"
+Write-Host "=================================================="
+Write-Host "Select an option:"
+Write-Host "1) Check Podman Status"
+Write-Host "   - Displays the current status of Podman components"
+Write-Host "2) Install Podman CLI"
+Write-Host "   - Installs the Podman command-line tool"
+Write-Host "3) Install Podman Desktop (UI)"
+Write-Host "   - Installs the Podman Desktop manager (Requires only CLI)"
+Write-Host "4) Initialize Podman Machine"
+Write-Host "   - Creates and starts a Podman machine (Requires CLI)"
+Write-Host "   - This creates a VHDX file with Linux + Podman inside"
+Write-Host "5) Move Podman Machine"
+Write-Host "   - Moves a Podman machine image to a new location"
+Write-Host "6) Register Podman Service"
+Write-Host "   - Creates a Windows service to auto-start Podman (Requires Machine)"
+Write-Host "7) Remove Podman Components"
+Write-Host "   - Options to remove service, machine, or uninstall software"
+Write-Host "=================================================="
 
 $installOption = Read-Host "Enter your choice (1-7). Default is 1 if empty"
 if ([string]::IsNullOrEmpty($installOption)) { $installOption = "1" }

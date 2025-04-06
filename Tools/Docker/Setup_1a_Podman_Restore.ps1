@@ -11,13 +11,13 @@ Write-Information "---------------------------------------------"
 
 # Verify that the disk image exists
 if (-not (Test-Path $diskImagePath)) {
-    Write-Error "Error: Disk image not found at '$diskImagePath'" # Changed to Error
+    Write-Error "Error: Disk image not found at '$diskImagePath'"
     exit 1
 }
 
 # Check if the ignition file exists (optional but recommended)
 if (-not (Test-Path $ignitionPath)) {
-    Write-Warning "Warning: Ignition file not found at '$ignitionPath'." # Changed to Warning
+    Write-Warning "Warning: Ignition file not found at '$ignitionPath'."
 }
 
 # List existing Podman system connections
@@ -41,12 +41,12 @@ if ($null -ne $vm) {
 Write-Information "---------------------------------------------"
 
 # Display menu options
-Write-Host "" # Changed to Host
-Write-Host "Options:" # Changed to Host
-Write-Host "1 - Initialize (or re-register) the Podman machine with existing data" # Changed to Host
-Write-Host "2 - Start the Podman machine (if registered)" # Changed to Host
-Write-Host "3 - Stop the Podman machine (if running)" # Changed to Host
-Write-Host "4 - Start the Hyper-V VM (if it exists and is off)" # Changed to Host
+Write-Host ""
+Write-Host "Options:"
+Write-Host "1 - Initialize (or re-register) the Podman machine with existing data"
+Write-Host "2 - Start the Podman machine (if registered)"
+Write-Host "3 - Stop the Podman machine (if running)"
+Write-Host "4 - Start the Hyper-V VM (if it exists and is off)"
 $choice = Read-Host "Enter your choice (1, 2, 3, or 4)"
 
 switch ($choice) {
@@ -109,7 +109,7 @@ switch ($choice) {
         }
     }
     default {
-        Write-Warning "Invalid choice. Exiting." # Changed to Warning
+        Write-Warning "Invalid choice. Exiting."
         exit 1
     }
 }

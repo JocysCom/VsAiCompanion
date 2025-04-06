@@ -66,7 +66,7 @@ function Enable-WSL2 {
     else {
         Write-Information "WSL distribution(s) detected."
         Write-Information "Currently installed WSL distributions:"
-        Write-Information $wslListOutput # Changed to Information as it's status output
+        Write-Information $wslListOutput
         Write-Information "Verifying that they use WSL2..."
 
         $lines = $wslListOutput -split "`r?`n"
@@ -95,9 +95,9 @@ function Enable-WSL2 {
 # Section: Virtualization Feature Selection
 ###############################################################################
 
-Write-Host "Select virtualization feature to enable:" # Changed to Write-Host for direct console interaction
-Write-Host "1) Windows Subsystem for Linux (WSL)" # Changed to Write-Host
-Write-Host "2) Hyper-V" # Changed to Write-Host
+Write-Host "Select virtualization feature to enable:"
+Write-Host "1) Windows Subsystem for Linux (WSL)"
+Write-Host "2) Hyper-V"
 $choice = Read-Host "Enter your choice (1 or 2, default is 1)"
 
 if ([string]::IsNullOrWhiteSpace($choice)) {
