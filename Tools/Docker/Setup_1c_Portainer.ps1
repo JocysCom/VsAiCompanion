@@ -41,17 +41,23 @@ else {
 $global:httpPort = 9000
 $global:httpsPort = 9443
 
-#############################################
-# Reusable Helper Functions
-#############################################
-
+#==============================================================================
+# Function: Get-PortainerContainerConfig
+#==============================================================================
 <#
 .SYNOPSIS
     Gets the current Portainer container configuration.
 .DESCRIPTION
-    Retrieves container information including environment variables and port mappings.
+    Retrieves container information including the image name and Portainer-specific
+    environment variables by inspecting the 'portainer' container using the selected engine.
 .OUTPUTS
-    Returns a custom object with container information or $null if not found.
+    [PSCustomObject] Returns a custom object with 'Image' and 'EnvVars' properties,
+                     or $null if the container is not found or inspection fails.
+.EXAMPLE
+    $config = Get-PortainerContainerConfig
+    if ($config) { Write-Host "Image: $($config.Image)" }
+.NOTES
+    Uses 'engine inspect'. Filters environment variables to keep only those starting with 'PORTAINER_'.
 #>
 function Get-PortainerContainerConfig {
     $containerInfo = & $global:enginePath inspect portainer 2>$null | ConvertFrom-Json
@@ -82,13 +88,23 @@ function Get-PortainerContainerConfig {
     }
 }
 
+#==============================================================================
+# Function: Remove-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
     Stops and removes the Portainer container.
 .DESCRIPTION
-    Safely stops and removes the Portainer container while preserving user data.
+    Checks if a container named 'portainer' exists. If it does, it stops and removes it
+    using the selected container engine. Supports -WhatIf.
 .OUTPUTS
-    Returns $true if successful, $false otherwise.
+    [bool] Returns $true if the container is removed successfully or didn't exist.
+           Returns $false if removal fails or is skipped due to -WhatIf.
+.EXAMPLE
+    Remove-PortainerContainer -WhatIf
+.NOTES
+    Uses 'engine ps', 'engine stop', and 'engine rm'.
+    Explicitly notes that the 'portainer_data' volume is not removed by this function.
 #>
 function Remove-PortainerContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -119,17 +135,38 @@ function Remove-PortainerContainer {
     }
 }
 
+#==============================================================================
+# Function: Start-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Starts a new Portainer container with the specified configuration.
+    Starts a new Portainer container with specified or default configuration.
 .DESCRIPTION
-    Creates a new Portainer container with the provided image and environment variables.
+    Runs a new container using the selected engine with the specified image.
+    Configures standard Portainer settings: detached mode, name 'portainer',
+    mounts 'portainer_data' volume, maps HTTP/HTTPS ports, and mounts the
+    appropriate engine socket (/var/run/docker.sock or /run/podman/podman.sock).
+    Applies any additional environment variables provided.
+    After starting, waits 10 seconds and performs TCP and HTTP connectivity tests.
+    Supports -WhatIf.
 .PARAMETER Image
-    The image to use for the container.
+    The Portainer container image to use (e.g., 'portainer/portainer-ce:latest'). Mandatory.
 .PARAMETER EnvVars
-    Array of environment variables to set in the container.
+    Optional array of environment variables strings (e.g., @("MY_VAR=value")).
+.PARAMETER HttpPort
+    Optional. The host port to map to container port 9000. Defaults to global $httpPort (9000).
+.PARAMETER HttpsPort
+    Optional. The host port to map to container port 9443. Defaults to global $httpsPort (9443).
 .OUTPUTS
-    Returns $true if successful, $false otherwise.
+    [bool] Returns $true if the container starts successfully and connectivity tests pass.
+           Returns $false if start fails, tests fail, or action is skipped due to -WhatIf.
+.EXAMPLE
+    Start-PortainerContainer -Image "portainer/portainer-ce:latest"
+.EXAMPLE
+    Start-PortainerContainer -Image "portainer/portainer-ce:latest" -HttpPort 8080 -HttpsPort 8443
+.NOTES
+    Relies on Test-TCPPort and Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
 #>
 function Start-PortainerContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -208,14 +245,25 @@ function Start-PortainerContainer {
     }
 }
 
+#==============================================================================
+# Function: Install-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs the Portainer container.
+    Installs and starts the Portainer container.
 .DESCRIPTION
-    Creates (if necessary) the volume 'portainer_data', pulls the Portainer image if not found
-    (or restores from backup), removes any pre-existing container named "portainer",
-    prompts for port configuration, builds run options, runs the container,
-    waits for startup, and tests connectivity.
+    Ensures the 'portainer_data' volume exists using Confirm-ContainerVolume.
+    Checks if the Portainer image exists locally; if not, attempts to restore from backup using
+    Test-AndRestoreBackup, falling back to pulling the image using Invoke-PullImage.
+    Removes any existing 'portainer' container using Remove-PortainerContainer.
+    Starts the new container using Start-PortainerContainer.
+.EXAMPLE
+    Install-PortainerContainer
+.NOTES
+    Orchestrates volume creation, image acquisition, cleanup, and container start.
+    Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
+    Remove-PortainerContainer, and Start-PortainerContainer helper functions.
+    Uses Write-Information for status messages.
 #>
 function Install-PortainerContainer {
     # Ensure the volume exists
@@ -245,41 +293,83 @@ function Install-PortainerContainer {
     Start-PortainerContainer -Image $global:imageName # This now supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Uninstall-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Portainer container and optionally the data volume.
+    Uninstalls the Portainer container and optionally removes its data volume.
 .DESCRIPTION
-    Uses the generic Remove-ContainerAndVolume function.
+    Calls the Remove-ContainerAndVolume helper function, specifying 'portainer' as the container
+    and 'portainer_data' as the volume. This will stop/remove the container and prompt the user
+    about removing the volume. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-PortainerContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-PortainerContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" # This now supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Backup-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live Portainer container.
+    Backs up the state of the running Portainer container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to create a backup of the container.
+    Calls the Backup-ContainerState helper function, specifying 'portainer' as the container name.
+    This commits the container state to an image and saves it as a tar file.
+.EXAMPLE
+    Backup-PortainerContainer
+.NOTES
+    Relies on Backup-ContainerState helper function.
 #>
 function Backup-PortainerContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName "portainer"
 }
 
+#==============================================================================
+# Function: Restore-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the Portainer container from backup.
+    Restores the Portainer container image from a backup tar file.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the container from a backup.
+    Calls the Restore-ContainerState helper function, specifying 'portainer' as the container name.
+    This loads the image from the backup tar file. Note: This only restores the image,
+    it does not automatically start a container from it.
+.EXAMPLE
+    Restore-PortainerContainer
+.NOTES
+    Relies on Restore-ContainerState helper function. Does not handle volume restore.
 #>
 function Restore-PortainerContainer {
     Restore-ContainerState -Engine $global:enginePath -ContainerName "portainer"
 }
 
+#==============================================================================
+# Function: Update-PortainerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Portainer container without resetting user data.
+    Updates the Portainer container to the latest image version while preserving data.
 .DESCRIPTION
-    Updates the Portainer container to the latest version while preserving all user data and configuration.
+    Performs an update workflow:
+    1. Gets the current container config using Get-PortainerContainerConfig.
+    2. Prompts the user whether to create a backup before updating.
+    3. Removes the existing container using Remove-PortainerContainer.
+    4. Pulls the latest image using Invoke-PullImage.
+    5. Starts a new container using Start-PortainerContainer with the latest image and preserved environment variables.
+    6. Offers to restore from backup if pull or start fails (and backup was made).
+    Supports -WhatIf for backup, remove, pull, and start actions.
+.EXAMPLE
+    Update-PortainerContainer -WhatIf
+.NOTES
+    Relies on Get-PortainerContainerConfig, Backup-PortainerContainer, Remove-PortainerContainer,
+    Invoke-PullImage, Start-PortainerContainer, Restore-PortainerContainer helper functions.
+    User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-PortainerContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -346,12 +436,19 @@ function Update-PortainerContainer {
     }
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for Portainer container operations.
+    Displays the main menu options for Portainer container management.
 .DESCRIPTION
-    Presents menu options (Install, Uninstall, Backup, Restore, Update);
-    the exit option ("0") terminates the menu loop.
+    Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update, Exit)
+    to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="

@@ -19,18 +19,25 @@ using namespace System.IO
 Test-AdminPrivilege
 Set-ScriptLocation
 
-#---------------------------------------------
+#==============================================================================
 # Function: Enable-WSL2
-#---------------------------------------------
+#==============================================================================
 <#
 .SYNOPSIS
-    Ensures that WSL default version is set to 2.
+    Ensures that WSL default version is set to 2 and converts existing distributions.
 .DESCRIPTION
-    Sets the default version for new WSL installations to 2, checks for installed distributions,
-    installs the default distribution if none exist, and converts any WSL1 distribution to WSL2.
-    Note: The installation command does not specify a distribution, so the system installs the default.
+    Sets the default version for new WSL installations to 2 using 'wsl.exe --set-default-version 2'.
+    Checks for installed distributions using 'wsl.exe -l -v'.
+    If no distributions are found, it attempts to install the default one using 'wsl.exe --install'.
+    If distributions exist, it iterates through them and converts any found running WSL1 to WSL2
+    using 'wsl.exe --set-version <distro> 2'.
 .EXAMPLE
     Enable-WSL2
+    # Ensures WSL 2 is the default and attempts to convert existing distros.
+.NOTES
+    Requires administrative privileges to set default version or convert distributions.
+    Uses Write-Information for status messages and Write-Error for failures.
+    Relies on parsing the output of 'wsl.exe -l -v'.
 #>
 function Enable-WSL2 {
     [CmdletBinding()]

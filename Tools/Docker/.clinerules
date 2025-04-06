@@ -40,6 +40,7 @@ While `PSScriptAnalyzer` is valuable, certain warnings might be acceptable or ex
 
 *   **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
 *   **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. *Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred.*
+*   **`PSShouldProcess`**: This warning can occur in wrapper functions (like `Update-NocoDBContainer`) that are decorated with `[CmdletBinding(SupportsShouldProcess=$true)]` but delegate the actual work (and the `ShouldProcess` call) to another function (like `Update-Container`). If the wrapper function itself doesn't perform actions requiring confirmation but correctly passes `-WhatIf`/`-Confirm` down via splatting or parameter binding to the inner function that *does* call `ShouldProcess`, suppressing this warning *on the wrapper function* is acceptable. Ensure the inner function correctly implements `ShouldProcess`. *Correction: Added a top-level `ShouldProcess` check to wrapper functions like `Update-n8nContainer` to resolve this instead of suppressing.*
 
 **Procedure for Suppression (During Validation):**
 When validating a script where these specific warnings are expected and acceptable, use the `-ExcludeRule` parameter with `Invoke-ScriptAnalyzer`.
@@ -74,3 +75,73 @@ Select the appropriate cmdlet for script output to prevent errors and ensure pro
 
 **Rationale:**
 Prevents type mismatches when capturing function output. Improves script clarity and control over output streams.
+
+## Rule: Standard PowerShell Function Header Format
+
+**Description:**
+All PowerShell functions defined in `.ps1` files within this directory MUST adhere to the following header format to ensure consistency, readability, and proper IntelliSense support.
+
+**Format:**
+
+```powershell
+#==============================================================================
+# Function: FunctionName
+#==============================================================================
+<#
+.SYNOPSIS
+    A brief one-line summary of the function's purpose.
+.DESCRIPTION
+    A more detailed description explaining what the function does, how it works,
+    and any important context or considerations.
+.PARAMETER ParameterName1
+    Description of the first parameter, including its purpose, expected data type,
+    and whether it's mandatory or optional.
+.PARAMETER ParameterName2
+    Description of the second parameter.
+.EXAMPLE
+    PS C:\> FunctionName -ParameterName1 "Value"
+    Explanation of what this example command achieves.
+.EXAMPLE
+    PS C:\> FunctionName -ParameterName1 "Value" -ParameterName2 $true
+    Explanation of another usage scenario.
+.OUTPUTS
+    [DataType] Description of the object(s) returned by the function, if any.
+    Use [void] if the function does not return a value.
+.NOTES
+    Additional notes such as author, dependencies, required privileges, known issues,
+    or links to relevant documentation.
+#>
+function FunctionName {
+    [CmdletBinding(SupportsShouldProcess=$true)] # Or [CmdletBinding()] if ShouldProcess not needed
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Help text for parameter 1.")]
+        [string]$ParameterName1,
+
+        [Parameter(Mandatory=$false)]
+        [bool]$ParameterName2
+    )
+
+    # Function body starts here
+    # Ensure ShouldProcess/ShouldContinue are called if SupportsShouldProcess=$true
+    if ($PSCmdlet.ShouldProcess("TargetResource", "Action")) {
+        # Perform action
+    }
+}
+
+```
+
+**Key Requirements:**
+
+1.  **Separator Block:** Each function MUST be preceded by the exact separator block:
+    ```powershell
+    #==============================================================================
+    # Function: FunctionName
+    #==============================================================================
+    ```
+    Replace `FunctionName` with the actual name of the function.
+2.  **Comment-Based Help:** A comment-based help block (`<# ... #>`) MUST be placed immediately before the `function` keyword (after the separator block).
+3.  **Help Block Content:** The help block SHOULD contain at least `.SYNOPSIS` and `.DESCRIPTION`. Include `.PARAMETER`, `.EXAMPLE`, `.OUTPUTS`, and `.NOTES` where applicable and helpful.
+4.  **`[CmdletBinding()]`:** Use the `[CmdletBinding()]` attribute for advanced functions, enabling common parameters and parameter validation. Use `[CmdletBinding(SupportsShouldProcess=$true)]` if the function performs actions that should support `-WhatIf` and `-Confirm`, and ensure `$PSCmdlet.ShouldProcess()` or `$PSCmdlet.ShouldContinue()` is called within the function body before performing the action.
+
+**Rationale:**
+This standard format significantly improves code readability by visually separating functions. The comment-based help block is essential for PowerShell's built-in help system (`Get-Help`) and provides rich IntelliSense information (parameter descriptions, types, summaries) in editors like VS Code, aiding development and maintenance. Consistent use of `[CmdletBinding()]` promotes robust function design.

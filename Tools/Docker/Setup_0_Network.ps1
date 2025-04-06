@@ -8,9 +8,34 @@
 #                . "$PSScriptRoot\Setup_0_Network.ps1"
 ################################################################################
 
-#------------------------------
+#==============================================================================
 # Function: Test-TCPPort
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Tests TCP connectivity to a specified port on a computer.
+.DESCRIPTION
+    Attempts to establish a TCP connection to the given port on the target computer name.
+    Resolves the computer name to an IP address (preferring IPv4) and attempts connection
+    with a specified timeout.
+.PARAMETER ComputerName
+    The hostname or IP address of the target computer. Mandatory.
+.PARAMETER Port
+    The TCP port number to test. Mandatory.
+.PARAMETER ServiceName
+    A friendly name for the service being tested, used in output messages. Mandatory.
+.PARAMETER TimeoutMilliseconds
+    The maximum time in milliseconds to wait for the connection attempt. Defaults to 5000.
+.OUTPUTS
+    [bool] Returns $true if the connection is successful within the timeout, $false otherwise.
+.EXAMPLE
+    Test-TCPPort -ComputerName "localhost" -Port 80 -ServiceName "Web Server"
+.EXAMPLE
+    Test-TCPPort -ComputerName "db.example.com" -Port 5432 -ServiceName "Database" -TimeoutMilliseconds 10000
+.NOTES
+    Uses System.Net.Sockets.TcpClient for the connection attempt.
+    Uses Write-Information for success messages and Write-Error for failures.
+#>
 function Test-TCPPort {
     param(
         [Parameter(Mandatory=$true)]
@@ -58,9 +83,27 @@ function Test-TCPPort {
     }
 }
 
-#------------------------------
+#==============================================================================
 # Function: Test-HTTPPort
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Tests HTTP connectivity to a specified URI.
+.DESCRIPTION
+    Uses Invoke-WebRequest to send a request to the given URI. Checks if the response
+    status code is 200 (OK).
+.PARAMETER Uri
+    The full HTTP or HTTPS URI to test (e.g., 'http://localhost:8080/status'). Mandatory.
+.PARAMETER ServiceName
+    A friendly name for the service being tested, used in output messages. Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the request is successful and the status code is 200, $false otherwise.
+.EXAMPLE
+    Test-HTTPPort -Uri "http://localhost:5000/api/health" -ServiceName "API Health Check"
+.NOTES
+    Uses Invoke-WebRequest with -UseBasicParsing and a 15-second timeout.
+    Uses Write-Information for success messages and Write-Error for failures.
+#>
 function Test-HTTPPort {
     param(
         [Parameter(Mandatory=$true)]
@@ -87,9 +130,30 @@ function Test-HTTPPort {
 }
 
 
-#------------------------------
+#==============================================================================
 # Function: Test-WebSocketPort
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Tests WebSocket connectivity to a specified URI.
+.DESCRIPTION
+    Attempts to establish a WebSocket connection using System.Net.WebSockets.ClientWebSocket.
+    If the connection is successful within a 5-second timeout, it returns $true.
+    If the WebSocket client is unavailable (older PowerShell versions), it falls back to
+    calling Test-HTTPPort on the equivalent http/https URI.
+.PARAMETER Uri
+    The full WebSocket URI to test (e.g., 'ws://localhost:8081/socket'). Mandatory.
+.PARAMETER ServiceName
+    A friendly name for the service being tested, used in output messages. Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the WebSocket connection (or HTTP fallback) is successful, $false otherwise.
+.EXAMPLE
+    Test-WebSocketPort -Uri "ws://localhost:9000/events" -ServiceName "Event Stream"
+.NOTES
+    Requires .NET Core or PowerShell 7+ for native WebSocket support.
+    Uses a 5-second timeout for the connection attempt.
+    Uses Write-Information for success messages and Write-Error for failures.
+#>
 function Test-WebSocketPort {
     param(
         [Parameter(Mandatory=$true)]

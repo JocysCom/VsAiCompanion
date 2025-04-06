@@ -41,15 +41,23 @@ else {
     $global:enginePath = Get-PodmanPath
 }
 
-#############################################
-# Helper Functions
-#############################################
-
+#==============================================================================
+# Function: Confirm-SourceCode
+#==============================================================================
 <#
 .SYNOPSIS
     Clones or updates the Qdrant MCP Server source code repository.
+.DESCRIPTION
+    Checks if Git is installed using Test-GitInstallation.
+    If the source directory ($global:srcDir) doesn't exist, it clones the repository from $global:repoUrl.
+    If the directory exists, it performs a 'git pull' to update the code.
 .OUTPUTS
-    Returns $true if the source code is present, $false otherwise.
+    [bool] Returns $true if the source code is present (cloned or updated successfully), $false otherwise.
+.EXAMPLE
+    if (Confirm-SourceCode) { # Proceed with build }
+.NOTES
+    Relies on Test-GitInstallation helper function.
+    Uses global variables $global:srcDir and $global:repoUrl.
 #>
 function Confirm-SourceCode {
     Test-GitInstallation # Check if Git is available
@@ -71,11 +79,23 @@ function Confirm-SourceCode {
     return $true
 }
 
+#==============================================================================
+# Function: Invoke-QdrantMCPServerImageBuild
+#==============================================================================
 <#
 .SYNOPSIS
-    Builds the Qdrant MCP Server container image using the source code.
+    Builds the Qdrant MCP Server container image from the source code.
+.DESCRIPTION
+    Checks if the Dockerfile exists in the source directory ($global:srcDir).
+    Uses the selected container engine ('engine build') to build the image, tagging it
+    with the value from $global:imageTag. Supports -WhatIf.
 .OUTPUTS
-    Returns $true if build is successful, $false otherwise.
+    [bool] Returns $true if the image build is successful, $false otherwise or if skipped.
+.EXAMPLE
+    Invoke-QdrantMCPServerImageBuild -WhatIf
+.NOTES
+    Relies on global variables $global:srcDir, $global:imageTag, $global:enginePath.
+    Uses Write-Information for status messages.
 #>
 function Invoke-QdrantMCPServerImageBuild {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -102,13 +122,28 @@ function Invoke-QdrantMCPServerImageBuild {
     }
 }
 
+#==============================================================================
+# Function: Install-QdrantMCPServerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs (clones, builds, and runs) the Qdrant MCP Server container.
+    Installs the Qdrant MCP Server container by cloning source, building, and running.
 .DESCRIPTION
-    Ensures source code is present, builds the image, ensures volume exists,
-    removes any existing container, prompts for configuration, runs the container,
-    and tests connectivity.
+    Orchestrates the installation process:
+    1. Ensures source code is present using Confirm-SourceCode.
+    2. Builds the container image using Invoke-QdrantMCPServerImageBuild.
+    3. Ensures the data volume exists using Confirm-ContainerVolume.
+    4. Removes any existing container using Remove-ContainerAndVolume.
+    5. Prompts the user for Qdrant URL, Collection Name, and API Key using Read-Host.
+    6. Runs the new container using the built image, mapping port 8000, and setting environment variables based on user input.
+    7. Waits 15 seconds and performs a TCP connectivity test.
+.EXAMPLE
+    Install-QdrantMCPServerContainer
+.NOTES
+    Relies on Confirm-SourceCode, Invoke-QdrantMCPServerImageBuild, Confirm-ContainerVolume,
+    Remove-ContainerAndVolume, Test-TCPPort helper functions.
+    Uses global variables for names, paths, etc.
+    Requires user interaction via Read-Host for configuration.
 #>
 function Install-QdrantMCPServerContainer {
     # Step 1: Ensure source code is available
@@ -169,25 +204,57 @@ function Install-QdrantMCPServerContainer {
     Write-Information "Qdrant MCP Server container started. Check logs for details."
 }
 
+#==============================================================================
+# Function: Uninstall-QdrantMCPServerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Qdrant MCP Server container and optionally the data volume.
+    Uninstalls the Qdrant MCP Server container and optionally removes its data volume.
+.DESCRIPTION
+    Calls the Remove-ContainerAndVolume helper function, specifying 'qdrant-mcp-server' as the container
+    and 'qdrant_mcp_server_data' as the volume. This will stop/remove the container and prompt the user
+    about removing the volume. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-QdrantMCPServerContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-QdrantMCPServerContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 }
 
+#==============================================================================
+# Function: Backup-QdrantMCPServerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live Qdrant MCP Server container state.
+    Backs up the state of the running Qdrant MCP Server container.
+.DESCRIPTION
+    Calls the Backup-ContainerState helper function, specifying 'qdrant-mcp-server' as the container name.
+    This commits the container state to an image and saves it as a tar file.
+.EXAMPLE
+    Backup-QdrantMCPServerContainer
+.NOTES
+    Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
 #>
 function Backup-QdrantMCPServerContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
+#==============================================================================
+# Function: Restore-QdrantMCPServerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the Qdrant MCP Server container state from backup.
+    Restores the Qdrant MCP Server container image from a backup tar file.
+.DESCRIPTION
+    Calls the Restore-ContainerState helper function, specifying 'qdrant-mcp-server' as the container name.
+    This loads the image from the backup tar file. Note: This only restores the image,
+    it does not automatically start the container or ensure environment variables are correct.
+.EXAMPLE
+    Restore-QdrantMCPServerContainer
+.NOTES
+    Relies on Restore-ContainerState helper function. Warns user about potential need to restart manually.
 #>
 function Restore-QdrantMCPServerContainer {
     # Note: Restoring state might require re-running with correct ENV vars if they changed.
@@ -197,9 +264,22 @@ function Restore-QdrantMCPServerContainer {
     Write-Warning "Container state restored from image backup. You may need to manually restart the container with correct environment variables if they were changed since the backup."
 }
 
+#==============================================================================
+# Function: Update-QdrantMCPServerContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Qdrant MCP Server container by pulling source, rebuilding, and restarting.
+    Updates the Qdrant MCP Server by pulling the latest source code, rebuilding the image, and reinstalling the container.
+.DESCRIPTION
+    Performs the update workflow:
+    1. Updates the source code repository using Confirm-SourceCode (which includes 'git pull').
+    2. Rebuilds the container image using Invoke-QdrantMCPServerImageBuild.
+    3. Calls Install-QdrantMCPServerContainer to handle removing the old container and running the new one with the updated image and configuration prompts.
+    Supports -WhatIf for the source code pull step.
+.EXAMPLE
+    Update-QdrantMCPServerContainer -WhatIf
+.NOTES
+    Relies on Confirm-SourceCode, Invoke-QdrantMCPServerImageBuild, Install-QdrantMCPServerContainer helper functions.
 #>
 function Update-QdrantMCPServerContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -230,9 +310,19 @@ function Update-QdrantMCPServerContainer {
     Install-QdrantMCPServerContainer
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for Qdrant MCP Server container operations.
+    Displays the main menu options for Qdrant MCP Server container management.
+.DESCRIPTION
+    Writes the available menu options (Show Info, Install/Rebuild, Uninstall, Backup, Restore, Update, Exit)
+    to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="

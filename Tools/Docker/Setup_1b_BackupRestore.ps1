@@ -12,7 +12,21 @@ using namespace System.IO
 . "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
 . "$PSScriptRoot\Setup_0_BackupRestore.ps1"
 
-# Function: Show-MainMenu displays backup/restore options.
+#==============================================================================
+# Function: Show-MainMenu
+#==============================================================================
+<#
+.SYNOPSIS
+    Displays the main menu options for the container image backup and restore script.
+.DESCRIPTION
+    Writes the available menu options (Backup all, Restore all and run, Exit) to the
+    information stream for the user.
+.EXAMPLE
+    Show-MainMenu
+    # Displays the menu options to the console.
+.NOTES
+    Uses Write-Information for output.
+#>
 function Show-MainMenu {
 	Write-Information "==========================================="
     Write-Information "Container Images Backup and Restore Menu"

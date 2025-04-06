@@ -30,12 +30,26 @@ $global:imageTag = "embedding-api" # Use the same for image and container for si
 $global:volumeName = "embedding_api_data" # Define a volume name (though not used by default app)
 $global:enginePath = Get-PodmanPath # Explicitly use Podman
 
+#==============================================================================
+# Function: Invoke-EmbeddingImageBuild
+#==============================================================================
 <#
 .SYNOPSIS
-    Creates the build context files and builds the Embedding API container image.
+    Creates the build context files (Dockerfile, requirements.txt, embedding_api.py)
+    and builds the Embedding API container image using Podman.
 .DESCRIPTION
-    Populates the build context directory with the Dockerfile, requirements.txt, and embedding_api.py.
-    Then builds the container image with the tag "embedding-api" using Podman.
+    Defines the content for the Dockerfile, requirements.txt, and the Python FastAPI application code.
+    Creates the build context directory ($global:buildDir) if it doesn't exist.
+    Writes the defined content to the respective files within the build context directory.
+    Builds the container image using 'podman build' with the specified tag ($global:imageTag)
+    from the build context directory.
+.OUTPUTS
+    Exits the script if the image build fails.
+.EXAMPLE
+    Invoke-EmbeddingImageBuild
+.NOTES
+    Relies on global variables $global:buildDir, $global:imageTag, $global:enginePath.
+    Uses Write-Information for status messages.
 #>
 function Invoke-EmbeddingImageBuild {
     # Define file contents for the Embedding API application.
@@ -165,13 +179,23 @@ async def options_handler(path: str):
     }
 }
 
+#==============================================================================
+# Function: Install-EmbeddingContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs (builds and runs) the Embedding API container.
+    Installs the Embedding API container by building the image and running it.
 .DESCRIPTION
-    Calls Build-EmbeddingImage to build the container image, removes any existing
-    container, then runs the container on port 8000.
-    After starting the container, the script waits for initialization and tests connectivity.
+    Calls Invoke-EmbeddingImageBuild to ensure the image is built.
+    Removes any existing container with the same name using Remove-ContainerAndVolume.
+    Runs the container using 'podman run', mapping port 8000.
+    Waits 10 seconds and performs HTTP/TCP connectivity tests.
+.EXAMPLE
+    Install-EmbeddingContainer
+.NOTES
+    Relies on Invoke-EmbeddingImageBuild, Remove-ContainerAndVolume, Test-HTTPPort, Test-TCPPort helper functions.
+    Uses global variables for names, paths, etc.
+    Uses Write-Information for status messages.
 #>
 function Install-EmbeddingContainer {
     Invoke-EmbeddingImageBuild
@@ -197,12 +221,24 @@ function Install-EmbeddingContainer {
     Write-Information "Embedding API is accessible at http://localhost:8000/v1/embeddings"
 }
 
+#==============================================================================
+# Function: Update-EmbeddingContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Embedding API container.
+    Updates the Embedding API container by rebuilding the image and restarting the container.
 .DESCRIPTION
-    Rebuilds the container image using the current build context, stops and removes the existing
-    container (if any), and runs a new container with the updated image.
+    Rebuilds the container image by calling Invoke-EmbeddingImageBuild.
+    Removes the existing container using Remove-ContainerAndVolume.
+    Runs a new container using the updated image, mapping port 8000.
+    Waits 10 seconds and performs HTTP/TCP connectivity tests.
+    Supports -WhatIf for the image build and container run steps.
+.EXAMPLE
+    Update-EmbeddingContainer -WhatIf
+.NOTES
+    Relies on Invoke-EmbeddingImageBuild, Remove-ContainerAndVolume, Test-HTTPPort, Test-TCPPort helper functions.
+    Uses global variables for names, paths, etc.
+    Uses Write-Information for status messages.
 #>
 function Update-EmbeddingContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -244,11 +280,21 @@ function Update-EmbeddingContainer {
     }
 }
 
+#==============================================================================
+# Function: Uninstall-EmbeddingContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Embedding API container and optionally the data volume.
+    Uninstalls the Embedding API container and optionally removes an associated volume if one exists with the same name.
 .DESCRIPTION
-    Uses the generic Remove-ContainerAndVolume function.
+    Calls the Remove-ContainerAndVolume helper function, specifying 'embedding-api' as both the
+    container and volume name. This will stop/remove the container and prompt the user
+    about removing the volume if a volume named 'embedding-api' exists. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-EmbeddingContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function. The default app doesn't use a named volume,
+    so the volume removal prompt is unlikely unless manually created.
 #>
 function Uninstall-EmbeddingContainer {
     # Note: This app doesn't use a named volume by default, so VolumeName is set to container name
@@ -256,12 +302,19 @@ function Uninstall-EmbeddingContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for Embedding API container management.
+    Displays the main menu options for Embedding API container management.
 .DESCRIPTION
-    Presents available options for installing, updating, and uninstalling the container.
-    The exit option ("0") terminates the menu loop.
+    Writes the available menu options (Show Info, Install/Rebuild, Update, Uninstall, Exit)
+    to the console using Write-Output. Notes that this script uses Podman only.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="

@@ -12,14 +12,28 @@
 #                . "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
 ################################################################################
 
-#############################################
-# Function: Ensure-ContainerNetwork
-# Description: Checks if a container network exists and creates it if it doesn't.
-# Parameters:
-#   -Engine: Path to the container engine executable.
-#   -NetworkName: Name of the network to check/create.
-# Returns: $true if network exists or was created, $false otherwise.
-#############################################
+#==============================================================================
+# Function: Confirm-ContainerNetwork
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if a container network exists and creates it if it doesn't.
+.DESCRIPTION
+    Uses the provided container engine to check if a network with the specified name exists.
+    If it doesn't exist, it attempts to create the network. Supports -WhatIf.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER NetworkName
+    The name of the container network to check or create. Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the network exists or was successfully created.
+           Returns $false if creation failed or was skipped due to -WhatIf.
+.EXAMPLE
+    Confirm-ContainerNetwork -Engine "podman" -NetworkName "my-app-network"
+.NOTES
+    Uses Write-Information for status messages.
+    Relies on 'engine network ls' and 'engine network create'.
+#>
 function Confirm-ContainerNetwork {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
@@ -57,14 +71,28 @@ function Confirm-ContainerNetwork {
     }
 }
 
-#############################################
-# Function: Ensure-ContainerVolume
-# Description: Checks if a volume exists and creates it if it doesn't.
-# Parameters:
-#   -Engine: Path to the container engine executable.
-#   -VolumeName: Name of the volume to check/create.
-# Returns: $true if volume exists or was created, $false otherwise.
-#############################################
+#==============================================================================
+# Function: Confirm-ContainerVolume
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if a container volume exists and creates it if it doesn't.
+.DESCRIPTION
+    Uses the provided container engine to check if a volume with the specified name exists.
+    If it doesn't exist, it attempts to create the volume. Supports -WhatIf.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER VolumeName
+    The name of the container volume to check or create. Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the volume exists or was successfully created.
+           Returns $false if creation failed or was skipped due to -WhatIf.
+.EXAMPLE
+    Confirm-ContainerVolume -Engine "docker" -VolumeName "my-db-data"
+.NOTES
+    Uses Write-Information for status messages.
+    Relies on 'engine volume ls' and 'engine volume create'.
+#>
 function Confirm-ContainerVolume {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
@@ -102,15 +130,34 @@ function Confirm-ContainerVolume {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Invoke-PullImage
-# Description: Pulls a container image using the specified engine.
-# Parameters:
-#   -Engine: Path to the container engine executable.
-#   -ImageName: Full name of the image to pull.
-#   -PullOptions: Optional array of additional options for the pull command (e.g., --platform, --tls-verify).
-# Returns: $true if pull was successful, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Pulls a container image using the specified engine and optional arguments.
+.DESCRIPTION
+    Executes the container engine's 'pull' command for the specified image name.
+    Allows passing additional command-line options via the PullOptions parameter.
+    Supports -WhatIf.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER ImageName
+    The full name and tag of the container image to pull (e.g., 'nginx:latest'). Mandatory.
+.PARAMETER PullOptions
+    An optional array of strings representing additional arguments to pass to the pull command
+    (e.g., @("--platform", "linux/arm64")). Defaults to an empty array.
+.OUTPUTS
+    [bool] Returns $true if the image pull command executes successfully (exit code 0).
+           Returns $false if the pull fails or is skipped due to -WhatIf.
+.EXAMPLE
+    Invoke-PullImage -Engine "podman" -ImageName "alpine:latest"
+.EXAMPLE
+    Invoke-PullImage -Engine "docker" -ImageName "mysql:8.0" -PullOptions @("--platform", "linux/amd64")
+.NOTES
+    Uses Write-Information for status messages.
+    Uses splatting (@pullCmd) to pass arguments to the engine.
+#>
 function Invoke-PullImage {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
@@ -145,17 +192,33 @@ function Invoke-PullImage {
     }
 }
 
-#--------------------------------------
+#==============================================================================
 # Function: Backup-ContainerState
-# Description: Creates a backup of a live running container by committing its state
-#              to an image and saving that image as a tar file. Also backs up
-#              associated volumes if specified.
-# Parameters:
-#   -Engine: Path to the container engine (docker or podman)
-#   -ContainerName: Name of the container to backup
-#   -BackupFolder: Folder to store the backup file (default ".\Backup")
-#   -BackupVolumes: Whether to also backup volumes associated with the container
-#--------------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Creates a backup of a live running container by committing its state to an image
+    and saving that image as a tar file.
+.DESCRIPTION
+    Checks if the specified container exists. If it does, it commits the container's current
+    state to a new image tagged as 'backup-<ContainerName>'. Then, it saves this backup image
+    to a .tar file named '<ContainerName>-backup.tar' (with ':' and '/' replaced by '_')
+    in the specified backup folder. Creates the backup folder if needed.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER ContainerName
+    The name of the running container to back up. Mandatory.
+.PARAMETER BackupFolder
+    The directory where the backup .tar file will be saved. Defaults to '.\Backup'.
+.OUTPUTS
+    [bool] Returns $true if both commit and save operations are successful, $false otherwise.
+.EXAMPLE
+    Backup-ContainerState -Engine "docker" -ContainerName "my-web-app" -BackupFolder "C:\ContainerBackups"
+.NOTES
+    Uses Write-Information for status messages.
+    Does not currently handle backing up associated volumes within this function.
+    Uses $LASTEXITCODE to check the success of engine commands.
+#>
 function Backup-ContainerState {
     param(
         [Parameter(Mandatory=$true)]
@@ -217,15 +280,33 @@ function Backup-ContainerState {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Remove-ContainerAndVolume
-# Description: Stops and removes a container, and optionally its associated volume.
-# Parameters:
-#   -Engine: Path to the container engine executable.
-#   -ContainerName: Name of the container to remove.
-#   -VolumeName: Name of the associated data volume to potentially remove.
-# Returns: $true if container removal was successful, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Stops and removes a container, and optionally prompts to remove an associated volume.
+.DESCRIPTION
+    Checks if the specified container exists. If it does, it stops and removes the container.
+    It then checks if the specified volume exists. If the volume exists, it prompts the user
+    via Read-Host whether to remove the volume as well. Supports -WhatIf for container/volume
+    stop/remove actions.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER ContainerName
+    The name of the container to stop and remove. Mandatory.
+.PARAMETER VolumeName
+    The name of the associated data volume to check and potentially remove. Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the container is successfully removed (or didn't exist initially).
+           Returns $false if the container removal fails. Volume removal status does not affect the return value.
+.EXAMPLE
+    Remove-ContainerAndVolume -Engine "podman" -ContainerName "old-app" -VolumeName "old-app-data"
+.NOTES
+    Uses Write-Information for status messages.
+    User interaction for volume removal is handled via Read-Host.
+    Uses $LASTEXITCODE to check the success of engine commands.
+#>
 function Remove-ContainerAndVolume {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
@@ -297,17 +378,43 @@ function Remove-ContainerAndVolume {
     return $true
 }
 
-#--------------------------------------
+#==============================================================================
 # Function: Restore-ContainerState
-# Description: Restores a container from a previously saved backup tar file.
-#              Loads the backup image and runs a new container from it.
-#              Also restores associated volumes if backup files exist.
-# Parameters:
-#   -Engine: Path to the container engine (docker or podman)
-#   -ContainerName: Name of the container to restore
-#   -BackupFolder: Folder where the backup file is located (default ".\Backup")
-#   -RestoreVolumes: Whether to also restore volumes associated with the container
-#--------------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Restores a container image from a backup .tar file and optionally restores associated volume data.
+.DESCRIPTION
+    Loads a container image from a backup file. It first looks for a container-specific backup
+    named '<ContainerName>-backup.tar'. If not found, it searches for any '.tar' file in the
+    backup folder whose name matches the container name. Once an image is loaded, it parses the
+    image name from the load command's output.
+    If -RestoreVolumes is specified and the ContainerName is 'n8n', it looks for 'n8n_data-data.tar',
+    creates the 'n8n_data' volume if needed, prompts the user, and restores the volume data using
+    a temporary container and tar extraction.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER ContainerName
+    The name of the container whose state is being restored. Used to find the backup file
+    and potentially identify volumes. Mandatory.
+.PARAMETER BackupFolder
+    The directory containing the backup .tar file(s). Defaults to '.\Backup'.
+.PARAMETER RestoreVolumes
+    Switch parameter. If present, attempts to restore associated volume data (currently only implemented for 'n8n').
+.OUTPUTS
+    [string] Returns the name of the loaded image if successful.
+    [bool] Returns $false if the backup file is not found or the image load fails.
+.EXAMPLE
+    $loadedImage = Restore-ContainerState -Engine "docker" -ContainerName "my-app"
+    if ($loadedImage) { docker run --name my-app $loadedImage }
+.EXAMPLE
+    Restore-ContainerState -Engine "podman" -ContainerName "n8n" -RestoreVolumes
+.NOTES
+    Uses Write-Information for status messages.
+    Volume restore logic is currently hardcoded for 'n8n' and 'n8n_data'.
+    Relies on parsing output from 'engine load'.
+    Uses $LASTEXITCODE to check the success of engine commands.
+#>
 function Restore-ContainerState {
     param(
         [Parameter(Mandatory=$true)]
@@ -432,16 +539,30 @@ function Restore-ContainerState {
     return $imageName
 }
 
-#############################################
+#==============================================================================
 # Function: Test-ImageUpdateAvailable
-# Description: Checks if a newer version of a container image is available
-#              from its registry. Works with multiple registries including
-#              docker.io, ghcr.io, and others.
-# Parameters:
-#   -Engine: Path to the container engine (docker or podman)
-#   -ImageName: Full image name including registry (e.g., ghcr.io/open-webui/open-webui:main)
-# Returns: $true if an update is available, $false otherwise
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if a newer version of a container image is available in its remote registry.
+.DESCRIPTION
+    Compares the digest of the locally available image (if any) with the digest of the image
+    in the remote registry. Handles both Docker and Podman engines, using different techniques
+    (docker manifest inspect, skopeo inspect, or podman pull/inspect fallback) to get the remote digest.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER ImageName
+    The full name and tag of the container image to check (e.g., 'ghcr.io/open-webui/open-webui:main'). Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the image is not found locally, if digests cannot be determined, or if the remote digest differs from the local digest.
+           Returns $false if the local and remote digests match.
+.EXAMPLE
+    if (Test-ImageUpdateAvailable -Engine "podman" -ImageName "docker.io/library/alpine:latest") { Invoke-PullImage ... }
+.NOTES
+    Uses Write-Information for status messages.
+    Attempts multiple methods to get remote digest for robustness (docker manifest, skopeo, podman pull).
+    Assumes update needed if digests cannot be reliably determined.
+#>
 function Test-ImageUpdateAvailable {
     [CmdletBinding()]
     [OutputType([bool])]
@@ -578,17 +699,44 @@ function Test-ImageUpdateAvailable {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Update-Container
-# Description: Generic function to update a container while preserving its configuration
-# Parameters:
-#   -Engine: Path to the container engine (docker or podman)
-#   -ContainerName: Name of the container to update
-#   -ImageName: Full image name to update to
-#   -Platform: Container platform (default: linux/amd64)
-#   -RunFunction: A script block that runs the container with the appropriate options
-# Returns: $true if successful, $false otherwise
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Provides a generic workflow to update a running container to the latest image version.
+.DESCRIPTION
+    Performs the following steps:
+    1. Checks if the container exists.
+    2. Checks if a remote image update is available using Test-ImageUpdateAvailable (prompts to force if not).
+    3. Optionally prompts to back up the current container state using Backup-ContainerState.
+    4. Removes the existing container.
+    5. Pulls the latest version of the specified image.
+    6. Executes a provided script block (`RunFunction`) to start the new container with the correct configuration.
+    7. Offers to restore from backup if the pull or start fails (and a backup was made).
+    Supports -WhatIf for backup, remove, pull, and start actions.
+.PARAMETER Engine
+    Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER ContainerName
+    The name of the container to update. Mandatory.
+.PARAMETER ImageName
+    The full name and tag of the container image to update to (e.g., 'nginx:latest'). Mandatory.
+.PARAMETER Platform
+    The target platform for the image pull (e.g., 'linux/amd64'). Defaults to 'linux/amd64'.
+.PARAMETER RunFunction
+    A script block that contains the specific 'engine run' command needed to start the container
+    with its required volumes, ports, environment variables, etc. Mandatory.
+.OUTPUTS
+    [bool] Returns $true if the update process completes successfully (including the new container start).
+           Returns $false if any critical step fails or the update is canceled.
+.EXAMPLE
+    $runMyApp = { & $enginePath run --name my-app -p 8080:80 -v my-app-data:/data $imageName }
+    Update-Container -Engine "docker" -ContainerName "my-app" -ImageName "my-registry/my-app:latest" -RunFunction $runMyApp
+.NOTES
+    Uses Write-Information for status messages.
+    Relies on several other functions: Test-ImageUpdateAvailable, Backup-ContainerState, Restore-ContainerState.
+    User interaction handled via Read-Host for backup and force update prompts.
+#>
 function Update-Container {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
@@ -706,25 +854,54 @@ function Update-Container {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Show-ContainerStatus
-# Description: Displays container configuration, checks runtime status,
-#              performs network connectivity tests, and pauses briefly.
-#              Requires Setup_0_Network.ps1 to be dot-sourced for network tests.
-# Parameters:
-#   -ContainerName: Name of the container.
-#   -ContainerEngine: Name of the engine (e.g., "docker", "podman").
-#   -EnginePath: Full path to the container engine executable.
-#   -DisplayName: Optional, friendly name for display (defaults to ContainerName).
-#   -ContainerUrl: Optional, base URL for HTTP/WS tests (e.g., http://localhost:8080).
-#   -TcpPort: Optional, port number for TCP connectivity test.
-#   -HttpPort: Optional, port number for HTTP connectivity test.
-#   -HttpPath: Optional, path for HTTP test (defaults to '/').
-#   -WsPort: Optional, port number for WebSocket connectivity test.
-#   -WsPath: Optional, path for WebSocket test.
-#   -DelaySeconds: Optional, seconds to pause after displaying info (default 3).
-#   -AdditionalInfo: Optional, hashtable of extra key-value pairs to display.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Displays status information and performs connectivity tests for a specified container.
+.DESCRIPTION
+    Shows basic information like container name, engine, and any additional configuration provided.
+    Checks the container's running status using 'engine ps'.
+    If the container is running, performs optional network connectivity tests:
+    - TCP port check using Test-TCPPort.
+    - HTTP endpoint check using Test-HTTPPort.
+    - WebSocket endpoint check using Test-WebSocketPort (requires Setup_0_Network.ps1).
+    Pauses for a specified number of seconds after displaying the information.
+.PARAMETER ContainerName
+    The name of the container to check. Mandatory.
+.PARAMETER ContainerEngine
+    The name of the container engine being used (e.g., "docker", "podman"). Mandatory.
+.PARAMETER EnginePath
+    The full path to the container engine executable. Mandatory.
+.PARAMETER DisplayName
+    An optional friendly name for the container to display in the output. Defaults to ContainerName.
+.PARAMETER ContainerUrl
+    An optional base URL (e.g., 'http://localhost:8080') used for constructing HTTP/WS test URIs if specific ports aren't provided.
+.PARAMETER TcpPort
+    Optional. The TCP port number on localhost to test connectivity to.
+.PARAMETER HttpPort
+    Optional. The HTTP port number on localhost to test connectivity to. If ContainerUrl is not set, defaults to http://localhost:<HttpPort>.
+.PARAMETER HttpPath
+    Optional. The path component for the HTTP test URI. Defaults to '/'.
+.PARAMETER WsPort
+    Optional. The WebSocket port number on localhost to test connectivity to. If ContainerUrl is not set, defaults to ws://localhost:<WsPort>.
+.PARAMETER WsPath
+    Optional. The path component for the WebSocket test URI.
+.PARAMETER DelaySeconds
+    Optional. The number of seconds to pause after displaying the status. Defaults to 3.
+.PARAMETER AdditionalInfo
+    Optional. A hashtable containing extra key-value pairs to display under 'Additional Configuration'.
+.EXAMPLE
+    Show-ContainerStatus -ContainerName "webserver" -ContainerEngine "docker" -EnginePath "docker" -HttpPort 80 -TcpPort 80
+.EXAMPLE
+    $info = @{ "Volume" = "data:/var/www"; "Network" = "web-net" }
+    Show-ContainerStatus -ContainerName "app-db" -ContainerEngine "podman" -EnginePath "podman" -DisplayName "Application Database" -TcpPort 5432 -AdditionalInfo $info -DelaySeconds 5
+.NOTES
+    Relies on Test-TCPPort, Test-HTTPPort (from Setup_0_Network.ps1).
+    Relies on Test-WebSocketPort (from Setup_0_Network.ps1). Checks for its existence before calling.
+    Uses Write-Host for direct console output formatting.
+#>
 function Show-ContainerStatus {
     [CmdletBinding()]
     param(

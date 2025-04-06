@@ -46,16 +46,28 @@ if (-not $global:enginePath) {
     exit 1
 }
 
+#==============================================================================
+# Function: ConvertTo-WSLPath
+#==============================================================================
 <#
 .SYNOPSIS
    Converts a Windows path into a WSL (Linux) path.
 .DESCRIPTION
    This function takes an absolute Windows path and converts it to the corresponding WSL
-   path by replacing the drive letter and backslashes with the Linux mount point format.
+   path by replacing the drive letter and backslashes with the Linux mount point format
+   (e.g., C:\Users\Me becomes /mnt/c/Users/Me).
    IMPORTANT: This workaround is CRUCIAL for successfully copying a file from the local
-   machine to Podman.
+   machine to Podman using 'podman machine ssh "podman cp ..."'.
 .PARAMETER winPath
-   The Windows path to convert.
+   The Windows path to convert. Mandatory.
+.OUTPUTS
+   [string] The converted WSL path, or the original path if conversion fails.
+.EXAMPLE
+   $wslPath = ConvertTo-WSLPath -winPath "C:\MyFolder\MyFile.txt"
+   # $wslPath will be "/mnt/c/MyFolder/MyFile.txt"
+.NOTES
+   Uses Resolve-Path to get the absolute path first.
+   Uses regex matching and replacement.
 #>
 function ConvertTo-WSLPath {
     param(
@@ -75,14 +87,24 @@ function ConvertTo-WSLPath {
     }
 }
 
+#==============================================================================
+# Function: Install-PipelinesContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs (or reinstalls) the Pipelines container from scratch.
+    Installs (or reinstalls) the Pipelines container using the official pre-built image.
 .DESCRIPTION
-    Installs Pipelines using the pre-built image from ghcr.io/open-webui/pipelines:main.
-    Optionally removes any existing container with the same name.
-    If running Docker, adds the '--add-host' parameter for host resolution; for Podman, skips it.
-    After running the container, waits for startup and tests connectivity.
+    Ensures the required volume exists using Confirm-ContainerVolume.
+    Removes any existing container named 'pipelines'.
+    Pulls and runs the 'ghcr.io/open-webui/pipelines:main' image.
+    Configures port mapping (9099:9099), volume mount, restart policy, and container name.
+    Adds '--add-host host.docker.internal:host-gateway' specifically for Docker.
+    Waits 20 seconds after starting and performs TCP/HTTP connectivity tests.
+.EXAMPLE
+    Install-PipelinesContainer
+.NOTES
+    Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
 #>
 function Install-PipelinesContainer {
     Write-Information "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
@@ -145,12 +167,19 @@ function Install-PipelinesContainer {
     Test-HTTPPort -Uri "http://localhost:9099" -serviceName $global:containerName
 }
 
+#==============================================================================
+# Function: Backup-PipelinesContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live Pipelines container.
+    Backs up the state of the running Pipelines container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to backup the container.
-    Aborts if the engine path has not been set.
+    Checks if the global engine path is set. If set, calls the Backup-ContainerState
+    helper function, specifying 'pipelines' as the container name.
+.EXAMPLE
+    Backup-PipelinesContainer
+.NOTES
+    Relies on Backup-ContainerState helper function.
 #>
 function Backup-PipelinesContainer {
     if (-not $global:enginePath) {
@@ -160,12 +189,20 @@ function Backup-PipelinesContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Restore-PipelinesContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the Pipelines container from backup.
+    Restores the Pipelines container image from a backup tar file.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the container.
-    Aborts if the engine path has not been set.
+    Checks if the global engine path is set. If set, calls the Restore-ContainerState
+    helper function, specifying 'pipelines' as the container name.
+    Note: This only restores the image, it does not automatically start a container from it.
+.EXAMPLE
+    Restore-PipelinesContainer
+.NOTES
+    Relies on Restore-ContainerState helper function.
 #>
 function Restore-PipelinesContainer {
     if (-not $global:enginePath) {
@@ -175,29 +212,51 @@ function Restore-PipelinesContainer {
     Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Uninstall-PipelinesContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Pipelines container and optionally the data volume.
+    Uninstalls the Pipelines container and optionally removes its data volume.
 .DESCRIPTION
-    Uses the generic Remove-ContainerAndVolume function.
+    Calls the Remove-ContainerAndVolume helper function, specifying 'pipelines' as both the
+    container and volume name. This will stop/remove the container and prompt the user
+    about removing the volume. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-PipelinesContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-PipelinesContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Add-PipelineToContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Adds the Azure pipeline file to the container.
-.PARAMETER PipelineUrl
-    URL of the pipeline file (use the raw URL).
-.PARAMETER DestinationDir
-    Destination directory inside the container.
-.PARAMETER ContainerName
-    Container name. Defaults to the global container name.
+    Downloads a specified pipeline file and copies it into the running Pipelines container.
 .DESCRIPTION
-    Downloads the azure_openai_pipeline.py file, converts the Windows path to a WSL path when using Podman,
-    copies the file into the container, restarts the container, and cleans up the temporary file.
-    IMPORTANT: Workaround for copying file to Podman is preserved.
+    Downloads the pipeline file from the specified URL to a temporary location.
+    If using Podman, converts the temporary file's Windows path to a WSL path using ConvertTo-WSLPath.
+    Copies the file into the specified destination directory within the container using 'podman machine ssh "podman cp ..."'.
+    Restarts the container to load the new pipeline.
+    Removes the temporary downloaded file.
+.PARAMETER PipelineUrl
+    The raw URL of the pipeline Python file to download. Defaults to the Azure OpenAI example.
+.PARAMETER DestinationDir
+    The directory path inside the container where the pipeline file should be copied. Defaults to '/app/pipelines'.
+.PARAMETER ContainerName
+    The name of the target Pipelines container. Defaults to the global $containerName ('pipelines').
+.EXAMPLE
+    Add-PipelineToContainer
+.EXAMPLE
+    Add-PipelineToContainer -PipelineUrl "https://example.com/my_custom_pipeline.py"
+.NOTES
+    Relies on Invoke-DownloadFile and ConvertTo-WSLPath helper functions.
+    Uses 'podman machine ssh "podman cp ..."' for copying, which requires the Podman machine to be running.
+    Uses Write-Information for status messages.
 #>
 function Add-PipelineToContainer {
     param(
@@ -242,25 +301,35 @@ function Add-PipelineToContainer {
     Write-Information "Reminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
+#==============================================================================
+# Function: Invoke-StartPipelinesForUpdate
+#==============================================================================
 <#
 .SYNOPSIS
     Helper function called by Update-Container to start the Pipelines container after an update.
 .DESCRIPTION
     This function encapsulates the specific logic required to start the Pipelines container,
-    including ensuring the volume exists, setting engine-specific parameters, and running the container.
+    including ensuring the volume exists, setting engine-specific parameters (like --add-host for Docker),
+    and running the container with the updated image name. It performs connectivity tests after starting.
     It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
 .PARAMETER EnginePath
-    Path to the container engine executable.
+    Path to the container engine executable (passed by Update-Container).
 .PARAMETER ContainerEngineType
-    Type of the container engine ('docker' or 'podman').
+    Type of the container engine ('docker' or 'podman') (passed by Update-Container).
 .PARAMETER ContainerName
-    Name of the container being updated.
+    Name of the container being updated (passed by Update-Container).
 .PARAMETER VolumeName
-    Name of the volume associated with the container.
+    Name of the volume associated with the container (passed by Update-Container).
 .PARAMETER ImageName
-    The new image name/tag to use for the updated container.
+    The new image name/tag to use for the updated container (passed by Update-Container).
 .OUTPUTS
-    Throws an error if the container fails to start.
+    Throws an error if the container fails to start, which signals failure back to Update-Container.
+.EXAMPLE
+    # This function is intended to be called internally by Update-Container via -RunFunction
+    # Update-Container -RunFunction ${function:Invoke-StartPipelinesForUpdate}
+.NOTES
+    Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
 #>
 function Invoke-StartPipelinesForUpdate {
     param(
@@ -310,13 +379,22 @@ function Invoke-StartPipelinesForUpdate {
     Test-HTTPPort -Uri "http://localhost:9099" -serviceName $ContainerName
 }
 
+#==============================================================================
+# Function: Update-PipelinesContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Pipelines container.
+    Updates the Pipelines container to the latest official image using the generic update workflow.
 .DESCRIPTION
-    Uses the generic Update-Container function to handle the update process,
-    passing a reference to the specific 'Invoke-StartPipelinesForUpdate' function
-    to handle the container startup logic after the image pull.
+    Calls the generic Update-Container helper function, providing the specific details for the
+    Pipelines container (name, image name) and passing a reference to the
+    Invoke-StartPipelinesForUpdate function via the -RunFunction parameter. This ensures the
+    container is started correctly after the image is pulled and the old container is removed.
+    Supports -WhatIf.
+.EXAMPLE
+    Update-PipelinesContainer -WhatIf
+.NOTES
+    Relies on the Update-Container helper function and Invoke-StartPipelinesForUpdate.
 #>
 function Update-PipelinesContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -340,11 +418,19 @@ function Update-PipelinesContainer {
                      -RunFunction ${function:Invoke-StartPipelinesForUpdate} # Pass function reference
 }
 
+#==============================================================================
+# Function: Update-PipelinesUserData
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the user data for the Pipelines container.
+    Placeholder function for updating user data in the Pipelines container.
 .DESCRIPTION
-    This functionality is not implemented.
+    Currently, this function only displays a message indicating that the functionality
+    is not implemented. Supports -WhatIf.
+.EXAMPLE
+    Update-PipelinesUserData
+.NOTES
+    This function needs implementation if specific user data update procedures are required.
 #>
 function Update-PipelinesUserData {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -355,11 +441,19 @@ function Update-PipelinesUserData {
     }
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for container operations.
+    Displays the main menu options for Pipelines container management.
 .DESCRIPTION
-    Shows required menu items (1 to 5) and optional items (A, B, C), plus an exit option (0).
+    Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Add Azure Pipeline,
+    Update System, Update User Data, Exit) to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="

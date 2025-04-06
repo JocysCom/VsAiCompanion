@@ -32,20 +32,28 @@ $global:networkName        = "firecrawl-net"
 $global:enginePath         = Get-DockerPath # Explicitly use Docker
 $global:volumeName         = "firecrawl_data" # Define a volume name
 
+#==============================================================================
+# Function: Install-FirecrawlContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs the Firecrawl container with dedicated Redis.
+    Installs the Firecrawl container and its dedicated Redis dependency.
 .DESCRIPTION
     Performs the following steps:
-    1. Creates a Docker network if it does not exist.
-    2. Removes any existing Redis container for Firecrawl, then starts a new Redis container
-       on the specified network with alias 'redis'.
-    3. Waits for Redis to initialize and tests connectivity.
-    4. Pulls the Firecrawl Docker image (or restores from backup).
-    5. Removes any existing Firecrawl container.
-    6. Runs the Firecrawl container with environment variable overrides to use the dedicated Redis.
-    7. Waits and tests connectivity for the Firecrawl API and Redis.
-    All original command arguments and workarounds are preserved.
+    1. Ensures the Docker network 'firecrawl-net' exists using Confirm-ContainerNetwork.
+    2. Removes any existing 'firecrawl-redis' container and starts a new one using the 'redis:alpine' image on the network with alias 'redis'.
+    3. Waits and tests TCP connectivity to the Redis container.
+    4. Ensures the 'firecrawl_data' volume exists using Confirm-ContainerVolume.
+    5. Checks if the Firecrawl image exists locally, restores from backup, or pulls it using Invoke-PullImage.
+    6. Removes any existing 'firecrawl' container.
+    7. Runs the Firecrawl container, connecting it to the network, mounting the volume, and setting environment variables to use the dedicated Redis via its network alias.
+    8. Waits and tests TCP/HTTP connectivity to the Firecrawl API and TCP connectivity to Redis again.
+.EXAMPLE
+    Install-FirecrawlContainer
+.NOTES
+    This function orchestrates the entire setup for Firecrawl and its Redis dependency.
+    Relies on Confirm-ContainerNetwork, Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage, Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages. Assumes Docker engine.
 #>
 function Install-FirecrawlContainer {
     #############################################
@@ -165,11 +173,20 @@ function Install-FirecrawlContainer {
     Write-Information "Firecrawl is now running and accessible at http://localhost:3002"
 }
 
+#==============================================================================
+# Function: Uninstall-FirecrawlContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Firecrawl container and optionally the data volume.
+    Uninstalls the Firecrawl container, its data volume (optional), and the associated Redis container.
 .DESCRIPTION
-    Uses the generic Remove-ContainerAndVolume function. Also removes the dedicated Redis container.
+    Calls Remove-ContainerAndVolume for the Firecrawl container and volume ('firecrawl', 'firecrawl_data').
+    Stops and removes the dedicated Redis container ('firecrawl-redis'). Supports -WhatIf via Remove-ContainerAndVolume.
+.EXAMPLE
+    Uninstall-FirecrawlContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
+    Uses 'docker rm --force' for the Redis container.
 #>
 function Uninstall-FirecrawlContainer {
     # Remove Firecrawl container and potentially its volume
@@ -183,48 +200,74 @@ function Uninstall-FirecrawlContainer {
     }
 }
 
+#==============================================================================
+# Function: Backup-FirecrawlContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live Firecrawl container.
+    Backs up the state of the running Firecrawl container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to back up the Firecrawl container.
+    Calls the Backup-ContainerState helper function, specifying 'firecrawl' as the container name.
+    This commits the container state to an image and saves it as a tar file.
+.EXAMPLE
+    Backup-FirecrawlContainer
+.NOTES
+    Relies on Backup-ContainerState helper function. Does not back up the Redis container state.
 #>
 function Backup-FirecrawlContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName
 }
 
+#==============================================================================
+# Function: Restore-FirecrawlContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the Firecrawl container from backup.
+    Restores the Firecrawl container image from a backup tar file.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the Firecrawl container.
-    Note: This does not restore the Redis container state.
+    Calls the Restore-ContainerState helper function, specifying 'firecrawl' as the container name.
+    This loads the image from the backup tar file. Note: This only restores the Firecrawl image,
+    it does not automatically start the container or restore/start the Redis container.
+.EXAMPLE
+    Restore-FirecrawlContainer
+.NOTES
+    Relies on Restore-ContainerState helper function. Does not handle Redis restore or container start.
 #>
 function Restore-FirecrawlContainer {
     Restore-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName
     # Consider adding logic to restart Redis if needed after restore
 }
 
+#==============================================================================
+# Function: Invoke-StartFirecrawlForUpdate
+#==============================================================================
 <#
 .SYNOPSIS
     Helper function called by Update-Container to start the Firecrawl container after an update.
 .DESCRIPTION
-    This function encapsulates the specific logic required to start the Firecrawl container,
-    assuming the network and Redis container are already running. It ensures the volume exists,
-    sets environment variables, runs the container, and tests connectivity.
+    This function encapsulates the specific logic required to start the Firecrawl container after an update.
+    It assumes the network and Redis container are already running. It ensures the volume exists,
+    sets the necessary environment variables (pointing to the existing Redis), runs the container
+    with the updated image name, waits, and performs connectivity tests.
     It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
 .PARAMETER EnginePath
-    Path to the container engine executable (Docker).
+    Path to the container engine executable (Docker) (passed by Update-Container).
 .PARAMETER ContainerEngineType
     Type of the container engine ('docker'). (Passed by Update-Container, not directly used).
 .PARAMETER ContainerName
-    Name of the container being updated (e.g., 'firecrawl').
+    Name of the container being updated (e.g., 'firecrawl') (passed by Update-Container).
 .PARAMETER VolumeName
-    Name of the volume associated with the container (e.g., 'firecrawl_data').
+    Name of the volume associated with the container (e.g., 'firecrawl_data') (passed by Update-Container).
 .PARAMETER ImageName
-    The new image name/tag to use for the updated container.
+    The new image name/tag to use for the updated container (passed by Update-Container).
 .OUTPUTS
-    Throws an error if the container fails to start.
+    Throws an error if the container fails to start, which signals failure back to Update-Container.
+.EXAMPLE
+    # This function is intended to be called internally by Update-Container via -RunFunction
+    # Update-Container -RunFunction ${function:Invoke-StartFirecrawlForUpdate}
+.NOTES
+    Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages. Assumes Docker engine and relies on global $networkName.
 #>
 function Invoke-StartFirecrawlForUpdate {
     param(
@@ -279,13 +322,23 @@ function Invoke-StartFirecrawlForUpdate {
     Write-Information "Firecrawl container updated successfully."
 }
 
+#==============================================================================
+# Function: Update-FirecrawlContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Firecrawl container.
+    Updates the Firecrawl container to the latest image version using the generic update workflow.
 .DESCRIPTION
-    Uses the generic Update-Container function. The Redis container is left running.
-    Passes a reference to the specific 'Invoke-StartFirecrawlForUpdate' function
-    to handle the container startup logic after the image pull.
+    Calls the generic Update-Container helper function, providing the specific details for the
+    Firecrawl container (name, image name) and passing a reference to the
+    Invoke-StartFirecrawlForUpdate function via the -RunFunction parameter. This ensures the
+    container is started correctly after the image is pulled and the old container is removed.
+    The associated Redis container is assumed to be running and is not affected by this update.
+    Supports -WhatIf.
+.EXAMPLE
+    Update-FirecrawlContainer -WhatIf
+.NOTES
+    Relies on the Update-Container helper function and Invoke-StartFirecrawlForUpdate. Assumes Docker engine.
 #>
 function Update-FirecrawlContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -309,11 +362,19 @@ function Update-FirecrawlContainer {
                      -RunFunction ${function:Invoke-StartFirecrawlForUpdate} # Pass function reference
 }
 
+#==============================================================================
+# Function: Update-FirecrawlUserData
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the user data for the Firecrawl container.
+    Placeholder function for updating user data in the Firecrawl container.
 .DESCRIPTION
-    This functionality is not implemented.
+    Currently, this function only displays a message indicating that the functionality
+    is not implemented. Supports -WhatIf.
+.EXAMPLE
+    Update-FirecrawlUserData
+.NOTES
+    This function needs implementation if specific user data update procedures are required.
 #>
 function Update-FirecrawlUserData {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -325,12 +386,19 @@ function Update-FirecrawlUserData {
     }
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for Firecrawl container operations.
+    Displays the main menu options for Firecrawl container management.
 .DESCRIPTION
-    Presents menu options for installing, uninstalling, backing up, restoring, updating the system,
-    and updating user data. The exit option ("0") terminates the menu loop.
+    Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update System,
+    Update User Data, Exit) to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="

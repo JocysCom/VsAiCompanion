@@ -23,34 +23,60 @@ Set-ScriptLocation
 # Ensure the script stops immediately if any error occurs.
 $ErrorActionPreference = 'Stop'
 
-#############################################
+#==============================================================================
 # Function: CheckPodmanCliAvailable
-# Checks if the Podman CLI is available in the path.
-# Returns: $true if Podman CLI is available, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if the Podman CLI command ('podman') is available in the system PATH.
+.DESCRIPTION
+    Uses Get-Command to check if 'podman' can be resolved.
+.OUTPUTS
+    [bool] Returns $true if the 'podman' command is found, $false otherwise.
+.EXAMPLE
+    if (CheckPodmanCliAvailable) { Write-Host "Podman CLI found." }
+#>
 function CheckPodmanCliAvailable {
     $podmanCmd = Get-Command podman -ErrorAction SilentlyContinue
     return ($null -ne $podmanCmd)
 }
 
-#############################################
+#==============================================================================
 # Function: CheckPodmanServiceAvailable
-# Checks if the Podman Service is installed and available.
-# The service automatically starts the Podman machine on system boot.
-# Returns: $true if Podman Service is installed, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if the Podman Machine startup service ('PodmanMachineStart') is installed.
+.DESCRIPTION
+    Uses Get-Service to check for the existence of a Windows service named 'PodmanMachineStart'.
+    This service is typically created by Install-PodmanService to auto-start the machine.
+.OUTPUTS
+    [bool] Returns $true if the service exists, $false otherwise.
+.EXAMPLE
+    if (CheckPodmanServiceAvailable) { Write-Host "Podman service found." }
+#>
 function CheckPodmanServiceAvailable {
     $serviceName = "PodmanMachineStart"
     $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
     return ($null -ne $service)
 }
 
-#############################################
+#==============================================================================
 # Function: CheckPodmanMachineAvailable
-# Checks if a Podman machine exists and is accessible.
-# The Podman machine is the WSL2-based virtual environment where containers run.
-# Returns: $true if a Podman machine exists, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if any Podman machine configuration exists.
+.DESCRIPTION
+    First checks if the Podman CLI is available. If so, it runs 'podman machine ls --format json'
+    and checks if the output indicates that at least one machine is configured.
+.OUTPUTS
+    [bool] Returns $true if the CLI is available and at least one machine is listed, $false otherwise.
+.EXAMPLE
+    if (CheckPodmanMachineAvailable) { Write-Host "Podman machine(s) configured." }
+.NOTES
+    Doesn't check if the machine is running, only if it's configured.
+#>
 function CheckPodmanMachineAvailable {
     # First check if Podman CLI is available
     if (-not (CheckPodmanCliAvailable)) {
@@ -69,12 +95,20 @@ function CheckPodmanMachineAvailable {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: CheckPodmanMachineRunning
-# Checks if any Podman machine is actually running.
-# A running machine has booted its Linux OS and is ready to run containers.
-# Returns: $true if a Podman machine is running, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if the default Podman machine is currently running.
+.DESCRIPTION
+    First checks if a Podman machine is available. If so, it runs 'podman machine ls --format json'
+    and checks the 'State' property of the first machine listed (usually 'default').
+.OUTPUTS
+    [bool] Returns $true if a machine exists and its state is 'Running', $false otherwise.
+.EXAMPLE
+    if (CheckPodmanMachineRunning) { Write-Host "Podman machine is running." }
+#>
 function CheckPodmanMachineRunning {
     # First check if Podman CLI and machine are available
     if (-not (CheckPodmanMachineAvailable)) {
@@ -93,20 +127,42 @@ function CheckPodmanMachineRunning {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: CheckPodmanDesktopInstalled
-# Checks if Podman Desktop is installed.
-# Podman Desktop is the GUI management tool for Podman.
-# Returns: $true if Podman Desktop is installed, $false otherwise.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if Podman Desktop appears to be installed via Add/Remove Programs registry entries.
+.DESCRIPTION
+    Calls the Test-ApplicationInstalled helper function (from Setup_0_Core.ps1)
+    to search for registry entries matching "Podman Desktop".
+.OUTPUTS
+    [bool] Returns $true if an entry matching "Podman Desktop" is found, $false otherwise.
+.EXAMPLE
+    if (CheckPodmanDesktopInstalled) { Write-Host "Podman Desktop is installed." }
+.NOTES
+    Relies on Test-ApplicationInstalled from Setup_0_Core.ps1.
+#>
 function CheckPodmanDesktopInstalled {
     return (Test-ApplicationInstalled "Podman Desktop")
 }
 
-#############################################
+#==============================================================================
 # Function: DisplayPodmanStatus
-# Displays the current status of all Podman components.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Displays a summary of the installation and running status of various Podman components.
+.DESCRIPTION
+    Calls the various Check* functions (CheckPodmanCliAvailable, CheckPodmanDesktopInstalled,
+    CheckPodmanMachineAvailable, CheckPodmanMachineRunning, CheckPodmanServiceAvailable)
+    and formats the results into a user-friendly status summary written to the information stream.
+.EXAMPLE
+    DisplayPodmanStatus
+.NOTES
+    Uses Write-Information for output.
+    Retrieves version and machine state details if components are available.
+#>
 function DisplayPodmanStatus {
     Write-Information "`n==================== PODMAN STATUS ===================="
 
@@ -173,11 +229,33 @@ function DisplayPodmanStatus {
 
 }
 
-#############################################
+#==============================================================================
 # Function: Install-PodmanCLI
-# Installs the Podman Program (CLI) by running the remote installer package.
-# The CLI is the core component that provides the 'podman' command.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Installs or upgrades the Podman Command Line Interface (CLI).
+.DESCRIPTION
+    Checks if Podman CLI is already installed. If installed, checks if the version matches the requested version
+    and prompts for upgrade if different. If not installed or upgrade confirmed, it downloads the specified
+    Podman setup executable, runs the installer, refreshes environment variables, and verifies the installation.
+.PARAMETER PodmanVersion
+    The target version of Podman to install (e.g., "5.4.0"). Defaults to "5.4.0".
+.PARAMETER setupExeUrl
+    Optional. The direct URL to the Podman setup executable. If not provided, it's constructed based on the PodmanVersion.
+.PARAMETER downloadFolder
+    The local folder to download the installer to. Defaults to '.\downloads'.
+.OUTPUTS
+    [bool] Returns $true if installation/upgrade is successful or skipped, $false on failure.
+.EXAMPLE
+    Install-PodmanCLI -PodmanVersion "5.1.0"
+.EXAMPLE
+    Install-PodmanCLI -setupExeUrl "http://example.com/podman-custom-setup.exe"
+.NOTES
+    Requires administrative privileges to run the installer.
+    Uses Invoke-DownloadFile and Update-EnvironmentVariable helper functions.
+    Uses Write-Information for status messages.
+#>
 function Install-PodmanCLI {
     param(
         [string]$PodmanVersion = "5.4.0",
@@ -245,11 +323,24 @@ function Install-PodmanCLI {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Select-DiskLocation
-# Prompts the user to select a custom disk location for Podman machine or use default
-# This determines where the VHDX (virtual disk) file will be stored
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Prompts the user to choose between the default or a custom disk location for the Podman machine VHDX file.
+.DESCRIPTION
+    Presents a menu asking the user to select the default location (within the user profile) or a custom path.
+    If custom is chosen, prompts the user to enter the path. Validates the path format and checks if the drive exists.
+.OUTPUTS
+    [string] Returns the selected custom path, or an empty string if the default location is chosen or if the custom path is invalid/rejected.
+.EXAMPLE
+    $location = Select-DiskLocation
+    if ($location) { Initialize-PodmanMachine -Rootful -DiskPath $location } else { Initialize-PodmanMachine -Rootful }
+.NOTES
+    Uses Write-Information for prompts and status messages.
+    Uses Read-Host for user input.
+#>
 function Select-DiskLocation {
 	Write-Information "==========================================="
     Write-Information "Select disk location machine virtual disk:"
@@ -301,11 +392,26 @@ function Select-DiskLocation {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Initialize-PodmanMachine
-# Creates and initializes a new Podman machine with default options
-# then offers to move the machine image to another location using WSL commands.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Initializes a new default Podman machine using WSL.
+.DESCRIPTION
+    Ensures WSL is correctly set up by calling Test-WSLStatus.
+    Verifies that at least one Linux distribution is installed via WSL.
+    Runs 'podman machine init' to create the default machine configuration and WSL distribution.
+    Starts the newly created machine using 'podman machine start'.
+.OUTPUTS
+    [bool] Returns $true if the machine is initialized and started successfully, $false otherwise.
+.EXAMPLE
+    Initialize-PodmanMachine
+.NOTES
+    Requires administrative privileges if WSL features need enabling.
+    Uses Test-WSLStatus helper function.
+    Uses Write-Information for status messages.
+#>
 function Initialize-PodmanMachine {
     # Ensure that WSL and required Windows features are enabled
     Test-WSLStatus
@@ -351,16 +457,40 @@ function Initialize-PodmanMachine {
 }
 
 #############################################
+#==============================================================================
 # Function: Move-PodmanMachineImage
-# Moves a Podman machine image to a new location using WSL commands.
-# Follows the procedure:
-# 1. Stop Podman machine
-# 2. Copy the VHDX folder to the new location
-# 3. Unregister the WSL distribution
-# 4. Import the copied VHDX in-place
-# 5. Start the Podman machine
-#############################################
-
+#==============================================================================
+<#
+.SYNOPSIS
+    Moves an existing Podman WSL machine's VHDX and associated files to a new location.
+.DESCRIPTION
+    Performs the following steps:
+    1. Stops the specified Podman machine.
+    2. Verifies the machine is stopped via 'wsl -l -v'.
+    3. Locates the source VHDX folder in the user's profile.
+    4. Checks for sufficient disk space at the destination.
+    5. Copies the entire source folder to the destination.
+    6. Prompts the user to confirm unregistering the original WSL distribution.
+    7. Unregisters the original WSL distribution ('wsl --unregister').
+    8. Imports the copied VHDX using 'wsl --import-in-place' or 'wsl --import'.
+    9. Removes the old Podman machine configuration files.
+    10. Re-initializes the Podman machine configuration ('podman machine init').
+    11. Starts the Podman machine in the new location ('podman machine start').
+    Includes recovery steps if starting the moved machine fails initially.
+.PARAMETER DestinationPath
+    The target directory where the Podman machine folder should be moved. Mandatory.
+.PARAMETER MachineName
+    The name of the Podman machine to move. Defaults to 'default'.
+.OUTPUTS
+    [bool] Returns $true if the move and restart are successful, $false otherwise.
+.EXAMPLE
+    Move-PodmanMachineImage -DestinationPath "D:\PodmanMachines"
+.NOTES
+    Requires administrative privileges for WSL commands.
+    This is a complex operation involving direct manipulation of WSL distributions. Use with caution.
+    Uses Write-Information for status messages.
+    User interaction required via Read-Host to confirm unregistration.
+#>
 function Move-PodmanMachineImage {
     param(
         [Parameter(Mandatory = $true)]
@@ -559,11 +689,29 @@ function Move-PodmanMachineImage {
     return $true
 }
 
-#############################################
+#==============================================================================
 # Function: Start-PodmanMachine
-# Starts an existing Podman machine.
-# This boots the Linux OS in the VHDX file using WSL2.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Starts an existing Podman machine.
+.DESCRIPTION
+    Checks if the Podman CLI is available and if the specified machine exists.
+    Checks if the machine is already running. If not running, it executes 'podman machine start'.
+    Supports -WhatIf.
+.PARAMETER MachineName
+    The name of the Podman machine to start. Defaults to 'default'.
+.OUTPUTS
+    [bool] Returns $true if the machine is already running or starts successfully.
+           Returns $false if the machine fails to start or if the start is skipped due to -WhatIf.
+.EXAMPLE
+    Start-PodmanMachine
+.EXAMPLE
+    Start-PodmanMachine -MachineName "my-custom-machine" -WhatIf
+.NOTES
+    Uses CheckPodmanCliAvailable, CheckPodmanMachineAvailable, CheckPodmanMachineRunning helper functions.
+    Uses Write-Information for status messages.
+#>
 function Start-PodmanMachine {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
@@ -609,11 +757,30 @@ function Start-PodmanMachine {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Install-PodmanService
-# Registers Podman as a Windows service that ensures the machine is running.
-# This service will automatically start the Podman machine on system boot.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Installs a Windows service ('PodmanMachineStart') to automatically start the Podman machine on system boot.
+.DESCRIPTION
+    Checks if Podman CLI and a machine are available.
+    Attempts to start the machine using Start-PodmanMachine.
+    Removes any existing service with the same name.
+    Creates a batch file ('start-podman.bat') in the Podman installation directory with logic to check network/WSL status and start the machine.
+    Creates a Windows service using 'sc.exe create' that runs the batch file with 'start= auto'.
+    Starts the newly created service using 'sc.exe start'.
+.PARAMETER ServiceName
+    The name for the Windows service. Defaults to 'PodmanMachineStart'.
+.OUTPUTS
+    [bool] Returns $true if the service is installed and started successfully, $false otherwise.
+.EXAMPLE
+    Install-PodmanService
+.NOTES
+    Requires administrative privileges to create/start services.
+    The created batch file includes checks for network and WSL availability before attempting to start the machine.
+    Uses Write-Information for status messages.
+#>
 function Install-PodmanService {
     param(
         [string]$ServiceName = "PodmanMachineStart"
@@ -720,11 +887,32 @@ if %errorlevel%==0 (
     return $true
 }
 
-#############################################
+#==============================================================================
 # Function: Install-PodmanDesktop
-# Installs Podman Desktop (UI) for managing Podman.
-# Only requires Podman CLI to be installed - can create machines itself.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Installs Podman Desktop UI.
+.DESCRIPTION
+    Checks if Podman Desktop is already installed.
+    Checks if Podman CLI is installed (required dependency).
+    Downloads the specified Podman Desktop setup executable.
+    Launches the installer asynchronously (does not wait for completion).
+    Prompts the user to confirm when the installation is finished.
+    Verifies the installation by checking again if Podman Desktop is installed.
+.PARAMETER setupExeUrl
+    The direct URL to the Podman Desktop setup executable. Defaults to a specific version URL.
+.PARAMETER downloadFolder
+    The local folder to download the installer to. Defaults to '.\downloads'.
+.OUTPUTS
+    [bool] Returns $true if installation is successful (based on user confirmation and re-check), $false otherwise.
+.EXAMPLE
+    Install-PodmanDesktop
+.NOTES
+    Requires user interaction to complete the installation GUI and confirm completion.
+    Uses Invoke-DownloadFile helper function.
+    Uses Write-Information for status messages.
+#>
 function Install-PodmanDesktop {
     param(
         [string]$setupExeUrl = "https://github.com/podman-desktop/podman-desktop/releases/download/v1.16.2/podman-desktop-1.16.2-setup-x64.exe",
@@ -781,10 +969,24 @@ function Install-PodmanDesktop {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Remove-PodmanService
-# Stops and removes the Podman service if it exists.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Stops and removes the Podman machine auto-start service ('PodmanMachineStart').
+.DESCRIPTION
+    Checks if the 'PodmanMachineStart' service exists using Get-Service.
+    If it exists, it stops the service using 'sc.exe stop' and then deletes it using 'sc.exe delete'.
+    Supports -WhatIf.
+.OUTPUTS
+    [bool] Returns $true if the service is removed successfully or didn't exist, $false if stop/delete fails.
+.EXAMPLE
+    Remove-PodmanService -WhatIf
+.NOTES
+    Requires administrative privileges to stop/delete services.
+    Uses Write-Information for status messages.
+#>
 function Remove-PodmanService {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
@@ -816,10 +1018,26 @@ function Remove-PodmanService {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Remove-PodmanComponent
-# Provides options to remove various Podman components.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Provides a menu to select and remove specific Podman components like the service or machine.
+.DESCRIPTION
+    Displays a menu with options to:
+    1. Remove the Podman Service (calls Remove-PodmanService).
+    2. Remove the Podman Machine (calls 'podman machine rm -f' for all listed machines).
+    3. (Placeholder) Uninstall Podman Desktop (directs user to Add/Remove Programs).
+    4. (Placeholder) Uninstall Podman CLI (directs user to Add/Remove Programs).
+    Prompts the user for a choice and executes the corresponding action. Supports -WhatIf for service/machine removal.
+.EXAMPLE
+    Remove-PodmanComponent
+.NOTES
+    Uses Read-Host for menu selection.
+    Actual uninstallation of Desktop/CLI is not implemented and requires manual user action.
+    Uses Write-Information for status messages.
+#>
 function Remove-PodmanComponent {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()

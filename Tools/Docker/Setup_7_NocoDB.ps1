@@ -40,13 +40,28 @@ else {
 # Set the NocoDB image name and container name.
 $global:imageName = "nocodb/nocodb:latest"
 
-#############################################
+#==============================================================================
 # Function: Install-NocoDBContainer
-# Description: Installs (or reinstalls) the NocoDB container.
-#              Checks/creates the necessary volume for data persistence,
-#              removes any existing container, pulls the image if necessary,
-#              runs the container, and tests connectivity.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Installs and starts the NocoDB container.
+.DESCRIPTION
+    Ensures the 'nocodb_data' volume exists using Confirm-ContainerVolume.
+    Checks if the NocoDB image exists locally; if not, attempts to restore from backup using
+    Test-AndRestoreBackup, falling back to pulling the image using Invoke-PullImage.
+    Removes any existing 'nocodb' container.
+    Runs the NocoDB container using the selected engine, mapping port 8570 to 8080,
+    and mounting the 'nocodb_data' volume to '/usr/app/data'.
+    Waits 20 seconds after starting and performs TCP/HTTP connectivity tests.
+.EXAMPLE
+    Install-NocoDBContainer
+.NOTES
+    Orchestrates volume creation, image acquisition, cleanup, and container start.
+    Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
+    Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
+#>
 function Install-NocoDBContainer {
     Write-Information "Installing NocoDB container using image '$global:imageName'..."
 
@@ -106,37 +121,92 @@ function Install-NocoDBContainer {
     Write-Information "If accessing NocoDB from another container (e.g. from n8n), use 'http://host.docker.internal:8570' as the URL."
 }
 
-#############################################
+#==============================================================================
 # Function: Uninstall-NocoDBContainer
-# Description: Removes the NocoDB container and optionally the data volume.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Uninstalls the NocoDB container and optionally removes its data volume.
+.DESCRIPTION
+    Calls the Remove-ContainerAndVolume helper function, specifying 'nocodb' as the container
+    and 'nocodb_data' as the volume. This will stop/remove the container and prompt the user
+    about removing the volume. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-NocoDBContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
+#>
 function Uninstall-NocoDBContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 }
 
-#############################################
+#==============================================================================
 # Function: Backup-NocoDBContainer
-# Description: Backs up the live NocoDB container.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Backs up the state of the running NocoDB container.
+.DESCRIPTION
+    Calls the Backup-ContainerState helper function, specifying 'nocodb' as the container name.
+    This commits the container state to an image and saves it as a tar file.
+.EXAMPLE
+    Backup-NocoDBContainer
+.NOTES
+    Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
+#>
 function Backup-NocoDBContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
-#############################################
+#==============================================================================
 # Function: Restore-NocoDBContainer
-# Description: Restores the NocoDB container from a backup.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Restores the NocoDB container image from a backup tar file.
+.DESCRIPTION
+    Calls the Restore-ContainerState helper function, specifying 'nocodb' as the container name.
+    This loads the image from the backup tar file. Note: This only restores the NocoDB image,
+    it does not automatically start the container.
+.EXAMPLE
+    Restore-NocoDBContainer
+.NOTES
+    Relies on Restore-ContainerState helper function. Does not handle volume restore.
+#>
 function Restore-NocoDBContainer {
     Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
 }
 
-#############################################
+#==============================================================================
 # Function: Invoke-StartNocoDBForUpdate
-# Description: Helper function called by Update-Container to start the NocoDB container after an update.
-#              Encapsulates the logic for ensuring volume, running the container, and testing connectivity.
-# Parameters: Standard parameters expected by Update-Container's -RunFunction.
-# Outputs: Throws an error if the container fails to start.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Helper function called by Update-Container to start the NocoDB container after an update.
+.DESCRIPTION
+    This function encapsulates the specific logic required to start the NocoDB container after an update.
+    It ensures the volume exists, runs the container with the correct ports, volume mount, and the
+    updated image name, waits, and performs connectivity tests.
+    It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
+.PARAMETER EnginePath
+    Path to the container engine executable (passed by Update-Container).
+.PARAMETER ContainerEngineType
+    Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, not directly used).
+.PARAMETER ContainerName
+    Name of the container being updated (e.g., 'nocodb') (passed by Update-Container).
+.PARAMETER VolumeName
+    Name of the volume associated with the container (e.g., 'nocodb_data') (passed by Update-Container).
+.PARAMETER ImageName
+    The new image name/tag to use for the updated container (passed by Update-Container).
+.OUTPUTS
+    Throws an error if the container fails to start, which signals failure back to Update-Container.
+.EXAMPLE
+    # This function is intended to be called internally by Update-Container via -RunFunction
+    # Update-Container -RunFunction ${function:Invoke-StartNocoDBForUpdate}
+.NOTES
+    Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
+#>
 function Invoke-StartNocoDBForUpdate {
     param(
         [string]$EnginePath,
@@ -175,11 +245,23 @@ function Invoke-StartNocoDBForUpdate {
     Write-Information "NocoDB container updated successfully."
 }
 
-#############################################
+#==============================================================================
 # Function: Update-NocoDBContainer
-# Description: Updates the NocoDB container using the generic Update-Container function,
-#              passing a reference to the specific 'Invoke-StartNocoDBForUpdate' function.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Updates the NocoDB container to the latest image version using the generic update workflow.
+.DESCRIPTION
+    Calls the generic Update-Container helper function, providing the specific details for the
+    NocoDB container (name, image name) and passing a reference to the
+    Invoke-StartNocoDBForUpdate function via the -RunFunction parameter. This ensures the
+    container is started correctly after the image is pulled and the old container is removed.
+    Supports -WhatIf.
+.EXAMPLE
+    Update-NocoDBContainer -WhatIf
+.NOTES
+    Relies on the Update-Container helper function and Invoke-StartNocoDBForUpdate.
+#>
 function Update-NocoDBContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
@@ -202,10 +284,20 @@ function Update-NocoDBContainer {
                      -RunFunction ${function:Invoke-StartNocoDBForUpdate} # Pass function reference
 }
 
-#############################################
+#==============================================================================
 # Function: Show-ContainerMenu
-# Description: Displays the main menu for NocoDB container management.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Displays the main menu options for NocoDB container management.
+.DESCRIPTION
+    Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update, Exit)
+    to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
+#>
 function Show-ContainerMenu {
     Write-Output "==========================================="
     Write-Output "NocoDB Container Management Menu"

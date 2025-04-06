@@ -49,10 +49,27 @@ Set-ScriptLocation
 
 $dockerStaticUrl  = "https://download.docker.com/win/static/stable/x86_64/docker-27.5.1.zip"
 
-#############################################
-# Docker Installation Functions
-#############################################
-
+#==============================================================================
+# Function: Invoke-DockerEngineDownload
+#==============================================================================
+<#
+.SYNOPSIS
+    Downloads the Docker Engine static binary zip archive.
+.DESCRIPTION
+    Downloads the Docker Engine zip file from the specified URL to a local 'downloads' folder.
+    Skips the download if the zip file already exists in the target folder.
+.PARAMETER dockerStaticUrl
+    The URL to download the Docker static binary zip file from.
+.PARAMETER downloadFolder
+    The local folder where the downloaded zip file should be saved. Defaults to '.\downloads'.
+.OUTPUTS
+    [string] The full path to the downloaded zip file. Exits script on download failure.
+.EXAMPLE
+    $zip = Invoke-DockerEngineDownload -dockerStaticUrl "https://download.docker.com/..."
+.NOTES
+    Uses Start-BitsTransfer for downloading.
+    Creates the download folder if it doesn't exist.
+#>
 function Invoke-DockerEngineDownload {
     param(
         [string]$dockerStaticUrl,
@@ -80,6 +97,28 @@ function Invoke-DockerEngineDownload {
     return $zipPath
 }
 
+#==============================================================================
+# Function: Install-DockerEngine
+#==============================================================================
+<#
+.SYNOPSIS
+    Extracts and installs the Docker Engine from the downloaded zip archive.
+.DESCRIPTION
+    Extracts the contents of the provided Docker zip archive to a temporary location.
+    Handles cases where the zip contains an inner 'docker' folder.
+    Moves the extracted contents to the final destination path.
+.PARAMETER zipPath
+    The path to the downloaded Docker zip archive.
+.PARAMETER destinationPath
+    The final directory where the Docker Engine files should be installed. Defaults to '.\docker'.
+.OUTPUTS
+    [string] The full path to the installation directory. Exits script on extraction failure.
+.EXAMPLE
+    $installPath = Install-DockerEngine -zipPath ".\downloads\docker.zip" -destinationPath "C:\Program Files\DockerEngine"
+.NOTES
+    Removes the destination path if it already exists before extraction.
+    Cleans up the temporary extraction folder.
+#>
 function Install-DockerEngine {
     param(
         [string]$zipPath,
@@ -119,6 +158,27 @@ function Install-DockerEngine {
     return $destinationPath
 }
 
+#==============================================================================
+# Function: Register-DockerEngineService
+#==============================================================================
+<#
+.SYNOPSIS
+    Registers and starts the Docker Engine (dockerd) as a Windows service.
+.DESCRIPTION
+    Checks if 'dockerd.exe' exists in the specified installation path.
+    Checks if the 'docker' service is already registered using Get-Service.
+    If not registered, it executes 'dockerd.exe --register-service'.
+    If the service is registered but not running, it starts the service using Start-Service.
+    Waits briefly after starting and adds the Docker installation path to the current session's PATH.
+.PARAMETER destinationPath
+    The directory where Docker Engine was installed. Defaults to '.\docker'.
+.EXAMPLE
+    Register-DockerEngineService -destinationPath "C:\Program Files\DockerEngine"
+.NOTES
+    Requires administrative privileges to register or start services.
+    Exits script if dockerd.exe is not found or if service registration/start fails.
+    Uses Start-Sleep to allow the service time to initialize.
+#>
 function Register-DockerEngineService {
     param(
         [string]$destinationPath = ".\docker"
@@ -159,6 +219,26 @@ function Register-DockerEngineService {
     $env:Path = "$(Resolve-Path $destinationPath);$env:Path"
 }
 
+#==============================================================================
+# Function: Test-DockerWorking
+#==============================================================================
+<#
+.SYNOPSIS
+    Verifies that the installed Docker Engine is working by running the hello-world container.
+.DESCRIPTION
+    Determines the path to the 'docker.exe' command (either from PATH or the specified installation directory).
+    Sets the DOCKER_HOST environment variable for the npipe connection.
+    Checks if the 'hello-world' image exists locally, pulling it if necessary.
+    Checks if a container named 'hello-world-test' exists, running a new one if necessary.
+    Reports success or failure based on the container run command's exit code.
+.PARAMETER destinationPath
+    The directory where Docker Engine was installed. Used to find docker.exe if not in PATH. Defaults to '.\docker'.
+.EXAMPLE
+    Test-DockerWorking -destinationPath "C:\Program Files\DockerEngine"
+.NOTES
+    Exits script if the hello-world container fails to run.
+    Uses Write-Output for status messages.
+#>
 function Test-DockerWorking {
     param(
         [string]$destinationPath = ".\docker"
@@ -200,6 +280,27 @@ function Test-DockerWorking {
     Write-Output "Docker Engine is working successfully."
 }
 
+#==============================================================================
+# Function: Test-DockerInstallation
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if Docker is installed and provides options to install Docker Desktop or Docker Engine if not found.
+.DESCRIPTION
+    Checks if the 'docker' command is available using Get-Command.
+    If not found, prompts the user to choose between installing Docker Desktop (via winget) or Docker Engine (static binary).
+    If Docker Desktop is chosen, it attempts installation using winget.
+    If Docker Engine is chosen, it calls Invoke-DockerEngineDownload, Install-DockerEngine, and Register-DockerEngineService.
+    If Docker is already found, it proceeds directly to verification.
+    Finally, calls Test-DockerWorking to verify the installation.
+.EXAMPLE
+    Test-DockerInstallation
+.NOTES
+    Requires administrative privileges for installation.
+    Requires winget if Docker Desktop installation is chosen.
+    Exits script on installation failure or invalid user selection.
+    Uses Write-Output/Write-Information for status messages.
+#>
 function Test-DockerInstallation {
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
         Write-Information "Docker is not installed."
@@ -244,6 +345,22 @@ function Test-DockerInstallation {
     Test-DockerWorking -destinationPath ".\docker"
 }
 
+#==============================================================================
+# Function: Test-DockerDaemonStatus
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if the Docker daemon is running and reachable.
+.DESCRIPTION
+    Sets the DOCKER_HOST environment variable for the npipe connection.
+    Runs 'docker info' and checks the exit code.
+    Reports success or failure based on the command's exit code.
+.EXAMPLE
+    Test-DockerDaemonStatus
+.NOTES
+    Exits script if the daemon is not reachable.
+    Uses Write-Output for status messages.
+#>
 function Test-DockerDaemonStatus {
     Write-Output "Ensuring Docker daemon is reachable..."
     $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"

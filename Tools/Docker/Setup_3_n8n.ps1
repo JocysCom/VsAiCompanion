@@ -50,17 +50,26 @@ else {
     $global:imageName     = "docker.io/n8nio/n8n:latest"
 }
 
-#############################################
-# Reusable Helper Functions
-#############################################
-
+#==============================================================================
+# Function: Get-n8nContainerConfig
+#==============================================================================
 <#
 .SYNOPSIS
-    Gets the current n8n container configuration.
+    Gets the current n8n container configuration, including environment variables, and prompts for external domain.
 .DESCRIPTION
-    Retrieves container information including environment variables.
+    Inspects the n8n container using the selected engine. Extracts the image name and relevant
+    environment variables (starting with N8N_ or WEBHOOK_). Ensures community packages and tool usage
+    are enabled by adding the respective environment variables if missing. Prompts the user via Read-Host
+    to enter an external domain and adds N8N_HOST and WEBHOOK_URL environment variables if provided.
 .OUTPUTS
-    Returns a custom object with container information or $null if not found.
+    [PSCustomObject] Returns a custom object containing the extracted/updated configuration details
+                     (Image, EnvVars) or $null if the container is not found or inspection fails.
+.EXAMPLE
+    $currentConfig = Get-n8nContainerConfig
+    if ($currentConfig) { Write-Host "Current Image: $($currentConfig.Image)" }
+.NOTES
+    Uses 'engine inspect'. Modifies the extracted environment variables list.
+    Requires user interaction via Read-Host for domain configuration.
 #>
 function Get-n8nContainerConfig {
     $containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
@@ -118,13 +127,23 @@ function Get-n8nContainerConfig {
     }
 }
 
+#==============================================================================
+# Function: Remove-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
     Stops and removes the n8n container.
 .DESCRIPTION
-    Safely stops and removes the n8n container while preserving user data.
+    Checks if a container named 'n8n' exists. If it does, it stops and removes it
+    using the selected container engine. Supports -WhatIf.
 .OUTPUTS
-    Returns $true if successful, $false otherwise.
+    [bool] Returns $true if the container is removed successfully or didn't exist.
+           Returns $false if removal fails or is skipped due to -WhatIf.
+.EXAMPLE
+    Remove-n8nContainer -WhatIf
+.NOTES
+    Uses 'engine ps', 'engine stop', and 'engine rm'.
+    Explicitly notes that the 'n8n_data' volume is not removed by this function.
 #>
 function Remove-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -155,17 +174,31 @@ function Remove-n8nContainer {
     }
 }
 
+#==============================================================================
+# Function: Start-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Starts a new n8n container with the specified configuration.
+    Starts a new n8n container with specified configuration.
 .DESCRIPTION
-    Creates a new n8n container with the provided image and environment variables.
+    Runs a new container using the selected engine with the specified image.
+    Configures standard n8n settings: detached mode, name 'n8n', mounts 'n8n_data' volume
+    to '/home/node/.n8n', and maps host port 5678 to container port 5678.
+    Applies any additional environment variables provided via the EnvVars parameter.
+    After starting, waits 20 seconds and performs TCP and HTTP connectivity tests.
+    Supports -WhatIf.
 .PARAMETER Image
-    The image to use for the container.
+    The n8n container image to use (e.g., 'docker.n8n.io/n8nio/n8n:latest'). Mandatory.
 .PARAMETER EnvVars
-    Array of environment variables to set in the container.
+    Optional array of environment variables strings (e.g., @("N8N_HOST=n8n.example.com")).
 .OUTPUTS
-    Returns $true if successful, $false otherwise.
+    [bool] Returns $true if the container starts successfully and connectivity tests pass.
+           Returns $false if start fails, tests fail, or action is skipped due to -WhatIf.
+.EXAMPLE
+    Start-n8nContainer -Image "docker.io/n8nio/n8n:latest" -EnvVars @("N8N_ENCRYPTION_KEY=secret")
+.NOTES
+    Relies on Test-TCPPort and Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
 #>
 function Start-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -222,15 +255,28 @@ function Start-n8nContainer {
     }
 }
 
+#==============================================================================
+# Function: Install-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs the n8n container.
+    Installs and starts the n8n container.
 .DESCRIPTION
-    Creates (if necessary) the volume 'n8n_data', pulls the n8n image if not found
-    (or restores from backup), removes any pre-existing container named "n8n",
-    prompts for an external domain, builds run options, runs the container,
-    waits for startup, and tests connectivity on port 5678.
-    Core argument values are preserved.
+    Ensures the 'n8n_data' volume exists using Confirm-ContainerVolume.
+    Checks if the n8n image exists locally; if not, attempts to restore from backup using
+    Test-AndRestoreBackup, falling back to pulling the image using Invoke-PullImage.
+    Removes any existing 'n8n' container using Remove-n8nContainer.
+    Defines default environment variables (enabling community packages/tools).
+    Prompts the user for an optional external domain to set N8N_HOST and WEBHOOK_URL.
+    Starts the new container using Start-n8nContainer with the determined image and environment variables.
+.EXAMPLE
+    Install-n8nContainer
+.NOTES
+    Orchestrates volume creation, image acquisition, cleanup, environment configuration, and container start.
+    Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
+    Remove-n8nContainer, and Start-n8nContainer helper functions.
+    Requires user interaction via Read-Host for domain configuration.
+    Uses Write-Information for status messages.
 #>
 function Install-n8nContainer {
     # Ensure the volume exists
@@ -281,21 +327,38 @@ function Install-n8nContainer {
     Start-n8nContainer -Image $global:imageName -EnvVars $envVars # This function now supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Uninstall-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the n8n container and optionally the data volume.
+    Uninstalls the n8n container and optionally removes its data volume.
 .DESCRIPTION
-    Uses the generic Remove-ContainerAndVolume function.
+    Calls the Remove-ContainerAndVolume helper function, specifying 'n8n' as the container
+    and 'n8n_data' as the volume. This will stop/remove the container and prompt the user
+    about removing the volume. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-n8nContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-n8nContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Backup-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live n8n container.
+    Backs up the state of the running n8n container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to create a backup of the container.
+    Calls the Backup-ContainerState helper function, specifying 'n8n' as the container name.
+    This commits the container state to an image and saves it as a tar file. Includes debug output.
+.EXAMPLE
+    Backup-n8nContainer
+.NOTES
+    Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
 #>
 function Backup-n8nContainer {
     Write-Information "Backing up n8n container..."
@@ -313,11 +376,22 @@ function Backup-n8nContainer {
     }
 }
 
+#==============================================================================
+# Function: Restore-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the n8n container from backup.
+    Restores the n8n container and its data volume from backup, then starts the container.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the container from a backup.
+    Calls Restore-ContainerState (with -RestoreVolumes) to load the image and restore volume data.
+    If successful, removes any existing 'n8n' container.
+    Retrieves existing configuration using Get-n8nContainerConfig (or defaults if none).
+    Starts the container using Start-n8nContainer with the restored image and configuration.
+.EXAMPLE
+    Restore-n8nContainer
+.NOTES
+    Relies on Restore-ContainerState, Remove-n8nContainer, Get-n8nContainerConfig,
+    and Start-n8nContainer helper functions. Supports -WhatIf via helper functions.
 #>
 function Restore-n8nContainer {
     Write-Information "Attempting to restore n8n container and its data volume from backup..."
@@ -357,25 +431,36 @@ function Restore-n8nContainer {
     }
 }
 
+#==============================================================================
+# Function: Invoke-StartN8nForUpdate
+#==============================================================================
 <#
 .SYNOPSIS
     Helper function called by Update-Container to start the n8n container after an update.
 .DESCRIPTION
-    This function encapsulates the specific logic required to start the n8n container,
-    including ensuring the volume exists, retrieving configuration, and calling Start-n8nContainer.
-    It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
+    This function encapsulates the specific logic required to start the n8n container after an update.
+    It ensures the volume exists, retrieves existing configuration (like domain settings) using
+    Get-n8nContainerConfig, and then calls Start-n8nContainer with the updated image name and
+    preserved environment variables. It adheres to the parameter signature expected by the
+    -RunFunction parameter of Update-Container.
 .PARAMETER EnginePath
-    Path to the container engine executable.
+    Path to the container engine executable (passed by Update-Container).
 .PARAMETER ContainerEngineType
-    Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, may not be used directly if relying on globals).
+    Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, may not be used directly).
 .PARAMETER ContainerName
-    Name of the container being updated. (Passed by Update-Container, may not be used directly if relying on globals).
+    Name of the container being updated. (Passed by Update-Container, may not be used directly).
 .PARAMETER VolumeName
-    Name of the volume associated with the container. (Passed by Update-Container, may not be used directly if relying on globals).
+    Name of the volume associated with the container. (Passed by Update-Container).
 .PARAMETER ImageName
-    The new image name/tag to use for the updated container.
+    The new image name/tag to use for the updated container (passed by Update-Container).
 .OUTPUTS
-    Throws an error if the container fails to start.
+    Throws an error if the container fails to start, which signals failure back to Update-Container.
+.EXAMPLE
+    # This function is intended to be called internally by Update-Container via -RunFunction
+    # Update-Container -RunFunction ${function:Invoke-StartN8nForUpdate}
+.NOTES
+    Relies on Confirm-ContainerVolume, Get-n8nContainerConfig, Start-n8nContainer helper functions.
+    Uses Write-Information for status messages. Includes [SuppressMessageAttribute] for unused standard parameters.
 #>
 function Invoke-StartN8nForUpdate {
     param(
@@ -419,17 +504,31 @@ function Invoke-StartN8nForUpdate {
     }
 }
 
+#==============================================================================
+# Function: Update-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the n8n container without resetting user data.
+    Updates the n8n container to the latest image version using the generic update workflow.
 .DESCRIPTION
-    Uses the generic Update-Container function to handle the update process,
-    passing a reference to the specific 'Invoke-StartN8nForUpdate' function
-    to handle the container startup logic after the image pull.
+    Calls the generic Update-Container helper function, providing the specific details for the
+    n8n container (name, image name) and passing a reference to the
+    Invoke-StartN8nForUpdate function via the -RunFunction parameter. This ensures the
+    container is started correctly with preserved configuration after the image is pulled
+    and the old container is removed. Supports -WhatIf.
+.EXAMPLE
+    Update-n8nContainer -WhatIf
+.NOTES
+    Relies on the Update-Container helper function and Invoke-StartN8nForUpdate.
 #>
 function Update-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
+
+    # Check ShouldProcess before proceeding with the delegated update
+    if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
+        return
+    }
 
     # Previously, a script block was defined here and passed using .GetNewClosure().
     # .GetNewClosure() creates a copy of the script block that captures the current
@@ -444,11 +543,19 @@ function Update-n8nContainer {
                      -RunFunction ${function:Invoke-StartN8nForUpdate} # Pass function reference
 }
 
+#==============================================================================
+# Function: Update-n8nUserData
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates user data for the n8n container.
+    Placeholder function for updating user data in the n8n container.
 .DESCRIPTION
-    This functionality is not yet implemented.
+    Currently, this function only displays a message indicating that the functionality
+    is not implemented. Supports -WhatIf.
+.EXAMPLE
+    Update-n8nUserData
+.NOTES
+    This function needs implementation if specific user data update procedures are required.
 #>
 function Update-n8nUserData {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -460,13 +567,23 @@ function Update-n8nUserData {
     }
 }
 
+#==============================================================================
+# Function: Restart-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restarts the n8n container with updated environment variables.
+    Restarts the n8n container, applying current configuration (e.g., enabling community packages).
 .DESCRIPTION
-    Safely stops and removes the existing container, then creates a new one with
-    the same image and volume but updated environment variables. This preserves
-    all user data while allowing configuration changes.
+    Retrieves the current container configuration using Get-n8nContainerConfig (which also ensures
+    community packages are enabled in the config object).
+    Removes the existing container using Remove-n8nContainer.
+    Starts a new container using Start-n8nContainer with the retrieved configuration (image and env vars).
+    This effectively restarts the container with potentially updated environment variables from Get-n8nContainerConfig.
+.EXAMPLE
+    Restart-n8nContainer
+.NOTES
+    Relies on Get-n8nContainerConfig, Remove-n8nContainer, Start-n8nContainer helper functions.
+    Supports -WhatIf via helper functions.
 #>
 function Restart-n8nContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -493,12 +610,19 @@ function Restart-n8nContainer {
     }
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for n8n container operations.
+    Displays the main menu options for n8n container management.
 .DESCRIPTION
-    Presents menu options (Install, Uninstall, Backup, Restore, Update System, and Update User Data);
-    the exit option ("0") terminates the menu loop.
+    Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update System,
+    Update User Data, Restart w/ Community Pkgs, Exit) to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="

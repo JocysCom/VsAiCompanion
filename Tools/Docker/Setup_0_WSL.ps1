@@ -6,10 +6,27 @@
 #                . "$PSScriptRoot\Setup_0_WSL.ps1"
 ################################################################################
 
-#############################################
-# WSL and Service Health Functions
-#############################################
-
+#==============================================================================
+# Function: Test-WSLStatus
+#==============================================================================
+<#
+.SYNOPSIS
+    Verifies WSL installation status, version, and required Windows features.
+.DESCRIPTION
+    Checks if the 'wsl.exe' command is available.
+    Checks if the default WSL version is 2, prompting to set it if not.
+    Checks if the 'Microsoft-Windows-Subsystem-Linux' Windows feature is enabled, prompting to enable it if not.
+    Checks if the 'VirtualMachinePlatform' Windows feature is enabled, prompting to enable it if not.
+    Exits the script if requirements are not met or if the user declines to enable features.
+.EXAMPLE
+    Test-WSLStatus
+    # Script continues if WSL is correctly configured, otherwise exits or prompts.
+.NOTES
+    Uses wsl.exe, Get-WindowsOptionalFeature, and dism.exe.
+    Requires administrative privileges to enable features or set the default WSL version.
+    Uses Write-Information for status messages and Write-Warning/Error for issues.
+    User interaction handled via Read-Host.
+#>
 function Test-WSLStatus {
     # Use Write-Information for status messages
     Write-Information "Verifying WSL installation and required service status..."

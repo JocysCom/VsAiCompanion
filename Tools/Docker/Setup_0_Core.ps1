@@ -11,10 +11,21 @@
 #                . "$PSScriptRoot\Setup_0_Core.ps1"
 ################################################################################
 
-#------------------------------
+#==============================================================================
 # Function: Test-AdminPrivilege
-# Description: Verify administrator privileges and exit if not elevated.
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Verify administrator privileges and exit if not elevated.
+.DESCRIPTION
+    Checks if the current user has administrator privileges. If not, it writes an error
+    and exits the script with status code 1.
+.EXAMPLE
+    Test-AdminPrivilege
+    # Script continues if elevated, otherwise exits.
+.NOTES
+    Uses [Security.Principal.WindowsPrincipal] and IsInRole.
+#>
 function Test-AdminPrivilege {
     if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
          Write-Error "Administrator privileges required. Please run this script as an Administrator."
@@ -22,10 +33,23 @@ function Test-AdminPrivilege {
     }
 }
 
-#------------------------------
+#==============================================================================
 # Function: Set-ScriptLocation
-# Description: Set the script's working directory to the directory containing the script.
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Sets the script's working directory to the directory containing the script.
+.DESCRIPTION
+    Determines the script's parent directory using $PSScriptRoot or $MyInvocation.MyCommand.Path
+    and changes the current location to that directory using Set-Location.
+    Supports -WhatIf via CmdletBinding.
+.EXAMPLE
+    Set-ScriptLocation
+    # Current directory is now the script's directory.
+.NOTES
+    Handles cases where $PSScriptRoot might be empty.
+    Uses Write-Information for status messages.
+#>
 function Set-ScriptLocation {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
@@ -49,11 +73,33 @@ function Set-ScriptLocation {
     }
 }
 
-#------------------------------
+#==============================================================================
 # Function: Invoke-DownloadFile
-# Description: Generic download function using Start-BitsTransfer (with fallback to Invoke-WebRequest).
-# Supports both -SourceUrl and -url as parameter aliases.
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Downloads a file from a URL, preferring BITS transfer with a fallback to Invoke-WebRequest.
+.DESCRIPTION
+    Downloads a file specified by -SourceUrl to the -DestinationPath.
+    Uses Start-BitsTransfer if available and not overridden by -UseFallback.
+    Falls back to Invoke-WebRequest if BITS fails or is unavailable.
+    Skips download if the destination file exists and -ForceDownload is not specified.
+.PARAMETER SourceUrl
+    The URL of the file to download. Alias: -url.
+.PARAMETER DestinationPath
+    The local path where the file should be saved.
+.PARAMETER ForceDownload
+    Switch parameter. If present, forces the download even if the destination file exists.
+.PARAMETER UseFallback
+    Switch parameter. If present, forces the use of Invoke-WebRequest instead of Start-BitsTransfer.
+.EXAMPLE
+    Invoke-DownloadFile -SourceUrl "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip"
+.EXAMPLE
+    Invoke-DownloadFile -url "http://example.com/file.zip" -DestinationPath "C:\temp\file.zip" -ForceDownload -UseFallback
+.NOTES
+    Uses Write-Information for status messages.
+    Temporarily sets $ProgressPreference to 'SilentlyContinue' for Invoke-WebRequest to improve speed.
+#>
 function Invoke-DownloadFile {
     [CmdletBinding()]
     param(
@@ -103,10 +149,24 @@ function Invoke-DownloadFile {
     }
 }
 
-#------------------------------
+#==============================================================================
 # Function: Test-GitInstallation
-# Description: Check for Git installation and add to PATH if needed from common VS locations.
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if Git is available in the PATH and attempts to add it from common Visual Studio locations if not found.
+.DESCRIPTION
+    Verifies if the 'git' command can be resolved using Get-Command.
+    If not found, it checks predefined paths within typical Visual Studio installations.
+    If found in one of these paths, it appends that path to the current session's $env:Path.
+    If Git still cannot be found, it writes an error and exits the script.
+.EXAMPLE
+    Test-GitInstallation
+    # Script continues if Git is found or added, otherwise exits.
+.NOTES
+    The list of predefined paths might need updating for different VS versions or installations.
+    Uses Write-Information for status messages.
+#>
 function Test-GitInstallation {
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         # Use Write-Information for status messages
@@ -130,16 +190,27 @@ function Test-GitInstallation {
     }
 }
 
-#------------------------------
+#==============================================================================
 # Function: Test-ApplicationInstalled
-#------------------------------
+#==============================================================================
+<#
+.SYNOPSIS
+    Determines whether a specified application is installed by checking the registry and Get-Package.
+.DESCRIPTION
+    Checks standard Uninstall registry keys (HKLM, HKLM WOW6432Node, HKCU) for display names matching the AppName (with wildcards).
+    If not found in the registry, it attempts to use Get-Package as a fallback.
+.PARAMETER AppName
+    The application name to search for (supports wildcards like '*AppName*'). Mandatory.
+.EXAMPLE
+    if (Test-ApplicationInstalled -AppName "Docker Desktop") { Write-Host "Docker is installed." }
+.EXAMPLE
+    $isVSCodeInstalled = Test-ApplicationInstalled -AppName "*Visual Studio Code*"
+.NOTES
+    Prioritizes registry check for performance.
+    Get-Package check is used as a fallback and might fail depending on execution policy or module availability.
+    Returns $true if found, $false otherwise.
+#>
 function Test-ApplicationInstalled {
-    <#
-    .SYNOPSIS
-        Determines whether a specified application is installed.
-    .PARAMETER AppName
-        The application name to search for (supports wildcards).
-    #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -177,22 +248,28 @@ function Test-ApplicationInstalled {
     return $false
 }
 
-#############################################
+#==============================================================================
 # Function: Update-EnvironmentVariable
-# Description: Refreshes specific environment variables (like PATH) in the current session.
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Refreshes the current session's PATH environment variable from registry values.
+.DESCRIPTION
+    Re-reads the machine and user PATH environment variables directly from the registry using
+    [System.Environment]::GetEnvironmentVariable() and concatenates them to update the
+    current PowerShell session's $env:PATH. This allows newly installed applications added
+    to the system PATH to be recognized without restarting the PowerShell session.
+    Supports -WhatIf via CmdletBinding.
+.EXAMPLE
+    Update-EnvironmentVariable
+    # The $env:PATH in the current session is updated.
+.NOTES
+    Uses Write-Information for status messages.
+#>
 function Update-EnvironmentVariable {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
-    <#
-    .SYNOPSIS
-      Refreshes the current session's PATH environment variable.
-
-    .DESCRIPTION
-      Re-reads the machine and user PATH from the registry and updates the current session.
-      This allows newly installed executables (such as podman) to be found without restarting PowerShell.
-    #>
 
     # Check if the action should be performed
     if ($PSCmdlet.ShouldProcess("current session environment variables", "Update PATH")) {
@@ -208,14 +285,37 @@ function Update-EnvironmentVariable {
     }
 }
 
-#############################################
+#==============================================================================
 # Function: Invoke-MenuLoop
-# Description: Handles a generic menu loop.
-# Parameters:
-#   -ShowMenuScriptBlock: A script block that displays the menu options.
-#   -ActionMap: A hashtable where keys are menu choices (strings) and values are script blocks to execute.
-#   -ExitChoice: The menu choice string that exits the loop (default "0").
-#############################################
+#==============================================================================
+<#
+.SYNOPSIS
+    Provides a generic, reusable menu loop structure.
+.DESCRIPTION
+    Repeatedly executes a provided script block to display menu options, prompts the user
+    for input, and executes a corresponding action script block based on a provided mapping.
+    The loop continues until the user enters the specified exit choice.
+.PARAMETER ShowMenuScriptBlock
+    A script block responsible for displaying the menu options to the user. Mandatory.
+.PARAMETER ActionMap
+    A hashtable where keys are the menu choice strings entered by the user, and values are
+    the script blocks to execute for that choice. Mandatory.
+.PARAMETER ExitChoice
+    The string the user must enter to exit the menu loop. Defaults to "0".
+.EXAMPLE
+    $menu = { Write-Host "1. Option 1"; Write-Host "2. Option 2"; Write-Host "0. Exit" }
+    $actions = @{
+        "1" = { Write-Host "Executing Option 1..." }
+        "2" = { Write-Host "Executing Option 2..." }
+    }
+    Invoke-MenuLoop -ShowMenuScriptBlock $menu -ActionMap $actions -ExitChoice "0"
+.NOTES
+    Uses Read-Host for input.
+    Uses dot sourcing (`. $ActionMap[$choice]`) to execute action script blocks in the current scope.
+    Includes basic error handling for action execution.
+    Clears the host and prompts user before showing the menu again (except on exit).
+    Uses Write-Information for status messages.
+#>
 function Invoke-MenuLoop {
     [CmdletBinding()]
     param(

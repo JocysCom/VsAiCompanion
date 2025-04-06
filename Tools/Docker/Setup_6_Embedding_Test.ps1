@@ -22,9 +22,25 @@
 $testPass = $true
 
 try {
-    ############################################################################
-    # 1) Helper Functions: Decode embedding and compute cosine similarity.
-    ############################################################################
+    #==============================================================================
+    # Function: ConvertFrom-Embedding
+    #==============================================================================
+    <#
+    .SYNOPSIS
+        Decodes a base64 encoded string representing an array of single-precision floats.
+    .DESCRIPTION
+        Takes a base64 string, decodes it into a byte array, and then interprets
+        every 4 bytes as a single-precision float (System.Single), returning a list of floats.
+    .PARAMETER EmbeddingBase64
+        The base64 encoded string containing the float data. Mandatory.
+    .OUTPUTS
+        [System.Collections.Generic.List[float]] A list of floats decoded from the base64 string,
+                                                 or $null if decoding fails.
+    .EXAMPLE
+        $floatList = ConvertFrom-Embedding -EmbeddingBase64 "AAAAAAAAAAA=" # Example base64
+    .NOTES
+        Uses System.Convert::FromBase64String and System.BitConverter::ToSingle.
+    #>
     Function ConvertFrom-Embedding {
         param(
             [Parameter(Mandatory)] [string] $EmbeddingBase64
@@ -42,6 +58,26 @@ try {
         return $floats
     }
 
+    #==============================================================================
+    # Function: Get-CosineSimilarity
+    #==============================================================================
+    <#
+    .SYNOPSIS
+        Calculates the cosine similarity between two vectors (lists of floats).
+    .DESCRIPTION
+        Computes the dot product of the two input vectors and divides it by the product
+        of their magnitudes to determine the cosine similarity. Handles zero magnitudes.
+    .PARAMETER vecA
+        The first vector as a list of floats. Mandatory.
+    .PARAMETER vecB
+        The second vector as a list of floats. Mandatory.
+    .OUTPUTS
+        [double] The cosine similarity value between -1 and 1. Returns 0 if either vector has zero magnitude.
+    .EXAMPLE
+        $similarity = Get-CosineSimilarity -vecA $list1 -vecB $list2
+    .NOTES
+        Throws an error if the input vectors have different lengths.
+    #>
     Function Get-CosineSimilarity {
         param(
             [Parameter(Mandatory)] [System.Collections.Generic.List[float]] $vecA,
@@ -64,6 +100,30 @@ try {
         return $dot / ([Math]::Sqrt($magA) * [Math]::Sqrt($magB))
     }
 
+    #==============================================================================
+    # Function: Get-EmbeddingFromAPI
+    #==============================================================================
+    <#
+    .SYNOPSIS
+        Requests an embedding for a given text line from the local Embedding API.
+    .DESCRIPTION
+        Sends a POST request to 'http://localhost:8000/v1/embeddings' with a JSON body
+        containing the specified model name and input text line. Parses the response,
+        extracts the base64 encoded embedding, decodes it using ConvertFrom-Embedding,
+        and returns the resulting list of floats.
+    .PARAMETER textLine
+        The string of text to get an embedding for. Mandatory.
+    .PARAMETER modelName
+        The name of the embedding model to use (passed in the API request). Mandatory.
+    .OUTPUTS
+        [System.Collections.Generic.List[float]] A list of floats representing the embedding,
+                                                 or $null if the API call or decoding fails.
+    .EXAMPLE
+        $embedding = Get-EmbeddingFromAPI -textLine "Example sentence" -modelName "model-name"
+    .NOTES
+        Uses Invoke-RestMethod for the API call and ConvertFrom-Embedding for decoding.
+        Includes basic validation of the API response structure.
+    #>
     Function Get-EmbeddingFromAPI {
         param(
             [Parameter(Mandatory)] [string] $textLine,

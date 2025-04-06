@@ -39,15 +39,27 @@ else {
     # If additional Podman-specific environment settings are needed, add them here.
 }
 
+#==============================================================================
+# Function: Install-QdrantContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs the Qdrant container.
+    Installs and starts the Qdrant container.
 .DESCRIPTION
-    Checks if a backup can be restored using the Check-AndRestoreBackup helper. If not,
-    pulls the Qdrant image from the registry using the selected container engine.
-    Then, if a container with the specified name exists, it is removed.
-    Finally, the Qdrant container is launched with proper port mapping and volume.
-    All original command arguments and workarounds are preserved.
+    Ensures the 'qdrant_storage' volume exists using Confirm-ContainerVolume.
+    Checks if the Qdrant image exists locally; if not, attempts to restore from backup using
+    Test-AndRestoreBackup, falling back to pulling the image using Invoke-PullImage.
+    Removes any existing 'qdrant' container.
+    Runs the Qdrant container using the selected engine, mapping ports 6333 (HTTP) and 6334 (gRPC),
+    and mounting the 'qdrant_storage' volume.
+    Waits 20 seconds after starting and performs TCP/HTTP connectivity tests.
+.EXAMPLE
+    Install-QdrantContainer
+.NOTES
+    Orchestrates volume creation, image acquisition, cleanup, and container start.
+    Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
+    Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
 #>
 function Install-QdrantContainer {
     # Ensure the volume exists
@@ -106,56 +118,91 @@ function Install-QdrantContainer {
     Write-Information "Qdrant is now running and accessible at http://localhost:6333"
 }
 
+#==============================================================================
+# Function: Uninstall-QdrantContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Qdrant container and optionally the data volume.
+    Uninstalls the Qdrant container and optionally removes its data volume.
 .DESCRIPTION
-    Uses the generic Remove-ContainerAndVolume function.
+    Calls the Remove-ContainerAndVolume helper function, specifying 'qdrant' as the container
+    and 'qdrant_storage' as the volume. This will stop/remove the container and prompt the user
+    about removing the volume. Supports -WhatIf.
+.EXAMPLE
+    Uninstall-QdrantContainer -Confirm:$false
+.NOTES
+    Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-QdrantContainer {
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Backup-QdrantContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live Qdrant container.
+    Backs up the state of the running Qdrant container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to create a backup of the Qdrant container.
+    Calls the Backup-ContainerState helper function, specifying 'qdrant' as the container name.
+    This commits the container state to an image and saves it as a tar file.
+.EXAMPLE
+    Backup-QdrantContainer
+.NOTES
+    Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
 #>
 function Backup-QdrantContainer {
     Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Restore-QdrantContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the Qdrant container from backup.
+    Restores the Qdrant container image from a backup tar file.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the Qdrant container.
+    Calls the Restore-ContainerState helper function, specifying 'qdrant' as the container name.
+    This loads the image from the backup tar file. Note: This only restores the Qdrant image,
+    it does not automatically start the container.
+.EXAMPLE
+    Restore-QdrantContainer
+.NOTES
+    Relies on Restore-ContainerState helper function. Does not handle volume restore.
 #>
 function Restore-QdrantContainer {
     Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Invoke-StartQdrantForUpdate
+#==============================================================================
 <#
 .SYNOPSIS
     Helper function called by Update-Container to start the Qdrant container after an update.
 .DESCRIPTION
-    This function encapsulates the specific logic required to start the Qdrant container,
-    including ensuring the volume exists, running the container with correct ports and volume,
-    and testing connectivity.
+    This function encapsulates the specific logic required to start the Qdrant container after an update.
+    It ensures the volume exists, runs the container with the correct ports, volume mount, and the
+    updated image name, waits, and performs connectivity tests.
     It adheres to the parameter signature expected by the -RunFunction parameter of Update-Container.
 .PARAMETER EnginePath
-    Path to the container engine executable.
+    Path to the container engine executable (passed by Update-Container).
 .PARAMETER ContainerEngineType
     Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, not directly used).
 .PARAMETER ContainerName
-    Name of the container being updated (e.g., 'qdrant').
+    Name of the container being updated (e.g., 'qdrant') (passed by Update-Container).
 .PARAMETER VolumeName
-    Name of the volume associated with the container (e.g., 'qdrant_storage').
+    Name of the volume associated with the container (e.g., 'qdrant_storage') (passed by Update-Container).
 .PARAMETER ImageName
-    The new image name/tag to use for the updated container.
+    The new image name/tag to use for the updated container (passed by Update-Container).
 .OUTPUTS
-    Throws an error if the container fails to start.
+    Throws an error if the container fails to start, which signals failure back to Update-Container.
+.EXAMPLE
+    # This function is intended to be called internally by Update-Container via -RunFunction
+    # Update-Container -RunFunction ${function:Invoke-StartQdrantForUpdate}
+.NOTES
+    Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
+    Uses Write-Information for status messages.
 #>
 function Invoke-StartQdrantForUpdate {
     param(
@@ -197,13 +244,22 @@ function Invoke-StartQdrantForUpdate {
     Write-Information "Qdrant container updated successfully."
 }
 
+#==============================================================================
+# Function: Update-QdrantContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Qdrant container.
+    Updates the Qdrant container to the latest image version using the generic update workflow.
 .DESCRIPTION
-    Uses the generic Update-Container function to handle the update process,
-    passing a reference to the specific 'Invoke-StartQdrantForUpdate' function
-    to handle the container startup logic after the image pull.
+    Calls the generic Update-Container helper function, providing the specific details for the
+    Qdrant container (name, image name) and passing a reference to the
+    Invoke-StartQdrantForUpdate function via the -RunFunction parameter. This ensures the
+    container is started correctly after the image is pulled and the old container is removed.
+    Supports -WhatIf.
+.EXAMPLE
+    Update-QdrantContainer -WhatIf
+.NOTES
+    Relies on the Update-Container helper function and Invoke-StartQdrantForUpdate.
 #>
 function Update-QdrantContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -227,11 +283,19 @@ function Update-QdrantContainer {
                      -RunFunction ${function:Invoke-StartQdrantForUpdate} # Pass function reference
 }
 
+#==============================================================================
+# Function: Update-QdrantUserData
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates user data for the Qdrant container.
+    Placeholder function for updating user data in the Qdrant container.
 .DESCRIPTION
-    This functionality is not implemented.
+    Currently, this function only displays a message indicating that the functionality
+    is not implemented. Supports -WhatIf.
+.EXAMPLE
+    Update-QdrantUserData
+.NOTES
+    This function needs implementation if specific user data update procedures are required.
 #>
 function Update-QdrantUserData {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -243,12 +307,19 @@ function Update-QdrantUserData {
     }
 }
 
+#==============================================================================
+# Function: Show-ContainerMenu
+#==============================================================================
 <#
 .SYNOPSIS
-    Displays the main menu for Qdrant container operations.
+    Displays the main menu options for Qdrant container management.
 .DESCRIPTION
-    Presents menu options for installing, uninstalling, backing up, restoring, updating (system and user data).
-    The exit option ("0") terminates the menu loop.
+    Writes the available menu options (Show Info, Install, Uninstall, Backup, Restore, Update System,
+    Update User Data, Exit) to the console using Write-Output.
+.EXAMPLE
+    Show-ContainerMenu
+.NOTES
+    Uses Write-Output for direct console display.
 #>
 function Show-ContainerMenu {
     Write-Output "==========================================="
