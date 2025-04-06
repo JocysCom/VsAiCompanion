@@ -99,30 +99,28 @@ function Enable-WSL2 {
 }
 
 ###############################################################################
-# Section: Virtualization Feature Selection
+# Section: Virtualization Feature Selection using Invoke-MenuLoop
 ###############################################################################
 
-Write-Host "==========================================="
-Write-Host "Select virtualization feature to enable:"
-Write-Host "==========================================="
-Write-Host "1. Windows Subsystem for Linux (WSL)"
-Write-Host "2. Hyper-V"
-Write-Host "-------------------------------------------"
-$choice = Read-Host "Enter your choice (1 or 2, default is 1)"
-
-if ([string]::IsNullOrWhiteSpace($choice)) {
-	$choice = "1"
+# Define Menu Title and Items
+$menuTitle = "Select virtualization feature to enable"
+$menuItems = [ordered]@{
+	"1" = "Windows Subsystem for Linux (WSL)"
+	"2" = "Hyper-V"
+	# "0" = "Exit" # Implicit exit choice
 }
 
-switch ($choice) {
-	"1" {
+# Define Menu Actions
+$menuActions = @{
+	"1" = {
 		Write-Information "Enabling/Verifying WSL..."
 		# Call existing function to check and enable WSL, then ensure WSL2 is set up.
 		Test-WSLStatus
 		Enable-WSL2
-		Write-Information "WSL setup completed."
+		Write-Information "WSL setup completed successfully."
+		exit 0 # Exit script after successful action
 	}
-	"2" {
+	"2" = {
 		Write-Information "Enabling Hyper-V..."
 		try {
 			# Check if the Hyper-V feature is already enabled.
@@ -138,19 +136,23 @@ switch ($choice) {
 				}
 				else {
 					Write-Error "Failed to enable Hyper-V."
-					exit 1
+					exit 1 # Exit script on error
 				}
 			}
+			Write-Information "Hyper-V setup completed successfully."
+			exit 0 # Exit script after successful action
 		}
 		catch {
 			Write-Error "An error occurred while enabling Hyper-V: $_"
-			exit 1
+			exit 1 # Exit script on error
 		}
 	}
-	default {
-		Write-Error "Invalid selection. Exiting."
-		exit 1
-	}
+	# Note: "0" action is handled internally by Invoke-MenuLoop to exit the loop.
+	# The script will then terminate naturally.
 }
 
-Write-Information "Virtualization setup completed successfully."
+# Invoke the Menu Loop (will exit after one valid choice due to 'exit' in actions)
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+
+# This line will only be reached if the user enters '0' or an invalid choice repeatedly until they enter '0'.
+Write-Information "Exited without making a selection."

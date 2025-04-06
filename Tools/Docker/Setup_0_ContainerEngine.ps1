@@ -100,28 +100,49 @@ function Select-ContainerEngine {
 	[OutputType([string])] # Explicitly declare return type as string
 	param() # Add empty param block for OutputType attribute
 
-	# Use Write-Information for prompts so they don't pollute the output stream and are controllable
-	Write-Host "==========================================="
-	Write-Host "Select container engine"
-	Write-Host "==========================================="
-	Write-Host "1. Docker"
-	Write-Host "2. Podman"
-	Write-Host "-------------------------------------------"
-	# Use a simpler prompt
-	$selection = Read-Host "Select Container Engine"
-
-	# Check if input is empty or whitespace, return null to signal exit
-	if ([string]::IsNullOrWhiteSpace($selection)) {
-		return $null
+	# Define Menu Title and Items
+	$menuTitle = "Select container engine"
+	$menuItems = [ordered]@{
+		"1" = "Docker"
+		"2" = "Podman"
+		# "0" = "Exit/Cancel" # Implicit exit choice
 	}
 
-	# Return the selected engine or null for invalid input
-	switch ($selection) {
-		"1" { return "docker" }
-		"2" { return "podman" }
-		default {
-			Write-Warning "Invalid selection." # Inform user of invalid choice
-			return $null # Return null for invalid choice
+	# Define Menu Actions
+	$selectedEngine = $null # Variable to store the result
+	$actionCompleted = $false # Flag to exit loop
+
+	$menuActions = @{
+		"1" = {
+			$script:selectedEngine = "docker"
+			$script:actionCompleted = $true
 		}
+		"2" = {
+			$script:selectedEngine = "podman"
+			$script:actionCompleted = $true
+		}
+		# "0" action will exit the loop, returning the initial $selectedEngine ($null)
 	}
+
+	# Invoke the Menu Loop - modify the loop slightly to exit after one action
+	do {
+		# Need to capture the choice made within Invoke-MenuLoop to check for '0'
+		# Invoke-MenuLoop doesn't return the choice, so we rely on the flag
+		# The actual choice value isn't needed here, only whether the loop exited via '0' or action.
+		Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+
+		# Check if an action was completed or if the user chose to exit (choice 0)
+		# We infer '0' was chosen if the loop finished but actionCompleted is still false
+		if ($actionCompleted) {
+			break # Exit the custom do-while loop if an action was performed
+		}
+		else {
+			# If actionCompleted is false after Invoke-MenuLoop finishes, it means '0' was chosen.
+			$selectedEngine = $null # Ensure null is returned if '0' was chosen
+			break # Exit the custom do-while loop
+		}
+	} while ($true) # Loop until explicitly broken
+
+	# Return the engine selected by the action block (or $null if '0' or invalid)
+	return $selectedEngine
 }

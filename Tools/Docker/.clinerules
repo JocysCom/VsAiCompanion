@@ -47,7 +47,7 @@ When validating a script where these specific warnings are expected and acceptab
 
 **Example:**
 To validate `Setup_3_n8n.ps1` while ignoring expected global variable usage and unused parameters in the update script block:
-`Invoke-ScriptAnalyzer -Path .\Setup_3_n8n.ps1 -ExcludeRule PSAvoidGlobalVars, PSReviewUnusedParameter`
+`Invoke-ScriptAnalyzer -Path .\Setup_3_n8n.ps1 -ExcludeRule PSAvoidGlobalVars, PSReviewUnusedParameter, PSAvoidUsingWriteHost`
 
 **Rationale:**
 Suppressing these specific, understood warnings allows focusing on other potentially critical issues identified by the analyzer without being cluttered by expected noise inherent in the chosen design pattern (menu loop with shared state, generic function callbacks). Always ensure the suppression is justified and documented if necessary.

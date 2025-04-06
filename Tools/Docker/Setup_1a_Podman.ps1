@@ -354,55 +354,78 @@ function Install-PodmanCLI {
 	Uses Read-Host for user input.
 #>
 function Select-DiskLocation {
-	Write-Host "==========================================="
-	Write-Host "Select disk location machine virtual disk:"
-	Write-Host "==========================================="
-	Write-Host "1. Default location (user profile)"
-	Write-Host "2. Custom location"
-	Write-Host "-------------------------------------------"
-	$locationChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
-
-	if ([string]::IsNullOrWhiteSpace($locationChoice) -or $locationChoice -eq "1") {
-		Write-Information "Using default disk location"
-		return ""  # Return empty string to use default location
+	# Define Menu Title and Items
+	$menuTitle = "Select disk location machine virtual disk"
+	$menuItems = [ordered]@{
+		"1" = "Default location (user profile)"
+		"2" = "Custom location"
+		# "0" = "Exit/Use Default" # Implicit exit choice
 	}
-	elseif ($locationChoice -eq "2") {
-		$customPath = Read-Host "Enter custom disk location path (e.g., D:\VM\Disks)"
 
-		# Validate the path format
-		if ([string]::IsNullOrWhiteSpace($customPath)) {
-			Write-Information "No path provided. Using default location." # Changed to Information
-			return ""
+	# Define Menu Actions
+	$selectedPath = "" # Variable to store the result from the action block
+	$actionCompleted = $false # Flag to exit loop after one action
+
+	$menuActions = @{
+		"1" = {
+			Write-Information "Using default disk location"
+			$script:selectedPath = "" # Use script scope to modify outer variable
+			$script:actionCompleted = $true
 		}
+		"2" = {
+			$customPath = Read-Host "Enter custom disk location path (e.g., D:\VM\Disks)"
 
-		# Check if the path is valid
-		try {
-			# Test if path is in valid format
-			$null = [System.IO.Path]::GetFullPath($customPath)
-
-			# If drive doesn't exist, inform the user but continue (we'll create the directory later)
-			$drive = [System.IO.Path]::GetPathRoot($customPath)
-			if (-not [System.IO.Directory]::Exists($drive)) {
-				Write-Warning "Drive $drive does not exist. Please ensure it's available before continuing."
-				$confirm = Read-Host "Continue with this path anyway? (Y/N, default is N)"
-				if ($confirm -ne "Y") {
-					Write-Information "Using default disk location instead."
-					return ""
+			# Validate the path format
+			if ([string]::IsNullOrWhiteSpace($customPath)) {
+				Write-Information "No path provided. Using default location."
+				$script:selectedPath = ""
+			}
+			else {
+				# Check if the path is valid
+				try {
+					$null = [System.IO.Path]::GetFullPath($customPath) # Test format
+					$drive = [System.IO.Path]::GetPathRoot($customPath)
+					if (-not [System.IO.Directory]::Exists($drive)) {
+						Write-Warning "Drive $drive does not exist. Please ensure it's available before continuing."
+						$confirm = Read-Host "Continue with this path anyway? (Y/N, default is N)"
+						if ($confirm -ne "Y") {
+							Write-Information "Using default disk location instead."
+							$script:selectedPath = ""
+						}
+						else {
+							Write-Information "Custom disk location selected: $customPath"
+							$script:selectedPath = $customPath
+						}
+					}
+					else {
+						Write-Information "Custom disk location selected: $customPath"
+						$script:selectedPath = $customPath
+					}
+				}
+				catch {
+					Write-Error "Invalid path format: $customPath. Using default location."
+					$script:selectedPath = ""
 				}
 			}
+			$script:actionCompleted = $true
+		}
+		# "0" action will exit the loop, returning the initial $selectedPath ("")
+	}
 
-			Write-Information "Custom disk location selected: $customPath"
-			return $customPath
+	# Invoke the Menu Loop - modify the loop slightly to exit after one action
+	# We can't use 'exit' inside the action block as it would exit the whole script.
+	# Instead, we use a flag.
+	do {
+		Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+		# Check if an action was completed or if the user chose to exit (choice 0)
+		if ($actionCompleted -or $choice -eq "0") {
+			break # Exit the custom do-while loop
 		}
-		catch {
-			Write-Error "Invalid path format: $customPath. Using default location."
-			return ""
-		}
-	}
-	else {
-		Write-Information "Invalid selection. Using default disk location."
-		return ""
-	}
+		# If an invalid choice was made, Invoke-MenuLoop handles the warning and repeats.
+	} while ($true) # Loop until explicitly broken
+
+	# Return the path selected by the action block (or default "")
+	return $selectedPath
 }
 
 #==============================================================================
@@ -1057,45 +1080,41 @@ function Remove-PodmanService {
 #>
 function Remove-PodmanComponent {
 	[CmdletBinding(SupportsShouldProcess = $true)]
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
 	param()
 
-	Write-Host "==========================================="
-	Write-Host "Select component to remove:"
-	Write-Host "==========================================="
-	Write-Host "1. Remove Podman Service only"
-	Write-Host "2. Remove Podman Machine only"
-	Write-Host "3. [Not Implemented] Uninstall Podman Desktop only"
-	Write-Host "4. [Not Implemented] Uninstall Podman CLI"
-	Write-Host "0. Exit without removing anything"
-	Write-Host "-------------------------------------------"
-	$removeOption = Read-Host "Enter option (1-5, default is 0)"
-
-	if ([string]::IsNullOrWhiteSpace($removeOption)) {
-		$removeOption = "0"
+	# Define Menu Title and Items
+	$menuTitle = "Select component to remove"
+	$menuItems = [ordered]@{
+		"1" = "Remove Podman Service only"
+		"2" = "Remove Podman Machine only"
+		"3" = "[Not Implemented] Uninstall Podman Desktop only"
+		"4" = "[Not Implemented] Uninstall Podman CLI"
+		"0" = "Exit without removing anything"
 	}
 
-	switch ($removeOption) {
-		"1" {
-			if (Remove-PodmanService) {
+	# Define Menu Actions
+	$actionCompleted = $false # Flag to exit loop after one action
+
+	$menuActions = @{
+		"1" = {
+			if (Remove-PodmanService) { # Remove-PodmanService handles ShouldProcess
 				Write-Information "Podman service removed successfully."
 			}
 			else {
 				Write-Error "Failed to remove Podman service."
 			}
+			$script:actionCompleted = $true
 		}
-		"2" {
+		"2" = {
 			if (CheckPodmanMachineAvailable) {
 				Write-Information "Removing Podman machines..."
 				$machineListJson = & podman machine ls --format json 2>&1
 				$machines = $machineListJson | ConvertFrom-Json
 
 				foreach ($machine in $machines) {
+					# Check ShouldProcess here before calling rm
 					if ($PSCmdlet.ShouldProcess($machine.Name, "Remove Podman Machine")) {
 						Write-Information "Removing machine: $($machine.Name)..."
-						# podman machine rm [options] [MACHINE]
-						# rm     Remove an existing machine
-						# -f     Force the removal if the machine is running
 						& podman machine rm -f $machine.Name
 						if ($LASTEXITCODE -eq 0) {
 							Write-Information "Machine '$($machine.Name)' removed successfully."
@@ -1109,80 +1128,71 @@ function Remove-PodmanComponent {
 			else {
 				Write-Information "No Podman machines found to remove."
 			}
+			$script:actionCompleted = $true
 		}
-		"3" {
+		"3" = {
 			Write-Information "Uninstall of Podman Desktop must be done through Windows Add/Remove Programs."
+			$script:actionCompleted = $true
 		}
-		"4" {
+		"4" = {
 			Write-Information "Uninstall of Podman CLI must be done through Windows Add/Remove Programs."
+			$script:actionCompleted = $true
 		}
-		"5" {
-			Write-Information "No components will be removed."
+		# "0" action will exit the loop
+	}
+
+	# Invoke the Menu Loop - modify the loop slightly to exit after one action
+	do {
+		Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+		# Check if an action was completed or if the user chose to exit (choice 0)
+		if ($actionCompleted -or $choice -eq "0") {
+			break # Exit the custom do-while loop
 		}
-		default {
-			Write-Warning "Invalid option. No components will be removed."
-		}
+	} while ($true) # Loop until explicitly broken
+
+	if ($choice -eq "0") {
+		Write-Information "Exited without removing components."
 	}
 }
 
 #############################################
-# Main Script Execution - Logical Menu
+# Main Script Execution - Using Invoke-MenuLoop
 #############################################
-Write-Information "=================================================="
-Write-Information "PODMAN SETUP AND MANAGEMENT"
-Write-Information "=================================================="
-Write-Information "Select an option:"
-Write-Information "1. Check Podman Status"
-Write-Information "   - Displays the current status of Podman components"
-Write-Information "2. Install Podman CLI"
-Write-Information "   - Installs the Podman command-line tool"
-Write-Information "3. Install Podman Desktop (UI)"
-Write-Information "   - Installs the Podman Desktop manager (Requires only CLI)"
-Write-Information "4. Initialize Podman Machine"
-Write-Information "   - Creates and starts a Podman machine (Requires CLI)"
-Write-Information "   - This creates a VHDX file with Linux + Podman inside"
-Write-Information "5. Move Podman Machine"
-Write-Information "   - Moves a Podman machine image to a new location"
-Write-Information "6. Register Podman Service"
-Write-Information "   - Creates a Windows service to auto-start Podman (Requires Machine)"
-Write-Information "7. Remove Podman Components"
-Write-Information "   - Options to remove service, machine, or uninstall software"
-Write-Information "=================================================="
 
-$installOption = Read-Host "Enter your choice (1-7). Default is 1 if empty"
-if ([string]::IsNullOrEmpty($installOption)) { $installOption = "1" }
+# Define Menu Title and Items
+$menuTitle = "PODMAN SETUP AND MANAGEMENT"
+$menuItems = [ordered]@{
+	"1" = "Check Podman Status"
+	"2" = "Install Podman CLI"
+	"3" = "Install Podman Desktop (UI)"
+	"4" = "Initialize Podman Machine"
+	"5" = "Move Podman Machine"
+	"6" = "Register Podman Service"
+	"7" = "Remove Podman Components"
+	"0" = "Exit"
+}
 
-switch ($installOption) {
-	"1" {
-		# Just show status (already displayed at start)
-		DisplayPodmanStatus
-	}
-	"2" {
-		Install-PodmanCLI
-	}
-	"3" {
-		Install-PodmanDesktop
-	}
-	"4" {
+# Define Menu Actions
+$menuActions = @{
+	"1" = { DisplayPodmanStatus }
+	"2" = { Install-PodmanCLI }
+	"3" = { Install-PodmanDesktop }
+	"4" = {
 		if (Initialize-PodmanMachine) {
 			Start-PodmanMachine
 		}
 	}
-	"5" {
-		# This creates a VHDX file with Linux + Podman and registers it with WSL2
+	"5" = {
 		$diskLocation = Select-DiskLocation
-		Move-PodmanMachineImage -DestinationPath $diskLocation
+		# Only proceed if a valid custom path was returned or default is used (empty string)
+		if ($diskLocation -ne $null) { # Check if Select-DiskLocation didn't error/cancel
+			Move-PodmanMachineImage -DestinationPath $diskLocation
+		}
 	}
-	"6" {
-		# Install Podman Service
-		# This creates a Windows service that starts the Podman machine on boot
-		Install-PodmanService
-	}
-	"7" {
-		Remove-PodmanComponent
-	}
-	default {
-		Write-Error "Invalid selection. Exiting."
-		exit 1
-	}
+	"6" = { Install-PodmanService }
+	"7" = { Remove-PodmanComponent }
+	# "0" action is handled internally by Invoke-MenuLoop
 }
+
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"

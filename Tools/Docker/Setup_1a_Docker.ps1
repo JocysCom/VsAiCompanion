@@ -303,45 +303,58 @@ function Test-DockerWorking {
 #>
 function Test-DockerInstallation {
 	if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-		Write-Host "Docker is not installed."
-		Write-Host "==========================================="
-		Write-Host "Select Docker installation method:"
-		Write-Host "==========================================="
-		Write-Host "1. Install Docker Desktop (requires winget)"
-		Write-Host "2. Install Docker Engine (static binary installation)"
-		Write-Host "-------------------------------------------"
-		$installMethod = Read-Host "Enter your choice (1 or 2), default is 1"
-		if ([string]::IsNullOrWhiteSpace($installMethod)) {
-			$installMethod = "1"
+		Write-Information "Docker is not installed." # Changed to Information
+
+		# Define Menu Title and Items
+		$menuTitle = "Select Docker installation method"
+		$menuItems = [ordered]@{
+			"1" = "Install Docker Desktop (requires winget)"
+			"2" = "Install Docker Engine (static binary installation)"
+			# "0" = "Exit" # Implicit exit choice
 		}
-		if ($installMethod -eq "1") {
-			if (Get-Command winget -ErrorAction SilentlyContinue) {
-				Write-Output "Installing Docker Desktop using winget..."
-				winget install --id Docker.DockerDesktop -e --accept-package-agreements --accept-source-agreements
-				Start-Sleep -Seconds 60
-				if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-					Write-Error "Docker Desktop installation via winget failed. Please install Docker manually."
-					exit 1
+
+		# Define Menu Actions
+		$menuActions = @{
+			"1" = {
+				if (Get-Command winget -ErrorAction SilentlyContinue) {
+					Write-Information "Installing Docker Desktop using winget..." # Changed to Information
+					winget install --id Docker.DockerDesktop -e --accept-package-agreements --accept-source-agreements
+					Start-Sleep -Seconds 60
+					if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+						Write-Error "Docker Desktop installation via winget failed. Please install Docker manually."
+						exit 1 # Exit script on error
+					}
+					Write-Information "Docker Desktop installed successfully." # Changed to Information
+					# Let the main script continue after successful install
 				}
-				Write-Output "Docker Desktop installed successfully."
+				else {
+					Write-Error "winget is not available for Docker Desktop installation. Please install Docker manually."
+					exit 1 # Exit script on error
+				}
 			}
-			else {
-				Write-Error "winget is not available for Docker Desktop installation. Please install Docker manually."
-				exit 1
+			"2" = {
+				$zipPath = Invoke-DockerEngineDownload -dockerStaticUrl $dockerStaticUrl
+				$destinationPath = Install-DockerEngine -zipPath $zipPath -destinationPath ".\docker"
+				Register-DockerEngineService -destinationPath $destinationPath
+				# Let the main script continue after successful install
 			}
+			# "0" action will exit the loop, and the script will then exit because Docker wasn't found.
 		}
-		elseif ($installMethod -eq "2") {
-			$zipPath = Invoke-DockerEngineDownload -dockerStaticUrl $dockerStaticUrl
-			$destinationPath = Install-DockerEngine -zipPath $zipPath -destinationPath ".\docker"
-			Register-DockerEngineService -destinationPath $destinationPath
-		}
-		else {
-			Write-Error "Invalid selection for Docker installation method."
+
+		# Invoke the Menu Loop
+		# We don't add 'exit' here because if the user chooses 0, we want the script to exit naturally
+		# because Docker wasn't found/installed. If they choose 1 or 2, the action completes,
+		# the loop exits, and the rest of Test-DockerInstallation runs.
+		Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+
+		# Re-check if Docker is available after the loop (in case user chose 0 or installation failed implicitly)
+		if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+			Write-Error "Docker installation was not completed or was skipped. Exiting."
 			exit 1
 		}
 	}
 	else {
-		Write-Output "Docker command found in PATH. Using existing Docker installation."
+		Write-Information "Docker command found in PATH. Using existing Docker installation." # Changed to Information
 	}
 	Test-DockerWorking -destinationPath ".\docker"
 }

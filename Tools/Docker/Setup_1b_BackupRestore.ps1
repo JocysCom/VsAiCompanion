@@ -9,33 +9,9 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1" # Need this for Invoke-MenuLoop
 . "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
 . "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-
-#==============================================================================
-# Function: Show-MainMenu
-#==============================================================================
-<#
-.SYNOPSIS
-	Displays the main menu options for the container image backup and restore script.
-.DESCRIPTION
-	Writes the available menu options (Backup all, Restore all and run, Exit) to the
-	information stream for the user.
-.EXAMPLE
-	Show-MainMenu
-	# Displays the menu options to the console.
-.NOTES
-	Uses Write-Information for output.
-#>
-function Show-MainMenu {
-	Write-Host "==========================================="
-	Write-Host "Container Images Backup and Restore Menu"
-	Write-Host "==========================================="
-	Write-Host "1. Backup all images"
-	Write-Host "2. Restore all images from backup and run"
-	Write-Host "0. Exit"
-	Write-Host "-------------------------------------------"
-}
 
 # MAIN SCRIPT EXECUTION
 
@@ -47,20 +23,20 @@ if (-not (Get-Command $containerEngine -ErrorAction SilentlyContinue)) {
 	exit 1
 }
 
-do {
-	Show-MainMenu
-	$choice = Read-Host "Enter your choice (1, 2, or 0)"
+# Define Menu Title and Items
+$menuTitle = "Container Images Backup and Restore Menu"
+$menuItems = [ordered]@{
+	"1" = "Backup all images"
+	"2" = "Restore all images from backup and run"
+	"0" = "Exit"
+}
 
-	switch ($choice) {
-		"1" { Invoke-ContainerImageBackup -Engine $containerEngine }
-		"2" { Invoke-ContainerImageRestore -Engine $containerEngine -RunContainers }
-		"0" { Write-Information "Exiting..."; break }
-		default { Write-Warning "Invalid selection. Please enter 1, 2, or 0." }
-	}
+# Define Menu Actions
+$menuActions = @{
+	"1" = { Invoke-ContainerImageBackup -Engine $containerEngine }
+	"2" = { Invoke-ContainerImageRestore -Engine $containerEngine -RunContainers }
+	# "0" action is handled internally by Invoke-MenuLoop
+}
 
-	if ($choice -ne "0") {
-		Write-Information "`nPress any key to continue..."
-		$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-		Clear-Host
-	}
-} while ($choice -ne "0")
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
