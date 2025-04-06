@@ -156,7 +156,7 @@ async def options_handler(path: str):
     Set-Content -Path (Join-Path $global:buildDir "requirements.txt") -Value $requirementsTxtContent
     Set-Content -Path (Join-Path $global:buildDir "embedding_api.py") -Value $embeddingApiContent
 
-    Write-Output "Building the Embedding API container image..."
+    Write-Information "Building the Embedding API container image..."
     # Build the container image using Podman.
     & $global:enginePath build --tag $global:imageTag "`"$global:buildDir`""
     if ($LASTEXITCODE -ne 0) {
@@ -180,7 +180,7 @@ function Install-EmbeddingContainer {
     # Pass container name as volume name; Remove-ContainerAndVolume will prompt if volume exists.
     Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
 
-    Write-Output "Running the Embedding API container..."
+    Write-Information "Running the Embedding API container..."
     # Command: run
     #   --detach: runs the container in background.
     #   --name: assigns the container the name "embedding-api".
@@ -194,7 +194,7 @@ function Install-EmbeddingContainer {
     Start-Sleep -Seconds 10
     Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
     Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-    Write-Output "Embedding API is accessible at http://localhost:8000/v1/embeddings"
+    Write-Information "Embedding API is accessible at http://localhost:8000/v1/embeddings"
 }
 
 <#
@@ -208,7 +208,7 @@ function Update-EmbeddingContainer {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
-    Write-Output "Updating the Embedding API container..."
+    Write-Information "Updating the Embedding API container..."
 
     # Rebuild the container image.
     if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Image")) {
@@ -226,7 +226,7 @@ function Update-EmbeddingContainer {
 
     # Run the updated container
     if ($PSCmdlet.ShouldProcess($global:containerName, "Run Updated Container")) {
-        Write-Output "Running the updated Embedding API container..."
+        Write-Information "Running the updated Embedding API container..."
         # Command: run
         #   --detach: runs the container in background.
         #   --name: assigns the container the name "embedding-api".
@@ -240,7 +240,7 @@ function Update-EmbeddingContainer {
         Start-Sleep -Seconds 10
         Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
         Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-        Write-Output "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings"
+        Write-Information "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings"
     }
 }
 

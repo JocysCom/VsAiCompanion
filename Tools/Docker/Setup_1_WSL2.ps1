@@ -36,10 +36,10 @@ function Enable-WSL2 {
     [CmdletBinding()]
     param()
 
-    Write-Output "Setting WSL default version to 2..."
+    Write-Information "Setting WSL default version to 2..."
     $setDefaultOutput = wsl.exe --set-default-version 2 2>&1
     if ($LASTEXITCODE -eq 0) {
-        Write-Output "WSL default version set to 2."
+        Write-Information "WSL default version set to 2."
     }
     else {
         Write-Error "Failed to set WSL default version. Output: $setDefaultOutput"
@@ -54,20 +54,20 @@ function Enable-WSL2 {
     }
 
     if ($wslListOutput -match "has no installed distributions") {
-        Write-Output "No WSL distributions found. Installing default distribution..."
+        Write-Information "No WSL distributions found. Installing default distribution..."
         $installOutput = wsl.exe --install 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Write-Output "Default WSL distribution installation initiated successfully."
+            Write-Information "Default WSL distribution installation initiated successfully."
         }
         else {
             Write-Error "Failed to install default WSL distribution. Output: $installOutput"
         }
     }
     else {
-        Write-Output "WSL distribution(s) detected."
-        Write-Output "Currently installed WSL distributions:"
-        Write-Output $wslListOutput
-        Write-Output "Verifying that they use WSL2..."
+        Write-Information "WSL distribution(s) detected."
+        Write-Information "Currently installed WSL distributions:"
+        Write-Information $wslListOutput # Changed to Information as it's status output
+        Write-Information "Verifying that they use WSL2..."
 
         $lines = $wslListOutput -split "`r?`n"
         $wsl1Found = $false
@@ -75,10 +75,10 @@ function Enable-WSL2 {
             if ($line -match "^\s*(\S+)\s+\S+\s+1\s*$") {
                 $wsl1Found = $true
                 $distro = $Matches[1]
-                Write-Output "Distribution $distro is using WSL1. Converting to WSL2..."
+                Write-Information "Distribution $distro is using WSL1. Converting to WSL2..."
                 $convertOutput = wsl.exe --set-version $distro 2 2>&1
                 if ($LASTEXITCODE -eq 0) {
-                    Write-Output "Successfully converted $distro to WSL2."
+                    Write-Information "Successfully converted $distro to WSL2."
                 }
                 else {
                     Write-Error "Failed to convert $distro to WSL2. Output: $convertOutput"
@@ -86,7 +86,7 @@ function Enable-WSL2 {
             }
         }
         if (-not $wsl1Found) {
-            Write-Output "All installed WSL distributions are using WSL2."
+            Write-Information "All installed WSL distributions are using WSL2."
         }
     }
 }
@@ -95,9 +95,9 @@ function Enable-WSL2 {
 # Section: Virtualization Feature Selection
 ###############################################################################
 
-Write-Output "Select virtualization feature to enable:"
-Write-Output "1) Windows Subsystem for Linux (WSL)"
-Write-Output "2) Hyper-V"
+Write-Host "Select virtualization feature to enable:" # Changed to Write-Host for direct console interaction
+Write-Host "1) Windows Subsystem for Linux (WSL)" # Changed to Write-Host
+Write-Host "2) Hyper-V" # Changed to Write-Host
 $choice = Read-Host "Enter your choice (1 or 2, default is 1)"
 
 if ([string]::IsNullOrWhiteSpace($choice)) {
@@ -106,25 +106,25 @@ if ([string]::IsNullOrWhiteSpace($choice)) {
 
 switch ($choice) {
     "1" {
-        Write-Output "Enabling/Verifying WSL..."
+        Write-Information "Enabling/Verifying WSL..."
         # Call existing function to check and enable WSL, then ensure WSL2 is set up.
         Test-WSLStatus
         Enable-WSL2
-        Write-Output "WSL setup completed."
+        Write-Information "WSL setup completed."
     }
     "2" {
-        Write-Output "Enabling Hyper-V..."
+        Write-Information "Enabling Hyper-V..."
         try {
             # Check if the Hyper-V feature is already enabled.
             $hyperVFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -ErrorAction SilentlyContinue
             if ($hyperVFeature -and $hyperVFeature.State -eq "Enabled") {
-                Write-Output "Hyper-V is already enabled."
+                Write-Information "Hyper-V is already enabled."
             }
             else {
-                Write-Output "Hyper-V is not enabled. Enabling the Microsoft-Hyper-V-All feature..."
+                Write-Information "Hyper-V is not enabled. Enabling the Microsoft-Hyper-V-All feature..."
                 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -All -NoRestart | Out-Null
                 if ($?) {
-                    Write-Output "Hyper-V has been enabled. A system restart may be required."
+                    Write-Information "Hyper-V has been enabled. A system restart may be required."
                 }
                 else {
                     Write-Error "Failed to enable Hyper-V."
@@ -143,4 +143,4 @@ switch ($choice) {
     }
 }
 
-Write-Output "Virtualization setup completed successfully."
+Write-Information "Virtualization setup completed successfully."

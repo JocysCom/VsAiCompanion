@@ -47,7 +47,7 @@ $volumeName    = "open-webui" # Assuming volume name matches container name
 function Get-OpenWebUIContainerConfig {
     $containerInfo = & $enginePath inspect $containerName 2>$null | ConvertFrom-Json
     if (-not $containerInfo) {
-        Write-Output "Container '$containerName' not found."
+        Write-Information "Container '$containerName' not found."
         return $null
     }
 
@@ -123,7 +123,7 @@ function Start-OpenWebUIContainer {
         [string]$successMessage,
         [PSCustomObject]$config = $null
     )
-    Write-Output "$action '$containerName'..."
+    Write-Information "$action '$containerName'..."
 
     # Build the run command with either provided config or defaults
     $runOptions = @("--platform")
@@ -208,7 +208,7 @@ function Start-OpenWebUIContainer {
         return $false
     }
 
-    Write-Output "Waiting 20 seconds for container startup..."
+    Write-Information "Waiting 20 seconds for container startup..."
     Start-Sleep -Seconds 20
 
     # Test connectivity
@@ -227,7 +227,7 @@ function Start-OpenWebUIContainer {
         Write-Warning "Skipping firewall rule creation due to -WhatIf."
     }
 
-    Write-Output $successMessage
+    Write-Information $successMessage
     return $true
 }
 
@@ -245,29 +245,29 @@ function Install-OpenWebUIContainer {
         Write-Error "Failed to ensure volume '$volumeName' exists. Exiting..."
         return
     }
-    Write-Output "IMPORTANT: Using volume '$volumeName' - existing user data will be preserved."
+    Write-Information "IMPORTANT: Using volume '$volumeName' - existing user data will be preserved."
 
     # Check if image exists locally, restore from backup, or pull new
     $existingImage = & $enginePath images --filter "reference=$imageName" --format "{{.ID}}"
     if (-not $existingImage) {
         if (-not (Test-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
-            Write-Output "No backup restored. Pulling Open WebUI image '$imageName'..."
+            Write-Information "No backup restored. Pulling Open WebUI image '$imageName'..."
             # Use shared pull function
             if (-not (Invoke-PullImage -Engine $enginePath -ImageName $imageName -PullOptions @("--platform", "linux/amd64"))) {
                 Write-Error "Pull failed. Check internet connection or image URL."
                 return
             }
         } else {
-            Write-Output "Using restored backup image '$imageName'."
+            Write-Information "Using restored backup image '$imageName'."
         }
     }
     else {
-        Write-Output "Using restored backup image '$imageName'."
+        Write-Information "Using restored backup image '$imageName'."
     }
     # Remove any existing container.
     $existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
     if ($existingContainer) {
-        Write-Output "Removing existing container '$containerName'..."
+        Write-Information "Removing existing container '$containerName'..."
         # Remove container:
         # rm         Remove one or more containers.
         # --force    Force removal of a running container.
@@ -353,11 +353,11 @@ function Update-OpenWebUIUserData {
 
     if ($PSCmdlet.ShouldProcess("Open WebUI container", "Display user data information")) {
         # Provide some helpful information
-        Write-Output "Update User Data functionality is not implemented for OpenWebUI container."
-        Write-Output "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container."
-        Write-Output "To back up user data, you can use the 'Backup Live container' option."
-        Write-Output "To modify user data directly, you would need to access the container with:"
-        Write-Output "  $enginePath exec -it $containerName /bin/bash"
+        Write-Information "Update User Data functionality is not implemented for OpenWebUI container."
+        Write-Information "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container."
+        Write-Information "To back up user data, you can use the 'Backup Live container' option."
+        Write-Information "To modify user data directly, you would need to access the container with:"
+        Write-Information "  $enginePath exec -it $containerName /bin/bash"
     }
 }
 

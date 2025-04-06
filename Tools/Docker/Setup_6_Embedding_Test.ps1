@@ -108,7 +108,7 @@ try {
     ############################################################################
     # 2) Check TCP connectivity.
     ############################################################################
-    Write-Output "Checking TCP connectivity on port 8000..."
+    Write-Information "Checking TCP connectivity on port 8000..."
     $tcpOk = Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
     if (-not $tcpOk) {
         Write-Error "TCP connectivity check failed."
@@ -138,7 +138,7 @@ try {
     ############################################################################
     for ($i = 0; $i -lt $testLines.Count; $i++) {
         $text = $testLines[$i]
-        Write-Output "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'"
+        Write-Information "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'"
         $floats = Get-EmbeddingFromAPI -textLine $text -modelName $modelName
         if (-not $floats) {
             Write-Error "Failed to obtain embedding for '$text'."
@@ -155,7 +155,7 @@ try {
     ############################################################################
     # 5) Compare repeated lines for high similarity (threshold ≥ 0.9).
     ############################################################################
-    Write-Output "`nComparing repeated lines for consistency..."
+    Write-Information "`nComparing repeated lines for consistency..."
     $repeatIndices = @(0, 2, 5)
     for ($j = 0; $j -lt $repeatIndices.Count; $j++) {
         for ($k = $j + 1; $k -lt $repeatIndices.Count; $k++) {
@@ -165,7 +165,7 @@ try {
             $keyB = "Hello world|$idxB"
             if ($embeddings.ContainsKey($keyA) -and $embeddings.ContainsKey($keyB)) {
                 $sim = Get-CosineSimilarity -vecA $embeddings[$keyA] -vecB $embeddings[$keyB]
-                Write-Output (" - Cosine similarity for 'Hello world' (index $idxA) vs. (index $idxB): " + [Math]::Round($sim, 4))
+                Write-Information (" - Cosine similarity for 'Hello world' (index $idxA) vs. (index $idxB): " + [Math]::Round($sim, 4))
                 if ($sim -lt 0.9) {
                     Write-Error ("Cosine similarity between repeated lines is below 0.9 (got $sim)")
                     $testPass = $false
@@ -183,7 +183,7 @@ try {
     $keyCoding = "I love coding|$codingIndex"
     if ($embeddings.ContainsKey($keyHello) -and $embeddings.ContainsKey($keyCoding)) {
         $cosSim = Get-CosineSimilarity -vecA $embeddings[$keyHello] -vecB $embeddings[$keyCoding]
-        Write-Output "`nCosine similarity between 'Hello' and 'I love coding': $cosSim"
+        Write-Information "`nCosine similarity between 'Hello' and 'I love coding': $cosSim"
         if ($cosSim -ge 0.7) {
             Write-Error "Expected similarity between 'Hello' and 'I love coding' to be below 0.7."
             $testPass = $false
@@ -196,9 +196,9 @@ catch {
     $testPass = $false
 }
 finally {
-    Write-Output ""
+    Write-Information ""
     if ($testPass) {
-        Write-Output "===== TEST PASS ====="
+        Write-Information "===== TEST PASS ====="
         exit 0
     }
     else {

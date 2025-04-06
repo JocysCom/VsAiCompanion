@@ -108,27 +108,27 @@ function CheckPodmanDesktopInstalled {
 # Displays the current status of all Podman components.
 #############################################
 function DisplayPodmanStatus {
-    Write-Output "`n==================== PODMAN STATUS ===================="
+    Write-Information "`n==================== PODMAN STATUS ===================="
 
     # Check Podman CLI
     $cliAvailable = CheckPodmanCliAvailable
     if ($cliAvailable) {
         try {
             $podmanVersion = & podman version --format "{{.Client.Version}}" 2>$null
-            Write-Output "Podman CLI: INSTALLED (Version: $podmanVersion)"
+            Write-Information "Podman CLI: INSTALLED (Version: $podmanVersion)"
         } catch {
-            Write-Output "Podman CLI: INSTALLED"
+            Write-Information "Podman CLI: INSTALLED"
         }
     } else {
-        Write-Output "Podman CLI: NOT INSTALLED"
+        Write-Information "Podman CLI: NOT INSTALLED"
     }
 
     # Check Podman Desktop
     $desktopInstalled = CheckPodmanDesktopInstalled
     if ($desktopInstalled) {
-        Write-Output "Podman Desktop: INSTALLED"
+        Write-Information "Podman Desktop: INSTALLED"
     } else {
-        Write-Output "Podman Desktop: NOT INSTALLED"
+        Write-Information "Podman Desktop: NOT INSTALLED"
     }
 
     # Check Podman Machine
@@ -144,19 +144,19 @@ function DisplayPodmanStatus {
                     $machineName = $machine.Name
 
                     if ($machineState -eq "Running") {
-                        Write-Output "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
+                        Write-Information "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
                     } else {
-                        Write-Output "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
+                        Write-Information "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
                     }
                 }
             } catch {
-                Write-Output "Podman Machine: ERROR CHECKING STATUS"
+                Write-Warning "Podman Machine: ERROR CHECKING STATUS" # Changed to Warning
             }
         } else {
-            Write-Output "Podman Machine: NOT AVAILABLE"
+            Write-Information "Podman Machine: NOT AVAILABLE"
         }
     } else {
-        Write-Output "Podman Machine: NOT AVAILABLE (CLI required)"
+        Write-Information "Podman Machine: NOT AVAILABLE (CLI required)"
     }
 
     # Check Podman Service
@@ -164,12 +164,12 @@ function DisplayPodmanStatus {
     if ($serviceAvailable) {
         $service = Get-Service -Name "PodmanMachineStart" -ErrorAction SilentlyContinue
         $serviceStatus = $service.Status
-        Write-Output "Podman Service: INSTALLED (Status: $serviceStatus)"
+        Write-Information "Podman Service: INSTALLED (Status: $serviceStatus)"
     } else {
-        Write-Output "Podman Service: NOT INSTALLED"
+        Write-Information "Podman Service: NOT INSTALLED"
     }
 
-    Write-Output "=====================================================`n"
+    Write-Information "=====================================================`n"
 
 }
 
@@ -194,28 +194,28 @@ function Install-PodmanCLI {
     if (CheckPodmanCliAvailable) {
         try {
             $installedVersion = & podman version --format "{{.Client.Version}}" 2>$null
-            Write-Output "Podman CLI is already installed (Version: $installedVersion)."
+            Write-Information "Podman CLI is already installed (Version: $installedVersion)."
 
             # Optionally check for upgrades
             if ($installedVersion -ne $PodmanVersion) {
                 $upgrade = Read-Host "Would you like to upgrade from version $installedVersion to $PodmanVersion? (Y/N, default is N)"
                 if ($upgrade -ne "Y") {
-                    Write-Output "Keeping current version $installedVersion."
+                    Write-Information "Keeping current version $installedVersion."
                     return $true
                 }
             } else {
-                Write-Output "You have the requested version. Skipping installation."
+                Write-Information "You have the requested version. Skipping installation."
                 return $true
             }
         } catch {
-            Write-Output "Podman CLI is already installed. Skipping installation."
+            Write-Information "Podman CLI is already installed. Skipping installation."
             return $true
         }
     }
 
     # Create downloads folder if it doesn't exist
     if (-not (Test-Path $downloadFolder)) {
-        Write-Output "Creating downloads folder at $downloadFolder..."
+        Write-Information "Creating downloads folder at $downloadFolder..."
         New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
     }
 
@@ -224,7 +224,7 @@ function Install-PodmanCLI {
     Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath
 
     # Launch the installer
-    Write-Output "Launching Podman installer..."
+    Write-Information "Launching Podman installer..."
     Start-Process -FilePath $exePath -Wait
 
     # Refresh environment variables so that the new installation can be located
@@ -234,9 +234,9 @@ function Install-PodmanCLI {
     if (CheckPodmanCliAvailable) {
         try {
             $podmanVersion = & podman version --format "{{.Client.Version}}" 2>$null
-            Write-Output "Podman CLI installed successfully (Version: $podmanVersion)."
+            Write-Information "Podman CLI installed successfully (Version: $podmanVersion)."
         } catch {
-            Write-Output "Podman CLI installed successfully."
+            Write-Information "Podman CLI installed successfully."
         }
         return $true
     } else {
@@ -251,13 +251,13 @@ function Install-PodmanCLI {
 # This determines where the VHDX (virtual disk) file will be stored
 #############################################
 function Select-DiskLocation {
-    Write-Output "Select disk location for Podman machine virtual disk:"
-    Write-Output "1) Default location (user profile)"
-    Write-Output "2) Custom location"
+    Write-Host "Select disk location for Podman machine virtual disk:" # Changed to Host
+    Write-Host "1) Default location (user profile)" # Changed to Host
+    Write-Host "2) Custom location" # Changed to Host
     $locationChoice = Read-Host "Enter your choice (1 or 2, default is 1)"
 
     if ([string]::IsNullOrWhiteSpace($locationChoice) -or $locationChoice -eq "1") {
-        Write-Output "Using default disk location"
+        Write-Information "Using default disk location" # Changed to Information
         return ""  # Return empty string to use default location
     }
     elseif ($locationChoice -eq "2") {
@@ -265,7 +265,7 @@ function Select-DiskLocation {
 
         # Validate the path format
         if ([string]::IsNullOrWhiteSpace($customPath)) {
-            Write-Output "No path provided. Using default location."
+            Write-Information "No path provided. Using default location." # Changed to Information
             return ""
         }
 
@@ -280,12 +280,12 @@ function Select-DiskLocation {
                 Write-Warning "Drive $drive does not exist. Please ensure it's available before continuing."
                 $confirm = Read-Host "Continue with this path anyway? (Y/N, default is N)"
                 if ($confirm -ne "Y") {
-                    Write-Output "Using default disk location instead."
+                    Write-Information "Using default disk location instead." # Changed to Information
                     return ""
                 }
             }
 
-            Write-Output "Custom disk location selected: $customPath"
+            Write-Information "Custom disk location selected: $customPath" # Changed to Information
             return $customPath
         }
         catch {
@@ -294,7 +294,7 @@ function Select-DiskLocation {
         }
     }
     else {
-        Write-Output "Invalid selection. Using default disk location."
+        Write-Information "Invalid selection. Using default disk location." # Changed to Information
         return ""
     }
 }
@@ -309,7 +309,7 @@ function Initialize-PodmanMachine {
     Test-WSLStatus
 
     # Verify a Linux distribution is installed via WSL
-    Write-Output "Verifying that a Linux distribution is installed via wsl.exe..."
+    Write-Information "Verifying that a Linux distribution is installed via wsl.exe..."
     $wslListOutput = & wsl.exe --list --quiet 2>&1
     if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($wslListOutput)) {
         Write-Error "wsl.exe did not return a valid list of distributions. Please install a Linux distro (e.g., Ubuntu) via 'wsl --install' or the Microsoft Store."
@@ -317,13 +317,13 @@ function Initialize-PodmanMachine {
     }
 
     # Initialize the machine with default settings first
-    Write-Output "Initializing Podman machine with default settings..."
+    Write-Information "Initializing Podman machine with default settings..."
     $initArgs = @("machine", "init") # Args for splatting
 
     # Execute the command to create the machine
-    Write-Output "Executing: podman $($initArgs -join ' ')"
+    Write-Information "Executing: podman $($initArgs -join ' ')"
     $initOutput = & podman @initArgs 2>&1
-    Write-Output $initOutput
+    Write-Information $initOutput # Changed to Information
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to initialize Podman machine. Output: $initOutput"
@@ -331,19 +331,19 @@ function Initialize-PodmanMachine {
     }
 
     # Start the machine to ensure everything is properly set up
-    Write-Output "Starting the Podman machine to complete initialization..."
+    Write-Information "Starting the Podman machine to complete initialization..."
     & podman machine start default
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to start Podman machine after initialization."
         return $false
     }
 
-    Write-Output "Podman machine initialized and started successfully with default settings."
+    Write-Information "Podman machine initialized and started successfully with default settings."
 
     # Show the current location of the machine's disk
     $userProfile = $env:USERPROFILE
     $podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\podman-machine-default"
-    Write-Output "Current machine location: $podmanFolder"
+    Write-Information "Current machine location: $podmanFolder"
 
     return $true
 }
@@ -370,7 +370,7 @@ function Move-PodmanMachineImage {
     $wslDistName = "podman-machine-$MachineName"
 
     # Step 1: Stop the Podman machine if it's running
-    Write-Output "Stopping Podman machine..."
+    Write-Information "Stopping Podman machine..."
     & podman machine stop $wslDistName
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to stop Podman machine. Aborting move operation."
@@ -378,9 +378,9 @@ function Move-PodmanMachineImage {
     }
 
     # Verify the machine is stopped by checking WSL status
-    Write-Output "Verifying machine is stopped using 'wsl -l -v'..."
+    Write-Information "Verifying machine is stopped using 'wsl -l -v'..."
     $wslStatus = & wsl -l -v 2>&1
-    Write-Output $wslStatus
+    Write-Information $wslStatus # Changed to Information
 
     # Check if the machine is actually stopped
     $machineStatus = $wslStatus | Select-String -Pattern $wslDistName -SimpleMatch
@@ -401,7 +401,7 @@ function Move-PodmanMachineImage {
     # Get source folder size
     $folderSize = (Get-ChildItem -Path $podmanFolder -Recurse | Measure-Object -Property Length -Sum).Sum
     $folderSizeGB = [math]::Round($folderSize / 1GB, 2)
-    Write-Output "Source folder size: $folderSizeGB GB"
+    Write-Information "Source folder size: $folderSizeGB GB"
 
     # Check destination disk space
     $destinationDrive = [System.IO.Path]::GetPathRoot($DestinationPath)
@@ -409,7 +409,7 @@ function Move-PodmanMachineImage {
     $driveLetter = $destinationDrive.Substring(0, 2)
     $freeSpace = (Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='$driveLetter'").FreeSpace
     $freeSpaceGB = [math]::Round($freeSpace / 1GB, 2)
-    Write-Output "Free space on destination drive ($driveLetter): $freeSpaceGB GB"
+    Write-Information "Free space on destination drive ($driveLetter): $freeSpaceGB GB"
 
     if ($freeSpace -lt ($folderSize * 1.1)) {  # Add 10% buffer
         Write-Error "Insufficient disk space on destination drive. Need at least $([math]::Round($folderSize * 1.1 / 1GB, 2)) GB but only $freeSpaceGB GB available."
@@ -419,18 +419,18 @@ function Move-PodmanMachineImage {
     # Create destination directory if it doesn't exist
     $destinationFolder = Join-Path $DestinationPath $wslDistName
     if (-not (Test-Path $destinationFolder)) {
-        Write-Output "Creating destination directory: $destinationFolder"
+        Write-Information "Creating destination directory: $destinationFolder"
         New-Item -ItemType Directory -Path $destinationFolder -Force | Out-Null
     }
 
     # Copy the entire folder (not just VHDX)
-    Write-Output "Copying Podman machine folder to new location..."
-    Write-Output "From: $podmanFolder"
-    Write-Output "To: $destinationFolder"
+    Write-Information "Copying Podman machine folder to new location..."
+    Write-Information "From: $podmanFolder"
+    Write-Information "To: $destinationFolder"
 
     try {
         Copy-Item -Path "$podmanFolder\*" -Destination $destinationFolder -Recurse -Force
-        Write-Output "Folder copied successfully."
+        Write-Information "Folder copied successfully."
     }
     catch {
         Write-Error "Failed to copy Podman machine folder: $_"
@@ -446,12 +446,12 @@ function Move-PodmanMachineImage {
 
     # Step 3: Unregister the WSL distribution only if it exists
     if (-not $skipUnregister) {
-        Write-Output "Unregistering WSL distribution: $wslDistName"
-        Write-Output "This will remove the original VHDX file."
+        Write-Information "Unregistering WSL distribution: $wslDistName"
+        Write-Information "This will remove the original VHDX file."
         $confirm = Read-Host "Continue? (Y/N, default is N)"
         if ($confirm -ne "Y") {
-            Write-Output "Operation cancelled. The copied files remain at: $destinationFolder"
-            Write-Output "Original Podman machine is untouched."
+            Write-Information "Operation cancelled. The copied files remain at: $destinationFolder"
+            Write-Information "Original Podman machine is untouched."
             return $false
         }
 
@@ -460,18 +460,18 @@ function Move-PodmanMachineImage {
             Write-Warning "Failed to unregister WSL distribution. Continuing with import step."
         }
     } else {
-        Write-Output "Skipping WSL unregister step as distribution was not found."
+        Write-Information "Skipping WSL unregister step as distribution was not found."
     }
 
     # Step 4: Import the copied VHDX file in-place
-    Write-Output "Importing VHDX in-place..."
+    Write-Information "Importing VHDX in-place..."
     & wsl --import-in-place $wslDistName $vhdxPath
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to import VHDX in-place. Check if the path is correct and try again."
-        Write-Output "VHDX path: $vhdxPath"
+        Write-Information "VHDX path: $vhdxPath"
 
         # Alternate approach if import-in-place fails
-        Write-Output "Trying alternate import method..."
+        Write-Information "Trying alternate import method..."
         & wsl --import $wslDistName $destinationFolder $vhdxPath
         if ($LASTEXITCODE -ne 0) {
             Write-Error "All import methods failed. Manual intervention required."
@@ -484,28 +484,28 @@ function Move-PodmanMachineImage {
     $configDir = Join-Path $env:USERPROFILE ".config\containers\podman\machine"
 
     if (Test-Path $configDir) {
-        Write-Output "Updating Podman machine configuration..."
+        Write-Information "Updating Podman machine configuration..."
 
         # First stop any existing podman processes
         Get-Process | Where-Object { $_.Name -like "*podman*" } | ForEach-Object {
-            Write-Output "Stopping process: $($_.Name) (ID: $($_.Id))"
+            Write-Information "Stopping process: $($_.Name) (ID: $($_.Id))"
             Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
         }
 
         # Make a backup of the current configuration
         $backupFolder = Join-Path $env:TEMP "podman-config-backup-$(Get-Date -Format 'yyyyMMddHHmmss')"
-        Write-Output "Creating backup of Podman configuration at: $backupFolder"
+        Write-Information "Creating backup of Podman configuration at: $backupFolder"
         if (Test-Path $configDir) {
             Copy-Item -Path $configDir -Destination $backupFolder -Recurse
         }
 
         # Remove the configuration to force Podman to recreate it
-        Write-Output "Removing current machine configuration to force recreation..."
+        Write-Information "Removing current machine configuration to force recreation..."
         Remove-Item -Path $configDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     # Step 6: Initialize/recreate the Podman machine
-    Write-Output "Re-initializing Podman machine with the moved WSL distribution..."
+    Write-Information "Re-initializing Podman machine with the moved WSL distribution..."
 
     # Wait for WSL to fully register the imported distribution
     Start-Sleep -Seconds 5
@@ -518,7 +518,7 @@ function Move-PodmanMachineImage {
     }
 
     # Initialize a new Podman machine with "--now=false" to avoid starting it yet
-    Write-Output "Creating new Podman machine configuration..."
+    Write-Information "Creating new Podman machine configuration..."
     & podman machine init --now=false
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to initialize new Podman machine configuration."
@@ -526,13 +526,13 @@ function Move-PodmanMachineImage {
     }
 
     # Start the Podman machine
-    Write-Output "Starting Podman machine..."
+    Write-Information "Starting Podman machine..."
     & podman machine start $MachineName
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to start Podman machine after move. Check if the import was successful using 'wsl -l -v'."
 
         # If starting fails, try a different approach - remove and recreate
-        Write-Output "Attempting recovery by recreating the machine..."
+        Write-Information "Attempting recovery by recreating the machine..."
 
         # Keep the WSL distribution but remove the Podman machine
         & podman machine rm -f $MachineName 2>$null
@@ -542,19 +542,19 @@ function Move-PodmanMachineImage {
         if ($LASTEXITCODE -eq 0) {
             & podman machine start $MachineName
             if ($LASTEXITCODE -eq 0) {
-                Write-Output "Machine successfully recreated and started."
+                Write-Information "Machine successfully recreated and started."
                 return $true
             }
         }
 
-        Write-Output "Recovery failed. You may need to: "
-        Write-Output "1. Run 'podman machine rm -f $MachineName' to remove the failed configuration"
-        Write-Output "2. Run 'podman machine init' to create a new machine"
-        Write-Output "3. Run 'podman machine start $MachineName' to start it"
+        Write-Information "Recovery failed. You may need to: "
+        Write-Information "1. Run 'podman machine rm -f $MachineName' to remove the failed configuration"
+        Write-Information "2. Run 'podman machine init' to create a new machine"
+        Write-Information "3. Run 'podman machine start $MachineName' to start it"
         return $false
     }
 
-    Write-Output "Podman machine image successfully moved to: $destinationFolder"
+    Write-Information "Podman machine image successfully moved to: $destinationFolder"
     return $true
 }
 
@@ -583,20 +583,20 @@ function Start-PodmanMachine {
 
     # Check if machine is already running
     if (CheckPodmanMachineRunning) {
-        Write-Output "Podman machine is already running."
+        Write-Information "Podman machine is already running."
         return $true
     }
 
     try {
         # Start the Podman machine (boots the Linux OS in WSL2)
         if ($PSCmdlet.ShouldProcess($MachineName, "Start Podman Machine")) {
-            Write-Output "Starting Podman machine '$MachineName'..."
+            Write-Information "Starting Podman machine '$MachineName'..."
             $startOutput = & podman machine start $MachineName 2>&1
             if ($LASTEXITCODE -ne 0) {
                 Write-Error "Failed to start Podman machine '$MachineName'. Output: $startOutput"
                 return $false
             }
-            Write-Output "Podman machine '$MachineName' started successfully."
+            Write-Information "Podman machine '$MachineName' started successfully."
             return $true
         } else {
             return $false # Indicate action was skipped due to -WhatIf
@@ -639,11 +639,11 @@ function Install-PodmanService {
     # Retrieve the installation folder
     $podmanCmd = Get-Command podman
     $destinationFolder = Split-Path $podmanCmd.Source
-    Write-Output "Podman is installed at: $destinationFolder"
+    Write-Information "Podman is installed at: $destinationFolder"
 
     # Remove any existing service with the same name
     if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
-        Write-Output "Service '$ServiceName' already exists. Removing it..."
+        Write-Information "Service '$ServiceName' already exists. Removing it..."
         Start-Process -FilePath "sc.exe" -ArgumentList "stop $ServiceName" -Wait -NoNewWindow
         Start-Process -FilePath "sc.exe" -ArgumentList "delete $ServiceName" -Wait -NoNewWindow
         Start-Sleep -Seconds 5
@@ -696,12 +696,12 @@ if %errorlevel%==0 (
         Write-Error "Failed to create the batch file at $batchFilePath."
         return $false
     }
-    Write-Output "Batch file created at: $batchFilePath"
+    Write-Information "Batch file created at: $batchFilePath"
 
     # Create the service via sc.exe
     # This registers a Windows service that runs the batch file on system startup
     $argsCreate = "create $ServiceName binPath= `"$batchFilePath`" start= auto"
-    Write-Output "Creating service using: sc.exe $argsCreate"
+    Write-Information "Creating service using: sc.exe $argsCreate"
     $svcCreateProcess = Start-Process -FilePath "sc.exe" -ArgumentList $argsCreate -Wait -NoNewWindow -PassThru
     if ($svcCreateProcess.ExitCode -ne 0) {
         Write-Error "Failed to create service '$ServiceName'. sc.exe returned exit code $($svcCreateProcess.ExitCode)."
@@ -715,7 +715,7 @@ if %errorlevel%==0 (
         return $false
     }
 
-    Write-Output "Service '$ServiceName' installed and started successfully."
+    Write-Information "Service '$ServiceName' installed and started successfully."
     return $true
 }
 
@@ -732,7 +732,7 @@ function Install-PodmanDesktop {
 
     # Check if Podman Desktop is already installed
     if (CheckPodmanDesktopInstalled) {
-        Write-Output "Podman Desktop is already installed. Skipping installation."
+        Write-Information "Podman Desktop is already installed. Skipping installation."
         return $true
     }
 
@@ -744,7 +744,7 @@ function Install-PodmanDesktop {
 
     # Create downloads folder if it doesn't exist
     if (-not (Test-Path $downloadFolder)) {
-        Write-Output "Creating downloads folder at $downloadFolder..."
+        Write-Information "Creating downloads folder at $downloadFolder..."
         New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
     }
 
@@ -753,15 +753,15 @@ function Install-PodmanDesktop {
     Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath
 
     # Launch the installer without waiting
-    Write-Output "Launching Podman Desktop installer..."
-    Write-Output "IMPORTANT: The script will continue executing after launching the installer."
-    Write-Output "Please complete the installation process when prompted."
+    Write-Information "Launching Podman Desktop installer..."
+    Write-Information "IMPORTANT: The script will continue executing after launching the installer."
+    Write-Information "Please complete the installation process when prompted."
 
     # Start without -Wait to prevent hanging
     Start-Process -FilePath $exePath
 
     # Give user a chance to see that installer has started
-    Write-Output "Waiting 5 seconds for installer to start..."
+    Write-Information "Waiting 5 seconds for installer to start..."
     Start-Sleep -Seconds 5
 
     # Prompt user to confirm installation is complete
@@ -772,7 +772,7 @@ function Install-PodmanDesktop {
 
     # Verify installation
     if (CheckPodmanDesktopInstalled) {
-        Write-Output "Podman Desktop installed successfully."
+        Write-Information "Podman Desktop installed successfully."
         return $true
     } else {
         Write-Error "Podman Desktop installation could not be verified. Please check manually."
@@ -791,7 +791,7 @@ function Remove-PodmanService {
     $serviceName = "PodmanMachineStart"
     if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
         if ($PSCmdlet.ShouldProcess($serviceName, "Stop Service")) {
-            Write-Output "Stopping service '$serviceName'..."
+            Write-Information "Stopping service '$serviceName'..."
             $svcStopProcess = Start-Process -FilePath "sc.exe" -ArgumentList "stop $serviceName" -Wait -NoNewWindow -PassThru
             if ($svcStopProcess.ExitCode -ne 0) {
                 Write-Error "Failed to stop service '$serviceName'. sc.exe returned exit code $($svcStopProcess.ExitCode)."
@@ -799,18 +799,18 @@ function Remove-PodmanService {
             }
         }
         if ($PSCmdlet.ShouldProcess($serviceName, "Delete Service")) {
-            Write-Output "Deleting service '$serviceName'..."
+            Write-Information "Deleting service '$serviceName'..."
             $svcDeleteProcess = Start-Process -FilePath "sc.exe" -ArgumentList "delete $serviceName" -Wait -NoNewWindow -PassThru
             if ($svcDeleteProcess.ExitCode -ne 0) {
                 Write-Error "Failed to delete service '$serviceName'. sc.exe returned exit code $($svcDeleteProcess.ExitCode)."
                 return $false
             }
-            Write-Output "Service '$serviceName' removed successfully."
+            Write-Information "Service '$serviceName' removed successfully."
         }
         return $true
     }
     else {
-        Write-Output "Service '$serviceName' not found. Nothing to remove."
+        Write-Information "Service '$serviceName' not found. Nothing to remove."
         return $true
     }
 }
@@ -823,12 +823,12 @@ function Remove-PodmanComponent {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
-    Write-Output "Select component to remove:"
-    Write-Output "1) Remove Podman Service only"
-    Write-Output "2) Remove Podman Machine only"
-    Write-Output "3) [Not Implemented] Uninstall Podman Desktop only"
-    Write-Output "4) [Not Implemented] Uninstall Podman CLI"
-    Write-Output "5) Exit without removing anything"
+    Write-Host "Select component to remove:" # Changed to Host
+    Write-Host "1) Remove Podman Service only" # Changed to Host
+    Write-Host "2) Remove Podman Machine only" # Changed to Host
+    Write-Host "3) [Not Implemented] Uninstall Podman Desktop only" # Changed to Host
+    Write-Host "4) [Not Implemented] Uninstall Podman CLI" # Changed to Host
+    Write-Host "5) Exit without removing anything" # Changed to Host
 
     $removeOption = Read-Host "Enter option (1-5, default is 5)"
     if ([string]::IsNullOrWhiteSpace($removeOption)) {
@@ -838,46 +838,46 @@ function Remove-PodmanComponent {
     switch ($removeOption) {
         "1" {
             if (Remove-PodmanService) {
-                Write-Output "Podman service removed successfully."
+                Write-Information "Podman service removed successfully."
             } else {
                 Write-Error "Failed to remove Podman service."
             }
         }
         "2" {
             if (CheckPodmanMachineAvailable) {
-                Write-Output "Removing Podman machines..."
+                Write-Information "Removing Podman machines..."
                 $machineListJson = & podman machine ls --format json 2>&1
                 $machines = $machineListJson | ConvertFrom-Json
 
                 foreach ($machine in $machines) {
                     if ($PSCmdlet.ShouldProcess($machine.Name, "Remove Podman Machine")) {
-                        Write-Output "Removing machine: $($machine.Name)..."
+                        Write-Information "Removing machine: $($machine.Name)..."
                         # podman machine rm [options] [MACHINE]
                         # rm     Remove an existing machine
                         # -f     Force the removal if the machine is running
                         & podman machine rm -f $machine.Name
                         if ($LASTEXITCODE -eq 0) {
-                            Write-Output "Machine '$($machine.Name)' removed successfully."
+                            Write-Information "Machine '$($machine.Name)' removed successfully."
                         } else {
                             Write-Error "Failed to remove machine '$($machine.Name)'."
                         }
                     }
                 }
             } else {
-                Write-Output "No Podman machines found to remove."
+                Write-Information "No Podman machines found to remove."
             }
         }
         "3" {
-            Write-Output "Uninstall of Podman Desktop must be done through Windows Add/Remove Programs."
+            Write-Information "Uninstall of Podman Desktop must be done through Windows Add/Remove Programs."
         }
         "4" {
-            Write-Output "Uninstall of Podman CLI must be done through Windows Add/Remove Programs."
+            Write-Information "Uninstall of Podman CLI must be done through Windows Add/Remove Programs."
         }
         "5" {
-            Write-Output "No components will be removed."
+            Write-Information "No components will be removed."
         }
         default {
-            Write-Output "Invalid option. No components will be removed."
+            Write-Warning "Invalid option. No components will be removed." # Changed to Warning
         }
     }
 }
@@ -885,26 +885,26 @@ function Remove-PodmanComponent {
 #############################################
 # Main Script Execution - Logical Menu
 #############################################
-Write-Output "=================================================="
-Write-Output "PODMAN SETUP AND MANAGEMENT"
-Write-Output "=================================================="
-Write-Output "Select an option:"
-Write-Output "1) Check Podman Status"
-Write-Output "   - Displays the current status of Podman components"
-Write-Output "2) Install Podman CLI"
-Write-Output "   - Installs the Podman command-line tool"
-Write-Output "3) Install Podman Desktop (UI)"
-Write-Output "   - Installs the Podman Desktop manager (Requires only CLI)"
-Write-Output "4) Initialize Podman Machine"
-Write-Output "   - Creates and starts a Podman machine (Requires CLI)"
-Write-Output "   - This creates a VHDX file with Linux + Podman inside"
-Write-Output "5) Move Podman Machine"
-Write-Output "   - Moves a Podman machine image to a new location"
-Write-Output "6) Register Podman Service"
-Write-Output "   - Creates a Windows service to auto-start Podman (Requires Machine)"
-Write-Output "7) Remove Podman Components"
-Write-Output "   - Options to remove service, machine, or uninstall software"
-Write-Output "=================================================="
+Write-Host "==================================================" # Changed to Host
+Write-Host "PODMAN SETUP AND MANAGEMENT" # Changed to Host
+Write-Host "==================================================" # Changed to Host
+Write-Host "Select an option:" # Changed to Host
+Write-Host "1) Check Podman Status" # Changed to Host
+Write-Host "   - Displays the current status of Podman components" # Changed to Host
+Write-Host "2) Install Podman CLI" # Changed to Host
+Write-Host "   - Installs the Podman command-line tool" # Changed to Host
+Write-Host "3) Install Podman Desktop (UI)" # Changed to Host
+Write-Host "   - Installs the Podman Desktop manager (Requires only CLI)" # Changed to Host
+Write-Host "4) Initialize Podman Machine" # Changed to Host
+Write-Host "   - Creates and starts a Podman machine (Requires CLI)" # Changed to Host
+Write-Host "   - This creates a VHDX file with Linux + Podman inside" # Changed to Host
+Write-Host "5) Move Podman Machine" # Changed to Host
+Write-Host "   - Moves a Podman machine image to a new location" # Changed to Host
+Write-Host "6) Register Podman Service" # Changed to Host
+Write-Host "   - Creates a Windows service to auto-start Podman (Requires Machine)" # Changed to Host
+Write-Host "7) Remove Podman Components" # Changed to Host
+Write-Host "   - Options to remove service, machine, or uninstall software" # Changed to Host
+Write-Host "==================================================" # Changed to Host
 
 $installOption = Read-Host "Enter your choice (1-7). Default is 1 if empty"
 if ([string]::IsNullOrEmpty($installOption)) { $installOption = "1" }

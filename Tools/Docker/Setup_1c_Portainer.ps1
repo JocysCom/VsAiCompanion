@@ -56,7 +56,7 @@ $global:httpsPort = 9443
 function Get-PortainerContainerConfig {
     $containerInfo = & $global:enginePath inspect portainer 2>$null | ConvertFrom-Json
     if (-not $containerInfo) {
-        Write-Output "Container 'portainer' not found."
+        Write-Information "Container 'portainer' not found."
         return $null
     }
 
@@ -97,13 +97,13 @@ function Remove-PortainerContainer {
 
     $existingContainer = & $global:enginePath ps --all --filter "name=portainer" --format "{{.ID}}"
     if (-not $existingContainer) {
-        Write-Output "No Portainer container found to remove."
+        Write-Information "No Portainer container found to remove."
         return $true
     }
 
     if ($PSCmdlet.ShouldProcess("portainer", "Stop and Remove Container")) {
-        Write-Output "Stopping and removing Portainer container..."
-        Write-Output "NOTE: This only removes the container, not the volume with user data."
+        Write-Information "Stopping and removing Portainer container..."
+        Write-Information "NOTE: This only removes the container, not the volume with user data."
 
         & $global:enginePath stop portainer 2>$null
         & $global:enginePath rm portainer
@@ -178,11 +178,11 @@ function Start-PortainerContainer {
 
     # Run the container
     if ($PSCmdlet.ShouldProcess("portainer", "Start Container with Image '$Image'")) {
-        Write-Output "Starting Portainer container with image: $Image"
+        Write-Information "Starting Portainer container with image: $Image"
         & $global:enginePath run $runOptions $Image
 
         if ($LASTEXITCODE -eq 0) {
-            Write-Output "Waiting for container startup..."
+            Write-Information "Waiting for container startup..."
             Start-Sleep -Seconds 10
 
             # Test connectivity
@@ -190,10 +190,10 @@ function Start-PortainerContainer {
             $httpTest = Test-HTTPPort -Uri "http://localhost:$HttpPort" -serviceName "Portainer"
 
             if ($tcpTest -and $httpTest) {
-                Write-Output "Portainer is now running and accessible at:"
-                Write-Output "  HTTP:  http://localhost:$HttpPort"
-                Write-Output "  HTTPS: https://localhost:$HttpsPort"
-                Write-Output "On first connection, you'll need to create an admin account."
+                Write-Information "Portainer is now running and accessible at:"
+                Write-Information "  HTTP:  http://localhost:$HttpPort"
+                Write-Information "  HTTPS: https://localhost:$HttpsPort"
+                Write-Information "On first connection, you'll need to create an admin account."
                 return $true
             } else {
                 Write-Warning "Portainer container started but connectivity tests failed. Please check the container logs."
@@ -223,13 +223,13 @@ function Install-PortainerContainer {
         Write-Error "Failed to ensure volume 'portainer_data' exists. Exiting..."
         return
     }
-    Write-Output "IMPORTANT: Using volume 'portainer_data' - existing user data will be preserved."
+    Write-Information "IMPORTANT: Using volume 'portainer_data' - existing user data will be preserved."
 
     # Check if the Portainer image is already available.
     $existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
     if (-not $existingImage) {
         if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-            Write-Output "No backup restored. Pulling Portainer image '$global:imageName'..."
+            Write-Information "No backup restored. Pulling Portainer image '$global:imageName'..."
             # Use the shared Invoke-PullImage function
             if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
                 Write-Error "Image pull failed. Exiting..."
@@ -288,7 +288,7 @@ function Update-PortainerContainer {
     # Step 1: Check if container exists and get its configuration
     $config = Get-PortainerContainerConfig
     if (-not $config) {
-        Write-Output "No Portainer container found to update. Please install it first."
+        Write-Information "No Portainer container found to update. Please install it first."
         return
     }
 
@@ -296,7 +296,7 @@ function Update-PortainerContainer {
     $createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
     if ($createBackup -ne "N") {
         if ($PSCmdlet.ShouldProcess("portainer", "Backup Container State")) {
-            Write-Output "Creating backup of current container..."
+            Write-Information "Creating backup of current container..."
             Backup-PortainerContainer
         }
     }
@@ -325,12 +325,12 @@ function Update-PortainerContainer {
             return
         }
     } else {
-         Write-Output "Skipping image pull due to -WhatIf."
+         Write-Information "Skipping image pull due to -WhatIf."
     }
 
     # Step 5: Start a new container with the latest image and preserved configuration
     if (Start-PortainerContainer -Image $global:imageName -EnvVars $config.EnvVars) { # This function now supports ShouldProcess
-        Write-Output "Portainer container updated successfully!"
+        Write-Information "Portainer container updated successfully!"
     } else {
         Write-Error "Failed to start updated container or action skipped."
 
