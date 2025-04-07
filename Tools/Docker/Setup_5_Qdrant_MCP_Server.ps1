@@ -192,9 +192,14 @@ function Install-QdrantMCPServerContainer {
 		$runOptions += "--env", "QDRANT_API_KEY=$qdrantApiKey"
 	}
 
-	& $global:enginePath run @runOptions $global:imageTag
+	# Add the image tag and the transport argument to the command
+	$runArguments = @($runOptions)
+	$runArguments += $global:imageTag
+	$runArguments += "--transport", "sse" # Add argument to enable SSE transport
+
+	& $global:enginePath run @runArguments
 	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to start the Qdrant MCP Server container."
+		Write-Error "Failed to start the Qdrant MCP Server container with SSE transport."
 		return
 	}
 
