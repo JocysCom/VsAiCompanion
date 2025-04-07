@@ -6,6 +6,7 @@
     <None Include="*.*" Exclude="*.sln*;UpgradeLog*.*" />
     <None Include=".github/*.*" />
     <None Include=".config/*.*" />
+    <None Include="Tools/**/*.*" />
     <None Include="Resources/*.*" />
   </ItemGroup>
   <!-- 

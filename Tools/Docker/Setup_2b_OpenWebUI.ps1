@@ -1,7 +1,7 @@
 ################################################################################
 # File         : Setup_2b_OpenWebUI.ps1
-# Description  : Script to set up, back up, restore, uninstall, and update the 
-#                Open WebUI container using Docker/Podman support. The script 
+# Description  : Script to set up, back up, restore, uninstall, and update the
+#                Open WebUI container using Docker/Podman support. The script
 #                provides a container menu (with install, backup, restore, uninstall,
 #                update, and exit options).
 # Usage        : Run as Administrator if using Docker.
@@ -10,8 +10,13 @@
 using namespace System
 using namespace System.IO
 
-# Dot-source common helper functions.
-. "$PSScriptRoot\Setup_0.ps1"
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_Network.ps1"
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Check-WSLStatus
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -21,351 +26,473 @@ Set-ScriptLocation
 #############################################
 $containerEngine = Select-ContainerEngine
 if ($containerEngine -eq "docker") {
-    Ensure-Elevated
-    $enginePath = Get-DockerPath
+	Ensure-Elevated
+	$enginePath = Get-DockerPath
 }
 else {
-    $enginePath = Get-PodmanPath
+	$enginePath = Get-PodmanPath
 }
-$imageName     = "ghcr.io/open-webui/open-webui:main"
+$imageName = "ghcr.io/open-webui/open-webui:main"
 $containerName = "open-webui"
+$volumeName = "open-webui" # Assuming volume name matches container name
 
+#==============================================================================
+# Function: Get-OpenWebUIContainerConfig
+#==============================================================================
 <#
 .SYNOPSIS
-    Gets the current Open WebUI container configuration.
+	Gets the current Open WebUI container configuration by inspecting the running container.
 .DESCRIPTION
-    Retrieves container information including environment variables and volume mounts.
+	Inspects the container specified by the global $containerName variable using the selected engine.
+	Extracts the image name, relevant environment variables (starting with OPENWEBUI_ or API_),
+	volume mounts, and port mappings.
 .OUTPUTS
-    Returns a custom object with container information or $null if not found.
+	[PSCustomObject] Returns a custom object containing the extracted configuration details
+					 (Image, EnvVars, VolumeMounts, Ports, Platform) or $null if the container
+					 is not found or inspection fails.
+.EXAMPLE
+	$currentConfig = Get-OpenWebUIContainerConfig
+	if ($currentConfig) { Write-Host "Current Image: $($currentConfig.Image)" }
+.NOTES
+	Uses 'engine inspect'. Includes error handling for parsing environment variables,
+	volume mounts, and port mappings, providing defaults if parsing fails.
 #>
 function Get-OpenWebUIContainerConfig {
-    $containerInfo = & $enginePath inspect $containerName 2>$null | ConvertFrom-Json
-    if (-not $containerInfo) {
-        Write-Host "Container '$containerName' not found." -ForegroundColor Yellow
-        return $null
-    }
-    
-    # Extract environment variables
-    $envVars = @()
-    try {
-        foreach ($env in $containerInfo.Config.Env) {
-            # Only preserve specific environment variables if needed
-            if ($env -match "^(OPENWEBUI_|API_)") {
-                $envVars += $env
-            }
-        }
-    } catch {
-        Write-Warning "Could not parse existing environment variables: $_"
-    }
-    
-    # Extract volume mounts
-    $volumeMounts = @()
-    try {
-        foreach ($mount in $containerInfo.Mounts) {
-            if ($mount.Type -eq "volume") {
-                $volumeMounts += "$($mount.Name):$($mount.Destination)"
-            }
-        }
-    } catch {
-        Write-Warning "Could not parse existing volume mounts: $_"
-        # Default volume mount if parsing fails
-        $volumeMounts = @("open-webui:/app/backend/data")
-    }
-    
-    # Extract port mappings
-    $ports = @()
-    try {
-        foreach ($portMapping in $containerInfo.NetworkSettings.Ports.PSObject.Properties) {
-            foreach ($binding in $portMapping.Value) {
-                $ports += "$($binding.HostPort):$($portMapping.Name.Split('/')[0])"
-            }
-        }
-    } catch {
-        Write-Warning "Could not parse existing port mappings: $_"
-        # Default port mapping if parsing fails
-        $ports = @("3000:8080")
-    }
-    
-    # Return a custom object with the container information
-    return [PSCustomObject]@{
-        Image = $containerInfo.Config.Image
-        EnvVars = $envVars
-        VolumeMounts = $volumeMounts
-        Ports = $ports
-        Platform = "linux/amd64"  # Assuming this is the platform used
-    }
+	$containerInfo = & $enginePath inspect $containerName 2>$null | ConvertFrom-Json
+	if (-not $containerInfo) {
+		Write-Host "Container '$containerName' not found."
+		return $null
+	}
+
+	# Extract environment variables
+	$envVars = @()
+	try {
+		foreach ($env in $containerInfo.Config.Env) {
+			# Only preserve specific environment variables if needed
+			if ($env -match "^(OPENWEBUI_|API_)") {
+				$envVars += $env
+			}
+		}
+	}
+	catch {
+		Write-Warning "Could not parse existing environment variables: $_"
+	}
+
+	# Extract volume mounts
+	$volumeMounts = @()
+	try {
+		foreach ($mount in $containerInfo.Mounts) {
+			if ($mount.Type -eq "volume") {
+				$volumeMounts += "$($mount.Name):$($mount.Destination)"
+			}
+		}
+	}
+	catch {
+		Write-Warning "Could not parse existing volume mounts: $_"
+		# Default volume mount if parsing fails
+		$volumeMounts = @("$($volumeName):/app/backend/data")
+	}
+
+	# Extract port mappings
+	$ports = @()
+	try {
+		foreach ($portMapping in $containerInfo.NetworkSettings.Ports.PSObject.Properties) {
+			foreach ($binding in $portMapping.Value) {
+				$ports += "$($binding.HostPort):$($portMapping.Name.Split('/')[0])"
+			}
+		}
+	}
+	catch {
+		Write-Warning "Could not parse existing port mappings: $_"
+		# Default port mapping if parsing fails
+		$ports = @("3000:8080")
+	}
+
+	# Return a custom object with the container information
+	return [PSCustomObject]@{
+		Image        = $containerInfo.Config.Image
+		EnvVars      = $envVars
+		VolumeMounts = $volumeMounts
+		Ports        = $ports
+		Platform     = "linux/amd64"  # Assuming this is the platform used
+	}
 }
 
+#==============================================================================
+# Function: Start-OpenWebUIContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Runs the container using the provided container engine and parameters.
+	Starts the Open WebUI container with specified or default configuration.
 .DESCRIPTION
-    This function encapsulates the duplicated code to run, wait, and test the 
-    container startup.
+	Runs a new container using the selected engine. Builds the 'run' command arguments based on
+	either a provided configuration object or default values (image, ports, volumes, name, restart policy).
+	Includes engine-specific arguments like '--add-host' for Docker.
+	After starting the container, waits 20 seconds and performs HTTP, TCP, and WebSocket connectivity tests.
+	Attempts to create a firewall rule for port 3000. Supports -WhatIf.
 .PARAMETER action
-    A message prefix indicating the action (e.g. "Running container" or "Starting updated container").
+	A string describing the action being performed (e.g., "Running container", "Starting updated container"), used in status messages. Mandatory.
 .PARAMETER successMessage
-    The message to print on successful startup.
+	The message to display upon successful startup and connectivity tests. Mandatory.
 .PARAMETER config
-    Optional configuration object containing container settings. If not provided, default settings are used.
+	Optional. A PSCustomObject (typically from Get-OpenWebUIContainerConfig) containing specific
+	configuration (Image, EnvVars, VolumeMounts, Ports, Platform) to use instead of defaults.
+.OUTPUTS
+	[bool] Returns $true if the container starts successfully and connectivity tests pass.
+		   Returns $false if start fails, tests fail, or action is skipped due to -WhatIf.
+.EXAMPLE
+	Start-OpenWebUIContainer -action "Running initial container" -successMessage "Container started!"
+.EXAMPLE
+	$cfg = Get-OpenWebUIContainerConfig; Start-OpenWebUIContainer -action "Restarting container" -successMessage "Restarted!" -config $cfg
+.NOTES
+	Relies on Test-HTTPPort, Test-TCPPort, Test-WebSocketPort helper functions.
+	Uses Write-Host for status messages. Firewall rule creation uses New-NetFirewallRule.
 #>
-function Run-Container {
-    param (
-        [string]$action,
-        [string]$successMessage,
-        [PSCustomObject]$config = $null
-    )
-    Write-Host "$action '$containerName'..."
-    
-    # Build the run command with either provided config or defaults
-    $runOptions = @("--platform")
-    
-    if ($config) {
-        $runOptions += $config.Platform
-    } else {
-        $runOptions += "linux/amd64"
-    }
-    
-    $runOptions += @("--detach")
-    
-    # Add port mappings
-    if ($config -and $config.Ports) {
-        foreach ($port in $config.Ports) {
-            $runOptions += "--publish"
-            $runOptions += $port
-        }
-    } else {
-        $runOptions += "--publish"
-        $runOptions += "3000:8080"
-    }
-    
-    # Add volume mounts
-    if ($config -and $config.VolumeMounts) {
-        foreach ($volume in $config.VolumeMounts) {
-            $runOptions += "--volume"
-            $runOptions += $volume
-        }
-    } else {
-        $runOptions += "--volume"
-        $runOptions += "open-webui:/app/backend/data"
-    }
-    
-    # Add environment variables if provided
-    if ($config -and $config.EnvVars) {
-        foreach ($env in $config.EnvVars) {
-            $runOptions += "--env"
-            $runOptions += $env
-        }
-    }
-    
-    # Add host networking for Docker only
-    if ($containerEngine -eq "docker") {
-        $runOptions += "--add-host"
-        $runOptions += "host.docker.internal:host-gateway"
-    }
-    
-    # Add restart policy
-    $runOptions += "--restart"
-    $runOptions += "always"
-    
-    # Add container name
-    $runOptions += "--name"
-    $runOptions += $containerName
-    
-    # Add image name
-    if ($config -and $config.Image) {
-        $runOptions += $config.Image
-    } else {
-        $runOptions += $imageName
-    }
-    
-    # Run the container with all options
-    & $enginePath run @runOptions
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to run container."
-        return $false
-    }
-    
-    Write-Host "Waiting 20 seconds for container startup..."
-    Start-Sleep -Seconds 20
-    
-    # Test connectivity
-    $httpTest = Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
-    $tcpTest = Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-    $wsTest = Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
-    
-    # Create firewall rule if needed
-    try {
-        New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow -ErrorAction SilentlyContinue
-    } catch {
-        Write-Warning "Could not create firewall rule. You may need to manually allow port 3000."
-    }
-    
-    Write-Host $successMessage
-    return $true
+function Start-OpenWebUIContainer {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param (
+		[string]$action,
+		[string]$successMessage,
+		[PSCustomObject]$config = $null
+	)
+	Write-Host "$action '$containerName'..."
+
+	# Build the run command with either provided config or defaults
+	$runOptions = @("--platform")
+
+	if ($config) {
+		$runOptions += $config.Platform
+	}
+	else {
+		$runOptions += "linux/amd64"
+	}
+
+	$runOptions += @("--detach")
+
+	# Add port mappings
+	if ($config -and $config.Ports) {
+		foreach ($port in $config.Ports) {
+			$runOptions += "--publish"
+			$runOptions += $port
+		}
+	}
+	else {
+		$runOptions += "--publish"
+		$runOptions += "3000:8080"
+	}
+
+	# Add volume mounts
+	if ($config -and $config.VolumeMounts) {
+		foreach ($volume in $config.VolumeMounts) {
+			$runOptions += "--volume"
+			$runOptions += $volume
+		}
+	}
+	else {
+		$runOptions += "--volume"
+		$runOptions += "$($volumeName):/app/backend/data"
+	}
+
+	# Add environment variables if provided
+	if ($config -and $config.EnvVars) {
+		foreach ($env in $config.EnvVars) {
+			$runOptions += "--env"
+			$runOptions += $env
+		}
+	}
+
+	# Add host networking for Docker only
+	if ($containerEngine -eq "docker") {
+		$runOptions += "--add-host"
+		$runOptions += "host.docker.internal:host-gateway"
+	}
+
+	# Add restart policy
+	$runOptions += "--restart"
+	$runOptions += "always"
+
+	# Add container name
+	$runOptions += "--name"
+	$runOptions += $containerName
+
+	# Add image name
+	if ($config -and $config.Image) {
+		$runOptions += $config.Image
+	}
+	else {
+		$runOptions += $imageName
+	}
+
+	# Command: run
+	#   --platform: Specify platform (linux/amd64).
+	#   --detach: Run container in background.
+	#   --publish: Map host port 3000 to container port 8080.
+	#   --volume: Mount the named volume for persistent data.
+	#   --add-host: (Docker only) Map host.docker.internal to host gateway IP.
+	#   --restart always: Always restart the container unless explicitly stopped.
+	#   --name: Assign a name to the container.
+	# Run the container with all options
+	if ($PSCmdlet.ShouldProcess($containerName, "Run Container with Image '$($config.Image -or $imageName)'")) {
+		& $enginePath run @runOptions
+	}
+	else {
+		Write-Warning "Skipping container run due to -WhatIf."
+		return $false # Indicate failure if skipped
+	}
+
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to run container."
+		return $false
+	}
+
+	Write-Host "Waiting 20 seconds for container startup..."
+	Start-Sleep -Seconds 20
+
+	# Test connectivity
+	Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
+	Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
+	Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
+
+	# Create firewall rule if needed
+	if ($PSCmdlet.ShouldProcess("Port 3000", "Create Firewall Rule 'Allow WebSockets'")) {
+		try {
+			New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow -ErrorAction SilentlyContinue
+		}
+		catch {
+			Write-Warning "Could not create firewall rule. You may need to manually allow port 3000."
+		}
+	}
+	else {
+		Write-Warning "Skipping firewall rule creation due to -WhatIf."
+	}
+
+	Write-Host $successMessage
+	return $true
 }
 
+#==============================================================================
+# Function: Install-OpenWebUIContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Installs the Open WebUI container.
+	Installs and starts the Open WebUI container.
 .DESCRIPTION
-    Attempts to restore a backup image; if not available, pulls the latest image,
-    removes any existing container, and then runs the container. A reminder regarding
-    Open WebUI settings is printed after the container is running.
+	Ensures the required volume exists using Confirm-ContainerVolume.
+	Checks if the image exists locally. If not, attempts to restore from backup using
+	Test-AndRestoreBackup, falling back to pulling the image using Invoke-PullImage.
+	Removes any existing container with the same name.
+	Starts the new container using Start-OpenWebUIContainer with default settings.
+.EXAMPLE
+	Install-OpenWebUIContainer
+.NOTES
+	Orchestrates volume creation, image acquisition, cleanup, and container start.
+	Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
+	Start-OpenWebUIContainer helper functions.
+	Uses Write-Host for status messages.
 #>
 function Install-OpenWebUIContainer {
-    # Attempt to restore backup image; if not, pull latest image.
-    if (-not (Check-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
-        Write-Host "No backup restored. Pulling Open WebUI image '$imageName'..."
-        # Pull command:
-        # pull       Pull an image from a registry.
-        # --platform string Specify the platform to pull the image for.
-        & $enginePath pull --platform linux/amd64 $imageName
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Pull failed. Check internet connection or image URL."
-            return
-        }
-    }
-    else {
-        Write-Host "Using restored backup image '$imageName'."
-    }
-    # Remove any existing container.
-    $existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing existing container '$containerName'..."
-        # Remove container:
-        # rm         Remove one or more containers.
-        # --force    Force removal of a running container.
-        & $enginePath rm --force $containerName
-    }
-    Run-Container -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+	# Ensure the volume exists
+	if (-not (Confirm-ContainerVolume -Engine $enginePath -VolumeName $volumeName)) {
+		Write-Error "Failed to ensure volume '$volumeName' exists. Exiting..."
+		return
+	}
+	Write-Host "IMPORTANT: Using volume '$volumeName' - existing user data will be preserved."
+
+	# Check if image exists locally, restore from backup, or pull new
+	$existingImage = & $enginePath images --filter "reference=$imageName" --format "{{.ID}}"
+	if (-not $existingImage) {
+		if (-not (Test-AndRestoreBackup -Engine $enginePath -ImageName $imageName)) {
+			Write-Host "No backup restored. Pulling Open WebUI image '$imageName'..."
+			# Use shared pull function
+			if (-not (Invoke-PullImage -Engine $enginePath -ImageName $imageName -PullOptions @("--platform", "linux/amd64"))) {
+				Write-Error "Pull failed. Check internet connection or image URL."
+				return
+			}
+		}
+		else {
+			Write-Host "Using restored backup image '$imageName'."
+		}
+	}
+	else {
+		Write-Host "Using restored backup image '$imageName'."
+	}
+	# Remove any existing container.
+	$existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
+	if ($existingContainer) {
+		Write-Host "Removing existing container '$containerName'..."
+		# Remove container:
+		# rm         Remove one or more containers.
+		# --force    Force removal of a running container.
+		& $enginePath rm --force $containerName
+	}
+	Start-OpenWebUIContainer -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
+#==============================================================================
+# Function: Uninstall-OpenWebUIContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the Open WebUI container.
+	Uninstalls the Open WebUI container and optionally removes its data volume.
 .DESCRIPTION
-    Checks for the existence of the container and removes it using the engine's rm command.
+	Calls the Remove-ContainerAndVolume helper function, specifying 'open-webui' as both the
+	container and volume name. This will stop/remove the container and prompt the user
+	about removing the volume. Supports -WhatIf.
+.EXAMPLE
+	Uninstall-OpenWebUIContainer -Confirm:$false
+.NOTES
+	Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-OpenWebUIContainer {
-    $existingContainer = & $enginePath ps -a --filter "name=^$containerName$" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing container '$containerName'..."
-        & $enginePath rm --force $containerName
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "Container removed successfully."
-            Write-Host "IMPORTANT: User data is preserved in the 'open-webui' volume." -ForegroundColor Yellow
-            Write-Host "To completely remove all user data, you would need to manually delete the volume with:" -ForegroundColor DarkYellow
-            Write-Host "  $enginePath volume rm open-webui" -ForegroundColor DarkYellow
-        }
-        else {
-            Write-Error "Failed to remove container."
-        }
-    }
-    else {
-        Write-Host "No container found to remove."
-    }
+	Remove-ContainerAndVolume -Engine $enginePath -ContainerName $containerName -VolumeName $volumeName
 }
 
+#==============================================================================
+# Function: Backup-OpenWebUIContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live Open WebUI container.
+	Backs up the state of the running Open WebUI container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to back up the container.
+	Calls the Backup-ContainerState helper function, specifying 'open-webui' as the container name.
+	This commits the container state to an image and saves it as a tar file.
+.EXAMPLE
+	Backup-OpenWebUIContainer
+.NOTES
+	Relies on Backup-ContainerState helper function.
 #>
 function Backup-OpenWebUIContainer {
-    Backup-ContainerState -Engine $enginePath -ContainerName $containerName
+	Backup-ContainerState -Engine $enginePath -ContainerName $containerName
 }
 
+#==============================================================================
+# Function: Restore-OpenWebUIContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the Open WebUI container from backup.
+	Restores the Open WebUI container image from a backup tar file.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the container.
+	Calls the Restore-ContainerState helper function, specifying 'open-webui' as the container name.
+	This loads the image from the backup tar file. Note: This only restores the image,
+	it does not automatically start a container from it.
+.EXAMPLE
+	Restore-OpenWebUIContainer
+.NOTES
+	Relies on Restore-ContainerState helper function. Does not handle volume restore.
 #>
 function Restore-OpenWebUIContainer {
-    Restore-ContainerState -Engine $enginePath -ContainerName $containerName
+	Restore-ContainerState -Engine $enginePath -ContainerName $containerName
 }
 
-#############################################
-# Optional Functions
-#############################################
-
+#==============================================================================
+# Function: Update-OpenWebUIContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the Open WebUI container.
+	Updates the Open WebUI container to the latest image version using the generic update workflow.
 .DESCRIPTION
-    Uses the shared Update-Container function to update the Open WebUI container
-    while preserving user data and configuration.
+	Defines a script block (`$runContainerFunction`) that encapsulates the logic to start the
+	Open WebUI container using its current configuration (obtained via Get-OpenWebUIContainerConfig)
+	but with the latest image name.
+	Calls the generic Update-Container helper function, passing the specific details for the
+	Open WebUI container (name, image name) and the defined script block via -RunFunction.
+	Supports -WhatIf.
+.EXAMPLE
+	Update-OpenWebUIContainer -WhatIf
+.NOTES
+	Relies on Get-OpenWebUIContainerConfig, Start-OpenWebUIContainer, and the generic Update-Container function.
+	The script block ensures that existing configuration (ports, volumes, env vars) is preserved during the update.
 #>
 function Update-OpenWebUIContainer {
-    # Define a script block that knows how to run the container with the right options
-    $runContainerFunction = {
-        $config = Get-OpenWebUIContainerConfig
-        if (-not $config) {
-            throw "Failed to get container configuration"
-        }
-        
-        # Update the image in the config to use the latest one
-        $config.Image = $imageName
-        
-        $result = Run-Container -action "Starting updated container" -successMessage "OpenWebUI container has been successfully updated and is running at http://localhost:3000" -config $config
-        if (-not $result) {
-            throw "Failed to start updated container"
-        }
-    }
-    
-    # Use the shared update function
-    Update-Container -Engine $enginePath -ContainerName $containerName -ImageName $imageName -RunFunction $runContainerFunction
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	# Define a script block that knows how to run the container with the right options
+	$runContainerFunction = {
+		$config = Get-OpenWebUIContainerConfig
+		if (-not $config) {
+			throw "Failed to get container configuration"
+		}
+
+		# Update the image in the config to use the latest one
+		$config.Image = $imageName
+
+		$result = Start-OpenWebUIContainer -action "Starting updated container" -successMessage "OpenWebUI container has been successfully updated and is running at http://localhost:3000" -config $config
+		if (-not $result) {
+			throw "Failed to start updated container"
+		}
+	}
+
+	# Use the shared update function (which supports ShouldProcess)
+	Update-Container -Engine $enginePath -ContainerName $containerName -ImageName $imageName -RunFunction $runContainerFunction
 }
 
+#==============================================================================
+# Function: Update-OpenWebUIUserData
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the user data for the Open WebUI container.
+	Placeholder function for updating user data; currently displays information only.
 .DESCRIPTION
-    This functionality is not implemented.
+	Displays informational messages explaining that direct user data update is not implemented
+	but that data resides in the 'open-webui' volume and can be backed up or accessed via 'exec'.
+	Supports -WhatIf.
+.EXAMPLE
+	Update-OpenWebUIUserData
+.NOTES
+	This function needs implementation if specific user data update procedures are required.
+	Uses Write-Host for output.
 #>
 function Update-OpenWebUIUserData {
-    Write-Host "Update User Data functionality is not implemented for OpenWebUI container."
-    
-    # Provide some helpful information
-    Write-Host "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container." -ForegroundColor Yellow
-    Write-Host "To back up user data, you can use the 'Backup Live container' option." -ForegroundColor Yellow
-    Write-Host "To modify user data directly, you would need to access the container with:" -ForegroundColor DarkYellow
-    Write-Host "  $enginePath exec -it $containerName /bin/bash" -ForegroundColor DarkYellow
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	if ($PSCmdlet.ShouldProcess("Open WebUI container", "Display user data information")) {
+		# Provide some helpful information
+		Write-Host "Update User Data functionality is not implemented for OpenWebUI container."
+		Write-Host "User data is stored in the 'open-webui' volume at '/app/backend/data' inside the container."
+		Write-Host "To back up user data, you can use the 'Backup Live container' option."
+		Write-Host "To modify user data directly, you would need to access the container with:"
+		Write-Host "  $enginePath exec -it $containerName /bin/bash"
+	}
 }
 
-#############################################
-# Main Menu Loop for OpenWebUI Container Management
-#############################################
-do {
-    Write-Host "==========================================="
-    Write-Host "Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update System"
-    Write-Host "6. Update User Data"
-    Write-Host "7. Check for Updates"
-    Write-Host "0. Exit"
-    $choice = Read-Host "Enter your choice (0-7)"
-    switch ($choice) {
-        "1" { Install-OpenWebUIContainer }
-        "2" { Uninstall-OpenWebUIContainer }
-        "3" { Backup-OpenWebUIContainer }
-        "4" { Restore-OpenWebUIContainer }
-        "5" { Update-OpenWebUIContainer }
-        "6" { Update-OpenWebUIUserData }
-        "7" { Check-ImageUpdateAvailable -Engine $enginePath -ImageName $imageName }
-        "0" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Please enter a number between 0 and 7." }
-    }
-    if ($choice -ne "0") {
-         Write-Host "`nPress any key to continue..."
-         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-         Clear-Host
-    }
-} while ($choice -ne "0")
+# Define Menu Title and Items
+$menuTitle = "Open WebUI Container Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container"
+	"4" = "Backup Live container"
+	"5" = "Restore Live container"
+	"6" = "Update System"
+	"7" = "Update User Data"
+	"8" = "Check for Updates"
+	"0" = "Exit"
+}
+
+# Define Menu Actions
+$menuActions = @{
+	"1" = {
+		Show-ContainerStatus -ContainerName $containerName `
+			-ContainerEngine $global:containerEngine `
+			-EnginePath $enginePath `
+			-DisplayName "Open WebUI" `
+			-TcpPort 3000 `
+			-HttpPort 3000 `
+			-WsPort 3000 `
+			-WsPath "/api/v1/chat/completions"
+	}
+	"2" = { Install-OpenWebUIContainer }
+	"3" = { Uninstall-OpenWebUIContainer }
+	"4" = { Backup-OpenWebUIContainer }
+	"5" = { Restore-OpenWebUIContainer }
+	"6" = { Update-OpenWebUIContainer }
+	"7" = { Update-OpenWebUIUserData }
+	"8" = { Test-ImageUpdateAvailable -Engine $enginePath -ImageName $imageName }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
+}
+
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"

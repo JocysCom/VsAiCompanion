@@ -10,9 +10,17 @@
 
 using namespace System
 using namespace System.IO
+using namespace System.Diagnostics.CodeAnalysis
 
-# Dot-source the common functions file.
-. "$PSScriptRoot\Setup_0.ps1"
+# Set Information Preference (commented out as Write-Host is used now)
+# $InformationPreference = 'Continue'
+
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_0_Network.ps1"
+. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -20,439 +28,634 @@ Set-ScriptLocation
 #############################################
 # Global Variables
 #############################################
+# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
+$global:containerName = "n8n"
+$global:volumeName = "n8n_data"
 $global:containerEngine = Select-ContainerEngine
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
+	exit 1
+}
 if ($global:containerEngine -eq "docker") {
-    Ensure-Elevated
-    $global:enginePath    = Get-DockerPath
-    $global:pullOptions   = @()  # No extra options needed for Docker.
-    $global:imageName     = "docker.n8n.io/n8nio/n8n:latest"
+	Test-AdminPrivilege
+	$global:enginePath = Get-DockerPath
+	$global:pullOptions = @()  # No extra options needed for Docker.
+	$global:imageName = "docker.n8n.io/n8nio/n8n:latest"
 }
 else {
-    $global:enginePath    = Get-PodmanPath
-    $global:pullOptions   = @("--tls-verify=false")
-    # Use the Docker Hub version of n8n for Podman to avoid 403 errors.
-    $global:imageName     = "n8nio/n8n:latest"
+	$global:enginePath = Get-PodmanPath
+	$global:pullOptions = @("--tls-verify=false")
+	# Use the Docker Hub version of n8n for Podman to avoid 403 errors.
+	$global:imageName = "docker.io/n8nio/n8n:latest"
 }
 
-#############################################
-# Reusable Helper Functions
-#############################################
-
+#==============================================================================
+# Function: Get-n8nContainerConfig
+#==============================================================================
 <#
 .SYNOPSIS
-    Gets the current n8n container configuration.
+	Gets the current n8n container configuration, including environment variables, and prompts for external domain.
 .DESCRIPTION
-    Retrieves container information including environment variables.
+	Inspects the n8n container using the selected engine. Extracts the image name and relevant
+	environment variables (starting with N8N_ or WEBHOOK_). Ensures community packages and tool usage
+	are enabled by adding the respective environment variables if missing. Prompts the user via Read-Host
+	to enter an external domain and adds N8N_HOST and WEBHOOK_URL environment variables if provided.
 .OUTPUTS
-    Returns a custom object with container information or $null if not found.
+	[PSCustomObject] Returns a custom object containing the extracted/updated configuration details
+					 (Image, EnvVars) or $null if the container is not found or inspection fails.
+.EXAMPLE
+	$currentConfig = Get-n8nContainerConfig
+	if ($currentConfig) { Write-Host "Current Image: $($currentConfig.Image)" }
+.NOTES
+	Uses 'engine inspect'. Modifies the extracted environment variables list.
+	Requires user interaction via Read-Host for domain configuration.
 #>
 function Get-n8nContainerConfig {
-    $containerInfo = & $global:enginePath inspect n8n 2>$null | ConvertFrom-Json
-    if (-not $containerInfo) {
-        Write-Host "Container 'n8n' not found." -ForegroundColor Yellow
-        return $null
-    }
-    
-    # Extract environment variables
-    $envVars = @()
-    try {
-        foreach ($env in $containerInfo.Config.Env) {
-            # Only preserve n8n-specific environment variables
-            if ($env -match "^(N8N_|WEBHOOK_)") {
-                $envVars += $env
-            }
-        }
-    } catch {
-        Write-Warning "Could not parse existing environment variables: $_"
-    }
-    
-    # Ensure N8N_COMMUNITY_PACKAGES_ENABLED is set to true
-    $communityPackagesEnabled = $false
-    $communityPackagesToolsEnabled = $false
-    foreach ($env in $envVars) {
-        if ($env -match "^N8N_COMMUNITY_PACKAGES_ENABLED=") {
-            $communityPackagesEnabled = $true
-        }
-        if ($env -match "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=") {
-            $communityPackagesToolsEnabled = $true
-        }
-    }
-    if (-not $communityPackagesEnabled) {
-        $envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
-    }
-    if (-not $communityPackagesToolsEnabled) {
-        $envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-    }
-    
-    # Return a custom object with the container information
-    return [PSCustomObject]@{
-        Image = $containerInfo.Config.Image
-        EnvVars = $envVars
-    }
+	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
+	if (-not $containerInfo) {
+		Write-Host "Container '$global:containerName' not found."
+		return $null
+	}
+
+	# Extract environment variables
+	$envVars = @()
+	try {
+		# Handle potential single vs multiple env vars
+		$envList = @($containerInfo.Config.Env)
+		foreach ($env in $envList) {
+			# Only preserve n8n-specific environment variables
+			if ($env -match "^(N8N_|WEBHOOK_)") {
+				$envVars += $env
+			}
+		}
+	}
+	catch {
+		Write-Warning "Could not parse existing environment variables: $_"
+	}
+
+	# Ensure N8N_COMMUNITY_PACKAGES_ENABLED is set to true
+	$communityPackagesEnabled = $false
+	$communityPackagesToolsEnabled = $false
+	foreach ($env in $envVars) {
+		if ($env -match "^N8N_COMMUNITY_PACKAGES_ENABLED=") {
+			$communityPackagesEnabled = $true
+		}
+		if ($env -match "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=") {
+			$communityPackagesToolsEnabled = $true
+		}
+	}
+	if (-not $communityPackagesEnabled) {
+		$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
+	}
+	if (-not $communityPackagesToolsEnabled) {
+		$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+	}
+
+	# Prompt user for external domain configuration.
+	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
+
+	# If an external domain is provided, add environment variable options.
+	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
+		$envVars += "N8N_HOST=$externalDomain"
+		$envVars += "WEBHOOK_URL=https://$externalDomain"
+	}
+
+	# Return a custom object with the container information
+	return [PSCustomObject]@{
+		Image   = $containerInfo.Config.Image
+		EnvVars = $envVars
+	}
 }
 
+#==============================================================================
+# Function: Remove-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Stops and removes the n8n container.
+	Stops and removes the n8n container.
 .DESCRIPTION
-    Safely stops and removes the n8n container while preserving user data.
+	Checks if a container named 'n8n' exists. If it does, it stops and removes it
+	using the selected container engine. Supports -WhatIf.
 .OUTPUTS
-    Returns $true if successful, $false otherwise.
+	[bool] Returns $true if the container is removed successfully or didn't exist.
+		   Returns $false if removal fails or is skipped due to -WhatIf.
+.EXAMPLE
+	Remove-n8nContainer -WhatIf
+.NOTES
+	Uses 'engine ps', 'engine stop', and 'engine rm'.
+	Explicitly notes that the 'n8n_data' volume is not removed by this function.
 #>
 function Remove-n8nContainer {
-    $existingContainer = & $global:enginePath ps --all --filter "name=n8n" --format "{{.ID}}"
-    if (-not $existingContainer) {
-        Write-Host "No n8n container found to remove." -ForegroundColor Yellow
-        return $true
-    }
-    
-    Write-Host "Stopping and removing n8n container..."
-    Write-Host "NOTE: This only removes the container, not the volume with user data." -ForegroundColor Yellow
-    
-    & $global:enginePath stop n8n 2>$null
-    & $global:enginePath rm n8n
-    
-    if ($LASTEXITCODE -eq 0) {
-        return $true
-    } else {
-        Write-Error "Failed to remove n8n container."
-        return $false
-    }
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
+	if (-not $existingContainer) {
+		Write-Host "No n8n container found to remove."
+		return $true
+	}
+
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Stop and Remove Container")) {
+		Write-Host "Stopping and removing n8n container..."
+		Write-Host "NOTE: This only removes the container, not the volume with user data."
+
+		& $global:enginePath stop $global:containerName 2>$null
+		& $global:enginePath rm $global:containerName
+
+		if ($LASTEXITCODE -eq 0) {
+			return $true
+		}
+		else {
+			Write-Error "Failed to remove n8n container."
+			return $false
+		}
+	}
+	else {
+		return $false # Action skipped due to -WhatIf
+	}
 }
 
+#==============================================================================
+# Function: Start-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Starts a new n8n container with the specified configuration.
+	Starts a new n8n container with specified configuration.
 .DESCRIPTION
-    Creates a new n8n container with the provided image and environment variables.
+	Runs a new container using the selected engine with the specified image.
+	Configures standard n8n settings: detached mode, name 'n8n', mounts 'n8n_data' volume
+	to '/home/node/.n8n', and maps host port 5678 to container port 5678.
+	Applies any additional environment variables provided via the EnvVars parameter.
+	After starting, waits 20 seconds and performs TCP and HTTP connectivity tests.
+	Supports -WhatIf.
 .PARAMETER Image
-    The image to use for the container.
+	The n8n container image to use (e.g., 'docker.n8n.io/n8nio/n8n:latest'). Mandatory.
 .PARAMETER EnvVars
-    Array of environment variables to set in the container.
+	Optional array of environment variables strings (e.g., @("N8N_HOST=n8n.example.com")).
 .OUTPUTS
-    Returns $true if successful, $false otherwise.
+	[bool] Returns $true if the container starts successfully and connectivity tests pass.
+		   Returns $false if start fails, tests fail, or action is skipped due to -WhatIf.
+.EXAMPLE
+	Start-n8nContainer -Image "docker.io/n8nio/n8n:latest" -EnvVars @("N8N_ENCRYPTION_KEY=secret")
+.NOTES
+	Relies on Test-TCPPort and Test-HTTPPort helper functions.
 #>
 function Start-n8nContainer {
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$Image,
-        
-        [Parameter(Mandatory=$false)]
-        [array]$EnvVars = @()
-    )
-    
-    # Build the run command
-    $runOptions = @(
-        "--detach",
-        "--publish", "5678:5678",
-        "--volume", "n8n_data:/home/node/.n8n",
-        "--name", "n8n"
-    )
-    
-    # Add all environment variables
-    foreach ($env in $EnvVars) {
-        $runOptions += "--env"
-        $runOptions += $env
-    }
-    
-    # Run the container
-    Write-Host "Starting n8n container with image: $Image"
-    & $global:enginePath run $runOptions $Image
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "Waiting for container startup..."
-        Start-Sleep -Seconds 20
-        
-        # Test connectivity
-        $tcpTest = Test-TCPPort -ComputerName "localhost" -Port 5678 -serviceName "n8n"
-        $httpTest = Test-HTTPPort -Uri "http://localhost:5678" -serviceName "n8n"
-        
-        if ($tcpTest -and $httpTest) {
-            Write-Host "n8n is now running and accessible at http://localhost:5678" -ForegroundColor Green
-            Write-Host "If accessing from another container, use 'http://host.docker.internal:5678' as the URL." -ForegroundColor Cyan
-            return $true
-        } else {
-            Write-Warning "n8n container started but connectivity tests failed. Please check the container logs."
-            return $false
-        }
-    } else {
-        Write-Error "Failed to start n8n container."
-        return $false
-    }
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Image,
+
+		[Parameter(Mandatory = $false)]
+		[array]$EnvVars = @()
+	)
+
+	# Build the run command
+	$runOptions = @(
+		"--detach", # Run container in background.
+		"--publish", "5678:5678", # Map host port 5678 to container port 5678.
+		"--volume", "$($global:volumeName):/home/node/.n8n", # Mount the named volume for persistent data.
+		"--name", $global:containerName         # Assign a name to the container.
+	)
+
+	# Add all environment variables
+	foreach ($env in $EnvVars) {
+		$runOptions += "--env"
+		$runOptions += $env
+	}
+
+	# Run the container
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
+		Write-Host "Starting n8n container with image: $Image"
+		& $global:enginePath run $runOptions $Image
+
+		if ($LASTEXITCODE -eq 0) {
+			Write-Host "Waiting for container startup..."
+			Start-Sleep -Seconds 20
+
+			# Test connectivity
+			$tcpTest = Test-TCPPort -ComputerName "localhost" -Port 5678 -serviceName "n8n"
+			$httpTest = Test-HTTPPort -Uri "http://localhost:5678" -serviceName "n8n"
+
+			if ($tcpTest -and $httpTest) {
+				Write-Host "n8n is now running and accessible at http://localhost:5678"
+				Write-Host "If accessing from another container, use 'http://host.docker.internal:5678' as the URL."
+				return $true
+			}
+			else {
+				Write-Warning "n8n container started but connectivity tests failed. Please check the container logs."
+				return $false
+			}
+		}
+		else {
+			Write-Error "Failed to start n8n container."
+			return $false
+		}
+	}
+	else {
+		return $false # Action skipped due to -WhatIf
+	}
 }
 
+#==============================================================================
+# Function: Install-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Pulls the latest n8n image.
+	Installs and starts the n8n container.
 .DESCRIPTION
-    Downloads the latest version of the n8n image.
-.OUTPUTS
-    Returns $true if successful, $false otherwise.
-#>
-function Pull-n8nImage {
-    Write-Host "Pulling latest n8n image '$global:imageName'..."
-    $pullCmd = @("pull") + $global:pullOptions + $global:imageName
-    & $global:enginePath @pullCmd
-    
-    if ($LASTEXITCODE -eq 0) {
-        return $true
-    } else {
-        Write-Error "Failed to pull latest n8n image."
-        return $false
-    }
-}
-
-<#
-.SYNOPSIS
-    Installs the n8n container.
-.DESCRIPTION
-    Creates (if necessary) the volume 'n8n_data', pulls the n8n image if not found
-    (or restores from backup), removes any pre-existing container named "n8n",
-    prompts for an external domain, builds run options, runs the container,
-    waits for startup, and tests connectivity on port 5678.
-    Core argument values are preserved.
+	Ensures the 'n8n_data' volume exists using Confirm-ContainerVolume.
+	Checks if the n8n image exists locally; if not, attempts to restore from backup using
+	Test-AndRestoreBackup, falling back to pulling the image using Invoke-PullImage.
+	Removes any existing 'n8n' container using Remove-n8nContainer.
+	Defines default environment variables (enabling community packages/tools).
+	Prompts the user for an optional external domain to set N8N_HOST and WEBHOOK_URL.
+	Starts the new container using Start-n8nContainer with the determined image and environment variables.
+.EXAMPLE
+	Install-n8nContainer
+.NOTES
+	Orchestrates volume creation, image acquisition, cleanup, environment configuration, and container start.
+	Relies on Confirm-ContainerVolume, Test-AndRestoreBackup, Invoke-PullImage,
+	Remove-n8nContainer, and Start-n8nContainer helper functions.
+	Requires user interaction via Read-Host for domain configuration.
 #>
 function Install-n8nContainer {
-    # Check if volume 'n8n_data' already exists; if not, create it.
-    $existingVolume = & $global:enginePath volume ls --filter "name=n8n_data" --format "{{.Name}}"
-    if ([string]::IsNullOrWhiteSpace($existingVolume)) {
-        Write-Host "Creating volume 'n8n_data'..."
-        & $global:enginePath volume create n8n_data
-    }
-    else {
-        Write-Host "Volume 'n8n_data' already exists. Skipping creation."
-        Write-Host "IMPORTANT: Using existing volume - all previous user data will be preserved." -ForegroundColor Green
-    }
+	# Ensure the volume exists
+	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+		Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
+		return
+	}
+	Write-Host "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
 
-    # Check if the n8n image is already available.
-    $existingImage = & $global:enginePath images --format "{{.Repository}}:{{.Tag}}" | Where-Object { $_ -match "n8n" }
-    if (-not $existingImage) {
-        if (-not (Check-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-            Write-Host "No backup restored. Pulling n8n image '$global:imageName'..."
-            if (-not (Pull-n8nImage)) {
-                Write-Error "Image pull failed. Exiting..."
-                return
-            }
-        }
-        else {
-            Write-Host "Using restored backup image '$global:imageName'."
-        }
-    }
-    else {
-        Write-Host "n8n image already exists. Skipping pull."
-    }
+	# Check if the n8n image is already available, restore from backup, or pull new.
+	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
+	if (-not $existingImage) {
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
+			Write-Host "No backup restored. Pulling n8n image '$global:imageName'..."
+			# Use shared pull function
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
+				Write-Error "Image pull failed. Exiting..."
+				return
+			}
+		}
+		else {
+			Write-Host "Using restored backup image '$global:imageName'."
+		}
+	}
+	else {
+		Write-Host "n8n image already exists. Skipping pull."
+	}
 
-    # Remove any existing container
-    Remove-n8nContainer
+	# Remove any existing container
+	Remove-n8nContainer # This function now supports ShouldProcess
 
-    # Prompt user for external domain configuration.
-    $externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
+	# Define environment variables
+	$envVars = @()
 
-    # Define environment variables
-    $envVars = @()
-	
 	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
 	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
 
-    # If an external domain is provided, add environment variable options.
-    if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
-        $envVars += "N8N_HOST=$externalDomain"
-        $envVars += "WEBHOOK_URL=https://$externalDomain"
-    }
+	# Prompt user for external domain configuration.
+	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
 
-    # Start the container
-    Start-n8nContainer -Image $global:imageName -EnvVars $envVars
+	# If an external domain is provided, add environment variable options.
+	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
+		$envVars += "N8N_HOST=$externalDomain"
+		$envVars += "WEBHOOK_URL=https://$externalDomain"
+	}
+
+	# Start the container
+	Start-n8nContainer -Image $global:imageName -EnvVars $envVars # This function now supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Uninstall-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls the n8n container.
+	Uninstalls the n8n container and optionally removes its data volume.
 .DESCRIPTION
-    Checks for an existing container named "n8n" and removes it using the container engine's rm command.
-    IMPORTANT: This only removes the container, not the volume with user data.
+	Calls the Remove-ContainerAndVolume helper function, specifying 'n8n' as the container
+	and 'n8n_data' as the volume. This will stop/remove the container and prompt the user
+	about removing the volume. Supports -WhatIf.
+.EXAMPLE
+	Uninstall-n8nContainer -Confirm:$false
+.NOTES
+	Relies on Remove-ContainerAndVolume helper function.
 #>
 function Uninstall-n8nContainer {
-    $existingContainer = & $global:enginePath ps --all --filter "name=n8n" --format "{{.ID}}"
-    if ($existingContainer) {
-        Write-Host "Removing n8n container..."
-        Write-Host "IMPORTANT: This only removes the container, NOT the volume with user data." -ForegroundColor Yellow
-        Write-Host "           Your workflows and credentials remain safe in the 'n8n_data' volume." -ForegroundColor Yellow
-        
-        $confirmation = Read-Host "Continue with container removal? (Y/N)"
-        if ($confirmation -ne "Y") {
-            Write-Host "Container removal cancelled."
-            return
-        }
-        
-        if (Remove-n8nContainer) {
-            Write-Host "n8n container removed successfully."
-            Write-Host "To completely remove all user data, you would need to manually delete the volume with:" -ForegroundColor DarkYellow
-            Write-Host "  $global:enginePath volume rm n8n_data" -ForegroundColor DarkYellow
-        }
-    }
-    else {
-        Write-Host "No n8n container found to remove."
-    }
+	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 }
 
+#==============================================================================
+# Function: Backup-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Backs up the live n8n container.
+	Backs up the state of the running n8n container.
 .DESCRIPTION
-    Uses the Backup-ContainerState helper function to create a backup of the container.
+	Calls the Backup-ContainerState helper function, specifying 'n8n' as the container name.
+	This commits the container state to an image and saves it as a tar file. Includes debug output.
+.EXAMPLE
+	Backup-n8nContainer
+.NOTES
+	Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
 #>
 function Backup-n8nContainer {
-    Backup-ContainerState -Engine $global:enginePath -ContainerName "n8n"
+	Write-Host "Backing up n8n container..."
+
+	# Debug output to verify the container name being passed
+	Write-Host "DEBUG: Passing container name '$global:containerName' to Backup-ContainerState"
+
+	# Call Backup-ContainerState with the explicit container name string
+	if (Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName) {
+		# This function supports ShouldProcess
+		Write-Host "n8n container backed up successfully."
+		return $true
+	}
+	else {
+		Write-Error "Failed to backup n8n container."
+		return $false
+	}
 }
 
+#==============================================================================
+# Function: Restore-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restores the n8n container from backup.
+	Restores the n8n container and its data volume from backup, then starts the container.
 .DESCRIPTION
-    Uses the Restore-ContainerState helper function to restore the container from a backup.
+	Calls Restore-ContainerState (with -RestoreVolumes) to load the image and restore volume data.
+	If successful, removes any existing 'n8n' container.
+	Retrieves existing configuration using Get-n8nContainerConfig (or defaults if none).
+	Starts the container using Start-n8nContainer with the restored image and configuration.
+.EXAMPLE
+	Restore-n8nContainer
+.NOTES
+	Relies on Restore-ContainerState, Remove-n8nContainer, Get-n8nContainerConfig,
+	and Start-n8nContainer helper functions. Supports -WhatIf via helper functions.
 #>
 function Restore-n8nContainer {
-    Restore-ContainerState -Engine $global:enginePath -ContainerName "n8n"
+	Write-Host "Attempting to restore n8n container and its data volume from backup..."
+
+	# First load the image from backup and restore volumes if available
+	$imageName = Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName -RestoreVolumes # This function supports ShouldProcess
+
+	if (-not $imageName) {
+		Write-Error "Failed to restore image for n8n container."
+		return
+	}
+
+	# Remove any existing container
+	Remove-n8nContainer # This function supports ShouldProcess
+
+	# Get configuration from existing container or use defaults
+	$config = Get-n8nContainerConfig
+	if (-not $config) {
+		Write-Host "No existing configuration found, using defaults."
+		$config = [PSCustomObject]@{
+			Image   = $imageName
+			EnvVars = @(
+				"N8N_COMMUNITY_PACKAGES_ENABLED=true",
+				"N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+			)
+		}
+	}
+	else {
+		# Update the image to use the restored one
+		$config.Image = $imageName
+	}
+
+	# Start the container using the restored image and existing configuration
+	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
+		# This function supports ShouldProcess
+		Write-Host "n8n container successfully restored and started."
+	}
+	else {
+		Write-Error "Failed to start restored n8n container."
+	}
 }
 
+#==============================================================================
+# Function: Invoke-StartN8nForUpdate
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates the n8n container without resetting user data.
+	Helper function called by Update-Container to start the n8n container after an update.
 .DESCRIPTION
-    Updates the n8n container to the latest version while preserving all user data and configuration.
+	This function encapsulates the specific logic required to start the n8n container after an update.
+	It ensures the volume exists, retrieves existing configuration (like domain settings) using
+	Get-n8nContainerConfig, and then calls Start-n8nContainer with the updated image name and
+	preserved environment variables. It adheres to the parameter signature expected by the
+	-RunFunction parameter of Update-Container.
+.PARAMETER EnginePath
+	Path to the container engine executable (passed by Update-Container).
+.PARAMETER ContainerEngineType
+	Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, may not be used directly).
+.PARAMETER ContainerName
+	Name of the container being updated. (Passed by Update-Container, may not be used directly).
+.PARAMETER VolumeName
+	Name of the volume associated with the container. (Passed by Update-Container).
+.PARAMETER ImageName
+	The new image name/tag to use for the updated container (passed by Update-Container).
+.OUTPUTS
+	Throws an error if the container fails to start, which signals failure back to Update-Container.
+.EXAMPLE
+	# This function is intended to be called internally by Update-Container via -RunFunction
+	# Update-Container -RunFunction ${function:Invoke-StartN8nForUpdate}
+.NOTES
+	Relies on Confirm-ContainerVolume, Get-n8nContainerConfig, Start-n8nContainer helper functions.
+#>
+function Invoke-StartN8nForUpdate {
+	param(
+		[string]$EnginePath,
+		# The following parameters are part of the standard signature for Update-Container's script block,
+		# but are not directly used in this specific implementation as it relies on global variables
+		# or calls Start-n8nContainer which uses globals.
+		[string]$ContainerEngineType,
+		[string]$ContainerName,
+		[string]$VolumeName,
+		[string]$ImageName            # The updated image name passed by Update-Container
+	)
+
+	# Ensure the volume exists (important if it was removed manually)
+	# Use the VolumeName parameter passed by Update-Container for consistency
+	if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+		throw "Failed to ensure volume '$VolumeName' exists during update."
+	}
+
+	# Get existing config to preserve environment variables (like domain)
+	$config = Get-n8nContainerConfig
+	if (-not $config) {
+		Write-Warning "Could not retrieve existing config during update. Using default environment variables."
+		$envVars = @(
+			"N8N_COMMUNITY_PACKAGES_ENABLED=true",
+			"N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
+		)
+	}
+	else {
+		$envVars = $config.EnvVars
+	}
+
+	# Start the container using the specific Start-n8nContainer function
+	# Pass the updated image name received as a parameter
+	$result = Start-n8nContainer -Image $ImageName -EnvVars $envVars
+	if (-not $result) {
+		# Throw an error to signal failure to Update-Container
+		throw "Failed to start updated n8n container."
+	}
+}
+
+#==============================================================================
+# Function: Update-n8nContainer
+#==============================================================================
+<#
+.SYNOPSIS
+	Updates the n8n container to the latest image version using the generic update workflow.
+.DESCRIPTION
+	Calls the generic Update-Container helper function, providing the specific details for the
+	n8n container (name, image name) and passing a reference to the
+	Invoke-StartN8nForUpdate function via the -RunFunction parameter. This ensures the
+	container is started correctly with preserved configuration after the image is pulled
+	and the old container is removed. Supports -WhatIf.
+.EXAMPLE
+	Update-n8nContainer -WhatIf
+.NOTES
+	Relies on the Update-Container helper function and Invoke-StartN8nForUpdate.
 #>
 function Update-n8nContainer {
-    # Step 1: Check if container exists and get its configuration
-    $config = Get-n8nContainerConfig
-    if (-not $config) {
-        Write-Host "No n8n container found to update. Please install it first." -ForegroundColor Yellow
-        return
-    }
-    
-    # Step 2: Optionally backup the container
-    $createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
-    if ($createBackup -ne "N") {
-        Write-Host "Creating backup of current container..."
-        Backup-n8nContainer
-    }
-    
-    # Step 3: Remove the existing container
-    if (-not (Remove-n8nContainer)) {
-        Write-Error "Failed to remove existing container. Update aborted."
-        return
-    }
-    
-    # Step 4: Pull the latest image
-    if (-not (Pull-n8nImage)) {
-        Write-Error "Failed to pull latest image. Update aborted."
-        
-        # Offer to restore from backup if one was created
-        if ($createBackup -ne "N") {
-            $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-            if ($restore -ne "N") {
-                Restore-n8nContainer
-            }
-        }
-        return
-    }
-    
-    # Step 5: Start a new container with the latest image and preserved configuration
-    if (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars) {
-        Write-Host "n8n container updated successfully!" -ForegroundColor Green
-    } else {
-        Write-Error "Failed to start updated container."
-        
-        # Offer to restore from backup if one was created
-        if ($createBackup -ne "N") {
-            $restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-            if ($restore -ne "N") {
-                Restore-n8nContainer
-            }
-        }
-    }
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	# Check ShouldProcess before proceeding with the delegated update
+	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
+		return
+	}
+
+	# Previously, a script block was defined here and passed using .GetNewClosure().
+	# .GetNewClosure() creates a copy of the script block that captures the current
+	# state of variables in its scope, ensuring the generic Update-Container function
+	# executes it with the correct context from this script.
+	# We now use a dedicated function (Invoke-StartN8nForUpdate) instead for better structure.
+
+	# Call the generic Update-Container function
+	Update-Container -Engine $global:enginePath `
+		-ContainerName $global:containerName `
+		-ImageName $global:imageName `
+		-RunFunction ${function:Invoke-StartN8nForUpdate} # Pass function reference
 }
 
+#==============================================================================
+# Function: Update-n8nUserData
+#==============================================================================
 <#
 .SYNOPSIS
-    Updates user data for the n8n container.
+	Placeholder function for updating user data in the n8n container.
 .DESCRIPTION
-    This functionality is not yet implemented.
+	Currently, this function only displays a message indicating that the functionality
+	is not implemented. Supports -WhatIf.
+.EXAMPLE
+	Update-n8nUserData
+.NOTES
+	This function needs implementation if specific user data update procedures are required.
 #>
 function Update-n8nUserData {
-    Write-Host "Update User Data functionality is not implemented for n8n container."
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	if ($PSCmdlet.ShouldProcess("n8n container user data", "Update")) {
+		# Placeholder for future implementation
+		Write-Host "Update User Data functionality is not implemented for n8n container."
+	}
 }
 
+#==============================================================================
+# Function: Restart-n8nContainer
+#==============================================================================
 <#
 .SYNOPSIS
-    Restarts the n8n container with updated environment variables.
+	Restarts the n8n container, applying current configuration (e.g., enabling community packages).
 .DESCRIPTION
-    Safely stops and removes the existing container, then creates a new one with
-    the same image and volume but updated environment variables. This preserves
-    all user data while allowing configuration changes.
+	Retrieves the current container configuration using Get-n8nContainerConfig (which also ensures
+	community packages are enabled in the config object).
+	Removes the existing container using Remove-n8nContainer.
+	Starts a new container using Start-n8nContainer with the retrieved configuration (image and env vars).
+	This effectively restarts the container with potentially updated environment variables from Get-n8nContainerConfig.
+.EXAMPLE
+	Restart-n8nContainer
+.NOTES
+	Relies on Get-n8nContainerConfig, Remove-n8nContainer, Start-n8nContainer helper functions.
+	Supports -WhatIf via helper functions.
 #>
 function Restart-n8nContainer {
-    # Get current container configuration
-    $config = Get-n8nContainerConfig
-    if (-not $config) {
-        Write-Host "No n8n container found to restart. Please install it first." -ForegroundColor Yellow
-        return
-    }
-    
-    # Remove the existing container
-    if (-not (Remove-n8nContainer)) {
-        Write-Error "Failed to remove existing container. Restart aborted."
-        return
-    }
-    
-    # Start a new container with the same image and configuration
-    if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
-        Write-Host "n8n container restarted successfully with community packages enabled!" -ForegroundColor Green
-    } else {
-        Write-Error "Failed to restart container."
-    }
-}
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
 
-<#
-.SYNOPSIS
-    Displays the main menu for n8n container operations.
-.DESCRIPTION
-    Presents menu options (Install, Uninstall, Backup, Restore, Update System, and Update User Data);
-    the exit option ("0") terminates the menu loop.
-#>
-function Show-ContainerMenu {
-    Write-Host "==========================================="
-    Write-Host "n8n Container Menu"
-    Write-Host "==========================================="
-    Write-Host "1. Install container"
-    Write-Host "2. Uninstall container (preserves user data)"
-    Write-Host "3. Backup Live container"
-    Write-Host "4. Restore Live container"
-    Write-Host "5. Update System"
-    Write-Host "6. Update User Data"
-    Write-Host "7. Restart with Community Packages Enabled"
-    Write-Host "0. Exit menu"
+	# Get current container configuration
+	$config = Get-n8nContainerConfig
+	if (-not $config) {
+		Write-Host "No n8n container found to restart. Please install it first."
+		return
+	}
+
+	# Remove the existing container
+	if (-not (Remove-n8nContainer)) {
+		# This function now supports ShouldProcess
+		Write-Error "Failed to remove existing container or action skipped. Restart aborted."
+		return
+	}
+
+	# Start a new container with the same image and configuration
+	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
+		# This function now supports ShouldProcess
+		Write-Host "n8n container restarted successfully with community packages enabled!"
+	}
+	else {
+		Write-Error "Failed to restart container or action skipped."
+	}
 }
 
 ################################################################################
-# Main Menu Loop for n8n Container Management
+# Main Menu Loop using Generic Function
 ################################################################################
-do {
-    Show-ContainerMenu
-    $choice = Read-Host "Enter your choice (1-7, or 0 to exit)"
-    switch ($choice) {
-        "1" { Install-n8nContainer }
-        "2" { Uninstall-n8nContainer }
-        "3" { Backup-n8nContainer }
-        "4" { Restore-n8nContainer }
-        "5" { Update-n8nContainer }
-        "6" { Update-n8nUserData }
-        "7" { Restart-n8nContainer }
-        "0" { Write-Host "Exiting menu." }
-        default { Write-Host "Invalid selection. Please enter a number between 0 and 7." }
-    }
-    if ($choice -ne "0") {
-         Write-Host "`nPress any key to continue..."
-         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-         Clear-Host
-    }
-} while ($choice -ne "0")
+
+# Define Menu Title and Items
+$menuTitle = "n8n Container Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container (preserves user data)"
+	"4" = "Backup Live container"
+	"5" = "Restore Live container"
+	"6" = "Update System"
+	"7" = "Update User Data"
+	"8" = "Restart with Community Packages Enabled"
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
+$menuActions = @{
+	"1" = {
+		Show-ContainerStatus -ContainerName $global:containerName `
+			-ContainerEngine $global:containerEngine `
+			-EnginePath $global:enginePath `
+			-DisplayName "n8n" `
+			-TcpPort 5678 `
+			-HttpPort 5678
+	}
+	"2" = { Install-n8nContainer }
+	"3" = { Uninstall-n8nContainer }
+	"4" = { Backup-n8nContainer }
+	"5" = { Restore-n8nContainer }
+	"6" = { Update-n8nContainer }
+	"7" = { Update-n8nUserData }
+	"8" = { Restart-n8nContainer }
+	# Note: "0" action is handled internally by Invoke-MenuLoop
+}
+
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
