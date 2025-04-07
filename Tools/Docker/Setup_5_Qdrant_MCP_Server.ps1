@@ -30,6 +30,8 @@ $global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant" # Source 
 $global:repoUrl = "https://github.com/qdrant/mcp-server-qdrant.git"
 $global:qdrantUrl = "http://localhost:6333" # Default Qdrant URL (assuming local install)
 $global:collectionName = "mcp-default-collection" # Default collection name
+$global:qdrantUrlPromptDefault = "http://host.containers.internal:6333" # Default shown to user, updated to reflect Podman host access
+
 
 $global:containerEngine = Select-ContainerEngine
 # Check if the selected container engine is supported and set the path accordingly.
@@ -170,8 +172,10 @@ function Install-QdrantMCPServerContainer {
 	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 
 	# Step 5: Get Configuration
-	$qdrantUrlInput = Read-Host "Enter Qdrant URL (leave blank for default: $($global:qdrantUrl))"
-	$qdrantUrlToUse = if ([string]::IsNullOrWhiteSpace($qdrantUrlInput)) { $global:qdrantUrl } else { $qdrantUrlInput }
+	$qdrantUrlInput = Read-Host "Enter Qdrant URL (leave blank for default: $($global:qdrantUrlPromptDefault))"
+	# If blank, use the default (host.containers.internal). Otherwise, use the user-provided URL.
+	$qdrantUrlToUse = if ([string]::IsNullOrWhiteSpace($qdrantUrlInput)) { $global:qdrantUrlPromptDefault } else { $qdrantUrlInput }
+	Write-Information "Using Qdrant URL for container: $qdrantUrlToUse" # Inform user of the actual URL being used by the container
 
 	$collectionNameInput = Read-Host "Enter Qdrant Collection Name (leave blank for default: $($global:collectionName))"
 	$collectionNameToUse = if ([string]::IsNullOrWhiteSpace($collectionNameInput)) { $global:collectionName } else { $collectionNameInput }
@@ -192,14 +196,11 @@ function Install-QdrantMCPServerContainer {
 		$runOptions += "--env", "QDRANT_API_KEY=$qdrantApiKey"
 	}
 
-	# Add the image tag and the transport argument to the command
-	$runArguments = @($runOptions)
-	$runArguments += $global:imageTag
-	$runArguments += "--transport", "sse" # Add argument to enable SSE transport
-
-	& $global:enginePath run @runArguments
+	# Execute podman run with options and image.
+	# The command and arguments (--transport sse) are specified by CMD in the Dockerfile.
+	& $global:enginePath run @runOptions $global:imageTag
 	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to start the Qdrant MCP Server container with SSE transport."
+		Write-Error "Failed to start the Qdrant MCP Server container using the default CMD. Check container logs for details."
 		return
 	}
 
@@ -210,6 +211,15 @@ function Install-QdrantMCPServerContainer {
 	# Add HTTP test if the server has a root endpoint or health check
 	# Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Qdrant MCP Server"
 	Write-Host "Qdrant MCP Server container started. Check logs for details."
+	Write-Host ""
+	Write-Host "--------------------------------------------------" -ForegroundColor Green
+	Write-Host " Cline Configuration Details:" -ForegroundColor Green
+	Write-Host "--------------------------------------------------" -ForegroundColor Green
+	Write-Host " Server Name: qdrant-mcp-server"
+	Write-Host " URL:         http://localhost:8000/sse"
+	Write-Host "--------------------------------------------------" -ForegroundColor Green
+	Write-Host "Add the above details to your Cline MCP settings." -ForegroundColor Green
+	Write-Host ""
 }
 
 #==============================================================================
