@@ -72,58 +72,46 @@ else {
 	Requires user interaction via Read-Host for domain configuration.
 #>
 function Get-n8nContainerConfig {
-	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
-	if (-not $containerInfo) {
-		Write-Host "Container '$global:containerName' not found."
-		return $null
-	}
-
-	# Extract environment variables
 	$envVars = @()
-	try {
-		# Handle potential single vs multiple env vars
-		$envList = @($containerInfo.Config.Env)
-		foreach ($env in $envList) {
-			# Only preserve n8n-specific environment variables
-			if ($env -match "^(N8N_|WEBHOOK_)") {
-				$envVars += $env
+	$imageName = $global:imageName # Default image name
+
+	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
+	if ($containerInfo) {
+		# Container exists, try to preserve existing vars and image name
+		$imageName = $containerInfo.Config.Image
+		try {
+			$envList = @($containerInfo.Config.Env)
+			foreach ($env in $envList) {
+				# Preserve existing N8N_ or WEBHOOK_ vars, excluding the ones we always add
+				if ($env -match "^(N8N_|WEBHOOK_)" `
+					-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ENABLED=" `
+					-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=") {
+					$envVars += $env
+				}
 			}
 		}
+		catch {
+			Write-Warning "Could not parse existing environment variables: $_"
+		}
 	}
-	catch {
-		Write-Warning "Could not parse existing environment variables: $_"
+	else {
+		Write-Host "Container '$global:containerName' not found. Using default settings for environment."
 	}
 
-	# Ensure N8N_COMMUNITY_PACKAGES_ENABLED is set to true
-	$communityPackagesEnabled = $false
-	$communityPackagesToolsEnabled = $false
-	foreach ($env in $envVars) {
-		if ($env -match "^N8N_COMMUNITY_PACKAGES_ENABLED=") {
-			$communityPackagesEnabled = $true
-		}
-		if ($env -match "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=") {
-			$communityPackagesToolsEnabled = $true
-		}
-	}
-	if (-not $communityPackagesEnabled) {
-		$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
-	}
-	if (-not $communityPackagesToolsEnabled) {
-		$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-	}
+	# Always ensure community packages and tool usage are enabled
+	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
+	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
 
 	# Prompt user for external domain configuration.
 	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
-
-	# If an external domain is provided, add environment variable options.
 	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
 		$envVars += "N8N_HOST=$externalDomain"
 		$envVars += "WEBHOOK_URL=https://$externalDomain"
 	}
 
-	# Return a custom object with the container information
+	# Return a custom object
 	return [PSCustomObject]@{
-		Image   = $containerInfo.Config.Image
+		Image   = $imageName
 		EnvVars = $envVars
 	}
 }
@@ -312,23 +300,11 @@ function Install-n8nContainer {
 	# Remove any existing container
 	Remove-n8nContainer # This function now supports ShouldProcess
 
-	# Define environment variables
-	$envVars = @()
+	# Get the configuration (which includes prompting for domain and setting defaults)
+	$config = Get-n8nContainerConfig
 
-	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
-	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-
-	# Prompt user for external domain configuration.
-	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
-
-	# If an external domain is provided, add environment variable options.
-	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
-		$envVars += "N8N_HOST=$externalDomain"
-		$envVars += "WEBHOOK_URL=https://$externalDomain"
-	}
-
-	# Start the container
-	Start-n8nContainer -Image $global:imageName -EnvVars $envVars # This function now supports ShouldProcess
+	# Start the container using the global image name and the retrieved config
+	Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars # This function now supports ShouldProcess
 }
 
 #==============================================================================
@@ -413,100 +389,19 @@ function Restore-n8nContainer {
 	# Remove any existing container
 	Remove-n8nContainer # This function supports ShouldProcess
 
-	# Get configuration from existing container or use defaults
+	# Get configuration (will use defaults if container didn't exist, includes domain prompt)
 	$config = Get-n8nContainerConfig
-	if (-not $config) {
-		Write-Host "No existing configuration found, using defaults."
-		$config = [PSCustomObject]@{
-			Image   = $imageName
-			EnvVars = @(
-				"N8N_COMMUNITY_PACKAGES_ENABLED=true",
-				"N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-			)
-		}
-	}
-	else {
-		# Update the image to use the restored one
-		$config.Image = $imageName
-	}
 
-	# Start the container using the restored image and existing configuration
+	# Update the image name in the config to the one we just restored
+	$config.Image = $imageName
+
+	# Start the container using the restored image and configuration
 	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
 		# This function supports ShouldProcess
 		Write-Host "n8n container successfully restored and started."
 	}
 	else {
 		Write-Error "Failed to start restored n8n container."
-	}
-}
-
-#==============================================================================
-# Function: Invoke-StartN8nForUpdate
-#==============================================================================
-<#
-.SYNOPSIS
-	Helper function called by Update-Container to start the n8n container after an update.
-.DESCRIPTION
-	This function encapsulates the specific logic required to start the n8n container after an update.
-	It ensures the volume exists, retrieves existing configuration (like domain settings) using
-	Get-n8nContainerConfig, and then calls Start-n8nContainer with the updated image name and
-	preserved environment variables. It adheres to the parameter signature expected by the
-	-RunFunction parameter of Update-Container.
-.PARAMETER EnginePath
-	Path to the container engine executable (passed by Update-Container).
-.PARAMETER ContainerEngineType
-	Type of the container engine ('docker' or 'podman'). (Passed by Update-Container, may not be used directly).
-.PARAMETER ContainerName
-	Name of the container being updated. (Passed by Update-Container, may not be used directly).
-.PARAMETER VolumeName
-	Name of the volume associated with the container. (Passed by Update-Container).
-.PARAMETER ImageName
-	The new image name/tag to use for the updated container (passed by Update-Container).
-.OUTPUTS
-	Throws an error if the container fails to start, which signals failure back to Update-Container.
-.EXAMPLE
-	# This function is intended to be called internally by Update-Container via -RunFunction
-	# Update-Container -RunFunction ${function:Invoke-StartN8nForUpdate}
-.NOTES
-	Relies on Confirm-ContainerVolume, Get-n8nContainerConfig, Start-n8nContainer helper functions.
-#>
-function Invoke-StartN8nForUpdate {
-	param(
-		[string]$EnginePath,
-		# The following parameters are part of the standard signature for Update-Container's script block,
-		# but are not directly used in this specific implementation as it relies on global variables
-		# or calls Start-n8nContainer which uses globals.
-		[string]$ContainerEngineType,
-		[string]$ContainerName,
-		[string]$VolumeName,
-		[string]$ImageName            # The updated image name passed by Update-Container
-	)
-
-	# Ensure the volume exists (important if it was removed manually)
-	# Use the VolumeName parameter passed by Update-Container for consistency
-	if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-		throw "Failed to ensure volume '$VolumeName' exists during update."
-	}
-
-	# Get existing config to preserve environment variables (like domain)
-	$config = Get-n8nContainerConfig
-	if (-not $config) {
-		Write-Warning "Could not retrieve existing config during update. Using default environment variables."
-		$envVars = @(
-			"N8N_COMMUNITY_PACKAGES_ENABLED=true",
-			"N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-		)
-	}
-	else {
-		$envVars = $config.EnvVars
-	}
-
-	# Start the container using the specific Start-n8nContainer function
-	# Pass the updated image name received as a parameter
-	$result = Start-n8nContainer -Image $ImageName -EnvVars $envVars
-	if (-not $result) {
-		# Throw an error to signal failure to Update-Container
-		throw "Failed to start updated n8n container."
 	}
 }
 
@@ -538,15 +433,37 @@ function Update-n8nContainer {
 
 	# Previously, a script block was defined here and passed using .GetNewClosure().
 	# .GetNewClosure() creates a copy of the script block that captures the current
-	# state of variables in its scope, ensuring the generic Update-Container function
-	# executes it with the correct context from this script.
-	# We now use a dedicated function (Invoke-StartN8nForUpdate) instead for better structure.
-
-	# Call the generic Update-Container function
-	Update-Container -Engine $global:enginePath `
+	# Call the modified Update-Container function (which no longer starts the container)
+	$updateResult = Update-Container -Engine $global:enginePath `
 		-ContainerName $global:containerName `
-		-ImageName $global:imageName `
-		-RunFunction ${function:Invoke-StartN8nForUpdate} # Pass function reference
+		-ImageName $global:imageName
+
+	# If the update (pull image, remove old container) was successful, start the new one
+	if ($updateResult) {
+		Write-Host "Update pre-check successful. Starting the updated container..."
+
+		# Ensure the volume exists (important if it was removed manually)
+		if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+			Write-Error "Failed to ensure volume '$global:volumeName' exists. Cannot start updated container."
+			return
+		}
+
+		# Get configuration (will use defaults if container didn't exist, includes domain prompt)
+		$config = Get-n8nContainerConfig
+
+		# Start the container using the specific Start-n8nContainer function
+		# Use the global image name (as Update-Container pulled it) and the retrieved EnvVars
+		if (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars) {
+			Write-Host "Container '$global:containerName' updated and started successfully!"
+		}
+		else {
+			Write-Error "Failed to start updated n8n container after successful image pull."
+			# Consider offering restore here if needed, similar to how Update-Container did
+		}
+	}
+	else {
+		Write-Error "Update process failed during image pull or container removal. Container not started."
+	}
 }
 
 #==============================================================================
@@ -595,12 +512,8 @@ function Restart-n8nContainer {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param()
 
-	# Get current container configuration
+	# Get current container configuration (includes domain prompt and defaults)
 	$config = Get-n8nContainerConfig
-	if (-not $config) {
-		Write-Host "No n8n container found to restart. Please install it first."
-		return
-	}
 
 	# Remove the existing container
 	if (-not (Remove-n8nContainer)) {

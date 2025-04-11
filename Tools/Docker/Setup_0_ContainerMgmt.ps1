@@ -765,10 +765,7 @@ function Update-Container {
 		[Parameter(Mandatory = $true)]
 		[string]$ImageName,
 
-		[string]$Platform = "linux/amd64",
-
-		[Parameter(Mandatory = $true)]
-		[scriptblock]$RunFunction
+		[string]$Platform = "linux/amd64"
 	)
 
 	# Use Write-Host for status messages
@@ -835,38 +832,16 @@ function Update-Container {
 			}
 			return $false
 		}
-	}
-
-	# Step 6: Run the container using the provided function
-	if ($PSCmdlet.ShouldProcess($ContainerName, "Start Updated Container")) {
 		# Use Write-Host for status messages
-		Write-Host "Starting updated container..."
-		try {
-			& $RunFunction
-			# Use Write-Host for status messages
-			Write-Host "Container '$ContainerName' updated successfully!"
-			return $true
-		}
-		catch {
-			Write-Error "Failed to start updated container: $_"
-
-			# Offer to restore from backup if one was created
-			if ($createBackup -ne "N") {
-				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-				if ($restore -ne "N") {
-					if ($PSCmdlet.ShouldProcess($ContainerName, "Restore Container State after Failed Start")) {
-						Restore-ContainerState -Engine $Engine -ContainerName $ContainerName
-					}
-				}
-			}
-			return $false
-		}
+		Write-Host "Image '$ImageName' pulled successfully."
+		# Indicate success if image pull was successful
+		return $true
 	}
 	else {
-		# If ShouldProcess returned false for starting the container
-		# Use Write-Host for status messages
-		Write-Host "Update process completed (image pulled, old container removed), but new container start was skipped due to -WhatIf."
-		return $true # Consider it a success in terms of -WhatIf
+		# If ShouldProcess returned false for pulling the image
+		Write-Warning "Image pull skipped due to -WhatIf."
+		# Consider it a success in terms of -WhatIf, as the pre-update steps completed
+		return $true
 	}
 }
 
