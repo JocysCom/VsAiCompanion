@@ -12,6 +12,66 @@
 ################################################################################
 
 #==============================================================================
+# Function: ConvertTo-WSLPath
+#==============================================================================
+<#
+.SYNOPSIS
+   Converts a Windows path into a WSL (Linux) path.
+.DESCRIPTION
+   This function takes an absolute Windows path and converts it to the corresponding WSL
+   path by replacing the drive letter and backslashes with the Linux mount point format
+   (e.g., C:\Users\Me becomes /mnt/c/Users/Me).
+   IMPORTANT: This workaround is CRUCIAL for successfully copying a file from the local
+   machine to Podman using 'podman machine ssh "podman cp ..."'.
+.PARAMETER winPath
+   The Windows path to convert. Mandatory.
+.OUTPUTS
+   [string] The converted WSL path, or the original path if conversion fails.
+.EXAMPLE
+   $wslPath = ConvertTo-WSLPath -winPath "C:\MyFolder\MyFile.txt"
+   # $wslPath will be "/mnt/c/MyFolder/MyFile.txt"
+.NOTES
+   Uses Resolve-Path to get the absolute path first.
+   Uses regex matching and replacement.
+   Copied from Setup_2a_Pipelines.ps1
+#>
+function ConvertTo-WSLPath {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$winPath
+	)
+	# Ensure the path exists before trying to resolve (needed for destination paths)
+	$itemExists = Test-Path -Path $winPath
+	if (-not $itemExists) {
+		# If it doesn't exist, try resolving the parent directory
+		$parentDir = Split-Path -Path $winPath -Parent
+		if (Test-Path -Path $parentDir) {
+			$resolvedParent = (Resolve-Path $parentDir).Path
+			$filename = Split-Path -Path $winPath -Leaf
+			$absPath = Join-Path -Path $resolvedParent -ChildPath $filename
+		}
+		else {
+			Write-Warning "Cannot resolve path or its parent: '$winPath'. Using original path for conversion attempt."
+			$absPath = $winPath # Fallback
+		}
+	}
+	else {
+		$absPath = (Resolve-Path $winPath).Path
+	}
+
+	if ($absPath -match '^([A-Z]):\\(.*)$') {
+		$drive = $matches[1].ToLower()
+		$pathWithoutDrive = $matches[2]
+		$unixPath = $pathWithoutDrive -replace '\\', '/'
+		return "/mnt/$drive/$unixPath"
+	}
+	else {
+		Write-Warning "Path '$winPath' does not match the expected Windows absolute path format."
+		return $absPath # Return original path on failure
+	}
+}
+
+#==============================================================================
 # Function: Backup-ContainerImage
 #==============================================================================
 <#
@@ -53,12 +113,24 @@ function Backup-ContainerImage {
 		Write-Host "Created backup folder: $BackupFolder"
 	}
 
-	# Replace characters not allowed in file names (':' and '/' become '_')
-	$safeName = $ImageName -replace "[:/]", "_"
-	$backupFile = Join-Path $BackupFolder "$safeName.tar"
+	# Generate timestamped filename based on Container Name (more logical association)
+	# Assuming ContainerName is available or passed, otherwise fallback needed.
+	# For now, let's derive from ImageName but aim for ContainerName if possible in calling script.
+	# Using the guide's pattern: {name}-image-{timestamp}.tar
+	# We'll use the base image name part before the first ':' or '/' as the {name} for now.
+	$baseName = ($ImageName -split '[:/]')[0]
+	# If ImageName was something like 'docker.io/n8nio/n8n', baseName is 'docker.io'. Let's try to get the last part.
+	if ($ImageName -match '.*/([^:]+)(:.+)?$') {
+		$baseName = $matches[1] # e.g., 'n8n' from 'docker.io/n8nio/n8n:latest'
+	}
+	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
+	# Use ContainerName if available globally, otherwise derived baseName (Reverted change)
+	$namePart = if ($global:containerName) { $global:containerName } else { Write-Warning "Global variable 'containerName' not found for image backup naming. Falling back to derived name '$baseName'."; $baseName }
+	$backupFileName = "$namePart-image-$timestamp.tar"
+	$backupFile = Join-Path $BackupFolder $backupFileName
 
 	# Use Write-Host for status messages
-	Write-Host "Backing up image '$ImageName' to '$backupFile'..."
+	Write-Host "Backing up image '$ImageName' to '$backupFile'..." # Keep original image name in message
 	# podman save [options] IMAGE
 	# save      Save an image to a tar archive.
 	# --output string   Specify the output file for saving the image.
@@ -73,6 +145,415 @@ function Backup-ContainerImage {
 		Write-Error "Failed to backup image '$ImageName'"
 		return $false
 	}
+}
+
+#==============================================================================
+# Function: Backup-ContainerVolume
+#==============================================================================
+<#
+.SYNOPSIS
+	Backs up a single container volume to a timestamped tar file using the temporary container method.
+.DESCRIPTION
+	Exports the specified container volume using the provided container engine (docker or podman)
+	to a .tar file in the specified backup folder. The filename includes the volume name,
+	type ('volume'), and a timestamp (YYYYMMdd-HHMM). Creates the backup folder if it doesn't exist.
+	Uses a temporary alpine container and the 'tar' command for compatibility.
+.PARAMETER Engine
+	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER EngineType
+	The type of the container engine ('docker' or 'podman'). Mandatory. Used to select the correct command.
+.PARAMETER VolumeName
+	The name of the container volume to back up. Mandatory.
+.PARAMETER BackupFolder
+	The directory where the backup .tar file will be saved. Defaults to '.\Backup'.
+.OUTPUTS
+	[string] Returns the full path to the created backup file on success, $null on failure.
+.EXAMPLE
+	Backup-ContainerVolume -Engine "podman" -EngineType "podman" -VolumeName "my_data" -BackupFolder "C:\MyBackups"
+.EXAMPLE
+	Backup-ContainerVolume -Engine "docker" -EngineType "docker" -VolumeName "app_data"
+.NOTES
+	Uses $LASTEXITCODE to check command success. Requires 'alpine' image.
+#>
+function Backup-ContainerVolume {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([string])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine, # Path to podman/docker executable
+
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$EngineType, # Type of engine
+
+		[Parameter(Mandatory = $true)]
+		[string]$VolumeName, # Name of the volume to backup
+
+		[string]$BackupFolder = ".\Backup" # Destination folder for the backup file
+	)
+
+	# Ensure backup folder exists
+	if (-not (Test-Path $BackupFolder)) {
+		if ($PSCmdlet.ShouldProcess($BackupFolder, "Create Directory")) {
+			New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
+			Write-Host "Created backup folder: $BackupFolder"
+		}
+		else {
+			Write-Warning "Backup folder creation skipped due to -WhatIf."
+			return $null
+		}
+	}
+
+	# Generate timestamped filename using .tar extension
+	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
+	$backupFileName = "$VolumeName-volume-$timestamp.tar" # Use .tar extension
+	$backupFilePath = Join-Path $BackupFolder $backupFileName
+
+	$targetDescription = "volume '$VolumeName' to '$backupFilePath'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Backup")) {
+		Write-Host "Skipped backup due to -WhatIf."
+		return $null
+	}
+
+	Write-Host "Backing up volume '$VolumeName' to '$backupFilePath' using $EngineType (tar method)..."
+
+	# Use the temporary container method for both Docker and Podman
+	$tempImage = "alpine" # Use alpine as it's common and has tar/sh
+	$containerBackupPath = "/backup/$backupFileName"
+	# Define the actual command to run inside the container's shell
+	# Use tar 'c'reate, 'v'erbose, 'f'ile. Use 'z' for gzip compression if desired (change extension too).
+	$innerTarCommand = "tar cvf ""$containerBackupPath"" -C /volume_data ." # -C changes dir first
+
+	# Construct the volume mount arguments carefully
+	$volumeMount = """$VolumeName`:/volume_data"""
+	# Ensure BackupFolder is absolute for reliable mounting
+	$absoluteBackupFolder = Convert-Path $BackupFolder
+	$backupMount = """$absoluteBackupFolder`:/backup"""
+
+	# Build arguments for splatting
+	$runArgs = @(
+		"run",
+		"--rm",
+		"-v", $volumeMount,
+		"-v", $backupMount,
+		$tempImage, # Image name
+		"sh", # Command
+		"-c", # Argument to sh
+		$innerTarCommand # Argument to -c
+	)
+
+	# Execute the command using splatting
+	Write-Host "Running command: $Engine $($runArgs -join ' ')"
+	& $Engine @runArgs
+
+	if ($LASTEXITCODE -eq 0) {
+		# Verify the file was created on the host
+		if (Test-Path $backupFilePath -PathType Leaf) {
+			Write-Host "Successfully backed up volume '$VolumeName' to '$backupFilePath'" -ForegroundColor Green
+			return $backupFilePath
+		}
+		else {
+			Write-Error "Engine command succeeded, but backup file '$backupFilePath' was not found on the host. Check volume mount permissions/paths or tar command output."
+			return $null
+		}
+	}
+	else {
+		Write-Error "Backup container failed for volume '$VolumeName'. Exit code: $LASTEXITCODE"
+		# Clean up potentially empty/failed backup file
+		if (Test-Path $backupFilePath -PathType Leaf) {
+			Remove-Item $backupFilePath -Force -ErrorAction SilentlyContinue
+		}
+		return $null
+	}
+}
+
+#==============================================================================
+# Function: Restore-ContainerVolume
+#==============================================================================
+<#
+.SYNOPSIS
+	Restores a container volume from a backup .tar file, prompting user for selection.
+.DESCRIPTION
+	Finds backup files matching '{VolumeName}-volume-*.tar' in the specified backup folder.
+	Presents a numbered list sorted by date (newest first) and prompts the user to select one.
+	Restores the selected backup into the specified volume using a temporary alpine container
+	and the 'tar' command. Creates the volume if it doesn't exist.
+.PARAMETER Engine
+	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER EngineType
+	The type of the container engine ('docker' or 'podman'). Mandatory. Used to select the correct command.
+.PARAMETER VolumeName
+	The name of the container volume to restore into. Mandatory.
+.PARAMETER BackupFolder
+	The directory where the backup .tar files are located. Defaults to '.\Backup'.
+.OUTPUTS
+	[bool] Returns $true on success, $false on failure or cancellation.
+.EXAMPLE
+	Restore-ContainerVolume -Engine "podman" -EngineType "podman" -VolumeName "my_data"
+.EXAMPLE
+	Restore-ContainerVolume -Engine "docker" -EngineType "docker" -VolumeName "app_data" -BackupFolder "C:\MyBackups"
+.NOTES
+	Uses $LASTEXITCODE to check command success. Requires 'alpine' image.
+	Will overwrite existing volume content.
+#>
+function Restore-ContainerVolume {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine, # Path to podman/docker executable
+
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$EngineType, # Type of engine
+
+		[Parameter(Mandatory = $true)]
+		[string]$VolumeName, # Name of the volume to restore into
+
+		[string]$BackupFolder = ".\Backup" # Source folder for backup files
+	)
+
+	# Find available backup files for the specified volume
+	$backupPattern = "$VolumeName-volume-*.tar" # Use .tar extension filter
+	$backupFiles = Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Sort-Object LastWriteTime -Descending
+
+	if (-not $backupFiles) {
+		Write-Error "No backup files found for volume '$VolumeName' in folder '$BackupFolder' matching pattern '$backupPattern'."
+		return $false
+	}
+
+	# Display available backups
+	Write-Host "Available backups for volume '$VolumeName':"
+	for ($i = 0; $i -lt $backupFiles.Count; $i++) {
+		Write-Host ("{0}. {1} ({2})" -f ($i + 1), $backupFiles[$i].Name, $backupFiles[$i].LastWriteTime)
+	}
+	Write-Host "0. Cancel"
+
+	# Prompt user for selection
+	$choice = Read-Host "Enter the number of the backup to restore (or 0 to cancel)"
+	if ($choice -eq '0' -or [string]::IsNullOrWhiteSpace($choice)) {
+		Write-Host "Restore cancelled by user."
+		return $false
+	}
+
+	# Validate selection
+	if ($choice -notmatch '^\d+$' -or [int]$choice -lt 1 -or [int]$choice -gt $backupFiles.Count) {
+		Write-Error "Invalid selection '$choice'."
+		return $false
+	}
+
+	# Get the selected file
+	$selectedBackup = $backupFiles[[int]$choice - 1]
+	$selectedBackupFile = $selectedBackup.FullName
+	Write-Host "Selected backup: $($selectedBackup.Name)"
+
+	$targetDescription = "volume '$VolumeName' from '$selectedBackupFile'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Restore")) {
+		Write-Host "Skipped restore due to -WhatIf or user cancellation."
+		return $false
+	}
+
+	Write-Host "Restoring volume '$VolumeName' from '$selectedBackupFile' using $EngineType (tar method)..."
+
+	# 1. Ensure the volume exists (Create if not)
+	$volumeExists = & $Engine volume inspect $VolumeName --format '{{.Name}}' 2>$null
+	if (-not $volumeExists) {
+		Write-Host "Volume '$VolumeName' does not exist. Creating it..."
+		& $Engine volume create $VolumeName | Out-Null
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Failed to create volume '$VolumeName'. Restore aborted."
+			return $false
+		}
+	}
+	else {
+		# Consider prompting if user wants to overwrite? For now, proceed.
+		Write-Host "Volume '$VolumeName' already exists. Contents will be overwritten by restore."
+		# Optionally, could clear the volume first, but cp should overwrite.
+	}
+
+	# 2. Use a temporary container to extract the tarball into the volume
+	$tempImage = "alpine" # Use alpine as it's common and has tar/sh
+	$backupFileName = Split-Path $selectedBackupFile -Leaf
+	$backupFolderHost = Split-Path $selectedBackupFile -Parent
+	# Ensure BackupFolder is absolute for reliable mounting
+	$absoluteBackupFolder = Convert-Path $backupFolderHost
+	$containerBackupPath = "/backup/$backupFileName"
+	# Use sh -c to change directory *inside* the container before extracting
+	# Use tar 'x'tract, 'v'erbose, 'f'ile. Use 'z' for gzip if backup used it.
+	# Add --strip-components=1 to remove the top-level '.' directory often included by 'tar cvf ... .'
+	$innerTarCommand = "cd /volume_data && tar xvf ""$containerBackupPath"" --strip-components=1"
+
+	# Construct the volume mount arguments carefully
+	$volumeMount = """$VolumeName`:/volume_data"""
+	$backupMount = """$absoluteBackupFolder`:/backup"""
+
+	# Build arguments for splatting
+	$runArgs = @(
+		"run",
+		"--rm",
+		"-v", $volumeMount,
+		"-v", $backupMount,
+		$tempImage, # Image name
+		"sh", # Command
+		"-c", # Argument to sh
+		$innerTarCommand # Argument to -c
+	)
+
+	# Execute the command using splatting
+	Write-Host "Running command: $Engine $($runArgs -join ' ')"
+	& $Engine @runArgs
+
+	if ($LASTEXITCODE -eq 0) {
+		Write-Host "Successfully restored volume '$VolumeName' from '$selectedBackupFile'" -ForegroundColor Green
+		return $true
+	}
+	else {
+		Write-Error "Restore container failed for volume '$VolumeName'. Exit code: $LASTEXITCODE"
+		return $false
+	}
+	# No complex try/catch/finally needed here as the tar command does the work
+}
+
+#==============================================================================
+# Function: Copy-MachineToHost
+#==============================================================================
+<#
+.SYNOPSIS
+    Copies a file or directory from a container (Docker or Podman) to the host machine.
+.DESCRIPTION
+    Handles the differences between Docker 'cp' and Podman 'cp' (which requires 'machine ssh'
+    and WSL path conversion on Windows). Creates the destination directory if it doesn't exist.
+.PARAMETER EnginePath
+    The full path to the container engine executable (docker.exe or podman.exe). Mandatory.
+.PARAMETER ContainerEngineType
+    The type of container engine ('docker' or 'podman'). Mandatory.
+.PARAMETER ContainerName
+    The name of the container from which to copy. Mandatory.
+.PARAMETER ContainerSourcePath
+    The path to the file or directory inside the container. Mandatory.
+.PARAMETER HostDestinationPath
+    The path on the host machine where the file or directory should be copied. Mandatory.
+.OUTPUTS
+    [bool] $true if the copy operation was successful, $false otherwise.
+.EXAMPLE
+    Copy-MachineToHost -EnginePath "C:\Program Files\Docker\Docker\resources\bin\docker.exe" `
+                       -ContainerEngineType "docker" `
+                       -ContainerName "my-app" `
+                       -ContainerSourcePath "/app/data.txt" `
+                       -HostDestinationPath "C:\Downloads\data.txt"
+.EXAMPLE
+    Copy-MachineToHost -EnginePath "C:\Program Files\RedHat\Podman\podman.exe" `
+                       -ContainerEngineType "podman" `
+                       -ContainerName "my-podman-app" `
+                       -ContainerSourcePath "/data/config.json" `
+                       -HostDestinationPath "C:\Temp\config.json"
+.NOTES
+    Relies on the ConvertTo-WSLPath function (expected to be available in the same scope)
+    when using Podman on Windows.
+    Uses Write-Host for status messages for consistency with other functions in this file,
+    although Write-Information might be preferred according to .clinerules.
+#>
+function Copy-MachineToHost {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$EnginePath,
+
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$ContainerEngineType,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerSourcePath,
+
+		[Parameter(Mandatory = $true)]
+		[string]$HostDestinationPath
+	)
+
+	$targetDescription = "file '$ContainerSourcePath' from container '$ContainerName' to host '$HostDestinationPath'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Copy")) {
+		Write-Host "Skipped copy due to -WhatIf or user cancellation."
+		return $false
+	}
+
+	# Ensure destination directory exists on host
+	$destinationDir = Split-Path -Path $HostDestinationPath -Parent
+	if (-not (Test-Path -Path $destinationDir -PathType Container)) {
+		Write-Host "Creating destination directory: $destinationDir"
+		try {
+			New-Item -Path $destinationDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
+		}
+		catch {
+			Write-Error "Failed to create destination directory '$destinationDir'. Error: $_"
+			return $false
+		}
+	}
+
+	Write-Host "Copying '$ContainerSourcePath' from $ContainerEngineType container '$ContainerName' to '$HostDestinationPath'..."
+	$copySuccess = $false
+	$cpResult = $null
+	$LASTEXITCODE = 0 # Reset before command
+
+	try {
+		if ($ContainerEngineType -eq "docker") {
+			# Docker cp syntax: docker cp <container>:<src_path> <dest_path>
+			$cpCommandArgs = @(
+				"cp",
+				"$($ContainerName):$ContainerSourcePath",
+				$HostDestinationPath
+			)
+			Write-Host "Running cp command: $EnginePath $($cpCommandArgs -join ' ')"
+			$cpResult = & $EnginePath @cpCommandArgs 2>&1
+		}
+		else {
+			# Podman requires WSL path for destination and execution via 'machine ssh'
+			# Podman cp syntax (inside ssh): podman cp <container>:<src_path> <dest_path_wsl>
+			$wslDestinationFilePath = ConvertTo-WSLPath -winPath $HostDestinationPath
+			if ($wslDestinationFilePath -eq $HostDestinationPath) {
+				# Conversion likely failed, ConvertTo-WSLPath should issue a warning.
+				throw "Failed to convert Windows destination path '$HostDestinationPath' to a WSL path. Cannot proceed with Podman copy."
+			}
+			# Escape single quotes in paths for the inner command string
+			$escapedContainerPath = $ContainerSourcePath -replace "'", "'\''"
+			$escapedWslDestPath = $wslDestinationFilePath -replace "'", "'\''"
+			$innerCpCommand = "podman cp '$ContainerName`:$escapedContainerPath' '$escapedWslDestPath'"
+			# Outer quotes handle spaces in EnginePath if needed, inner command is single arg to ssh
+			$sshArgs = @(
+				"machine",
+				"ssh",
+				$innerCpCommand # The command string to execute inside the SSH session
+			)
+			Write-Host "Running cp command via podman machine ssh: $EnginePath $($sshArgs -join ' ')"
+			$cpResult = & $EnginePath @sshArgs 2>&1
+		}
+
+		Write-Host "Cp result: $cpResult" # Display output regardless of exit code for debugging
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Copy operation failed. Exit Code: $LASTEXITCODE." # Removed Output from here as it's already printed
+			throw "Copy command failed with exit code $LASTEXITCODE."
+		}
+
+		# Verify the file/dir exists at the destination
+		if (Test-Path -Path $HostDestinationPath) {
+			Write-Host "Successfully copied to '$HostDestinationPath'." -ForegroundColor Green
+			$copySuccess = $true
+		}
+		else {
+			# This case might happen if the source path didn't exist in the container, but 'cp' still returned 0.
+			Write-Error "Copy command reported success (Exit Code 0), but the destination '$HostDestinationPath' was not found or is empty. Check source path existence in container or command output: $cpResult"
+			$copySuccess = $false
+		}
+	}
+	catch {
+		Write-Error "An error occurred during the copy operation: $_"
+		$copySuccess = $false
+	}
+
+	return $copySuccess
 }
 
 #==============================================================================

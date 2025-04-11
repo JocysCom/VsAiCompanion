@@ -196,32 +196,35 @@ function Invoke-PullImage {
 }
 
 #==============================================================================
-# Function: Backup-ContainerState
+# Function: Backup-ContainerAndData
 #==============================================================================
 <#
 .SYNOPSIS
-	Creates a backup of a live running container by committing its state to an image
-	and saving that image as a tar file.
+	Backs up a container's data volume (if applicable, e.g., 'n8n_data' for 'n8n') and its image state.
 .DESCRIPTION
-	Checks if the specified container exists. If it does, it commits the container's current
-	state to a new image tagged as 'backup-<ContainerName>'. Then, it saves this backup image
-	to a .tar file named '<ContainerName>-backup.tar' (with ':' and '/' replaced by '_')
-	in the specified backup folder. Creates the backup folder if needed.
+	For the 'n8n' container: Stops the container, exports the 'n8n_data' volume (user data) to
+	'<BackupFolder>/n8n_data-data.tar' using 'podman volume export', and restarts the container.
+	For all containers (including 'n8n'): Commits the current container state to a new image
+	tagged 'backup-<ContainerName>' and saves this image to '<BackupFolder>/<ContainerName>-backup.tar'.
 .PARAMETER Engine
 	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
 .PARAMETER ContainerName
 	The name of the running container to back up. Mandatory.
 .PARAMETER BackupFolder
-	The directory where the backup .tar file will be saved. Defaults to '.\Backup'.
+	The directory where the backup .tar files will be saved. Defaults to '.\Backup'.
 .OUTPUTS
-	[bool] Returns $true if both commit and save operations are successful, $false otherwise.
+	[bool] For 'n8n', returns $true if the volume export was successful. For others, returns $true if image save was successful.
 .EXAMPLE
-	Backup-ContainerState -Engine "docker" -ContainerName "my-web-app" -BackupFolder "C:\ContainerBackups"
+	Backup-ContainerAndData -Engine "docker" -ContainerName "my-web-app" -BackupFolder "C:\ContainerBackups"
+.EXAMPLE
+	Backup-ContainerAndData -Engine "podman" -ContainerName "n8n"
 .NOTES
-	Does not currently handle backing up associated volumes within this function.
+	Volume backup logic is currently specific to 'n8n' and its 'n8n_data' volume.
+	Prioritizes volume backup success for 'n8n'. Image backup is secondary for 'n8n'.
 	Uses $LASTEXITCODE to check the success of engine commands.
 #>
-function Backup-ContainerState {
+function Backup-ContainerAndData {
+	[CmdletBinding(SupportsShouldProcess = $true)] # Added SupportsShouldProcess
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
@@ -231,9 +234,14 @@ function Backup-ContainerState {
 	)
 
 	if (-not (Test-Path $BackupFolder)) {
-		New-Item -ItemType Directory -Path $BackupFolder -Force | Out-Null
-		# Use Write-Host for status messages
-		Write-Host "Created backup folder: $BackupFolder"
+		if ($PSCmdlet.ShouldProcess($BackupFolder, "Create Directory")) {
+			New-Item -ItemType Directory -Path $BackupFolder -Force | Out-Null
+			Write-Host "Created backup folder: $BackupFolder"
+		}
+		else {
+			Write-Warning "Backup folder creation skipped. Cannot proceed."
+			return $false
+		}
 	}
 
 	# Check if the container exists.
@@ -243,43 +251,125 @@ function Backup-ContainerState {
 		return $false
 	}
 
-	# Use Write-Host for status messages
-	Write-Host "DEBUG: Container name is '$ContainerName'"
+	# --- Volume Backup Logic (Specific to n8n for now) ---
+	$volumeBackupSuccess = $true # Assume success unless volume backup fails or is skipped
+	if ($ContainerName -eq "n8n") {
+		$volumeName = "n8n_data"
+		$volumeBackupFile = Join-Path $BackupFolder "$volumeName-data.tar"
 
-	# Create a simple image tag without any container- prefix that might be causing issues
+		# Check if volume exists
+		$existingVolume = & $Engine volume ls --filter "name=^$volumeName$" --format "{{.Name}}"
+		if ($existingVolume) {
+			Write-Host "Attempting to back up volume '$volumeName' for container '$ContainerName'."
+			Write-Warning "Container '$ContainerName' will be stopped temporarily for volume backup."
+
+			# Stop the container
+			if ($PSCmdlet.ShouldProcess($ContainerName, "Stop Container for Volume Backup")) {
+				& $Engine stop $ContainerName 2>$null | Out-Null
+				if ($LASTEXITCODE -ne 0) {
+					Write-Warning "Failed to stop container '$ContainerName'. Skipping volume backup."
+					$volumeBackupSuccess = $false
+				}
+				else {
+					# Export the volume
+					if ($PSCmdlet.ShouldProcess($volumeName, "Export Volume to '$volumeBackupFile'")) {
+						Write-Host "Exporting volume '$volumeName' to '$volumeBackupFile'..."
+						# podman volume export [options] VOLUME
+						# export    Export volume contents to an external tar file.
+						# --output, -o string   Specify the output file.
+						& $Engine volume export --output $volumeBackupFile $volumeName
+						if ($LASTEXITCODE -eq 0) {
+							Write-Host "Successfully exported volume '$volumeName' to '$volumeBackupFile'."
+						}
+						else {
+							Write-Error "Failed to export volume '$volumeName'."
+							$volumeBackupSuccess = $false
+						}
+					}
+					else {
+						Write-Warning "Volume export skipped due to -WhatIf."
+						$volumeBackupSuccess = $false # Treat skip as failure for overall success
+					}
+
+					# Restart the container regardless of export success/failure
+					if ($PSCmdlet.ShouldProcess($ContainerName, "Restart Container after Volume Backup Attempt")) {
+						Write-Host "Restarting container '$ContainerName'..."
+						& $Engine start $ContainerName 2>$null | Out-Null
+						if ($LASTEXITCODE -ne 0) {
+							Write-Warning "Failed to restart container '$ContainerName' after volume backup attempt."
+						}
+					}
+					else {
+						Write-Warning "Container restart skipped due to -WhatIf."
+					}
+				}
+			}
+			else {
+				Write-Warning "Container stop skipped due to -WhatIf. Cannot back up volume."
+				$volumeBackupSuccess = $false
+			}
+		}
+		else {
+			Write-Warning "Volume '$volumeName' not found. Skipping volume backup."
+			# Not necessarily a failure if volume doesn't exist, but backup isn't complete
+			$volumeBackupSuccess = $false
+		}
+	}
+	# --- End Volume Backup Logic ---
+
+	# --- Image Backup Logic (Existing - Run for all containers as secondary/fallback) ---
+	$imageBackupSuccess = $false
+	Write-Host "Proceeding with container image state backup (commit/save)..."
 	$backupImageTag = "backup-$ContainerName"
 
-	# Use Write-Host for status messages
-	Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
-	# podman commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
-	# commit    Create a new image from a container's changes.
-	& $Engine commit $ContainerName $backupImageTag
-	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to commit container '$ContainerName'."
-		return $false
-	}
+	if ($PSCmdlet.ShouldProcess($ContainerName, "Commit Container State to Image '$backupImageTag'")) {
+		Write-Host "Committing container '$ContainerName' to image '$backupImageTag'..."
+		& $Engine commit $ContainerName $backupImageTag
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Failed to commit container '$ContainerName'."
+			# Don't return yet, report overall success later
+		}
+		else {
+			# Build backup tar file name for the image
+			$safeName = $ContainerName -replace "[:/]", "_"
+			if ($safeName -eq "") { $safeName = "unknown" }
+			$imageBackupFile = Join-Path $BackupFolder "$safeName-backup.tar"
 
-	# Build backup tar file name.
-	$safeName = $ContainerName -replace "[:/]", "_"
-	if ($safeName -eq "") {
-		$safeName = "unknown"
-	}
-	$backupFile = Join-Path $BackupFolder "$safeName-backup.tar"
-
-	# Use Write-Host for status messages
-	Write-Host "Saving backup image '$backupImageTag' to '$backupFile'..."
-	# podman save [options] IMAGE
-	# save      Save an image to a tar archive.
-	# --output string   Specify the output file for saving the image.
-	& $Engine save --output $backupFile $backupImageTag
-	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Host for status messages
-		Write-Host "Backup successfully saved to '$backupFile'."
-		return $true
+			if ($PSCmdlet.ShouldProcess($backupImageTag, "Save Image to '$imageBackupFile'")) {
+				Write-Host "Saving backup image '$backupImageTag' to '$imageBackupFile'..."
+				& $Engine save --output $imageBackupFile $backupImageTag
+				if ($LASTEXITCODE -eq 0) {
+					Write-Host "Image backup successfully saved to '$imageBackupFile'."
+					$imageBackupSuccess = $true
+				}
+				else {
+					Write-Error "Failed to save backup image to '$imageBackupFile'."
+				}
+			}
+			else {
+				Write-Warning "Image save skipped due to -WhatIf."
+			}
+		}
 	}
 	else {
-		Write-Error "Failed to save backup image to '$backupFile'."
-		return $false
+		Write-Warning "Container commit skipped due to -WhatIf."
+	}
+	# --- End Image Backup Logic ---
+
+	# Return true only if the essential part (volume backup for n8n) succeeded.
+	# For other containers, return true if image backup succeeded.
+	if ($ContainerName -eq "n8n") {
+		if (-not $volumeBackupSuccess) {
+			Write-Warning "Volume backup for n8n did not complete successfully."
+		}
+		return $volumeBackupSuccess # Prioritize volume backup success for n8n
+	}
+	else {
+		# For other containers, image backup is the primary method here
+		if (-not $imageBackupSuccess) {
+			Write-Warning "Image backup did not complete successfully."
+		}
+		return $imageBackupSuccess
 	}
 }
 
@@ -384,42 +474,38 @@ function Remove-ContainerAndVolume {
 }
 
 #==============================================================================
-# Function: Restore-ContainerState
+# Function: Restore-ContainerAndData
 #==============================================================================
 <#
 .SYNOPSIS
-	Restores a container image from a backup .tar file and optionally restores associated volume data.
+	Restores a container image from backup and optionally restores associated volume data.
 .DESCRIPTION
-	Loads a container image from a backup file. It first looks for a container-specific backup
-	named '<ContainerName>-backup.tar'. If not found, it searches for any '.tar' file in the
-	backup folder whose name matches the container name. Once an image is loaded, it parses the
-	image name from the load command's output.
-	If -RestoreVolumes is specified and the ContainerName is 'n8n', it looks for 'n8n_data-data.tar',
-	creates the 'n8n_data' volume if needed, prompts the user, and restores the volume data using
-	a temporary container and tar extraction.
+	Loads a container image from '<BackupFolder>/<ContainerName>-backup.tar' (or a matching image backup).
+	If -RestoreVolumes is specified and ContainerName is 'n8n': Looks for '<BackupFolder>/n8n_data-data.tar',
+	creates the 'n8n_data' volume if needed, prompts the user, and restores the volume data (user data)
+	using a temporary container and tar extraction.
 .PARAMETER Engine
 	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
 .PARAMETER ContainerName
-	The name of the container whose state is being restored. Used to find the backup file
-	and potentially identify volumes. Mandatory.
+	The name of the container being restored. Used to find backup files and identify volumes. Mandatory.
 .PARAMETER BackupFolder
 	The directory containing the backup .tar file(s). Defaults to '.\Backup'.
 .PARAMETER RestoreVolumes
-	Switch parameter. If present, attempts to restore associated volume data (currently only implemented for 'n8n').
+	Switch parameter. If present, attempts to restore associated volume data (currently specific to 'n8n').
 .OUTPUTS
 	[string] Returns the name of the loaded image if successful.
-	[bool] Returns $false if the backup file is not found or the image load fails.
+	[bool] Returns $false if the image backup file is not found or the image load fails. Volume restore status doesn't affect return value directly, but errors are reported.
 .EXAMPLE
-	$loadedImage = Restore-ContainerState -Engine "docker" -ContainerName "my-app"
+	$loadedImage = Restore-ContainerAndData -Engine "docker" -ContainerName "my-app"
 	if ($loadedImage) { docker run --name my-app $loadedImage }
 .EXAMPLE
-	Restore-ContainerState -Engine "podman" -ContainerName "n8n" -RestoreVolumes
+	Restore-ContainerAndData -Engine "podman" -ContainerName "n8n" -RestoreVolumes
 .NOTES
-	Volume restore logic is currently hardcoded for 'n8n' and 'n8n_data'.
+	Volume restore logic is currently specific to 'n8n' and its 'n8n_data' volume.
 	Relies on parsing output from 'engine load'.
 	Uses $LASTEXITCODE to check the success of engine commands.
 #>
-function Restore-ContainerState {
+function Restore-ContainerAndData {
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
@@ -826,7 +912,8 @@ function Update-Container {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
 					if ($PSCmdlet.ShouldProcess($ContainerName, "Restore Container State after Failed Update")) {
-						Restore-ContainerState -Engine $Engine -ContainerName $ContainerName
+						# Call the renamed function
+						Restore-ContainerAndData -Engine $Engine -ContainerName $ContainerName
 					}
 				}
 			}

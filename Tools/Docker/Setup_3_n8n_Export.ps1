@@ -1,7 +1,7 @@
 ################################################################################
-# File         : Setup_3_n8n_Export.ps1
-# Description  : Exports n8n workflows and credentials by copying data from the
-#                running n8n container's volume to a local directory.
+# File         : Setup_3_n8n_ExportImport.ps1 # Renamed conceptually
+# Description  : Provides menu options to export or import n8n workflows and
+#                credentials for a running container.
 # Usage        : Run with appropriate permissions. Requires the n8n container
 #                to be running. Run as Administrator if using Docker.
 ################################################################################
@@ -9,6 +9,8 @@
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
 . "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1" # Needed for Show-ContainerStatus potentially
+. "$PSScriptRoot\Setup_0_BackupRestore.ps1" # Needed for Copy-MachineToHost
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -20,119 +22,431 @@ $global:containerName = "n8n"
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
-    Write-Warning "No container engine selected. Exiting script."
-    exit 1
+	Write-Warning "No container engine selected. Exiting script."
+	exit 1
 }
 if ($global:containerEngine -eq "docker") {
-    Test-AdminPrivilege # Docker often requires elevation
-    $global:enginePath = Get-DockerPath
+	Test-AdminPrivilege # Docker often requires elevation
+	$global:enginePath = Get-DockerPath
 }
 else {
-    $global:enginePath = Get-PodmanPath
+	$global:enginePath = Get-PodmanPath
 }
 
-# Define source and destination paths
-$containerSourcePath = "$($global:containerName):/home/node/.n8n/." # Trailing /. copies content
-$localDestinationPath = Join-Path -Path $PSScriptRoot -ChildPath "downloads\n8n_data"
+# Define common paths
+$localDownloadsDir = Join-Path -Path $PSScriptRoot -ChildPath "downloads"
+$localWorkflowsPath = Join-Path -Path $localDownloadsDir -ChildPath "n8n_workflows.json"
+$localCredentialsPath = Join-Path -Path $localDownloadsDir -ChildPath "n8n_credentials.json"
+$containerTempDir = "/tmp" # Using /tmp inside the container
+$containerWorkflowsPath = "$containerTempDir/n8n_workflows.json"
+$containerCredentialsPath = "$containerTempDir/n8n_credentials.json"
 
 #==============================================================================
-# Function: Export-n8nData
+# Function: ConvertTo-WSLPath
 #==============================================================================
 <#
 .SYNOPSIS
-    Exports n8n data (workflows, credentials, etc.) from the running container.
+   Converts a Windows path into a WSL (Linux) path.
 .DESCRIPTION
-    Checks if the n8n container specified by $global:containerName is running using the
-    selected container engine ($global:enginePath). If running, it creates the
-    local destination directory ($localDestinationPath) if it doesn't exist.
-    Then, it uses the container engine's 'cp' command to copy the contents of
-    '/home/node/.n8n' from the container to the local destination directory.
-.PARAMETER ContainerEnginePath
-    The full path to the container engine executable (docker.exe or podman.exe).
-.PARAMETER ContainerName
-    The name of the n8n container (e.g., "n8n").
-.PARAMETER SourcePathInContainer
-    The path inside the container to copy data from (e.g., "n8n:/home/node/.n8n/.").
-.PARAMETER DestinationPathLocal
-    The local directory path where the data should be exported.
-.OUTPUTS
-    [void] This function does not return a value but writes status messages.
-.EXAMPLE
-    Export-n8nData -ContainerEnginePath $global:enginePath -ContainerName $global:containerName -SourcePathInContainer $containerSourcePath -DestinationPathLocal $localDestinationPath
+   Needed for Podman on Windows when copying files via 'podman machine ssh "podman cp ..."'.
 .NOTES
-    Requires the target n8n container to be running.
-    Uses Write-Host for status messages and Write-Error for errors.
+   Copied from Setup_2a_Pipelines.ps1
 #>
-function Export-n8nData {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$ContainerEnginePath,
+function ConvertTo-WSLPath {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$winPath
+	)
+	# Ensure the path exists before trying to resolve (needed for destination paths)
+	$itemExists = Test-Path -Path $winPath
+	if (-not $itemExists) {
+		# If it doesn't exist, try resolving the parent directory
+		$parentDir = Split-Path -Path $winPath -Parent
+		if (Test-Path -Path $parentDir) {
+			$resolvedParent = (Resolve-Path $parentDir).Path
+			$filename = Split-Path -Path $winPath -Leaf
+			$absPath = Join-Path -Path $resolvedParent -ChildPath $filename
+		}
+		else {
+			Write-Warning "Cannot resolve path or its parent: '$winPath'. Using original path for conversion attempt."
+			$absPath = $winPath # Fallback
+		}
+	}
+	else {
+		$absPath = (Resolve-Path $winPath).Path
+	}
 
-        [Parameter(Mandatory = $true)]
-        [string]$ContainerName,
-
-        [Parameter(Mandatory = $true)]
-        [string]$SourcePathInContainer,
-
-        [Parameter(Mandatory = $true)]
-        [string]$DestinationPathLocal
-    )
-
-    # Check if container is running
-    Write-Host "Checking status of container '$ContainerName'..."
-    $containerId = & $ContainerEnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.ID}}"
-    if (-not $containerId) {
-        Write-Error "Container '$ContainerName' is not running. Export cannot proceed."
-        return
-    }
-    Write-Host "Container '$ContainerName' is running (ID: $containerId)."
-
-    # Ensure destination directory exists
-    if (-not (Test-Path -Path $DestinationPathLocal -PathType Container)) {
-        Write-Host "Creating destination directory: $DestinationPathLocal"
-        try {
-            New-Item -Path $DestinationPathLocal -ItemType Directory -Force -ErrorAction Stop | Out-Null
-        }
-        catch {
-            Write-Error "Failed to create destination directory '$DestinationPathLocal': $_"
-            return
-        }
-    }
-    else {
-         Write-Host "Destination directory already exists: $DestinationPathLocal"
-    }
-
-    # Perform the copy operation
-    $targetDescription = "contents of '$SourcePathInContainer' to '$DestinationPathLocal'"
-    if ($PSCmdlet.ShouldProcess($targetDescription, "Copy Data from Container")) {
-        Write-Host "Attempting to copy data..."
-        try {
-            & $ContainerEnginePath cp $SourcePathInContainer $DestinationPathLocal 2>&1 | Write-Host # Show output/errors from cp
-            if ($LASTEXITCODE -ne 0) {
-                 # Throw an exception to be caught below if cp command fails
-                throw "Container engine 'cp' command failed with exit code $LASTEXITCODE."
-            }
-            Write-Host "Successfully exported n8n data to '$DestinationPathLocal'." -ForegroundColor Green
-        }
-        catch {
-            Write-Error "Failed to export n8n data: $_"
-            Write-Error "Please ensure the container '$ContainerName' is running and the path '$SourcePathInContainer' is correct."
-        }
-    }
-    else {
-        Write-Host "Skipped copying data due to -WhatIf."
-    }
+	if ($absPath -match '^([A-Z]):\\(.*)$') {
+		$drive = $matches[1].ToLower()
+		$pathWithoutDrive = $matches[2]
+		$unixPath = $pathWithoutDrive -replace '\\', '/'
+		return "/mnt/$drive/$unixPath"
+	}
+	else {
+		Write-Warning "Path '$winPath' does not match the expected Windows absolute path format."
+		return $absPath # Return original path on failure
+	}
 }
 
+#==============================================================================
+# Function: Invoke-ExportWorkflow
+#==============================================================================
+<#
+.SYNOPSIS
+    Exports n8n workflows from the container to a local file.
+.DESCRIPTION
+    Executes 'n8n export:workflow --all' inside the container as the 'node' user,
+    saving the output to a temporary file. Then copies the file to the local
+    'downloads' directory using the appropriate cp command (Docker direct, Podman via ssh).
+    Cleans up the temporary file in the container.
+.OUTPUTS
+    [bool] $true if successful, $false otherwise.
+#>
+function Invoke-ExportWorkflow {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$targetDescription = "n8n workflows from container '$($global:containerName)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Export")) {
+		Write-Host "Skipped export due to -WhatIf."
+		return $false
+	}
+
+	Write-Host "--- Starting Workflow Export ---"
+	$workflowExported = $false
+	$exportSuccess = $true
+	try {
+		# 1. Execute export command in container
+		$workflowCmdArgs = @("export:workflow", "--all", "--output", $containerWorkflowsPath)
+		Write-Host "Running exec command: $($global:enginePath) exec --user node $($global:containerName) n8n $($workflowCmdArgs -join ' ')"
+		$execResult = & $global:enginePath exec --user node $global:containerName n8n $workflowCmdArgs 2>&1
+		Write-Host "Exec result: $execResult"
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "The 'n8n export:workflow' command failed. Exit Code: $LASTEXITCODE. Output: $execResult"
+			throw "Exec command failed."
+		}
+		Write-Host "'n8n export:workflow' command executed successfully."
+		$workflowExported = $true # Mark as exported in container
+
+		# 2. Copy file from container to host using shared function
+		$copySuccess = Copy-MachineToHost -EnginePath $global:enginePath `
+			-ContainerEngineType $global:containerEngine `
+			-ContainerName $global:containerName `
+			-ContainerSourcePath $containerWorkflowsPath `
+			-HostDestinationPath $localWorkflowsPath
+		if (-not $copySuccess) {
+			# Error is logged within Copy-MachineToHost, just need to stop execution here
+			throw "Copy-MachineToHost command failed for workflows."
+		}
+		# Success message is now inside Copy-MachineToHost if successful
+	}
+	catch {
+		Write-Error "Workflow export step failed: $_"
+		$exportSuccess = $false
+	}
+	finally {
+		# 3. Cleanup temp file in container if it was created
+		if ($workflowExported) {
+			Write-Host "Cleaning up temporary workflow file in container..."
+			& $global:enginePath exec --user node $global:containerName rm $containerWorkflowsPath 2>$null
+		}
+		Write-Host "--- Finished Workflow Export ---"
+	}
+	return $exportSuccess
+}
+
+#==============================================================================
+# Function: Invoke-ExportCredential
+#==============================================================================
+<#
+.SYNOPSIS
+    Exports n8n credentials from the container to a local file.
+.DESCRIPTION
+    Executes 'n8n export:credentials --all' inside the container as the 'node' user,
+    saving the output to a temporary file. Handles the "No credentials found" case
+    as a warning. Copies the file (if created) to the local 'downloads' directory
+    using the appropriate cp command. Cleans up the temporary file.
+.OUTPUTS
+    [bool] $true if successful or if no credentials found, $false on other errors.
+#>
+function Invoke-ExportCredential {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$targetDescription = "n8n credentials from container '$($global:containerName)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Export")) {
+		Write-Host "Skipped export due to -WhatIf."
+		return $false
+	}
+
+	Write-Host "--- Starting Credentials Export ---"
+	$credentialsExported = $false
+	$exportSuccess = $true
+	$commandSucceeded = $false
+	try {
+		# 1. Execute export command in container
+		$credentialsCmdArgs = @("export:credentials", "--all", "--output", $containerCredentialsPath)
+		Write-Host "Running exec command: $($global:enginePath) exec --user node $($global:containerName) n8n $($credentialsCmdArgs -join ' ')"
+		$execResult = & $global:enginePath exec --user node $global:containerName n8n $credentialsCmdArgs 2>&1
+		Write-Host "Exec result: $execResult"
+
+		if ($LASTEXITCODE -eq 0) {
+			Write-Host "'n8n export:credentials' command executed successfully."
+			$credentialsExported = $true # Mark as exported in container
+			$commandSucceeded = $true
+		}
+		elseif ($LASTEXITCODE -eq 1 -and $execResult -match "No credentials found") {
+			Write-Warning "No credentials found to export. Skipping credentials file copy."
+			$credentialsExported = $false # Ensure flag is false
+			$commandSucceeded = $true # Treat this specific case as non-fatal for the overall step
+		}
+		else {
+			Write-Error "The 'n8n export:credentials' command failed. Exit Code: $LASTEXITCODE. Output: $execResult"
+			throw "Exec command failed."
+		}
+
+		# 2. Copy file from container to host (only if export command created a file) using shared function
+		if ($credentialsExported) {
+			$copySuccess = Copy-MachineToHost -EnginePath $global:enginePath `
+				-ContainerEngineType $global:containerEngine `
+				-ContainerName $global:containerName `
+				-ContainerSourcePath $containerCredentialsPath `
+				-HostDestinationPath $localCredentialsPath
+			if (-not $copySuccess) {
+				# Error is logged within Copy-MachineToHost, just need to stop execution here
+				throw "Copy-MachineToHost command failed for credentials."
+			}
+			# Success message is now inside Copy-MachineToHost if successful
+		}
+	}
+	catch {
+		Write-Error "Credentials export step failed: $_"
+		$exportSuccess = $false
+	}
+	finally {
+		# 3. Cleanup temp file in container if it was created
+		if ($credentialsExported) {
+			Write-Host "Cleaning up temporary credentials file in container..."
+			& $global:enginePath exec --user node $global:containerName rm $containerCredentialsPath 2>$null
+		}
+		Write-Host "--- Finished Credentials Export ---"
+	}
+	# Return true if the command succeeded OR if the only issue was "no credentials found"
+	return $exportSuccess -and $commandSucceeded
+}
+
+#==============================================================================
+# Function: Invoke-ImportWorkflow
+#==============================================================================
+<#
+.SYNOPSIS
+    Imports n8n workflows into the container from a local file.
+.DESCRIPTION
+    Checks if the local workflow export file exists. Copies the file into the
+    container's temporary directory using the appropriate cp command (Docker direct,
+    Podman via ssh with WSL path). Executes 'n8n import:workflow' inside the
+    container as the 'node' user. Cleans up the temporary file.
+.OUTPUTS
+    [bool] $true if successful, $false otherwise.
+#>
+function Invoke-ImportWorkflow {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$targetDescription = "n8n workflows into container '$($global:containerName)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Import")) {
+		Write-Host "Skipped import due to -WhatIf."
+		return $false
+	}
+
+	# Check if source file exists
+	if (-not (Test-Path -Path $localWorkflowsPath -PathType Leaf)) {
+		Write-Error "Local workflow file not found: '$localWorkflowsPath'. Please export workflows first."
+		return $false
+	}
+
+	Write-Host "--- Starting Workflow Import ---"
+	$importSuccess = $true
+	$fileCopied = $false
+	try {
+		# 1. Copy file from host to container
+		Write-Host "Copying local workflow file to container..."
+		if ($global:containerEngine -eq "docker") {
+			$cpCommand = "$($global:enginePath) cp ""$localWorkflowsPath"" ""$($global:containerName):$containerWorkflowsPath"""
+			Write-Host "Running cp command: $cpCommand"
+			$cpResult = & $global:enginePath cp $localWorkflowsPath "$($global:containerName):$containerWorkflowsPath" 2>&1
+		}
+		else {
+			# Podman - use machine ssh workaround for host-to-container
+			$wslSourceFilePath = ConvertTo-WSLPath -winPath $localWorkflowsPath
+			if ($wslSourceFilePath -eq $localWorkflowsPath) { throw "Failed to convert Windows path '$localWorkflowsPath' to WSL path." }
+			$innerCpCommand = "podman cp '$wslSourceFilePath' '$($global:containerName):$containerWorkflowsPath'"
+			$cpCommand = "$($global:enginePath) machine ssh ""$innerCpCommand"""
+			Write-Host "Running cp command via podman machine ssh: $cpCommand"
+			$cpResult = & $global:enginePath machine ssh "$innerCpCommand" 2>&1
+		}
+		Write-Host "Cp result: $cpResult"
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Copying the local workflow file to the container failed. Exit Code: $LASTEXITCODE. Output: $cpResult"
+			throw "Cp command failed."
+		}
+		Write-Host "Successfully copied workflow file to container."
+		$fileCopied = $true
+
+		# 2. Execute import command in container
+		$importCmdArgs = @("import:workflow", "--input", $containerWorkflowsPath)
+		Write-Host "Running exec command: $($global:enginePath) exec --user node $($global:containerName) n8n $($importCmdArgs -join ' ')"
+		$execResult = & $global:enginePath exec --user node $global:containerName n8n $importCmdArgs 2>&1
+		Write-Host "Exec result: $execResult"
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "The 'n8n import:workflow' command failed. Exit Code: $LASTEXITCODE. Output: $execResult"
+			throw "Exec command failed."
+		}
+		Write-Host "'n8n import:workflow' command executed successfully." -ForegroundColor Green
+	}
+	catch {
+		Write-Error "Workflow import step failed: $_"
+		$importSuccess = $false
+	}
+	finally {
+		# 3. Cleanup temp file in container if it was copied
+		if ($fileCopied) {
+			Write-Host "Cleaning up temporary workflow file in container..."
+			& $global:enginePath exec --user node $global:containerName rm $containerWorkflowsPath 2>$null
+		}
+		Write-Host "--- Finished Workflow Import ---"
+	}
+	return $importSuccess
+}
+
+#==============================================================================
+# Function: Invoke-ImportCredential
+#==============================================================================
+<#
+.SYNOPSIS
+    Imports n8n credentials into the container from a local file.
+.DESCRIPTION
+    Checks if the local credential export file exists. Copies the file into the
+    container's temporary directory using the appropriate cp command. Executes
+    'n8n import:credentials' inside the container as the 'node' user.
+    Cleans up the temporary file.
+.OUTPUTS
+    [bool] $true if successful, $false otherwise.
+#>
+function Invoke-ImportCredential {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$targetDescription = "n8n credentials into container '$($global:containerName)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Import")) {
+		Write-Host "Skipped import due to -WhatIf."
+		return $false
+	}
+
+	# Check if source file exists
+	if (-not (Test-Path -Path $localCredentialsPath -PathType Leaf)) {
+		Write-Error "Local credentials file not found: '$localCredentialsPath'. Please export credentials first."
+		return $false
+	}
+
+	Write-Host "--- Starting Credentials Import ---"
+	$importSuccess = $true
+	$fileCopied = $false
+	try {
+		# 1. Copy file from host to container
+		Write-Host "Copying local credentials file to container..."
+		if ($global:containerEngine -eq "docker") {
+			$cpCommand = "$($global:enginePath) cp ""$localCredentialsPath"" ""$($global:containerName):$containerCredentialsPath"""
+			Write-Host "Running cp command: $cpCommand"
+			$cpResult = & $global:enginePath cp $localCredentialsPath "$($global:containerName):$containerCredentialsPath" 2>&1
+		}
+		else {
+			# Podman
+			$wslSourceFilePath = ConvertTo-WSLPath -winPath $localCredentialsPath
+			if ($wslSourceFilePath -eq $localCredentialsPath) { throw "Failed to convert Windows path '$localCredentialsPath' to WSL path." }
+			$innerCpCommand = "podman cp '$wslSourceFilePath' '$($global:containerName):$containerCredentialsPath'"
+			$cpCommand = "$($global:enginePath) machine ssh ""$innerCpCommand"""
+			Write-Host "Running cp command via podman machine ssh: $cpCommand"
+			$cpResult = & $global:enginePath machine ssh "$innerCpCommand" 2>&1
+		}
+		Write-Host "Cp result: $cpResult"
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Copying the local credentials file to the container failed. Exit Code: $LASTEXITCODE. Output: $cpResult"
+			throw "Cp command failed."
+		}
+		Write-Host "Successfully copied credentials file to container."
+		$fileCopied = $true
+
+		# 2. Execute import command in container
+		$importCmdArgs = @("import:credentials", "--input", $containerCredentialsPath)
+		Write-Host "Running exec command: $($global:enginePath) exec --user node $($global:containerName) n8n $($importCmdArgs -join ' ')"
+		$execResult = & $global:enginePath exec --user node $global:containerName n8n $importCmdArgs 2>&1
+		Write-Host "Exec result: $execResult"
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "The 'n8n import:credentials' command failed. Exit Code: $LASTEXITCODE. Output: $execResult"
+			throw "Exec command failed."
+		}
+		Write-Host "'n8n import:credentials' command executed successfully." -ForegroundColor Green
+	}
+	catch {
+		Write-Error "Credentials import step failed: $_"
+		$importSuccess = $false
+	}
+	finally {
+		# 3. Cleanup temp file in container if it was copied
+		if ($fileCopied) {
+			Write-Host "Cleaning up temporary credentials file in container..."
+			& $global:enginePath exec --user node $global:containerName rm $containerCredentialsPath 2>$null
+		}
+		Write-Host "--- Finished Credentials Import ---"
+	}
+	return $importSuccess
+}
+
+
 ################################################################################
-# Main Script Body
+# Main Menu Loop using Generic Function
 ################################################################################
 
-Write-Host "Starting n8n data export..."
-Export-n8nData -ContainerEnginePath $global:enginePath `
-    -ContainerName $global:containerName `
-    -SourcePathInContainer $containerSourcePath `
-    -DestinationPathLocal $localDestinationPath
+# Define Menu Title and Items
+$menuTitle = "n8n Export/Import Menu"
+$menuItems = [ordered]@{
+	"1" = "Export Workflows"
+	"2" = "Export Credentials"
+	"3" = "Import Workflows"
+	"4" = "Import Credentials"
+	"S" = "Show Container Status" # Added for convenience
+	"0" = "Exit menu"
+}
 
-Write-Host "Export script finished."
+# Define Menu Actions
+$menuActions = @{
+	"1" = { Invoke-ExportWorkflow }
+	"2" = { Invoke-ExportCredential }
+	"3" = { Invoke-ImportWorkflow }
+	"4" = { Invoke-ImportCredential }
+	"S" = {
+		Show-ContainerStatus -ContainerName $global:containerName `
+			-ContainerEngine $global:containerEngine `
+			-EnginePath $global:enginePath `
+			-DisplayName $global:containerName `
+			-TcpPort 5678 ` # Assuming default n8n port
+		-HttpPort 5678
+	}
+	# Note: "0" action is handled internally by Invoke-MenuLoop
+}
+
+# Ensure downloads directory exists before showing menu
+if (-not (Test-Path -Path $localDownloadsDir -PathType Container)) {
+	Write-Host "Creating downloads directory: $localDownloadsDir"
+	New-Item -Path $localDownloadsDir -ItemType Directory -Force | Out-Null
+}
+
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+
+Write-Host "Script finished."
