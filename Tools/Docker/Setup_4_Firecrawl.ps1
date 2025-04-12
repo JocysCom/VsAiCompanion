@@ -29,8 +29,8 @@ $global:redisImage = "redis:alpine"
 $global:firecrawlName = "firecrawl"
 $global:redisContainerName = "firecrawl-redis"
 $global:networkName = "firecrawl-net"
-$global:containerEngine = "docker" # Hardcode to docker
-$global:enginePath = Get-EnginePath -EngineName $global:containerEngine # Use generic function
+$global:containerEngine = "docker"
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 $global:volumeName = $global:firecrawlName # Default: same as container name.
 
 #==============================================================================

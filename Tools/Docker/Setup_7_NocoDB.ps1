@@ -32,6 +32,8 @@ if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# Set the NocoDB image name.
+$global:imageName = "nocodb/nocodb:latest"
 # Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
@@ -42,9 +44,6 @@ else { # Assumes podman
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
-
-# Set the NocoDB image name.
-$global:imageName = "nocodb/nocodb:latest"
 
 #==============================================================================
 # Function: Install-NocoDBContainer

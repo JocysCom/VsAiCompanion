@@ -38,16 +38,16 @@ if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# Set the image name (consistent for both engines in this case, but might differ elsewhere)
+$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
 # Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:pullOptions = @()
-	$global:imageName = "docker.n8n.io/n8nio/n8n:latest"
+	# $global:imageName = "docker.n8n.io/n8nio/n8n:latest" # Original Docker-specific, now using common one
 }
 else { # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
-	# Use the Docker Hub version of n8n for Podman to avoid 403 errors.
-	$global:imageName = "docker.io/n8nio/n8n:latest"
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine

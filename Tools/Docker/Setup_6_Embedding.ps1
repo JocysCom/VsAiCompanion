@@ -26,7 +26,7 @@ Set-ScriptLocation
 #############################################
 $global:buildDir = Join-Path $PSScriptRoot "embedding_api"
 $global:containerName = "embedding-api"
-$global:imageTag = "embedding-api"
+$global:imageName = "embedding-api" # Standardized variable name
 $global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
 $global:containerEngine = "podman" # Hardcode to podman
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine # Explicitly use Podman via generic function
@@ -173,7 +173,7 @@ async def options_handler(path: str):
 
 	Write-Host "Building the Embedding API container image..."
 	# Build the container image using Podman.
-	& $global:enginePath build --tag $global:imageTag "`"$global:buildDir`""
+	& $global:enginePath build --tag $global:imageName "`"$global:buildDir`"" # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to build embedding API image."
 		exit 1
@@ -210,7 +210,7 @@ function Install-EmbeddingContainer {
 	#   --detach: runs the container in background.
 	#   --name: assigns the container the name "embedding-api".
 	#   --publish: maps host port 8000 to container port 8000.
-	& $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageTag
+	& $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageName # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run embedding API container."
 		exit 1
@@ -248,7 +248,7 @@ function Update-EmbeddingContainer {
 	Write-Host "Updating the Embedding API container..."
 
 	# Rebuild the container image.
-	if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Image")) {
+	if ($PSCmdlet.ShouldProcess($global:imageName, "Build Image")) { # Use imageName
 		Invoke-EmbeddingImageBuild
 	}
 	else {
@@ -269,7 +269,7 @@ function Update-EmbeddingContainer {
 		#   --detach: runs the container in background.
 		#   --name: assigns the container the name "embedding-api".
 		#   --publish: maps host port 8000 to container port 8000.
-		& $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageTag
+		& $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageName # Use imageName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to run updated embedding API container."
 			exit 1

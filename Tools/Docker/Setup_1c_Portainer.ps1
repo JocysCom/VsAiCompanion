@@ -30,15 +30,15 @@ if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# Set the image name (consistent for both engines)
+$global:imageName = "portainer/portainer-ce:latest"
 # Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:pullOptions = @()
-	$global:imageName = "portainer/portainer-ce:latest"
 }
 else { # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
-	$global:imageName = "portainer/portainer-ce:latest"
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine

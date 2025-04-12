@@ -24,7 +24,7 @@ Set-ScriptLocation
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerName = "qdrant-mcp-server"
-$global:imageTag = "qdrant-mcp-server:latest"
+$global:imageName = "qdrant-mcp-server:latest" # Standardized variable name
 $global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
 $global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant"
 $global:repoUrl = "https://github.com/qdrant/mcp-server-qdrant.git"
@@ -112,9 +112,9 @@ function Invoke-QdrantMCPServerImageBuild {
 		return $false
 	}
 
-	if ($PSCmdlet.ShouldProcess($global:imageTag, "Build Container Image from '$($global:srcDir)'")) {
-		Write-Host "Building Qdrant MCP Server image '$($global:imageTag)'..."
-		& $global:enginePath build --tag $global:imageTag $global:srcDir
+	if ($PSCmdlet.ShouldProcess($global:imageName, "Build Container Image from '$($global:srcDir)'")) { # Use imageName
+		Write-Host "Building Qdrant MCP Server image '$($global:imageName)'..." # Use imageName
+		& $global:enginePath build --tag $global:imageName $global:srcDir # Use imageName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to build Qdrant MCP Server image."
 			return $false
@@ -199,7 +199,7 @@ function Install-QdrantMCPServerContainer {
 
 	# Execute podman run with options and image.
 	# The command and arguments (--transport sse) are specified by CMD in the Dockerfile.
-	& $global:enginePath run @runOptions $global:imageTag
+	& $global:enginePath run @runOptions $global:imageName # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to start the Qdrant MCP Server container using the default CMD. Check container logs for details."
 		return
