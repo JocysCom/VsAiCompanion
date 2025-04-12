@@ -69,12 +69,13 @@ Select the appropriate cmdlet for script output to prevent errors and ensure pro
 
 *   **`Write-Output`**: **Strictly** for function return values intended for assignment or pipeline use.
     *   **AVOID** using it for status messages/prompts within functions that return values. Doing so pollutes the output stream and can cause type errors (e.g., `$var = MyFunc` results in `$var` being `Object[]` instead of `string` because `Write-Output` messages were captured).
-*   **`Write-Information`**: **Preferred** for status/progress messages. Controllable via `$InformationPreference` (set to `'Continue'` in main scripts) and redirectable.
-*   **`Write-Host`**: Use **only** when direct console display is essential and redirection is undesirable (e.g., `Read-Host` prompts).
+*   **`Write-Host`**: Use when direct console display is essential and redirection is undesirable (e.g., `Read-Host` prompts).
 *   **`Write-Warning`/`Error`/`Verbose`/`Debug`**: Use for their specific semantic purposes.
 
 **Rationale:**
 Prevents type mismatches when capturing function output. Improves script clarity and control over output streams.
+
+Simplicity is very important because code should be easy for both humans and AI to understand. For example, avoid passing functions as arguments.
 
 ## Rule: Standard PowerShell Function Header Format
 
