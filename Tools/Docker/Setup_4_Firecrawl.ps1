@@ -25,13 +25,15 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 $global:imageName = "obeoneorg/firecrawl"
+$global:firecrawlName = "firecrawl" # Use this for container name
+$global:volumeName = $global:firecrawlName # Default: same as container name.
 $global:redisImage = "redis:alpine"
-$global:firecrawlName = "firecrawl"
 $global:redisContainerName = "firecrawl-redis"
 $global:networkName = "firecrawl-net"
+
+# --- Engine Selection (Hardcoded to Docker) ---
 $global:containerEngine = "docker"
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
-$global:volumeName = $global:firecrawlName # Default: same as container name.
 
 #==============================================================================
 # Function: Install-FirecrawlContainer

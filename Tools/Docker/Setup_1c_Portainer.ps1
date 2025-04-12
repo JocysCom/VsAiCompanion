@@ -24,14 +24,19 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
+$global:imageName = "portainer/portainer-ce:latest"
+$global:containerName = "portainer"
+$global:volumeName = $global:containerName # Default: same as container name.
+$global:httpPort = 9000
+$global:httpsPort = 9443
+
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
-# Set the image name (consistent for both engines)
-$global:imageName = "portainer/portainer-ce:latest"
 # Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
@@ -42,12 +47,6 @@ else { # Assumes podman
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
-
-# Container specific variables
-$global:containerName = "portainer"
-$global:volumeName = $global:containerName # Default: same as container name.
-$global:httpPort = 9000
-$global:httpsPort = 9443
 
 #==============================================================================
 # Function: Get-PortainerContainerConfig

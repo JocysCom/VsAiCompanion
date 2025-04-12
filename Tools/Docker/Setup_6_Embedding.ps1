@@ -24,12 +24,14 @@ Set-ScriptLocation
 #############################################
 # Global Variables and Build Context Directory
 #############################################
-$global:buildDir = Join-Path $PSScriptRoot "embedding_api"
-$global:containerName = "embedding-api"
 $global:imageName = "embedding-api" # Standardized variable name
+$global:containerName = "embedding-api"
 $global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
-$global:containerEngine = "podman" # Hardcode to podman
-$global:enginePath = Get-EnginePath -EngineName $global:containerEngine # Explicitly use Podman via generic function
+$global:buildDir = Join-Path $PSScriptRoot "embedding_api"
+
+# --- Engine Selection (Hardcoded to Podman) ---
+$global:containerEngine = "podman"
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 #==============================================================================
 # Function: Invoke-EmbeddingImageBuild

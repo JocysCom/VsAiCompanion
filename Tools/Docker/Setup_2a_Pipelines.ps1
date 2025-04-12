@@ -29,7 +29,7 @@ $global:downloadFolder = ".\downloads"
 $global:enginePath = $null
 $global:containerEngine = $null
 
-# Ensure the engine is selected.
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {

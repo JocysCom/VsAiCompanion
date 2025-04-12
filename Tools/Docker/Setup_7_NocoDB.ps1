@@ -24,16 +24,17 @@ Set-ScriptLocation
 # Global Variables and Container Engine Setup
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
+$global:imageName = "nocodb/nocodb:latest"
 $global:containerName = "nocodb"
 $global:volumeName = $global:containerName # Default: same as container name.
+
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
-# Set the NocoDB image name.
-$global:imageName = "nocodb/nocodb:latest"
 # Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege

@@ -29,17 +29,18 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
+$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
 $global:containerName = "n8n"
-$global:containerPort = 5678
 $global:volumeName = $global:containerName # Default: same as container name.
+$global:containerPort = 5678
+
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
-# Set the image name (consistent for both engines in this case, but might differ elsewhere)
-$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
 # Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege

@@ -25,6 +25,8 @@ Set-ScriptLocation
 $global:imageName = "qdrant/qdrant"
 $global:containerName = "qdrant"
 $global:volumeName = $global:containerName # Default: same as container name.
+
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {

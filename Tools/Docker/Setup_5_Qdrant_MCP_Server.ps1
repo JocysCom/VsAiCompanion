@@ -23,16 +23,16 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:containerName = "qdrant-mcp-server"
 $global:imageName = "qdrant-mcp-server:latest" # Standardized variable name
+$global:containerName = "qdrant-mcp-server"
 $global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
 $global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant"
 $global:repoUrl = "https://github.com/qdrant/mcp-server-qdrant.git"
 $global:qdrantUrl = "http://localhost:6333"
-$global:collectionName = "mcp-default-collection" # Default collection name
-$global:qdrantUrlPromptDefault = "http://host.containers.internal:6333" # Default shown to user, updated to reflect Podman host access
+$global:collectionName = "mcp-default-collection"
+$global:qdrantUrlPromptDefault = "http://host.containers.internal:6333"
 
-
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {

@@ -24,6 +24,11 @@ Set-ScriptLocation
 #############################################
 # Pick Container Engine and Set Global Variables
 #############################################
+$global:imageName = "ghcr.io/open-webui/open-webui:main"
+$global:containerName = "open-webui"
+$global:volumeName = $global:containerName # Default: same as container name.
+
+# --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine # Renamed variable for clarity
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
@@ -36,9 +41,6 @@ if ($global:containerEngine -eq "docker") {
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine # Renamed variable
-$global:imageName = "ghcr.io/open-webui/open-webui:main"
-$global:containerName = "open-webui"
-$global:volumeName = $global:containerName # Default: same as container name.
 
 #==============================================================================
 # Function: Get-OpenWebUIContainerConfig
