@@ -24,26 +24,27 @@ Set-ScriptLocation
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerName = "qdrant-mcp-server"
-$global:imageTag = "qdrant-mcp-server:latest" # Tag for the built image
-$global:volumeName = "qdrant_mcp_server_data" # Define a volume name (may not be used by app)
-$global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant" # Source code directory
+$global:imageTag = "qdrant-mcp-server:latest"
+$global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
+$global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant"
 $global:repoUrl = "https://github.com/qdrant/mcp-server-qdrant.git"
-$global:qdrantUrl = "http://localhost:6333" # Default Qdrant URL (assuming local install)
+$global:qdrantUrl = "http://localhost:6333"
 $global:collectionName = "mcp-default-collection" # Default collection name
 $global:qdrantUrlPromptDefault = "http://host.containers.internal:6333" # Default shown to user, updated to reflect Podman host access
 
 
 $global:containerEngine = Select-ContainerEngine
-# Check if the selected container engine is supported and set the path accordingly.
-if ($global:containerEngine -eq "docker") {
-	Test-AdminPrivilege
-	$global:enginePath = Get-DockerPath
-}
-elseif ($global:containerEngine -eq "podman") {
-	$global:enginePath = Get-PodmanPath
-}else{
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# Set engine-specific options (only admin check for Docker)
+if ($global:containerEngine -eq "docker") {
+	Test-AdminPrivilege
+}
+# Get the engine path after setting specific options
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 #==============================================================================
 # Function: Confirm-SourceCode

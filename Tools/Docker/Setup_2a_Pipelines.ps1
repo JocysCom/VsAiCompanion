@@ -23,7 +23,7 @@ Set-ScriptLocation
 # Global variables used across functions.
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerName = "pipelines"
-$global:volumeName = "pipelines" # Assuming volume name matches container name
+$global:volumeName = $global:containerName # Default: same as container name.
 $global:pipelinesFolder = ".\pipelines"
 $global:downloadFolder = ".\downloads"
 $global:enginePath = $null
@@ -31,16 +31,13 @@ $global:containerEngine = $null
 
 # Ensure the engine is selected.
 $global:containerEngine = Select-ContainerEngine
-if ($global:containerEngine -eq "docker") {
-	$global:enginePath = Get-DockerPath
-}
-elseif ($global:containerEngine -eq "podman") {
-	$global:enginePath = Get-PodmanPath
-}
-else {
-	Write-Error "No container engine (Docker or Podman) found. Please install one before running this script."
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# No engine-specific options needed here, just get the path
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 # Validate that we have a valid engine path
 if (-not $global:enginePath) {

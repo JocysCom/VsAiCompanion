@@ -24,20 +24,27 @@ Set-ScriptLocation
 #############################################
 $global:imageName = "qdrant/qdrant"
 $global:containerName = "qdrant"
-$global:volumeName = "qdrant_storage" # Define a volume name
+$global:volumeName = $global:containerName # Default: same as container name.
 $global:containerEngine = Select-ContainerEngine
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
+	exit 1
+}
+# Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
-	$global:enginePath = Get-DockerPath
-	Write-Host "Using Docker with executable: $global:enginePath"
+	Write-Host "Using Docker..."
 	# For Docker, set DOCKER_HOST pointing to the Docker service pipe.
 	$env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 }
-else {
-	$global:enginePath = Get-PodmanPath
-	Write-Host "Using Podman with executable: $global:enginePath"
+else { # Assumes podman
+	Write-Host "Using Podman..."
 	# If additional Podman-specific environment settings are needed, add them here.
 }
+# Get the engine path after setting specific options
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
+Write-Host "Engine executable: $global:enginePath"
 
 #==============================================================================
 # Function: Install-QdrantContainer

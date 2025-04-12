@@ -31,25 +31,26 @@ Set-ScriptLocation
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerName = "n8n"
 $global:containerPort = 5678
-$global:volumeName = "n8n_data"
+$global:volumeName = $global:containerName # Default: same as container name.
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
-	$global:enginePath = Get-DockerPath
-	$global:pullOptions = @()  # No extra options needed for Docker.
+	$global:pullOptions = @()
 	$global:imageName = "docker.n8n.io/n8nio/n8n:latest"
 }
-else {
-	$global:enginePath = Get-PodmanPath
+else { # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
 	# Use the Docker Hub version of n8n for Podman to avoid 403 errors.
 	$global:imageName = "docker.io/n8nio/n8n:latest"
 }
+# Get the engine path after setting specific options
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 #==============================================================================
 # Function: Get-n8nContainerConfig

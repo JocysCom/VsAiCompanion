@@ -25,19 +25,18 @@ if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
 	exit 1
 }
+# Set engine-specific options (only admin check for Docker)
 if ($global:containerEngine -eq "docker") {
-	Test-AdminPrivilege # Docker often requires elevation
-	$global:enginePath = Get-DockerPath
+	Test-AdminPrivilege
 }
-else {
-	$global:enginePath = Get-PodmanPath
-}
+# Get the engine path after setting specific options
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 # Define common paths
 $localDownloadsDir = Join-Path -Path $PSScriptRoot -ChildPath "downloads"
 $localWorkflowsPath = Join-Path -Path $localDownloadsDir -ChildPath "n8n_workflows.json"
 $localCredentialsPath = Join-Path -Path $localDownloadsDir -ChildPath "n8n_credentials.json"
-$containerTempDir = "/tmp" # Using /tmp inside the container
+$containerTempDir = "/tmp"
 $containerWorkflowsPath = "$containerTempDir/n8n_workflows.json"
 $containerCredentialsPath = "$containerTempDir/n8n_credentials.json"
 

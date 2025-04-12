@@ -18,7 +18,7 @@ using namespace System.IO
 
 # Ensure the script is running as Administrator and set the working directory.
 # Note: This script currently only supports Docker due to network alias usage.
-Test-AdminPrivilege
+Test-AdminPrivilege # Docker requires elevation
 Set-ScriptLocation
 
 #############################################
@@ -29,8 +29,9 @@ $global:redisImage = "redis:alpine"
 $global:firecrawlName = "firecrawl"
 $global:redisContainerName = "firecrawl-redis"
 $global:networkName = "firecrawl-net"
-$global:enginePath = Get-DockerPath # Explicitly use Docker
-$global:volumeName = "firecrawl_data" # Define a volume name
+$global:containerEngine = "docker" # Hardcode to docker
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine # Use generic function
+$global:volumeName = $global:firecrawlName # Default: same as container name.
 
 #==============================================================================
 # Function: Install-FirecrawlContainer

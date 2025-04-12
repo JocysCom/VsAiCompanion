@@ -25,19 +25,25 @@ Set-ScriptLocation
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerName = "nocodb"
-$global:volumeName = "nocodb_data"
+$global:volumeName = $global:containerName # Default: same as container name.
 $global:containerEngine = Select-ContainerEngine
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
+	exit 1
+}
+# Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
-	$global:enginePath = Get-DockerPath
-	$global:pullOptions = @()  # No additional options for Docker.
+	$global:pullOptions = @()
 }
-else {
-	$global:enginePath = Get-PodmanPath
+else { # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
 }
+# Get the engine path after setting specific options
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
-# Set the NocoDB image name and container name.
+# Set the NocoDB image name.
 $global:imageName = "nocodb/nocodb:latest"
 
 #==============================================================================

@@ -25,19 +25,27 @@ Set-ScriptLocation
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:containerEngine = Select-ContainerEngine
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
+	exit 1
+}
+# Set engine-specific options
 if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
-	$global:enginePath = Get-DockerPath
-	$global:pullOptions = @()  # No extra options needed for Docker.
+	$global:pullOptions = @()
 	$global:imageName = "portainer/portainer-ce:latest"
 }
-else {
-	$global:enginePath = Get-PodmanPath
+else { # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
 	$global:imageName = "portainer/portainer-ce:latest"
 }
+# Get the engine path after setting specific options
+$global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
-# Default ports for Portainer
+# Container specific variables
+$global:containerName = "portainer"
+$global:volumeName = $global:containerName # Default: same as container name.
 $global:httpPort = 9000
 $global:httpsPort = 9443
 
@@ -60,9 +68,9 @@ $global:httpsPort = 9443
 	Uses 'engine inspect'. Filters environment variables to keep only those starting with 'PORTAINER_'.
 #>
 function Get-PortainerContainerConfig {
-	$containerInfo = & $global:enginePath inspect portainer 2>$null | ConvertFrom-Json
+	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
 	if (-not $containerInfo) {
-		Write-Host "Container 'portainer' not found."
+		Write-Host "Container '$($global:containerName)' not found."
 		return $null
 	}
 
@@ -141,9 +149,9 @@ function Start-PortainerContainer {
 	# Build the run command
 	$runOptions = @(
 		"--detach", # Run container in background.
-		"--publish", "${HttpPort}:9000", # Map host HTTP port to container port 9000.
-		"--publish", "${HttpsPort}:9443", # Map host HTTPS port to container port 9443.
-		"--volume", "portainer_data:/data"      # Mount the named volume for persistent data.
+		"--publish", "${HttpPort}:9000",
+		"--publish", "${HttpsPort}:9443",
+		"--volume", "$($global:volumeName):/data" # Mount the named volume for persistent data.
 	)
 
 	# Add socket volume based on container engine
@@ -160,7 +168,7 @@ function Start-PortainerContainer {
 
 	# Assign a name to the container.
 	$runOptions += "--name"
-	$runOptions += "portainer"
+	$runOptions += $global:containerName
 
 	# Add all environment variables (if any).
 	foreach ($env in $EnvVars) {
@@ -169,7 +177,7 @@ function Start-PortainerContainer {
 	}
 
 	# Run the container
-	if ($PSCmdlet.ShouldProcess("portainer", "Start Container with Image '$Image'")) {
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting Portainer container with image: $Image"
 		& $global:enginePath run $runOptions $Image
 
@@ -225,11 +233,11 @@ function Start-PortainerContainer {
 #>
 function Install-PortainerContainer {
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName "portainer_data")) {
-		Write-Error "Failed to ensure volume 'portainer_data' exists. Exiting..."
+	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
-	Write-Host "IMPORTANT: Using volume 'portainer_data' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
 
 	# Check if the Portainer image is already available.
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
@@ -278,7 +286,7 @@ function Update-PortainerContainer {
 	param()
 
 	# Check ShouldProcess before proceeding
-	if (-not $PSCmdlet.ShouldProcess("portainer", "Update Container")) {
+	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
 		return
 	}
 
@@ -291,7 +299,7 @@ function Update-PortainerContainer {
 	}
 
 	# Check if container actually exists before prompting for backup
-	$existingContainer = & $global:enginePath ps -a --filter "name=portainer" --format "{{.ID}}"
+	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
@@ -301,12 +309,12 @@ function Update-PortainerContainer {
 		}
 	}
 	else {
-		Write-Warning "Container 'portainer' not found. Skipping backup prompt."
+		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
 	# Call simplified Update-Container (handles check, remove, pull)
 	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" -ImageName $global:imageName) {
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the original config (image name is implicitly latest from pull)
 		if (-not (Start-PortainerContainer -Image $global:imageName -EnvVars $config.EnvVars)) {
@@ -351,7 +359,7 @@ $menuItems = [ordered]@{
 $menuActions = @{
 	"1" = {
 		# Pass the global variable directly to the restored -ContainerEngine parameter
-		Show-ContainerStatus -ContainerName "portainer" `
+		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Portainer" `
@@ -359,9 +367,9 @@ $menuActions = @{
 			-HttpPort $global:httpPort
 	}
 	"2" = { Install-PortainerContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" } # Call shared function directly
-	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName "portainer" } # Call shared function directly
-	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName "portainer" } # Call shared function directly
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
 	"6" = { Update-PortainerContainer } # Calls the dedicated update function
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
