@@ -23,52 +23,53 @@ Ensure the table uses the feature codes directly in the cells, not checkboxes or
 
 ## Features
 
-HE - Have a header with file, name description and usage
-SR - References Setup_0.ps1 with shared functions.
-CS - Installs container server
-IM - Installs container images
-ME - Have the container menu.
-EL - Ensure Elevated (checks for administrator privileges).
-SL - Set Script Location (sets the script's working directory).
-DF - Download File (downloads a file from a URL).
-CG - Check Git (checks if Git is installed).
-GP - Get Docker Path (gets the path to the Docker executable).
-PP - Get Podman Path (gets the path to the Podman executable).
-SE - Select Container Engine (prompts the user to choose Docker or Podman).
-AP - Test Application Installed (checks if an application is installed).
-TC - Test TCP Port (tests if a TCP port is open).
-HT - Test HTTP Port (tests if an HTTP port is open).
-WB - Test WebSocket Port (tests if a WebSocket port is open).
-BC - Backup Container Image (backs up a container image to a tar file).
-BS - Backup Container State (backs up a live running container by committing its state to an image and saving that image as a tar file).
-RC - Restore Container Image (restores a container image from a tar file).
-UP - Update Container (updates a container while preserving its configuration).
-RV - Refresh Environment Variables (Refreshes the current session's environment variables).
-RS - Restore Container State (restores a container from a previously saved backup tar file).
-CI - Check Image Update Available (Checks if a newer version of a container image is available from its registry).
-CW - Check WSL Status (Verifies WSL installation and required service status).
-ML - Menu Loop (Uses the generic Invoke-MenuLoop function).
-RM - Remove Container (Uses the generic Remove-ContainerAndVolume function).
+HE - Have a standard header block (see requirements below).
+SR - References necessary Setup_0_*.ps1 files with shared functions.
+CS - Installs container server (Docker/Podman CLI/Engine or builds from source).
+IM - Installs container images (pulls pre-built images or builds from source).
+ME - Has a main container management menu loop.
+EL - Ensure Elevated (checks for administrator privileges using Test-AdminPrivilege).
+SL - Set Script Location (sets the script's working directory using Set-ScriptLocation).
+DF - Download File (downloads a file from a URL using Invoke-DownloadFile).
+CG - Check Git (checks if Git is installed using Test-GitInstallation).
+GP - Get Docker Path (gets the path to the Docker executable, usually via Get-EnginePath).
+PP - Get Podman Path (gets the path to the Podman executable, usually via Get-EnginePath).
+SE - Select Container Engine (prompts the user to choose Docker or Podman using Select-ContainerEngine).
+AP - Test Application Installed (checks if an application is installed using Test-ApplicationInstalled).
+TC - Test TCP Port (tests if a TCP port is open using Test-TCPPort).
+HT - Test HTTP Port (tests if an HTTP port is open using Test-HTTPPort).
+WB - Test WebSocket Port (tests if a WebSocket port is open using Test-WebSocketPort).
+BC - Backup Container Image (backs up a container image to a tar file using Backup-ContainerImage).
+BS - Backup Container Volume (backs up a container's associated volume using Backup-ContainerVolume - tar method).
+RC - Restore Container Image (restores a container image from a tar file using Restore-ContainerImage or Test-AndRestoreBackup).
+UP - Update Container (updates a container image using Update-Container or custom build/run logic).
+RV - Refresh Environment Variables (Refreshes the current session's environment variables using Update-EnvironmentVariable).
+RS - Restore Container Volume (restores a container's associated volume from a tar backup using Restore-ContainerVolume).
+CI - Check Image Update Available (Checks if a newer version of a container image is available using Test-ImageUpdateAvailable).
+CW - Check WSL Status (Verifies WSL installation and required service status using Test-WSLStatus).
+ML - Menu Loop (Uses the generic Invoke-MenuLoop function for main menu or internal choices).
+RM - Remove Container (Uses the generic Remove-ContainerAndVolume function, may include related resources like networks/other containers).
 ST - Show/Test Status (Displays container info, status, and tests connectivity using Show-ContainerStatus).
 
 | Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
 |--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
 | Setup_0_\*.ps1                       | HE |    |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
-| Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW |    |    |
-| Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW |    |    |
-| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME |    | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    | RS | RV |    | CW | ML | RM |
-| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |    |    |
-| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    | ML |    |
-| Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    |    |    |    |    |    | SE |    |    |    |    | BC |    | RC |    |    |    |    |    | ML |    |
+| Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW | ML |    |    |
+| Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW | ML |    |    |
+| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME | EL | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    |    | RV |    | CW | ML |    |    |
+| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |    |    |    |
+| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    | ML |    |    |
+| Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    | SL |    |    | GP | PP | SE |    |    |    |    | BC |    | RC |    |    |    |    |    | ML |    |    |
 | Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
-| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL | DF |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
-| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI | CW | ML | RM | ST |
+| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
+| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI |    | ML | RM | ST |
 | Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_3_n8n_Export.ps1               | HE | SR |    |    |    | EL | SL |    |    | GP | PP | SE |    |    |    |    |    | BS |    |    |    |    |    |    |    |    |
 | Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
 | Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
 | Setup_5_Qdrant_MCP_Server.ps1        | HE | SR | CS | IM | ME | EL | SL |    | CG | GP | PP | SE |    | TC |    |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
-| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    |    |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM | ST |
-| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |    |
+| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    | PP |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM | ST |
+| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |    |    |
 | Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
 
 ## Feature requirements
@@ -100,10 +101,10 @@ Scripts must include the specific shared library files (`Setup_0_*.ps1`) they ne
 
 ### EL - Ensure Elevated
 
-If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Ensure-Elevated` function immediately after dot-sourcing `Setup_0_Core.ps1`:
+If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Test-AdminPrivilege` function immediately after dot-sourcing `Setup_0_Core.ps1`:
 
 ```PowerShell
-Ensure-Elevated
+Test-AdminPrivilege
 ```
 
 ### SL - Set Script Location
@@ -116,16 +117,21 @@ Set-ScriptLocation
 
 ### SE - Select Container Engine
 
-Scripts supporting both Docker and Podman should prompt the user and set global variables for the engine name and path:
+Scripts supporting both Docker and Podman should call the `Select-ContainerEngine` function. This function displays a menu, prompts the user, and returns the selected engine name ('docker' or 'podman'). It also sets script-scoped variables `$script:selectedEngine` and `$script:enginePath`. The calling script should typically assign the returned name to a global variable and can optionally retrieve the path from the script-scoped variable or call `Get-EnginePath` again.
 
 ```PowerShell
+# Example in calling script:
 $global:containerEngine = Select-ContainerEngine
 if ($global:containerEngine -eq "docker") {
-    # Ensure-Elevated # Call if Docker requires elevation
-    $global:enginePath = Get-DockerPath
+    # Test-AdminPrivilege # Call if Docker requires elevation
+    $global:enginePath = Get-EnginePath -EngineName "docker" # Or use $script:enginePath if appropriate
+}
+elseif ($global:containerEngine -eq "podman") {
+    $global:enginePath = Get-EnginePath -EngineName "podman" # Or use $script:enginePath if appropriate
 }
 else {
-    $global:enginePath = Get-PodmanPath
+    Write-Error "No valid container engine selected. Exiting."
+    exit 1
 }
 # Validate $global:enginePath is not null
 ```
@@ -155,9 +161,27 @@ Test-HTTPPort -Uri "http://localhost:[port_number]" -serviceName "[Service Name]
 ### BS / RC / UP / RS - Backup, Restore, Update
 
 Scripts providing Backup, Restore, and Update functionality via the menu should use the corresponding shared functions from `Setup_0_BackupRestore.ps1` and `Setup_0_ContainerMgmt.ps1`:
-*   Backup: `Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName`
-*   Restore: `Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName` (potentially with `-RestoreVolumes`)
-*   Update: Use the `Update-Container` function, providing a script block (`$RunFunction`) that correctly runs the specific container with its required options. `Check-AndRestoreBackup` (which calls `Restore-ContainerImage`) is often used within the install function called by `Update-Container`.
+*   **BS - Backup Volume:** Use `Backup-ContainerVolume` to back up the container's associated data volume to a `.tar` file.
+    ```PowerShell
+    # Example Menu Action
+    Backup-ContainerVolume -Engine $global:enginePath -EngineType $global:containerEngine -VolumeName $global:volumeName
+    ```
+*   **RC - Restore Image:** Use `Restore-ContainerImage` (or `Test-AndRestoreBackup`) to restore a container image from a `.tar` file.
+    ```PowerShell
+    # Example Menu Action (prompting for file)
+    $backupFile = Read-Host "Enter path to image backup file (.tar)"
+    Restore-ContainerImage -Engine $global:enginePath -BackupFile $backupFile
+    ```
+*   **UP - Update Container:** Use the `Update-Container` function. This function handles checking for image updates, removing the old container, and pulling the new image. The calling script's menu action must handle backup/restore prompts and starting the new container (often by providing a script block like `Invoke-StartSpecificContainerForUpdate` to the `-RunFunction` parameter, although this parameter is not currently implemented in `Update-Container`).
+    ```PowerShell
+    # Example Menu Action (simplified, assumes Update-Container handles start or caller does)
+    Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName
+    ```
+*   **RS - Restore Volume:** Use `Restore-ContainerVolume` to restore a container's data volume from a `.tar` backup file (prompts for selection).
+    ```PowerShell
+    # Example Menu Action
+    Restore-ContainerVolume -Engine $global:enginePath -EngineType $global:containerEngine -VolumeName $global:volumeName
+    ```
 
 ### ME - Menu Display Function
 
@@ -182,20 +206,36 @@ function Show-ContainerMenu {
 
 ### ML - Menu Loop
 
-Scripts with a menu must use the generic `Invoke-MenuLoop` function from `Setup_0_Core.ps1` to handle the menu logic. Define a hashtable mapping menu choices (strings) to the corresponding action script blocks.
+Scripts with a menu must use the generic `Invoke-MenuLoop` function from `Setup_0_Core.ps1` to handle the menu logic. Provide the menu title, an ordered hashtable of menu items (choice string -> description), and a hashtable mapping menu choices to action script blocks.
 
 ```PowerShell
+# Define Menu Title and Items
+$menuTitle = "[Specific Container Name] Menu"
+$menuItems = [ordered]@{
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container"
+	"4" = "Backup Volume (User Data)"
+	"5" = "Restore Volume (User Data)"
+	"6" = "Update System (Image)"
+	# ... other options ...
+	"0" = "Exit menu"
+}
+
+# Define Menu Actions
 $menuActions = @{
-    "1" = { Install-SpecificContainer }
-    "2" = { Uninstall-SpecificContainer }
-    "3" = { Backup-SpecificContainer }
-    "4" = { Restore-SpecificContainer }
-    "5" = { Update-SpecificContainer }
-    # "6" = { Update-SpecificUserData } # Optional
+	"1" = { Show-ContainerStatus ... }
+	"2" = { Install-SpecificContainer }
+	"3" = { Remove-ContainerAndVolume ... }
+	"4" = { Backup-ContainerVolume ... }
+	"5" = { Restore-ContainerVolume ... }
+	"6" = { Update-SpecificContainer }
+	# ... other actions ...
     # "A" = { Custom-Action } # Optional
 }
 
-Invoke-MenuLoop -ShowMenuScriptBlock ${function:Show-ContainerMenu} -ActionMap $menuActions -ExitChoice "0"
+# Invoke the Menu Loop
+Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
 ```
 
 ### RM - Remove Container

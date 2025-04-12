@@ -18,7 +18,7 @@ For example, with:
 
 You might have:
 - **Volume Backup File:** `n8n-volume-20250101-1450.tar`
-- **Image Backup File:** `n8n_data-image-20250101-1455.tar`
+- **Image Backup File:** `n8n-image-20250101-1455.tar` (Note: The helper scripts use the container name, not volume name, for image backups)
 
 ## Set Global Variables (PowerShell)
 
@@ -45,7 +45,7 @@ docker save -o $backupFile docker.io/n8nio/n8n:latest
 
 ```powershell
 # Adjust the filename as needed if it differs from the example below.
-docker load -i n8n_data-image-20250101-1455.tar
+docker load -i n8n-image-20250101-1455.tar
 ```
 
 ## 2. Docker Volume (User Data) Backup & Restore

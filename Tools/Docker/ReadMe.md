@@ -52,7 +52,7 @@ The PowerShell scripts are organized as follows:
 
 **Shared Helper Functions (`Setup_0_*.ps1`)**
 These scripts contain reusable functions imported by other setup scripts. They are not meant to be run directly.
-- **Setup_0_BackupRestore.ps1**: Functions for backing up and restoring container images and state.
+- **Setup_0_BackupRestore.ps1**: Functions for backing up and restoring container images and volumes (using `tar`).
 - **Setup_0_ContainerEngine.ps1**: Functions for selecting the container engine (Docker/Podman) and finding its path.
 - **Setup_0_ContainerMgmt.ps1**: Functions for common container management tasks (e.g., updating, removing).
 - **Setup_0_Core.ps1**: Core helper functions (e.g., ensuring elevation, setting script location, menu loop).
@@ -62,20 +62,20 @@ These scripts contain reusable functions imported by other setup scripts. They a
 **Core Setup & Management (`Setup_1_*.ps1`)**
 These scripts handle the initial setup of the container environment and core management tools.
 - **Setup_1_WSL2.ps1**: Ensures Windows Subsystem for Linux (WSL2) is installed and configured, which is often required for Docker/Podman on Windows.
-- **Setup_1a_Docker.ps1**: Installs and configures Docker Desktop on Windows.
-- **Setup_1a_Podman.ps1**: Installs and configures Podman, including the CLI and optionally Podman Desktop.
-- **Setup_1a_Podman_ExportContainers.ps1**: Script specifically for exporting existing Podman containers (likely for backup purposes).
-- **Setup_1a_Podman_Restore.ps1**: Script specifically for restoring Podman containers from backups.
-- **Setup_1b_BackupRestore.ps1**: Provides a menu-driven interface for backing up or restoring container images using functions from `Setup_0_BackupRestore.ps1`.
-- **Setup_1c_Portainer.ps1**: Installs and configures the Portainer container management UI.
+- **Setup_1a_Docker.ps1**: Installs and configures Docker Desktop or Docker Engine on Windows.
+- **Setup_1a_Podman.ps1**: Installs and configures Podman, including the CLI, machine, service, and optionally Podman Desktop.
+- **Setup_1b_BackupRestore.ps1**: Provides a menu-driven interface for backing up or restoring container *images* using functions from `Setup_0_BackupRestore.ps1`.
+- **Setup_1c_Portainer.ps1**: Installs and configures the Portainer container management UI (supports Docker/Podman).
 
 **Application Deployment (`Setup_2-7_*.ps1`)**
 These scripts handle the deployment and management of specific containerized applications.
-- **Setup_2a_Pipelines.ps1**: Deploys the Pipelines container for AI workflow orchestration.
-- **Setup_2b_OpenWebUI.ps1**: Installs the Open WebUI container for managing AI models and interfaces.
-- **Setup_3_n8n.ps1**: Installs the n8n container for workflow automation.
-- **Setup_4_Firecrawl.ps1**: Installs the Firecrawl container (and its Redis dependency) for web crawling.
-- **Setup_5_Qdrant.ps1**: Installs the Qdrant vector database container.
-- **Setup_6_Embedding.ps1**: Builds and runs the custom Embedding API container.
+- **Setup_2a_Pipelines.ps1**: Deploys the Pipelines container for AI workflow orchestration (supports Docker/Podman).
+- **Setup_2b_OpenWebUI.ps1**: Installs the Open WebUI container for managing AI models and interfaces (supports Docker/Podman).
+- **Setup_3_n8n.ps1**: Installs the n8n container for workflow automation (supports Docker/Podman).
+- **Setup_3_n8n_Export.ps1**: Exports n8n workflows and credentials (supports Docker/Podman).
+- **Setup_4_Firecrawl.ps1**: Installs the Firecrawl container (and its Redis dependency) for web crawling (**Docker only**).
+- **Setup_5_Qdrant.ps1**: Installs the Qdrant vector database container (supports Docker/Podman).
+- **Setup_5_Qdrant_MCP_Server.ps1**: Builds and runs the Qdrant MCP Server container from source (supports Docker/Podman).
+- **Setup_6_Embedding.ps1**: Builds and runs the custom Embedding API container from source (**Podman only**).
 - **Setup_6_Embedding_Test.ps1**: Tests the functionality of the deployed Embedding API.
-- **Setup_7_NocoDB.ps1**: Installs the NocoDB container for no-code database management.
+- **Setup_7_NocoDB.ps1**: Installs the NocoDB container for no-code database management (supports Docker/Podman).
