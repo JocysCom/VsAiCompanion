@@ -26,7 +26,7 @@ Set-ScriptLocation
 #############################################
 $containerEngine = Select-ContainerEngine
 if ($containerEngine -eq "docker") {
-	Ensure-Elevated
+	Test-AdminPrivilege
 	$enginePath = Get-DockerPath
 }
 else {
@@ -329,103 +329,87 @@ function Install-OpenWebUIContainer {
 	Start-OpenWebUIContainer -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
-#==============================================================================
-# Function: Uninstall-OpenWebUIContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Open WebUI container and optionally removes its data volume.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'open-webui' as both the
-	container and volume name. This will stop/remove the container and prompt the user
-	about removing the volume. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-OpenWebUIContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-#>
-function Uninstall-OpenWebUIContainer {
-	Remove-ContainerAndVolume -Engine $enginePath -ContainerName $containerName -VolumeName $volumeName
-}
-
-#==============================================================================
-# Function: Backup-OpenWebUIContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Backs up the state of the running Open WebUI container.
-.DESCRIPTION
-	Calls the Backup-ContainerState helper function, specifying 'open-webui' as the container name.
-	This commits the container state to an image and saves it as a tar file.
-.EXAMPLE
-	Backup-OpenWebUIContainer
-.NOTES
-	Relies on Backup-ContainerState helper function.
-#>
-function Backup-OpenWebUIContainer {
-	Backup-ContainerState -Engine $enginePath -ContainerName $containerName
-}
-
-#==============================================================================
-# Function: Restore-OpenWebUIContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores the Open WebUI container image from a backup tar file.
-.DESCRIPTION
-	Calls the Restore-ContainerState helper function, specifying 'open-webui' as the container name.
-	This loads the image from the backup tar file. Note: This only restores the image,
-	it does not automatically start a container from it.
-.EXAMPLE
-	Restore-OpenWebUIContainer
-.NOTES
-	Relies on Restore-ContainerState helper function. Does not handle volume restore.
-#>
-function Restore-OpenWebUIContainer {
-	Restore-ContainerState -Engine $enginePath -ContainerName $containerName
-}
+# Note: Uninstall-OpenWebUIContainer, Backup-OpenWebUIContainer, Restore-OpenWebUIContainer functions removed. Shared functions called directly from menu.
 
 #==============================================================================
 # Function: Update-OpenWebUIContainer
 #==============================================================================
 <#
 .SYNOPSIS
-	Updates the Open WebUI container to the latest image version using the generic update workflow.
+	Updates the Open WebUI container to the latest image version while preserving data.
 .DESCRIPTION
-	Defines a script block (`$runContainerFunction`) that encapsulates the logic to start the
-	Open WebUI container using its current configuration (obtained via Get-OpenWebUIContainerConfig)
-	but with the latest image name.
-	Calls the generic Update-Container helper function, passing the specific details for the
-	Open WebUI container (name, image name) and the defined script block via -RunFunction.
-	Supports -WhatIf.
+	Orchestrates the update process:
+	1. Gets the current container configuration.
+	2. Prompts the user to optionally back up the current container state.
+	3. Calls the simplified generic Update-Container function (handles update check, removal, pull).
+	4. If core update steps succeed, calls Start-OpenWebUIContainer to start the new container with preserved config.
+	5. Offers to restore from backup if the start fails (and a backup was made).
 .EXAMPLE
 	Update-OpenWebUIContainer -WhatIf
 .NOTES
-	Relies on Get-OpenWebUIContainerConfig, Start-OpenWebUIContainer, and the generic Update-Container function.
-	The script block ensures that existing configuration (ports, volumes, env vars) is preserved during the update.
+	Relies on Get-OpenWebUIContainerConfig, Backup-OpenWebUIContainer, Update-Container,
+	Start-OpenWebUIContainer, Restore-OpenWebUIContainer helper functions.
+	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-OpenWebUIContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
 	param()
 
-	# Define a script block that knows how to run the container with the right options
-	$runContainerFunction = {
-		$config = Get-OpenWebUIContainerConfig
-		if (-not $config) {
-			throw "Failed to get container configuration"
-		}
-
-		# Update the image in the config to use the latest one
-		$config.Image = $imageName
-
-		$result = Start-OpenWebUIContainer -action "Starting updated container" -successMessage "OpenWebUI container has been successfully updated and is running at http://localhost:3000" -config $config
-		if (-not $result) {
-			throw "Failed to start updated container"
-		}
+	# Check ShouldProcess before proceeding
+	if (-not $PSCmdlet.ShouldProcess($containerName, "Update Container")) {
+		return
 	}
 
-	# Use the shared update function (which supports ShouldProcess)
-	Update-Container -Engine $enginePath -ContainerName $containerName -ImageName $imageName -RunFunction $runContainerFunction
+	Write-Host "Initiating update for Open WebUI..."
+	$backupMade = $false
+	$config = Get-OpenWebUIContainerConfig # Get config before potential removal
+	if (-not $config) {
+		Write-Error "Cannot update: Open WebUI container not found or config could not be read."
+		return # Exit the function if config cannot be read
+	}
+
+	# Check if container actually exists before prompting for backup
+	$existingContainer = & $enginePath ps -a --filter "name=$containerName" --format "{{.ID}}"
+	if ($existingContainer) {
+		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
+		if ($createBackup -ne "N") {
+			if (Backup-OpenWebUIContainer) { # Calls Backup-ContainerState
+				$backupMade = $true
+			}
+		}
+	}
+	else {
+		Write-Warning "Container '$containerName' not found. Skipping backup prompt."
+	}
+
+
+	# Call simplified Update-Container (handles check, remove, pull)
+	# Pass volume name for removal step
+	if (Update-Container -Engine $enginePath -ContainerName $containerName -VolumeName $volumeName -ImageName $imageName) {
+		Write-Host "Core update steps successful. Starting new container..."
+		# Start the new container using the original config (image name is implicitly latest from pull)
+		# Update the image name in the retrieved config before starting
+		$config.Image = $imageName
+		if (-not (Start-OpenWebUIContainer -action "Starting updated container" -successMessage "Open WebUI container updated successfully!" -config $config)) {
+			Write-Error "Failed to start updated Open WebUI container."
+			if ($backupMade) {
+				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+				if ($restore -ne "N") {
+					Restore-OpenWebUIContainer # Calls Restore-ContainerState
+				}
+			}
+		}
+		# Success message is handled within Start-OpenWebUIContainer if successful
+	}
+	else {
+		Write-Error "Update process failed during check, removal, or pull."
+		if ($backupMade) {
+			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+			if ($restore -ne "N") {
+				Restore-OpenWebUIContainer # Calls Restore-ContainerState
+			}
+		}
+	}
 }
 
 #==============================================================================
@@ -485,10 +469,10 @@ $menuActions = @{
 			-WsPath "/api/v1/chat/completions"
 	}
 	"2" = { Install-OpenWebUIContainer }
-	"3" = { Uninstall-OpenWebUIContainer }
-	"4" = { Backup-OpenWebUIContainer }
-	"5" = { Restore-OpenWebUIContainer }
-	"6" = { Update-OpenWebUIContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $enginePath -ContainerName $containerName -VolumeName $volumeName } # Call shared function directly
+	"4" = { Backup-ContainerState -Engine $enginePath -ContainerName $containerName } # Call shared function directly
+	"5" = { Restore-ContainerState -Engine $enginePath -ContainerName $containerName } # Call shared function directly
+	"6" = { Update-OpenWebUIContainer } # Calls the dedicated update function
 	"7" = { Update-OpenWebUIUserData }
 	"8" = { Test-ImageUpdateAvailable -Engine $enginePath -ImageName $imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop

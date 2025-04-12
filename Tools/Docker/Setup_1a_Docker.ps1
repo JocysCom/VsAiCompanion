@@ -15,7 +15,7 @@ using namespace System.IO
 . "$PSScriptRoot\Setup_0_WSL.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
-Ensure-Elevated
+Test-AdminPrivilege
 Set-ScriptLocation
 
 #############################################
@@ -49,53 +49,6 @@ Set-ScriptLocation
 
 $dockerStaticUrl = "https://download.docker.com/win/static/stable/x86_64/docker-27.5.1.zip"
 
-#==============================================================================
-# Function: Invoke-DockerEngineDownload
-#==============================================================================
-<#
-.SYNOPSIS
-	Downloads the Docker Engine static binary zip archive.
-.DESCRIPTION
-	Downloads the Docker Engine zip file from the specified URL to a local 'downloads' folder.
-	Skips the download if the zip file already exists in the target folder.
-.PARAMETER dockerStaticUrl
-	The URL to download the Docker static binary zip file from.
-.PARAMETER downloadFolder
-	The local folder where the downloaded zip file should be saved. Defaults to '.\downloads'.
-.OUTPUTS
-	[string] The full path to the downloaded zip file. Exits script on download failure.
-.EXAMPLE
-	$zip = Invoke-DockerEngineDownload -dockerStaticUrl "https://download.docker.com/..."
-.NOTES
-	Uses Start-BitsTransfer for downloading.
-	Creates the download folder if it doesn't exist.
-#>
-function Invoke-DockerEngineDownload {
-	param(
-		[string]$dockerStaticUrl,
-		[string]$downloadFolder = ".\downloads"
-	)
-	if (-not (Test-Path $downloadFolder)) {
-		Write-Output "Creating downloads folder at $downloadFolder..."
-		New-Item -ItemType Directory -Force -Path $downloadFolder | Out-Null
-	}
-	$zipPath = Join-Path $downloadFolder "docker.zip"
-	if (Test-Path $zipPath) {
-		Write-Output "Docker archive already exists at $zipPath. Skipping download."
-	}
-	else {
-		Write-Output "Downloading Docker static binary archive from $dockerStaticUrl..."
-		try {
-			# Use Start-BitsTransfer for faster download with progress.
-			Start-BitsTransfer -Source $dockerStaticUrl -Destination $zipPath
-		}
-		catch {
-			Write-Error "Failed to download Docker static binary archive. Please check your internet connection or URL. Error details: $_"
-			exit 1
-		}
-	}
-	return $zipPath
-}
 
 #==============================================================================
 # Function: Install-DockerEngine
@@ -125,7 +78,7 @@ function Install-DockerEngine {
 		[string]$destinationPath = ".\docker"
 	)
 	if (Test-Path $destinationPath) {
-		Write-Output "Destination folder $destinationPath already exists. Skipping extraction and installation."
+		Write-Host "Destination folder $destinationPath already exists. Skipping extraction and installation."
 		return $destinationPath
 	}
 
@@ -140,17 +93,17 @@ function Install-DockerEngine {
 		Write-Error "Failed to extract Docker archive."
 		exit 1
 	}
-	Write-Output "Processing extracted files..."
+	Write-Host "Processing extracted files..."
 	$innerFolder = Join-Path $tempDestination "docker"
 	if (Test-Path $innerFolder) {
-		Write-Output "Detected inner 'docker' folder. Moving its contents to $destinationPath..."
+		Write-Host "Detected inner 'docker' folder. Moving its contents to $destinationPath..."
 		New-Item -ItemType Directory -Path $destinationPath | Out-Null
 		Get-ChildItem -Path $innerFolder | ForEach-Object {
 			Copy-Item -Path $_.FullName -Destination $destinationPath -Recurse -Force
 		}
 	}
 	else {
-		Write-Output "No inner folder detected. Renaming extraction folder to $destinationPath..."
+		Write-Host "No inner folder detected. Renaming extraction folder to $destinationPath..."
 		Rename-Item -Path $tempDestination -NewName "docker"
 		return $destinationPath
 	}
@@ -188,10 +141,10 @@ function Register-DockerEngineService {
 		Write-Error "dockerd.exe not found in $destinationPath. Installation may have failed."
 		exit 1
 	}
-	Write-Output "Checking if Docker Engine service is already registered..."
+	Write-Host "Checking if Docker Engine service is already registered..."
 	$dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
 	if ($null -eq $dockerService) {
-		Write-Output "Registering Docker Engine as a service..."
+		Write-Host "Registering Docker Engine as a service..."
 		& "$dockerdPath" --register-service
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to register Docker service."
@@ -200,11 +153,11 @@ function Register-DockerEngineService {
 		$dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
 	}
 	else {
-		Write-Output "Docker service is already registered."
+		Write-Host "Docker service is already registered."
 	}
 
 	if ($dockerService.Status -ne 'Running') {
-		Write-Output "Starting Docker service..."
+		Write-Host "Starting Docker service..."
 		Start-Service docker
 		$dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
 		if ($dockerService.Status -ne 'Running') {
@@ -213,7 +166,7 @@ function Register-DockerEngineService {
 		}
 	}
 	else {
-		Write-Output "Docker service is already running."
+		Write-Host "Docker service is already running."
 	}
 	Start-Sleep -Seconds 10
 	$env:Path = "$(Resolve-Path $destinationPath);$env:Path"
@@ -249,12 +202,12 @@ function Test-DockerWorking {
 	else {
 		$dockerExe = Join-Path $destinationPath "docker.exe"
 	}
-	Write-Output "Verifying Docker installation with hello-world image..."
+	Write-Host "Verifying Docker installation with hello-world image..."
 	$env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 
 	$existingHelloWorld = &$dockerExe images --filter "reference=hello-world" --format "{{.Repository}}"
 	if (-not $existingHelloWorld) {
-		Write-Output "hello-world image not found locally. Pulling hello-world image..."
+		Write-Host "hello-world image not found locally. Pulling hello-world image..."
 		&$dockerExe pull hello-world | Out-Null
 	}
 
@@ -262,7 +215,7 @@ function Test-DockerWorking {
 	$existingContainer = &$dockerExe ps -a --filter "name=^$helloWorldContainerName$" --format "{{.ID}}"
 
 	if (-not $existingContainer) {
-		Write-Output "No existing hello-world container found. Running a new one..."
+		Write-Host "No existing hello-world container found. Running a new one..."
 		# docker run [options] IMAGE [COMMAND [ARG...]]
 		# run         Run a command in a new container.
 		# --name      Assign a name to the container.
@@ -274,10 +227,10 @@ function Test-DockerWorking {
 		}
 	}
 	else {
-		Write-Output "hello-world container already exists. Skipping container creation."
+		Write-Host "hello-world container already exists. Skipping container creation."
 	}
 
-	Write-Output "Docker Engine is working successfully."
+	Write-Host "Docker Engine is working successfully."
 }
 
 #==============================================================================
@@ -290,7 +243,7 @@ function Test-DockerWorking {
 	Checks if the 'docker' command is available using Get-Command.
 	If not found, prompts the user to choose between installing Docker Desktop (via winget) or Docker Engine (static binary).
 	If Docker Desktop is chosen, it attempts installation using winget.
-	If Docker Engine is chosen, it calls Invoke-DockerEngineDownload, Install-DockerEngine, and Register-DockerEngineService.
+	If Docker Engine is chosen, it calls Invoke-DownloadFile, Install-DockerEngine, and Register-DockerEngineService.
 	If Docker is already found, it proceeds directly to verification.
 	Finally, calls Test-DockerWorking to verify the installation.
 .EXAMPLE
@@ -299,11 +252,11 @@ function Test-DockerWorking {
 	Requires administrative privileges for installation.
 	Requires winget if Docker Desktop installation is chosen.
 	Exits script on installation failure or invalid user selection.
-	Uses Write-Output/Write-Host for status messages.
+	Uses Write-Host for status messages.
 #>
 function Test-DockerInstallation {
 	if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-		Write-Host "Docker is not installed." # Changed to Host
+		Write-Host "Docker is not installed."
 
 		# Define Menu Title and Items
 		$menuTitle = "Select Docker installation method"
@@ -333,7 +286,13 @@ function Test-DockerInstallation {
 				}
 			}
 			"2" = {
-				$zipPath = Invoke-DockerEngineDownload -dockerStaticUrl $dockerStaticUrl
+				# Use shared download function
+				$zipPath = Join-Path ".\downloads" "docker.zip" # Define expected path
+				Invoke-DownloadFile -SourceUrl $dockerStaticUrl -DestinationPath $zipPath
+				if (-not (Test-Path $zipPath)) {
+					Write-Error "Download failed. Cannot proceed with Docker Engine installation."
+					exit 1
+				}
 				$destinationPath = Install-DockerEngine -zipPath $zipPath -destinationPath ".\docker"
 				Register-DockerEngineService -destinationPath $destinationPath
 				# Let the main script continue after successful install
@@ -354,7 +313,7 @@ function Test-DockerInstallation {
 		}
 	}
 	else {
-		Write-Host "Docker command found in PATH. Using existing Docker installation." # Changed to Host
+		Write-Host "Docker command found in PATH. Using existing Docker installation."
 	}
 	Test-DockerWorking -destinationPath ".\docker"
 }
@@ -373,17 +332,17 @@ function Test-DockerInstallation {
 	Test-DockerDaemonStatus
 .NOTES
 	Exits script if the daemon is not reachable.
-	Uses Write-Output for status messages.
+	Uses Write-Host for status messages.
 #>
 function Test-DockerDaemonStatus {
-	Write-Output "Ensuring Docker daemon is reachable..."
+	Write-Host "Ensuring Docker daemon is reachable..."
 	$env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 	$dockerInfo = docker info 2>&1
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Docker daemon is not reachable. Please ensure Docker is running. Error details: $dockerInfo"
 		exit 1
 	}
-	Write-Output "Docker daemon is reachable."
+	Write-Host "Docker daemon is reachable."
 }
 
 #############################################
@@ -394,4 +353,4 @@ Test-WSLStatus
 Test-DockerInstallation
 Test-DockerDaemonStatus
 
-Write-Output "Docker installation and verification completed successfully."
+Write-Host "Docker installation and verification completed successfully."

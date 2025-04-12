@@ -1,10 +1,9 @@
 ################################################################################
-# File         : Setup_1_VM.ps1
+# File         : Setup_1_WSL2.ps1
 # Description  : Script to enable virtualization features on Windows.
-#                Allows the user to choose between enabling Windows Subsystem for Linux (WSL)
-#                or Hyper-V. For WSL, it calls the existing Check-WSLStatus function and
-#                ensures that the default WSL version is set to 2, installing and/or upgrading
-#                distributions as necessary.
+#                Provides a menu to enable either Windows Subsystem for Linux (WSL)
+#                or Hyper-V. For WSL, it ensures WSL2 is the default and converts
+#                existing distributions if necessary.
 # Usage        : Run as Administrator.
 ################################################################################
 

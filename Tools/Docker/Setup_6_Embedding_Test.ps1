@@ -7,6 +7,9 @@
 # Usage        : Run after the Embedding API container is running.
 ################################################################################
 
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_0_Network.ps1" # For Test-TCPPort
+
 ##############################################################################
 # Purpose:
 #   This script calls the local Embedding API multiple times with several lines

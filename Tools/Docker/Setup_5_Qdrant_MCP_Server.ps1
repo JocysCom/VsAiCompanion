@@ -222,65 +222,7 @@ function Install-QdrantMCPServerContainer {
 	Write-Host ""
 }
 
-#==============================================================================
-# Function: Uninstall-QdrantMCPServerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Qdrant MCP Server container and optionally removes its data volume.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'qdrant-mcp-server' as the container
-	and 'qdrant_mcp_server_data' as the volume. This will stop/remove the container and prompt the user
-	about removing the volume. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-QdrantMCPServerContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-#>
-function Uninstall-QdrantMCPServerContainer {
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
-}
-
-#==============================================================================
-# Function: Backup-QdrantMCPServerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Backs up the state of the running Qdrant MCP Server container.
-.DESCRIPTION
-	Calls the Backup-ContainerState helper function, specifying 'qdrant-mcp-server' as the container name.
-	This commits the container state to an image and saves it as a tar file.
-.EXAMPLE
-	Backup-QdrantMCPServerContainer
-.NOTES
-	Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
-#>
-function Backup-QdrantMCPServerContainer {
-	Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
-}
-
-#==============================================================================
-# Function: Restore-QdrantMCPServerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores the Qdrant MCP Server container image from a backup tar file.
-.DESCRIPTION
-	Calls the Restore-ContainerState helper function, specifying 'qdrant-mcp-server' as the container name.
-	This loads the image from the backup tar file. Note: This only restores the image,
-	it does not automatically start the container or ensure environment variables are correct.
-.EXAMPLE
-	Restore-QdrantMCPServerContainer
-.NOTES
-	Relies on Restore-ContainerState helper function. Warns user about potential need to restart manually.
-#>
-function Restore-QdrantMCPServerContainer {
-	# Note: Restoring state might require re-running with correct ENV vars if they changed.
-	# The generic Restore-ContainerState only restores the image.
-	# A more robust restore might need to re-run Install after loading the image.
-	Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName
-	Write-Warning "Container state restored from image backup. You may need to manually restart the container with correct environment variables if they were changed since the backup."
-}
+# Note: Uninstall-QdrantMCPServerContainer, Backup-QdrantMCPServerContainer, Restore-QdrantMCPServerContainer functions removed. Shared functions called directly from menu.
 
 #==============================================================================
 # Function: Update-QdrantMCPServerContainer
@@ -362,9 +304,12 @@ $menuActions = @{
 		}
 	}
 	"2" = { Install-QdrantMCPServerContainer }
-	"3" = { Uninstall-QdrantMCPServerContainer }
-	"4" = { Backup-QdrantMCPServerContainer }
-	"5" = { Restore-QdrantMCPServerContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = {
+		Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
+		Write-Warning "Container state restored from image backup. You may need to manually restart the container with correct environment variables if they were changed since the backup (use option 2)."
+	}
 	"6" = { Update-QdrantMCPServerContainer }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

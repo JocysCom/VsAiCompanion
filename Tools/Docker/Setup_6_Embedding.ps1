@@ -281,27 +281,7 @@ function Update-EmbeddingContainer {
 	}
 }
 
-#==============================================================================
-# Function: Uninstall-EmbeddingContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Embedding API container and optionally removes an associated volume if one exists with the same name.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'embedding-api' as both the
-	container and volume name. This will stop/remove the container and prompt the user
-	about removing the volume if a volume named 'embedding-api' exists. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-EmbeddingContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function. The default app doesn't use a named volume,
-	so the volume removal prompt is unlikely unless manually created.
-#>
-function Uninstall-EmbeddingContainer {
-	# Note: This app doesn't use a named volume by default, so VolumeName is set to container name
-	# for potential future use or if user manually created one.
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName
-}
+# Note: Uninstall-EmbeddingContainer function removed. Shared function called directly from menu.
 
 ################################################################################
 # Main Menu Loop using Generic Function
@@ -331,7 +311,7 @@ $menuActions = @{
 	}
 	"2" = { Install-EmbeddingContainer }
 	"3" = { Update-EmbeddingContainer }
-	"4" = { Uninstall-EmbeddingContainer }
+	"4" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName } # Call shared function directly
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

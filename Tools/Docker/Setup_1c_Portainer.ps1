@@ -90,55 +90,6 @@ function Get-PortainerContainerConfig {
 }
 
 #==============================================================================
-# Function: Remove-PortainerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Stops and removes the Portainer container.
-.DESCRIPTION
-	Checks if a container named 'portainer' exists. If it does, it stops and removes it
-	using the selected container engine. Supports -WhatIf.
-.OUTPUTS
-	[bool] Returns $true if the container is removed successfully or didn't exist.
-		   Returns $false if removal fails or is skipped due to -WhatIf.
-.EXAMPLE
-	Remove-PortainerContainer -WhatIf
-.NOTES
-	Uses 'engine ps', 'engine stop', and 'engine rm'.
-	Explicitly notes that the 'portainer_data' volume is not removed by this function.
-#>
-function Remove-PortainerContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	[OutputType([bool])]
-	param()
-
-	$existingContainer = & $global:enginePath ps --all --filter "name=portainer" --format "{{.ID}}"
-	if (-not $existingContainer) {
-		Write-Host "No Portainer container found to remove."
-		return $true
-	}
-
-	if ($PSCmdlet.ShouldProcess("portainer", "Stop and Remove Container")) {
-		Write-Host "Stopping and removing Portainer container..."
-		Write-Host "NOTE: This only removes the container, not the volume with user data."
-
-		& $global:enginePath stop portainer 2>$null
-		& $global:enginePath rm portainer
-
-		if ($LASTEXITCODE -eq 0) {
-			return $true
-		}
-		else {
-			Write-Error "Failed to remove Portainer container."
-			return $false
-		}
-	}
-	else {
-		return $false # Action skipped due to -WhatIf
-	}
-}
-
-#==============================================================================
 # Function: Start-PortainerContainer
 #==============================================================================
 <#
@@ -300,61 +251,7 @@ function Install-PortainerContainer {
 	Start-PortainerContainer -Image $global:imageName # This now supports ShouldProcess
 }
 
-#==============================================================================
-# Function: Uninstall-PortainerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Portainer container and optionally removes its data volume.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'portainer' as the container
-	and 'portainer_data' as the volume. This will stop/remove the container and prompt the user
-	about removing the volume. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-PortainerContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-#>
-function Uninstall-PortainerContainer {
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" # This now supports ShouldProcess
-}
-
-#==============================================================================
-# Function: Backup-PortainerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Backs up the state of the running Portainer container.
-.DESCRIPTION
-	Calls the Backup-ContainerState helper function, specifying 'portainer' as the container name.
-	This commits the container state to an image and saves it as a tar file.
-.EXAMPLE
-	Backup-PortainerContainer
-.NOTES
-	Relies on Backup-ContainerState helper function.
-#>
-function Backup-PortainerContainer {
-	Backup-ContainerState -Engine $global:enginePath -ContainerName "portainer"
-}
-
-#==============================================================================
-# Function: Restore-PortainerContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores the Portainer container image from a backup tar file.
-.DESCRIPTION
-	Calls the Restore-ContainerState helper function, specifying 'portainer' as the container name.
-	This loads the image from the backup tar file. Note: This only restores the image,
-	it does not automatically start a container from it.
-.EXAMPLE
-	Restore-PortainerContainer
-.NOTES
-	Relies on Restore-ContainerState helper function. Does not handle volume restore.
-#>
-function Restore-PortainerContainer {
-	Restore-ContainerState -Engine $global:enginePath -ContainerName "portainer"
-}
+# Note: Uninstall-PortainerContainer, Backup-PortainerContainer, Restore-PortainerContainer functions removed. Shared functions called directly from menu.
 
 #==============================================================================
 # Function: Update-PortainerContainer
@@ -363,85 +260,72 @@ function Restore-PortainerContainer {
 .SYNOPSIS
 	Updates the Portainer container to the latest image version while preserving data.
 .DESCRIPTION
-	Performs an update workflow:
-	1. Gets the current container config using Get-PortainerContainerConfig.
-	2. Prompts the user whether to create a backup before updating.
-	3. Removes the existing container using Remove-PortainerContainer.
-	4. Pulls the latest image using Invoke-PullImage.
-	5. Starts a new container using Start-PortainerContainer with the latest image and preserved environment variables.
-	6. Offers to restore from backup if pull or start fails (and backup was made).
-	Supports -WhatIf for backup, remove, pull, and start actions.
+	Orchestrates the update process:
+	1. Gets the current container configuration.
+	2. Prompts the user to optionally back up the current container state.
+	3. Calls the simplified generic Update-Container function (handles update check, removal, pull).
+	4. If core update steps succeed, calls Start-PortainerContainer to start the new container with preserved config.
+	5. Offers to restore from backup if the start fails (and a backup was made).
 .EXAMPLE
 	Update-PortainerContainer -WhatIf
 .NOTES
-	Relies on Get-PortainerContainerConfig, Backup-PortainerContainer, Remove-PortainerContainer,
-	Invoke-PullImage, Start-PortainerContainer, Restore-PortainerContainer helper functions.
+	Relies on Get-PortainerContainerConfig, Backup-PortainerContainer, Update-Container,
+	Start-PortainerContainer, Restore-PortainerContainer helper functions.
 	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-PortainerContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
 	param()
 
-	# Step 1: Check if container exists and get its configuration
-	$config = Get-PortainerContainerConfig
-	if (-not $config) {
-		Write-Host "No Portainer container found to update. Please install it first."
+	# Check ShouldProcess before proceeding
+	if (-not $PSCmdlet.ShouldProcess("portainer", "Update Container")) {
 		return
 	}
 
-	# Step 2: Optionally backup the container
-	$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
-	if ($createBackup -ne "N") {
-		if ($PSCmdlet.ShouldProcess("portainer", "Backup Container State")) {
-			Write-Host "Creating backup of current container..."
-			Backup-PortainerContainer
+	Write-Host "Initiating update for Portainer..."
+	$backupMade = $false
+	$config = Get-PortainerContainerConfig # Get config before potential removal
+	if (-not $config) {
+		Write-Error "Cannot update: Portainer container not found or config could not be read."
+		return # Exit the function if config cannot be read
+	}
+
+	# Check if container actually exists before prompting for backup
+	$existingContainer = & $global:enginePath ps -a --filter "name=portainer" --format "{{.ID}}"
+	if ($existingContainer) {
+		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
+		if ($createBackup -ne "N") {
+			if (Backup-PortainerContainer) { # Calls Backup-ContainerState
+				$backupMade = $true
+			}
 		}
 	}
-
-	# Step 3: Remove the existing container
-	if (-not (Remove-PortainerContainer)) {
-		# This function now supports ShouldProcess
-		Write-Error "Failed to remove existing container or action skipped. Update aborted."
-		return
+	else {
+		Write-Warning "Container 'portainer' not found. Skipping backup prompt."
 	}
 
-	# Step 4: Pull the latest image
-	if ($PSCmdlet.ShouldProcess($global:imageName, "Pull Latest Image")) {
-		# Use the shared Invoke-PullImage function
-		if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
-			Write-Error "Failed to pull latest image. Update aborted."
-
-			# Offer to restore from backup if one was created
-			if ($createBackup -ne "N") {
+	# Call simplified Update-Container (handles check, remove, pull)
+	# Pass volume name for removal step
+	if (Update-Container -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" -ImageName $global:imageName) {
+		Write-Host "Core update steps successful. Starting new container..."
+		# Start the new container using the original config (image name is implicitly latest from pull)
+		if (-not (Start-PortainerContainer -Image $global:imageName -EnvVars $config.EnvVars)) {
+			Write-Error "Failed to start updated Portainer container."
+			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
-					if ($PSCmdlet.ShouldProcess("portainer", "Restore Container State after Failed Update")) {
-						Restore-PortainerContainer
-					}
+					Restore-PortainerContainer # Calls Restore-ContainerState
 				}
 			}
-			return
 		}
+		# Success message is handled within Start-PortainerContainer if successful
 	}
 	else {
-		Write-Host "Skipping image pull due to -WhatIf."
-	}
-
-	# Step 5: Start a new container with the latest image and preserved configuration
-	if (Start-PortainerContainer -Image $global:imageName -EnvVars $config.EnvVars) {
-		# This function now supports ShouldProcess
-		Write-Host "Portainer container updated successfully!"
-	}
-	else {
-		Write-Error "Failed to start updated container or action skipped."
-
-		# Offer to restore from backup if one was created
-		if ($createBackup -ne "N") {
+		Write-Error "Update process failed during check, removal, or pull."
+		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
-				if ($PSCmdlet.ShouldProcess("portainer", "Restore Container State after Failed Start")) {
-					Restore-PortainerContainer
-				}
+				Restore-PortainerContainer # Calls Restore-ContainerState
 			}
 		}
 	}
@@ -475,10 +359,10 @@ $menuActions = @{
 			-HttpPort $global:httpPort
 	}
 	"2" = { Install-PortainerContainer }
-	"3" = { Uninstall-PortainerContainer }
-	"4" = { Backup-PortainerContainer }
-	"5" = { Restore-PortainerContainer }
-	"6" = { Update-PortainerContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName "portainer" -VolumeName "portainer_data" } # Call shared function directly
+	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName "portainer" } # Call shared function directly
+	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName "portainer" } # Call shared function directly
+	"6" = { Update-PortainerContainer } # Calls the dedicated update function
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

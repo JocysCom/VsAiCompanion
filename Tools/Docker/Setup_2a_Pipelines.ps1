@@ -49,47 +49,6 @@ if (-not $global:enginePath) {
 }
 
 #==============================================================================
-# Function: ConvertTo-WSLPath
-#==============================================================================
-<#
-.SYNOPSIS
-   Converts a Windows path into a WSL (Linux) path.
-.DESCRIPTION
-   This function takes an absolute Windows path and converts it to the corresponding WSL
-   path by replacing the drive letter and backslashes with the Linux mount point format
-   (e.g., C:\Users\Me becomes /mnt/c/Users/Me).
-   IMPORTANT: This workaround is CRUCIAL for successfully copying a file from the local
-   machine to Podman using 'podman machine ssh "podman cp ..."'.
-.PARAMETER winPath
-   The Windows path to convert. Mandatory.
-.OUTPUTS
-   [string] The converted WSL path, or the original path if conversion fails.
-.EXAMPLE
-   $wslPath = ConvertTo-WSLPath -winPath "C:\MyFolder\MyFile.txt"
-   # $wslPath will be "/mnt/c/MyFolder/MyFile.txt"
-.NOTES
-   Uses Resolve-Path to get the absolute path first.
-   Uses regex matching and replacement.
-#>
-function ConvertTo-WSLPath {
-	param(
-		[Parameter(Mandatory = $true)]
-		[string]$winPath
-	)
-	$absPath = (Resolve-Path $winPath).Path
-	if ($absPath -match '^([A-Z]):\\(.*)$') {
-		$drive = $matches[1].ToLower()
-		$pathWithoutDrive = $matches[2]
-		$unixPath = $pathWithoutDrive -replace '\\', '/'
-		return "/mnt/$drive/$unixPath"
-	}
-	else {
-		Write-Warning "Path '$winPath' does not match the expected Windows absolute path format."
-		return $absPath
-	}
-}
-
-#==============================================================================
 # Function: Install-PipelinesContainer
 #==============================================================================
 <#
@@ -169,69 +128,7 @@ function Install-PipelinesContainer {
 	Test-HTTPPort -Uri "http://localhost:9099" -serviceName $global:containerName
 }
 
-#==============================================================================
-# Function: Backup-PipelinesContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Backs up the state of the running Pipelines container.
-.DESCRIPTION
-	Checks if the global engine path is set. If set, calls the Backup-ContainerState
-	helper function, specifying 'pipelines' as the container name.
-.EXAMPLE
-	Backup-PipelinesContainer
-.NOTES
-	Relies on Backup-ContainerState helper function.
-#>
-function Backup-PipelinesContainer {
-	if (-not $global:enginePath) {
-		Write-Error "Engine path not set. Please install the Pipelines container first."
-		return
-	}
-	Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
-}
-
-#==============================================================================
-# Function: Restore-PipelinesContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores the Pipelines container image from a backup tar file.
-.DESCRIPTION
-	Checks if the global engine path is set. If set, calls the Restore-ContainerState
-	helper function, specifying 'pipelines' as the container name.
-	Note: This only restores the image, it does not automatically start a container from it.
-.EXAMPLE
-	Restore-PipelinesContainer
-.NOTES
-	Relies on Restore-ContainerState helper function.
-#>
-function Restore-PipelinesContainer {
-	if (-not $global:enginePath) {
-		Write-Error "Engine path not set. Please install the Pipelines container first."
-		return
-	}
-	Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
-}
-
-#==============================================================================
-# Function: Uninstall-PipelinesContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Pipelines container and optionally removes its data volume.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'pipelines' as both the
-	container and volume name. This will stop/remove the container and prompt the user
-	about removing the volume. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-PipelinesContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-#>
-function Uninstall-PipelinesContainer {
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
-}
+# Note: Backup-PipelinesContainer, Restore-PipelinesContainer, Uninstall-PipelinesContainer functions removed. Shared functions called directly from menu.
 
 #==============================================================================
 # Function: Add-PipelineToContainer
@@ -388,36 +285,76 @@ function Invoke-StartPipelinesForUpdate {
 .SYNOPSIS
 	Updates the Pipelines container to the latest official image using the generic update workflow.
 .DESCRIPTION
-	Calls the generic Update-Container helper function, providing the specific details for the
-	Pipelines container (name, image name) and passing a reference to the
-	Invoke-StartPipelinesForUpdate function via the -RunFunction parameter. This ensures the
-	container is started correctly after the image is pulled and the old container is removed.
-	Supports -WhatIf.
+	Orchestrates the update process:
+	1. Prompts the user to optionally back up the current container state.
+	2. Calls the simplified generic Update-Container function (handles update check, removal, pull).
+	3. If core update steps succeed, calls Invoke-StartPipelinesForUpdate to start the new container.
+	4. Offers to restore from backup if the start fails (and a backup was made).
 .EXAMPLE
 	Update-PipelinesContainer -WhatIf
 .NOTES
-	Relies on the Update-Container helper function and Invoke-StartPipelinesForUpdate.
+	Relies on Backup-PipelinesContainer, Update-Container, Invoke-StartPipelinesForUpdate,
+	Restore-PipelinesContainer helper functions.
+	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-PipelinesContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
 	param()
 
-	# Check ShouldProcess before proceeding with the delegated update
+	# Check ShouldProcess before proceeding
 	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
 		return
 	}
 
-	# Previously, a script block was defined here and passed using .GetNewClosure().
-	# .GetNewClosure() creates a copy of the script block that captures the current
-	# state of variables in its scope, ensuring the generic Update-Container function
-	# executes it with the correct context from this script.
-	# We now use a dedicated function (Invoke-StartPipelinesForUpdate) instead for better structure.
+	Write-Host "Initiating update for Pipelines..."
+	$backupMade = $false
+	# Check if container actually exists before prompting for backup
+	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
+	if ($existingContainer) {
+		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
+		if ($createBackup -ne "N") {
+			if (Backup-PipelinesContainer) { # Calls Backup-ContainerState
+				$backupMade = $true
+			}
+		}
+	}
+	else {
+		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
+	}
 
-	# Call the generic Update-Container function
-	Update-Container -Engine $global:enginePath `
-		-ContainerName $global:containerName `
-		-ImageName "ghcr.io/open-webui/pipelines:main" `
-		-RunFunction ${function:Invoke-StartPipelinesForUpdate} # Pass function reference
+	# Call simplified Update-Container (handles check, remove, pull)
+	# Pass volume name for removal step
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName "ghcr.io/open-webui/pipelines:main") {
+		Write-Host "Core update steps successful. Starting new container..."
+		# Start the new container using the dedicated start function
+		try {
+			# Invoke-StartPipelinesForUpdate expects these params, pass globals/literals
+			Invoke-StartPipelinesForUpdate -EnginePath $global:enginePath `
+				-ContainerEngineType $global:containerEngine `
+				-ContainerName $global:containerName `
+				-VolumeName $global:volumeName `
+				-ImageName "ghcr.io/open-webui/pipelines:main"
+			Write-Host "Pipelines container updated successfully!"
+		}
+		catch {
+			Write-Error "Failed to start updated Pipelines container: $_"
+			if ($backupMade) {
+				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+				if ($restore -ne "N") {
+					Restore-PipelinesContainer # Calls Restore-ContainerState
+				}
+			}
+		}
+	}
+	else {
+		Write-Error "Update process failed during check, removal, or pull."
+		if ($backupMade) {
+			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+			if ($restore -ne "N") {
+				Restore-PipelinesContainer # Calls Restore-ContainerState
+			}
+		}
+	}
 }
 
 #==============================================================================
@@ -472,11 +409,11 @@ $menuActions = @{
 			-HttpPort 9099
 	}
 	"2" = { Install-PipelinesContainer }
-	"3" = { Uninstall-PipelinesContainer }
-	"4" = { Backup-PipelinesContainer }
-	"5" = { Restore-PipelinesContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
 	"A" = { Add-PipelineToContainer }
-	"B" = { Update-PipelinesContainer }
+	"B" = { Update-PipelinesContainer } # Calls the dedicated update function
 	"C" = { Update-PipelinesUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

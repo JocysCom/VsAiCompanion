@@ -86,7 +86,7 @@ function Install-QdrantContainer {
 		}
 	}
 	else {
-		Write-Host "Using restored backup image '$global:imageName'." # This line was duplicated in the original, keeping it for consistency unless told otherwise.
+		Write-Host "Qdrant image '$global:imageName' already exists locally."
 	}
 
 	# Remove Existing Container
@@ -120,61 +120,7 @@ function Install-QdrantContainer {
 	Write-Host "Qdrant is now running and accessible at http://localhost:6333"
 }
 
-#==============================================================================
-# Function: Uninstall-QdrantContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Qdrant container and optionally removes its data volume.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'qdrant' as the container
-	and 'qdrant_storage' as the volume. This will stop/remove the container and prompt the user
-	about removing the volume. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-QdrantContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-#>
-function Uninstall-QdrantContainer {
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
-}
-
-#==============================================================================
-# Function: Backup-QdrantContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Backs up the state of the running Qdrant container.
-.DESCRIPTION
-	Calls the Backup-ContainerState helper function, specifying 'qdrant' as the container name.
-	This commits the container state to an image and saves it as a tar file.
-.EXAMPLE
-	Backup-QdrantContainer
-.NOTES
-	Relies on Backup-ContainerState helper function. Supports -WhatIf via the helper function.
-#>
-function Backup-QdrantContainer {
-	Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
-}
-
-#==============================================================================
-# Function: Restore-QdrantContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores the Qdrant container image from a backup tar file.
-.DESCRIPTION
-	Calls the Restore-ContainerState helper function, specifying 'qdrant' as the container name.
-	This loads the image from the backup tar file. Note: This only restores the Qdrant image,
-	it does not automatically start the container.
-.EXAMPLE
-	Restore-QdrantContainer
-.NOTES
-	Relies on Restore-ContainerState helper function. Does not handle volume restore.
-#>
-function Restore-QdrantContainer {
-	Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # This function supports ShouldProcess
-}
+# Note: Uninstall-QdrantContainer, Backup-QdrantContainer, Restore-QdrantContainer functions removed. Shared functions called directly from menu.
 
 #==============================================================================
 # Function: Invoke-StartQdrantForUpdate
@@ -253,36 +199,76 @@ function Invoke-StartQdrantForUpdate {
 .SYNOPSIS
 	Updates the Qdrant container to the latest image version using the generic update workflow.
 .DESCRIPTION
-	Calls the generic Update-Container helper function, providing the specific details for the
-	Qdrant container (name, image name) and passing a reference to the
-	Invoke-StartQdrantForUpdate function via the -RunFunction parameter. This ensures the
-	container is started correctly after the image is pulled and the old container is removed.
-	Supports -WhatIf.
+	Orchestrates the update process:
+	1. Prompts the user to optionally back up the current container state.
+	2. Calls the simplified generic Update-Container function (handles update check, removal, pull).
+	3. If core update steps succeed, calls Invoke-StartQdrantForUpdate to start the new container.
+	4. Offers to restore from backup if the start fails (and a backup was made).
 .EXAMPLE
 	Update-QdrantContainer -WhatIf
 .NOTES
-	Relies on the Update-Container helper function and Invoke-StartQdrantForUpdate.
+	Relies on Backup-QdrantContainer, Update-Container, Invoke-StartQdrantForUpdate,
+	Restore-QdrantContainer helper functions.
+	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-QdrantContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
 	param()
 
-	# Check ShouldProcess before proceeding with the delegated update
+	# Check ShouldProcess before proceeding
 	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
 		return
 	}
 
-	# Previously, a script block was defined here and passed using .GetNewClosure().
-	# .GetNewClosure() creates a copy of the script block that captures the current
-	# state of variables in its scope, ensuring the generic Update-Container function
-	# executes it with the correct context from this script.
-	# We now use a dedicated function (Invoke-StartQdrantForUpdate) instead for better structure.
+	Write-Host "Initiating update for Qdrant..."
+	$backupMade = $false
+	# Check if container actually exists before prompting for backup
+	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
+	if ($existingContainer) {
+		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
+		if ($createBackup -ne "N") {
+			if (Backup-QdrantContainer) { # Calls Backup-ContainerState
+				$backupMade = $true
+			}
+		}
+	}
+	else {
+		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
+	}
 
-	# Use the shared update function (which supports ShouldProcess)
-	Update-Container -Engine $global:enginePath `
-		-ContainerName $global:containerName `
-		-ImageName $global:imageName `
-		-RunFunction ${function:Invoke-StartQdrantForUpdate} # Pass function reference
+	# Call simplified Update-Container (handles check, remove, pull)
+	# Pass volume name for removal step
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
+		Write-Host "Core update steps successful. Starting new container..."
+		# Start the new container using the dedicated start function
+		try {
+			# Invoke-StartQdrantForUpdate expects these params, pass globals/literals
+			Invoke-StartQdrantForUpdate -EnginePath $global:enginePath `
+				-ContainerEngineType $global:containerEngine `
+				-ContainerName $global:containerName `
+				-VolumeName $global:volumeName `
+				-ImageName $global:imageName
+			# Success message is handled within Invoke-StartQdrantForUpdate
+		}
+		catch {
+			Write-Error "Failed to start updated Qdrant container: $_"
+			if ($backupMade) {
+				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+				if ($restore -ne "N") {
+					Restore-QdrantContainer # Calls Restore-ContainerState
+				}
+			}
+		}
+	}
+	else {
+		Write-Error "Update process failed during check, removal, or pull."
+		if ($backupMade) {
+			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+			if ($restore -ne "N") {
+				Restore-QdrantContainer # Calls Restore-ContainerState
+			}
+		}
+	}
 }
 
 #==============================================================================
@@ -338,10 +324,10 @@ $menuActions = @{
 			-AdditionalInfo @{ "gRPC Port" = 6334 }
 	}
 	"2" = { Install-QdrantContainer }
-	"3" = { Uninstall-QdrantContainer }
-	"4" = { Backup-QdrantContainer }
-	"5" = { Restore-QdrantContainer }
-	"6" = { Update-QdrantContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"6" = { Update-QdrantContainer } # Calls the dedicated update function
 	"7" = { Update-QdrantUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

@@ -9,70 +9,50 @@
 ################################################################################
 
 #==============================================================================
-# Function: Get-DockerPath
+# Function: Get-EnginePath
 #==============================================================================
 <#
 .SYNOPSIS
-	Finds the path to the Docker executable.
+	Finds the path to the specified container engine executable (docker or podman).
 .DESCRIPTION
-	Attempts to locate the 'docker.exe' executable. First, it uses Get-Command.
-	If not found in PATH, it checks for a 'docker.exe' within a 'docker' subdirectory
+	Attempts to locate the engine's executable (e.g., 'docker.exe' or 'podman.exe').
+	First, it uses Get-Command. If not found in PATH, it checks for the executable
+	within a subdirectory named after the engine (e.g., '.\docker' or '.\podman')
 	relative to the script's location. If still not found, it writes an error and exits.
+.PARAMETER EngineName
+	The name of the container engine ('docker' or 'podman'). Mandatory.
 .OUTPUTS
-	[string] The full path to the found docker.exe. Exits script on failure.
+	[string] The full path to the found engine executable. Exits script on failure.
 .EXAMPLE
-	$dockerExePath = Get-DockerPath
+	$dockerExePath = Get-EnginePath -EngineName "docker"
 	& $dockerExePath ps
-.NOTES
-	Assumes a potential local 'docker' subdirectory if Docker isn't in the system PATH.
-#>
-function Get-DockerPath {
-	$dockerCmd = Get-Command docker -ErrorAction SilentlyContinue
-	if ($dockerCmd) {
-		return $dockerCmd.Source
-	}
-	else {
-		$dockerPath = Join-Path (Resolve-Path ".\docker") "docker.exe"
-		if (Test-Path $dockerPath) {
-			return $dockerPath
-		}
-		else {
-			Write-Error "Docker executable not found."
-			exit 1
-		}
-	}
-}
-
-#==============================================================================
-# Function: Get-PodmanPath
-#==============================================================================
-<#
-.SYNOPSIS
-	Finds the path to the Podman executable.
-.DESCRIPTION
-	Attempts to locate the 'podman.exe' executable. First, it uses Get-Command.
-	If not found in PATH, it checks for a 'podman.exe' within a 'podman' subdirectory
-	relative to the script's location. If still not found, it writes an error and exits.
-.OUTPUTS
-	[string] The full path to the found podman.exe. Exits script on failure.
 .EXAMPLE
-	$podmanExePath = Get-PodmanPath
+	$podmanExePath = Get-EnginePath -EngineName "podman"
 	& $podmanExePath images
 .NOTES
-	Assumes a potential local 'podman' subdirectory if Podman isn't in the system PATH.
+	Assumes a potential local subdirectory if the engine isn't in the system PATH.
 #>
-function Get-PodmanPath {
-	$podmanCmd = Get-Command podman -ErrorAction SilentlyContinue
-	if ($podmanCmd) {
-		return $podmanCmd.Source
+function Get-EnginePath {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$EngineName
+	)
+
+	$exeName = "$EngineName.exe"
+	$engineCmd = Get-Command $EngineName -ErrorAction SilentlyContinue
+	if ($engineCmd) {
+		return $engineCmd.Source
 	}
 	else {
-		$podmanPath = Join-Path (Resolve-Path ".\podman") "podman.exe"
-		if (Test-Path $podmanPath) {
-			return $podmanPath
+		# Check relative path (e.g., .\docker\docker.exe)
+		$relativePath = Join-Path (Resolve-Path ".\$EngineName") $exeName
+		if (Test-Path $relativePath) {
+			return $relativePath
 		}
 		else {
-			Write-Error "Podman executable not found."
+			Write-Error "$($EngineName.ToUpper()) executable not found in PATH or relative directory '.\$EngineName'."
 			exit 1
 		}
 	}
@@ -107,11 +87,30 @@ function Select-ContainerEngine {
 		"0" = "Exit menu"
 	}
 	$script:selectedEngine = $null # Variable to store the result
+	$script:enginePath = $null # Variable to store the path
+
 	$menuActions = @{
-		"1" = { $script:selectedEngine = "docker" }
-		"2" = {	$script:selectedEngine = "podman" }
+		"1" = {
+			$script:selectedEngine = "docker"
+			$script:enginePath = Get-EnginePath -EngineName "docker"
+		}
+		"2" = {
+			$script:selectedEngine = "podman"
+			$script:enginePath = Get-EnginePath -EngineName "podman"
+		}
 	}
 	Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0" -DefaultChoice "1"
+
+	# Validate $script:enginePath is not null after selection or exit
+	if ($script:selectedEngine -and (-not $script:enginePath)) {
+		Write-Error "Failed to get path for selected engine '$script:selectedEngine'. Exiting."
+		exit 1
+	}
+
 	# Return the engine selected by the action block (or $null if '0' or invalid)
+	# The path is now implicitly set in the script scope variable $script:enginePath
+	# We return only the name for compatibility with existing scripts.
+	# Scripts should now get the path separately if needed, or rely on global vars set by caller.
+	# Consider returning a hashtable in the future: @{ Name = $script:selectedEngine; Path = $script:enginePath }
 	return $script:selectedEngine
 }

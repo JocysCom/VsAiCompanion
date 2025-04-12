@@ -9,15 +9,12 @@
 # Usage        : Run the script; ensure proper administrator privileges.
 ################################################################################
 
-# Define default values at script scope
-$diskLocation = ""      # Default disk location (empty means use default user profile location)
-
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_0_Core.ps1"
 . "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Test-WSLStatus
 
 # Optionally ensure the script is running as Administrator and set the working directory.
-#Test-AdminPrivilege
+Test-AdminPrivilege # Required for machine init/service install/remove
 Set-ScriptLocation
 
 # Ensure the script stops immediately if any error occurs.
@@ -334,100 +331,6 @@ function Install-PodmanCLI {
 		return $false
 	}
 }
-
-#==============================================================================
-# Function: Select-DiskLocation
-#==============================================================================
-<#
-.SYNOPSIS
-	Prompts the user to choose between the default or a custom disk location for the Podman machine VHDX file.
-.DESCRIPTION
-	Presents a menu asking the user to select the default location (within the user profile) or a custom path.
-	If custom is chosen, prompts the user to enter the path. Validates the path format and checks if the drive exists.
-.OUTPUTS
-	[string] Returns the selected custom path, or an empty string if the default location is chosen or if the custom path is invalid/rejected.
-.EXAMPLE
-	$location = Select-DiskLocation
-	if ($location) { Initialize-PodmanMachine -Rootful -DiskPath $location } else { Initialize-PodmanMachine -Rootful }
-.NOTES
-	Uses Write-Host for prompts and status messages.
-	Uses Read-Host for user input.
-#>
-function Select-DiskLocation {
-	# Define Menu Title and Items
-	$menuTitle = "Select disk location machine virtual disk"
-	$menuItems = [ordered]@{
-		"1" = "Default location (user profile)"
-		"2" = "Custom location"
-		# "0" = "Exit/Use Default" # Implicit exit choice
-	}
-
-	# Define Menu Actions
-	$selectedPath = "" # Variable to store the result from the action block
-	$actionCompleted = $false # Flag to exit loop after one action
-
-	$menuActions = @{
-		"1" = {
-			Write-Host "Using default disk location"
-			$script:selectedPath = "" # Use script scope to modify outer variable
-			$script:actionCompleted = $true
-		}
-		"2" = {
-			$customPath = Read-Host "Enter custom disk location path (e.g., D:\VM\Disks)"
-
-			# Validate the path format
-			if ([string]::IsNullOrWhiteSpace($customPath)) {
-				Write-Host "No path provided. Using default location."
-				$script:selectedPath = ""
-			}
-			else {
-				# Check if the path is valid
-				try {
-					$null = [System.IO.Path]::GetFullPath($customPath) # Test format
-					$drive = [System.IO.Path]::GetPathRoot($customPath)
-					if (-not [System.IO.Directory]::Exists($drive)) {
-						Write-Warning "Drive $drive does not exist. Please ensure it's available before continuing."
-						$confirm = Read-Host "Continue with this path anyway? (Y/N, default is N)"
-						if ($confirm -ne "Y") {
-							Write-Host "Using default disk location instead."
-							$script:selectedPath = ""
-						}
-						else {
-							Write-Host "Custom disk location selected: $customPath"
-							$script:selectedPath = $customPath
-						}
-					}
-					else {
-						Write-Host "Custom disk location selected: $customPath"
-						$script:selectedPath = $customPath
-					}
-				}
-				catch {
-					Write-Error "Invalid path format: $customPath. Using default location."
-					$script:selectedPath = ""
-				}
-			}
-			$script:actionCompleted = $true
-		}
-		# "0" action will exit the loop, returning the initial $selectedPath ("")
-	}
-
-	# Invoke the Menu Loop - modify the loop slightly to exit after one action
-	# We can't use 'exit' inside the action block as it would exit the whole script.
-	# Instead, we use a flag.
-	do {
-		Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
-		# Check if an action was completed or if the user chose to exit (choice 0)
-		if ($actionCompleted -or $choice -eq "0") {
-			break # Exit the custom do-while loop
-		}
-		# If an invalid choice was made, Invoke-MenuLoop handles the warning and repeats.
-	} while ($true) # Loop until explicitly broken
-
-	# Return the path selected by the action block (or default "")
-	return $selectedPath
-}
-
 #==============================================================================
 # Function: Initialize-PodmanMachine
 #==============================================================================
@@ -489,241 +392,6 @@ function Initialize-PodmanMachine {
 	$podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\podman-machine-default"
 	Write-Host "Current machine location: $podmanFolder"
 
-	return $true
-}
-
-#############################################
-#==============================================================================
-# Function: Move-PodmanMachineImage
-#==============================================================================
-<#
-.SYNOPSIS
-	Moves an existing Podman WSL machine's VHDX and associated files to a new location.
-.DESCRIPTION
-	Performs the following steps:
-	1. Stops the specified Podman machine.
-	2. Verifies the machine is stopped via 'wsl -l -v'.
-	3. Locates the source VHDX folder in the user's profile.
-	4. Checks for sufficient disk space at the destination.
-	5. Copies the entire source folder to the destination.
-	6. Prompts the user to confirm unregistering the original WSL distribution.
-	7. Unregisters the original WSL distribution ('wsl --unregister').
-	8. Imports the copied VHDX using 'wsl --import-in-place' or 'wsl --import'.
-	9. Removes the old Podman machine configuration files.
-	10. Re-initializes the Podman machine configuration ('podman machine init').
-	11. Starts the Podman machine in the new location ('podman machine start').
-	Includes recovery steps if starting the moved machine fails initially.
-.PARAMETER DestinationPath
-	The target directory where the Podman machine folder should be moved. Mandatory.
-.PARAMETER MachineName
-	The name of the Podman machine to move. Defaults to 'default'.
-.OUTPUTS
-	[bool] Returns $true if the move and restart are successful, $false otherwise.
-.EXAMPLE
-	Move-PodmanMachineImage -DestinationPath "D:\PodmanMachines"
-.NOTES
-	Requires administrative privileges for WSL commands.
-	This is a complex operation involving direct manipulation of WSL distributions. Use with caution.
-	Uses Write-Host for status messages.
-	User interaction required via Read-Host to confirm unregistration.
-#>
-function Move-PodmanMachineImage {
-	param(
-		[Parameter(Mandatory = $true)]
-		[string]$DestinationPath,
-		[string]$MachineName = "default"
-	)
-
-	$wslDistName = "podman-machine-$MachineName"
-
-	# Step 1: Stop the Podman machine if it's running
-	Write-Host "Stopping Podman machine..."
-	& podman machine stop $wslDistName
-	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to stop Podman machine. Aborting move operation."
-		return $false
-	}
-
-	# Verify the machine is stopped by checking WSL status
-	Write-Host "Verifying machine is stopped using 'wsl -l -v'..."
-	$wslStatus = & wsl -l -v 2>&1
-	Write-Host $wslStatus
-
-	# Check if the machine is actually stopped
-	$machineStatus = $wslStatus | Select-String -Pattern $wslDistName -SimpleMatch
-	if ($machineStatus -match "Running") {
-		Write-Error "Podman machine is still running. Please stop it manually using 'wsl --terminate $wslDistName'."
-		return $false
-	}
-
-	# Step 2: Locate the VHDX folder and check disk space
-	$userProfile = $env:USERPROFILE
-	$podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\$wslDistName"
-
-	if (-not (Test-Path $podmanFolder)) {
-		Write-Error "Podman machine folder not found at: $podmanFolder"
-		return $false
-	}
-
-	# Get source folder size
-	$folderSize = (Get-ChildItem -Path $podmanFolder -Recurse | Measure-Object -Property Length -Sum).Sum
-	$folderSizeGB = [math]::Round($folderSize / 1GB, 2)
-	Write-Host "Source folder size: $folderSizeGB GB"
-
-	# Check destination disk space
-	$destinationDrive = [System.IO.Path]::GetPathRoot($DestinationPath)
-	# Extract just the drive letter with colon (e.g., "D:")
-	$driveLetter = $destinationDrive.Substring(0, 2)
-	$freeSpace = (Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='$driveLetter'").FreeSpace
-	$freeSpaceGB = [math]::Round($freeSpace / 1GB, 2)
-	Write-Host "Free space on destination drive ($driveLetter): $freeSpaceGB GB"
-
-	if ($freeSpace -lt ($folderSize * 1.1)) {
-		# Add 10% buffer
-		Write-Error "Insufficient disk space on destination drive. Need at least $([math]::Round($folderSize * 1.1 / 1GB, 2)) GB but only $freeSpaceGB GB available."
-		return $false
-	}
-
-	# Create destination directory if it doesn't exist
-	$destinationFolder = Join-Path $DestinationPath $wslDistName
-	if (-not (Test-Path $destinationFolder)) {
-		Write-Host "Creating destination directory: $destinationFolder"
-		New-Item -ItemType Directory -Path $destinationFolder -Force | Out-Null
-	}
-
-	# Copy the entire folder (not just VHDX)
-	Write-Host "Copying Podman machine folder to new location..."
-	Write-Host "From: $podmanFolder"
-	Write-Host "To: $destinationFolder"
-
-	try {
-		Copy-Item -Path "$podmanFolder\*" -Destination $destinationFolder -Recurse -Force
-		Write-Host "Folder copied successfully."
-	}
-	catch {
-		Write-Error "Failed to copy Podman machine folder: $_"
-		return $false
-	}
-
-	# Verify the VHDX file was copied
-	$vhdxPath = Join-Path $destinationFolder "ext4.vhdx"
-	if (-not (Test-Path $vhdxPath)) {
-		Write-Error "VHDX file not found after copy at: $vhdxPath"
-		return $false
-	}
-
-	# Step 3: Unregister the WSL distribution only if it exists
-	if (-not $skipUnregister) {
-		Write-Host "Unregistering WSL distribution: $wslDistName"
-		Write-Host "This will remove the original VHDX file."
-		$confirm = Read-Host "Continue? (Y/N, default is N)"
-		if ($confirm -ne "Y") {
-			Write-Host "Operation cancelled. The copied files remain at: $destinationFolder"
-			Write-Host "Original Podman machine is untouched."
-			return $false
-		}
-
-		& wsl --unregister $wslDistName
-		if ($LASTEXITCODE -ne 0) {
-			Write-Warning "Failed to unregister WSL distribution. Continuing with import step."
-		}
-	}
-	else {
-		Write-Host "Skipping WSL unregister step as distribution was not found."
-	}
-
-	# Step 4: Import the copied VHDX file in-place
-	Write-Host "Importing VHDX in-place..."
-	& wsl --import-in-place $wslDistName $vhdxPath
-	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to import VHDX in-place. Check if the path is correct and try again."
-		Write-Host "VHDX path: $vhdxPath"
-
-		# Alternate approach if import-in-place fails
-		Write-Host "Trying alternate import method..."
-		& wsl --import $wslDistName $destinationFolder $vhdxPath
-		if ($LASTEXITCODE -ne 0) {
-			Write-Error "All import methods failed. Manual intervention required."
-			return $false
-		}
-	}
-
-	# Step 5: Update Podman configuration if needed
-	# The .config directory contains Podman's machine configuration files
-	$configDir = Join-Path $env:USERPROFILE ".config\containers\podman\machine"
-
-	if (Test-Path $configDir) {
-		Write-Host "Updating Podman machine configuration..."
-
-		# First stop any existing podman processes
-		Get-Process | Where-Object { $_.Name -like "*podman*" } | ForEach-Object {
-			Write-Host "Stopping process: $($_.Name) (ID: $($_.Id))"
-			Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
-		}
-
-		# Make a backup of the current configuration
-		$backupFolder = Join-Path $env:TEMP "podman-config-backup-$(Get-Date -Format 'yyyyMMddHHmmss')"
-		Write-Host "Creating backup of Podman configuration at: $backupFolder"
-		if (Test-Path $configDir) {
-			Copy-Item -Path $configDir -Destination $backupFolder -Recurse
-		}
-
-		# Remove the configuration to force Podman to recreate it
-		Write-Host "Removing current machine configuration to force recreation..."
-		Remove-Item -Path $configDir -Recurse -Force -ErrorAction SilentlyContinue
-	}
-
-	# Step 6: Initialize/recreate the Podman machine
-	Write-Host "Re-initializing Podman machine with the moved WSL distribution..."
-
-	# Wait for WSL to fully register the imported distribution
-	Start-Sleep -Seconds 5
-
-	# Check if podman-machine-default is registered in WSL
-	$wslCheck = & wsl --list | Select-String -Pattern $wslDistName
-	if (-not $wslCheck) {
-		Write-Error "WSL distribution '$wslDistName' was not properly registered. Please check WSL status."
-		return $false
-	}
-
-	# Initialize a new Podman machine with "--now=false" to avoid starting it yet
-	Write-Host "Creating new Podman machine configuration..."
-	& podman machine init --now=false
-	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to initialize new Podman machine configuration."
-		return $false
-	}
-
-	# Start the Podman machine
-	Write-Host "Starting Podman machine..."
-	& podman machine start $MachineName
-	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to start Podman machine after move. Check if the import was successful using 'wsl -l -v'."
-
-		# If starting fails, try a different approach - remove and recreate
-		Write-Host "Attempting recovery by recreating the machine..."
-
-		# Keep the WSL distribution but remove the Podman machine
-		& podman machine rm -f $MachineName 2>$null
-
-		# Initialize a new machine pointing to the existing WSL distribution
-		& podman machine init
-		if ($LASTEXITCODE -eq 0) {
-			& podman machine start $MachineName
-			if ($LASTEXITCODE -eq 0) {
-				Write-Host "Machine successfully recreated and started."
-				return $true
-			}
-		}
-
-		Write-Host "Recovery failed. You may need to: "
-		Write-Host "1. Run 'podman machine rm -f $MachineName' to remove the failed configuration"
-		Write-Host "2. Run 'podman machine init' to create a new machine"
-		Write-Host "3. Run 'podman machine start $MachineName' to start it"
-		return $false
-	}
-
-	Write-Host "Podman machine image successfully moved to: $destinationFolder"
 	return $true
 }
 
@@ -1166,7 +834,7 @@ $menuItems = [ordered]@{
 	"2" = "Install Podman CLI"
 	"3" = "Install Podman Desktop (UI)"
 	"4" = "Initialize Podman Machine"
-	"5" = "Move Podman Machine"
+	# Option 5 (Move Machine) removed
 	"6" = "Register Podman Service"
 	"7" = "Remove Podman Components"
 	"0" = "Exit"
@@ -1182,13 +850,7 @@ $menuActions = @{
 			Start-PodmanMachine
 		}
 	}
-	"5" = {
-		$diskLocation = Select-DiskLocation
-		# Only proceed if a valid custom path was returned or default is used (empty string)
-		if ($diskLocation -ne $null) { # Check if Select-DiskLocation didn't error/cancel
-			Move-PodmanMachineImage -DestinationPath $diskLocation
-		}
-	}
+	# Action for option 5 removed
 	"6" = { Install-PodmanService }
 	"7" = { Remove-PodmanComponent }
 	# "0" action is handled internally by Invoke-MenuLoop

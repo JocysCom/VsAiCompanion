@@ -18,7 +18,7 @@ using namespace System.IO
 
 # Ensure the script is running as Administrator and set the working directory.
 # Note: This script currently only supports Docker due to network alias usage.
-Ensure-Elevated
+Test-AdminPrivilege
 Set-ScriptLocation
 
 #############################################
@@ -175,70 +175,7 @@ function Install-FirecrawlContainer {
 	Write-Host "Firecrawl is now running and accessible at http://localhost:3002"
 }
 
-#==============================================================================
-# Function: Uninstall-FirecrawlContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the Firecrawl container, its data volume (optional), and the associated Redis container.
-.DESCRIPTION
-	Calls Remove-ContainerAndVolume for the Firecrawl container and volume ('firecrawl', 'firecrawl_data').
-	Stops and removes the dedicated Redis container ('firecrawl-redis'). Supports -WhatIf via Remove-ContainerAndVolume.
-.EXAMPLE
-	Uninstall-FirecrawlContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-	Uses 'docker rm --force' for the Redis container.
-#>
-function Uninstall-FirecrawlContainer {
-	# Remove Firecrawl container and potentially its volume
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:firecrawlName -VolumeName $global:volumeName
-
-	# Remove the dedicated Redis container
-	$existingRedis = & $global:enginePath ps -a --filter "name=^$global:redisContainerName$" --format "{{.ID}}"
-	if ($existingRedis) {
-		Write-Host "Removing Redis container '$global:redisContainerName'..."
-		& $global:enginePath rm --force $global:redisContainerName
-	}
-}
-
-#==============================================================================
-# Function: Backup-FirecrawlContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Backs up the state of the running Firecrawl container.
-.DESCRIPTION
-	Calls the Backup-ContainerState helper function, specifying 'firecrawl' as the container name.
-	This commits the container state to an image and saves it as a tar file.
-.EXAMPLE
-	Backup-FirecrawlContainer
-.NOTES
-	Relies on Backup-ContainerState helper function. Does not back up the Redis container state.
-#>
-function Backup-FirecrawlContainer {
-	Backup-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName
-}
-
-#==============================================================================
-# Function: Restore-FirecrawlContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores the Firecrawl container image from a backup tar file.
-.DESCRIPTION
-	Calls the Restore-ContainerState helper function, specifying 'firecrawl' as the container name.
-	This loads the image from the backup tar file. Note: This only restores the Firecrawl image,
-	it does not automatically start the container or restore/start the Redis container.
-.EXAMPLE
-	Restore-FirecrawlContainer
-.NOTES
-	Relies on Restore-ContainerState helper function. Does not handle Redis restore or container start.
-#>
-function Restore-FirecrawlContainer {
-	Restore-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName
-	# Consider adding logic to restart Redis if needed after restore
-}
+# Note: Uninstall-FirecrawlContainer, Backup-FirecrawlContainer, Restore-FirecrawlContainer functions removed. Shared functions called directly from menu.
 
 #==============================================================================
 # Function: Invoke-StartFirecrawlForUpdate
@@ -331,37 +268,76 @@ function Invoke-StartFirecrawlForUpdate {
 .SYNOPSIS
 	Updates the Firecrawl container to the latest image version using the generic update workflow.
 .DESCRIPTION
-	Calls the generic Update-Container helper function, providing the specific details for the
-	Firecrawl container (name, image name) and passing a reference to the
-	Invoke-StartFirecrawlForUpdate function via the -RunFunction parameter. This ensures the
-	container is started correctly after the image is pulled and the old container is removed.
-	The associated Redis container is assumed to be running and is not affected by this update.
-	Supports -WhatIf.
+	Orchestrates the update process:
+	1. Prompts the user to optionally back up the current container state.
+	2. Calls the simplified generic Update-Container function (handles update check, removal, pull).
+	3. If core update steps succeed, calls Invoke-StartFirecrawlForUpdate to start the new container.
+	4. Offers to restore from backup if the start fails (and a backup was made).
 .EXAMPLE
 	Update-FirecrawlContainer -WhatIf
 .NOTES
-	Relies on the Update-Container helper function and Invoke-StartFirecrawlForUpdate. Assumes Docker engine.
+	Relies on Backup-FirecrawlContainer, Update-Container, Invoke-StartFirecrawlForUpdate,
+	Restore-FirecrawlContainer helper functions. Assumes Docker engine.
+	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-FirecrawlContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
 	param()
 
-	# Check ShouldProcess before proceeding with the delegated update
+	# Check ShouldProcess before proceeding
 	if (-not $PSCmdlet.ShouldProcess($global:firecrawlName, "Update Container")) {
 		return
 	}
 
-	# Previously, a script block was defined here and passed using .GetNewClosure().
-	# .GetNewClosure() creates a copy of the script block that captures the current
-	# state of variables in its scope, ensuring the generic Update-Container function
-	# executes it with the correct context from this script.
-	# We now use a dedicated function (Invoke-StartFirecrawlForUpdate) instead for better structure.
+	Write-Host "Initiating update for Firecrawl..."
+	$backupMade = $false
+	# Check if container exists before prompting for backup
+	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:firecrawlName)" --format "{{.ID}}"
+	if ($existingContainer) {
+		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
+		if ($createBackup -ne "N") {
+			if (Backup-FirecrawlContainer) { # Calls Backup-ContainerState
+				$backupMade = $true
+			}
+		}
+	}
+	else {
+		Write-Warning "Container '$($global:firecrawlName)' not found. Skipping backup prompt."
+	}
 
-	# Call the generic Update-Container function
-	Update-Container -Engine $global:enginePath `
-		-ContainerName $global:firecrawlName `
-		-ImageName $global:imageName `
-		-RunFunction ${function:Invoke-StartFirecrawlForUpdate} # Pass function reference
+	# Call simplified Update-Container (handles check, remove, pull)
+	# Pass volume name for removal step
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:firecrawlName -VolumeName $global:volumeName -ImageName $global:imageName) {
+		Write-Host "Core update steps successful. Starting new container..."
+		# Start the new container using the dedicated start function
+		try {
+			# Invoke-StartFirecrawlForUpdate expects these params, pass globals/literals
+			Invoke-StartFirecrawlForUpdate -EnginePath $global:enginePath `
+				-ContainerEngineType "docker" ` # Hardcoded as this script only supports Docker
+				-ContainerName $global:firecrawlName `
+				-VolumeName $global:volumeName `
+				-ImageName $global:imageName
+			# Success message is handled within Invoke-StartFirecrawlForUpdate
+		}
+		catch {
+			Write-Error "Failed to start updated Firecrawl container: $_"
+			if ($backupMade) {
+				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+				if ($restore -ne "N") {
+					Restore-FirecrawlContainer # Calls Restore-ContainerState
+				}
+			}
+		}
+	}
+	else {
+		Write-Error "Update process failed during check, removal, or pull."
+		if ($backupMade) {
+			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+			if ($restore -ne "N") {
+				Restore-FirecrawlContainer # Calls Restore-ContainerState
+			}
+		}
+	}
 }
 
 #==============================================================================
@@ -427,10 +403,18 @@ $menuActions = @{
 			-DelaySeconds 3
 	}
 	"2" = { Install-FirecrawlContainer }
-	"3" = { Uninstall-FirecrawlContainer }
-	"4" = { Backup-FirecrawlContainer }
-	"5" = { Restore-FirecrawlContainer }
-	"6" = { Update-FirecrawlContainer }
+	"3" = {
+		# Uninstall both Firecrawl and its Redis container
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:firecrawlName -VolumeName $global:volumeName
+		$existingRedis = & $global:enginePath ps -a --filter "name=^$global:redisContainerName$" --format "{{.ID}}"
+		if ($existingRedis) {
+			Write-Host "Removing Redis container '$global:redisContainerName'..."
+			& $global:enginePath rm --force $global:redisContainerName
+		}
+	}
+	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
+	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
+	"6" = { Update-FirecrawlContainer } # Calls the dedicated update function
 	"7" = { Update-FirecrawlUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

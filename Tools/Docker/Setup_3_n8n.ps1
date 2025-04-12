@@ -119,55 +119,6 @@ function Get-n8nContainerConfig {
 }
 
 #==============================================================================
-# Function: Remove-n8nContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Stops and removes the n8n container.
-.DESCRIPTION
-	Checks if a container named 'n8n' exists. If it does, it stops and removes it
-	using the selected container engine. Supports -WhatIf.
-.OUTPUTS
-	[bool] Returns $true if the container is removed successfully or didn't exist.
-		   Returns $false if removal fails or is skipped due to -WhatIf.
-.EXAMPLE
-	Remove-n8nContainer -WhatIf
-.NOTES
-	Uses 'engine ps', 'engine stop', and 'engine rm'.
-	Explicitly notes that the 'n8n_data' volume is not removed by this function.
-#>
-function Remove-n8nContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	[OutputType([bool])]
-	param()
-
-	$existingContainer = & $global:enginePath ps --all --filter "name=$global:containerName" --format "{{.ID}}"
-	if (-not $existingContainer) {
-		Write-Host "No n8n container found to remove."
-		return $true
-	}
-
-	if ($PSCmdlet.ShouldProcess($global:containerName, "Stop and Remove Container")) {
-		Write-Host "Stopping and removing n8n container..."
-		Write-Host "NOTE: This only removes the container, not the volume with user data."
-
-		& $global:enginePath stop $global:containerName 2>$null
-		& $global:enginePath rm $global:containerName
-
-		if ($LASTEXITCODE -eq 0) {
-			return $true
-		}
-		else {
-			Write-Error "Failed to remove n8n container."
-			return $false
-		}
-	}
-	else {
-		return $false # Action skipped due to -WhatIf
-	}
-}
-
-#==============================================================================
 # Function: Start-n8nContainer
 #==============================================================================
 <#
@@ -299,8 +250,9 @@ function Install-n8nContainer {
 		Write-Host "n8n image already exists. Skipping pull."
 	}
 
-	# Remove any existing container
-	Remove-n8nContainer # This function now supports ShouldProcess
+	# Remove any existing container using the shared function
+	# Pass container name and volume name. It will prompt about volume removal.
+	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
 
 	# Get the configuration (which includes prompting for domain and setting defaults)
 	$config = Get-n8nContainerConfig
@@ -309,83 +261,90 @@ function Install-n8nContainer {
 	Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars # This function now supports ShouldProcess
 }
 
-#==============================================================================
-# Function: Uninstall-n8nContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Uninstalls the n8n container and optionally removes its data volume.
-.DESCRIPTION
-	Calls the Remove-ContainerAndVolume helper function, specifying 'n8n' as the container
-	and 'n8n_data' as the volume. This will stop/remove the container and prompt the user
-	about removing the volume. Supports -WhatIf.
-.EXAMPLE
-	Uninstall-n8nContainer -Confirm:$false
-.NOTES
-	Relies on Remove-ContainerAndVolume helper function.
-#>
-function Uninstall-n8nContainer {
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
-}
+# Note: Uninstall-n8nContainer function removed. Shared function called directly from menu.
 
 #==============================================================================
 # Function: Update-n8nContainer
 #==============================================================================
 <#
 .SYNOPSIS
-	Updates the n8n container to the latest image version using the generic update workflow.
+	Updates the n8n container to the latest image version while preserving data.
 .DESCRIPTION
-	Calls the generic Update-Container helper function, providing the specific details for the
-	n8n container (name, image name) and passing a reference to the
-	Invoke-StartN8nForUpdate function via the -RunFunction parameter. This ensures the
-	container is started correctly with preserved configuration after the image is pulled
-	and the old container is removed. Supports -WhatIf.
+	Orchestrates the update process:
+	1. Gets the current container configuration (including domain prompt).
+	2. Prompts the user to optionally back up the current container image.
+	3. Calls the simplified generic Update-Container function (handles update check, removal, pull).
+	4. If core update steps succeed, calls Start-n8nContainer to start the new container with preserved config.
+	5. Offers to restore from backup if the start fails (and a backup was made).
 .EXAMPLE
 	Update-n8nContainer -WhatIf
 .NOTES
-	Relies on the Update-Container helper function and Invoke-StartN8nForUpdate.
+	Relies on Get-n8nContainerConfig, Backup-ContainerImage, Update-Container,
+	Start-n8nContainer, Restore-ContainerImage helper functions.
+	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-n8nContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
 	param()
 
-	# Check ShouldProcess before proceeding with the delegated update
+	# Check ShouldProcess before proceeding
 	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
 		return
 	}
 
-	# Previously, a script block was defined here and passed using .GetNewClosure().
-	# .GetNewClosure() creates a copy of the script block that captures the current
-	# Call the modified Update-Container function (which no longer starts the container)
-	$updateResult = Update-Container -Engine $global:enginePath `
-		-ContainerName $global:containerName `
-		-ImageName $global:imageName
+	Write-Host "Initiating update for n8n..."
+	$backupMade = $false
+	$config = Get-n8nContainerConfig # Get config before potential removal (includes domain prompt)
+	if (-not $config) {
+		# Get-n8nContainerConfig handles the case where container doesn't exist,
+		# but we still need to check if it returned null unexpectedly.
+		Write-Error "Cannot update: Failed to get n8n configuration."
+		return # Exit the function if config cannot be read
+	}
 
-	# If the update (pull image, remove old container) was successful, start the new one
-	if ($updateResult) {
-		Write-Host "Update pre-check successful. Starting the updated container..."
-
-		# Ensure the volume exists (important if it was removed manually)
-		if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
-			Write-Error "Failed to ensure volume '$global:volumeName' exists. Cannot start updated container."
-			return
-		}
-
-		# Get configuration (will use defaults if container didn't exist, includes domain prompt)
-		$config = Get-n8nContainerConfig
-
-		# Start the container using the specific Start-n8nContainer function
-		# Use the global image name (as Update-Container pulled it) and the retrieved EnvVars
-		if (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars) {
-			Write-Host "Container '$global:containerName' updated and started successfully!"
-		}
-		else {
-			Write-Error "Failed to start updated n8n container after successful image pull."
-			# Consider offering restore here if needed, similar to how Update-Container did
+	# Check if container actually exists before prompting for backup
+	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
+	if ($existingContainer) {
+		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
+		if ($createBackup -ne "N") {
+			# Backup-ContainerImage uses global:containerName for naming convention
+			if (Backup-ContainerImage -Engine $global:enginePath -ImageName $config.Image) {
+				$backupMade = $true
+			}
 		}
 	}
 	else {
-		Write-Error "Update process failed during image pull or container removal. Container not started."
+		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
+	}
+
+	# Call simplified Update-Container (handles check, remove, pull)
+	# Pass volume name for removal step
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
+		Write-Host "Core update steps successful. Starting new container..."
+		# Start the new container using the config retrieved earlier
+		if (-not (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars)) {
+			Write-Error "Failed to start updated n8n container."
+			if ($backupMade) {
+				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+				if ($restore -ne "N") {
+					# Restore-ContainerImage requires backup file path, which isn't easily known here.
+					# Directing user to use menu option 5 is safer.
+					Write-Warning "Please use menu option '5 - Import Image (App)' to restore the backup."
+					# Restore-ContainerImage -Engine $global:enginePath -BackupFile ???
+				}
+			}
+		}
+		# Success message is handled within Start-n8nContainer if successful
+	}
+	else {
+		Write-Error "Update process failed during check, removal, or pull."
+		if ($backupMade) {
+			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
+			if ($restore -ne "N") {
+				Write-Warning "Please use menu option '5 - Import Image (App)' to restore the backup."
+				# Restore-ContainerImage -Engine $global:enginePath -BackupFile ???
+			}
+		}
 	}
 }
 
@@ -438,9 +397,8 @@ function Restart-n8nContainer {
 	# Get current container configuration (includes domain prompt and defaults)
 	$config = Get-n8nContainerConfig
 
-	# Remove the existing container
-	if (-not (Remove-n8nContainer)) {
-		# This function now supports ShouldProcess
+	# Remove the existing container using the shared function
+	if (-not (Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName)) {
 		Write-Error "Failed to remove existing container or action skipped. Restart aborted."
 		return
 	}
@@ -468,8 +426,10 @@ function Reset-AdminPassword {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param()
 
-	& $global:enginePath exec -it $global:containerName $global:containerName user-management:reset
-	& $global:enginePath restart $global:containerName
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Reset Admin Password and Restart Container")) {
+		& $global:enginePath exec -it $global:containerName $global:containerName user-management:reset
+		& $global:enginePath restart $global:containerName
+	}
 }
 
 ################################################################################
@@ -504,7 +464,7 @@ $menuActions = @{
 			-HttpPort $global:containerPort
 	}
 	"2" = { Install-n8nContainer }
-	"3" = { Uninstall-n8nContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
 	"4" = {
 		# Export Image
 		Write-Host "Exporting n8n Image..."
@@ -544,10 +504,10 @@ $menuActions = @{
 			# No need to write an error here as the function does it.
 		}
 	}
-	"8" = { Update-n8nContainer } # Was 6
-	"9" = { Update-n8nUserData } # Was 7
-	"A" = { Restart-n8nContainer } # Was 8
-	"B" = { Reset-AdminPassword } # Was 9
+	"8" = { Update-n8nContainer } # Calls the dedicated update function
+	"9" = { Update-n8nUserData }
+	"A" = { Restart-n8nContainer }
+	"B" = { Reset-AdminPassword }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
