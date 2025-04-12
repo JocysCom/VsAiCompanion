@@ -557,6 +557,134 @@ function Copy-MachineToHost {
 }
 
 #==============================================================================
+# Function: Copy-HostToMachine
+#==============================================================================
+<#
+.SYNOPSIS
+    Copies a file or directory from the host machine into a container (Docker or Podman).
+.DESCRIPTION
+    Handles the differences between Docker 'cp' and Podman 'cp' (which requires 'machine ssh'
+    and WSL path conversion for the source path on Windows). Checks if the source exists on the host.
+.PARAMETER EnginePath
+    The full path to the container engine executable (docker.exe or podman.exe). Mandatory.
+.PARAMETER ContainerEngineType
+    The type of container engine ('docker' or 'podman'). Mandatory.
+.PARAMETER ContainerName
+    The name of the container into which to copy. Mandatory.
+.PARAMETER HostSourcePath
+    The path to the file or directory on the host machine to copy from. Mandatory.
+.PARAMETER ContainerDestinationPath
+    The path inside the container where the file or directory should be copied. Mandatory.
+.OUTPUTS
+    [bool] $true if the copy operation was successful, $false otherwise.
+.EXAMPLE
+    Copy-HostToMachine -EnginePath "C:\Program Files\Docker\Docker\resources\bin\docker.exe" `
+                       -ContainerEngineType "docker" `
+                       -ContainerName "my-app" `
+                       -HostSourcePath "C:\Uploads\config.json" `
+                       -ContainerDestinationPath "/app/config.json"
+.EXAMPLE
+    Copy-HostToMachine -EnginePath "C:\Program Files\RedHat\Podman\podman.exe" `
+                       -ContainerEngineType "podman" `
+                       -ContainerName "my-podman-app" `
+                       -HostSourcePath "C:\Temp\data.txt" `
+                       -ContainerDestinationPath "/data/data.txt"
+.NOTES
+    Relies on the ConvertTo-WSLPath function (expected to be available in the same scope)
+    when using Podman on Windows to convert the host source path.
+    Uses Write-Host for status messages for consistency with other functions in this file.
+#>
+function Copy-HostToMachine {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$EnginePath,
+
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$ContainerEngineType,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
+
+		[Parameter(Mandatory = $true)]
+		[string]$HostSourcePath,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerDestinationPath
+	)
+
+	# Check if source exists on host
+	if (-not (Test-Path -Path $HostSourcePath)) {
+		Write-Error "Host source path '$HostSourcePath' not found."
+		return $false
+	}
+
+	$targetDescription = "file '$HostSourcePath' from host to container '$($ContainerName):$($ContainerDestinationPath)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Copy")) {
+		Write-Host "Skipped copy due to -WhatIf or user cancellation."
+		return $false
+	}
+
+	Write-Host "Copying '$HostSourcePath' from host to $ContainerEngineType container '$($ContainerName):$($ContainerDestinationPath)'..."
+	$copySuccess = $false
+	$cpResult = $null
+	$LASTEXITCODE = 0 # Reset before command
+
+	try {
+		if ($ContainerEngineType -eq "docker") {
+			# Docker cp syntax: docker cp <host_src_path> <container>:<dest_path>
+			$cpCommandArgs = @(
+				"cp",
+				$HostSourcePath,
+				"$($ContainerName):$ContainerDestinationPath"
+			)
+			Write-Host "Running cp command: $EnginePath $($cpCommandArgs -join ' ')"
+			$cpResult = & $EnginePath @cpCommandArgs 2>&1
+		}
+		else {
+			# Podman requires WSL path for source and execution via 'machine ssh'
+			# Podman cp syntax (inside ssh): podman cp <host_src_path_wsl> <container>:<dest_path>
+			$wslSourceFilePath = ConvertTo-WSLPath -winPath $HostSourcePath
+			if ($wslSourceFilePath -eq $HostSourcePath) {
+				# Conversion likely failed, ConvertTo-WSLPath should issue a warning.
+				throw "Failed to convert Windows source path '$HostSourcePath' to a WSL path. Cannot proceed with Podman copy."
+			}
+			# Escape single quotes in paths for the inner command string
+			$escapedWslSourcePath = $wslSourceFilePath -replace "'", "'\''"
+			$escapedContainerDestPath = $ContainerDestinationPath -replace "'", "'\''"
+			$innerCpCommand = "podman cp '$escapedWslSourcePath' '$ContainerName`:$escapedContainerDestPath'"
+			# Outer quotes handle spaces in EnginePath if needed, inner command is single arg to ssh
+			$sshArgs = @(
+				"machine",
+				"ssh",
+				$innerCpCommand # The command string to execute inside the SSH session
+			)
+			Write-Host "Running cp command via podman machine ssh: $EnginePath $($sshArgs -join ' ')"
+			$cpResult = & $EnginePath @sshArgs 2>&1
+		}
+
+		Write-Host "Cp result: $cpResult" # Display output regardless of exit code for debugging
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Copy operation failed. Exit Code: $LASTEXITCODE."
+			throw "Copy command failed with exit code $LASTEXITCODE."
+		}
+
+		# Verification inside the container is tricky and often not necessary. Assume success if exit code is 0.
+		Write-Host "Successfully initiated copy to '$($ContainerName):$($ContainerDestinationPath)'. Verify inside container if needed." -ForegroundColor Green
+		$copySuccess = $true
+
+	}
+	catch {
+		Write-Error "An error occurred during the copy operation: $_"
+		$copySuccess = $false
+	}
+
+	return $copySuccess
+}
+
+#==============================================================================
 # Function: Invoke-ContainerImageBackup
 #==============================================================================
 <#
