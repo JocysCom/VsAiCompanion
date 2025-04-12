@@ -18,6 +18,7 @@ Set-ScriptLocation
 #############################################
 # Global Variables
 #############################################
+$global:backupDir = "Backup"
 $global:containerName = "n8n"
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
@@ -33,9 +34,9 @@ if ($global:containerEngine -eq "docker") {
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 # Define common paths
-$localDownloadsDir = Join-Path -Path $PSScriptRoot -ChildPath "downloads"
-$localWorkflowsPath = Join-Path -Path $localDownloadsDir -ChildPath "n8n_workflows.json"
-$localCredentialsPath = Join-Path -Path $localDownloadsDir -ChildPath "n8n_credentials.json"
+$localBackupDir = Join-Path -Path $PSScriptRoot -ChildPath $global:backupDir
+$localWorkflowsPath = Join-Path -Path $localBackupDir -ChildPath "n8n_workflows.json"
+$localCredentialsPath = Join-Path -Path $localBackupDir -ChildPath "n8n_credentials.json"
 $containerTempDir = "/tmp"
 $containerWorkflowsPath = "$containerTempDir/n8n_workflows.json"
 $containerCredentialsPath = "$containerTempDir/n8n_credentials.json"
@@ -96,7 +97,7 @@ function ConvertTo-WSLPath {
 .DESCRIPTION
     Executes 'n8n export:workflow --all' inside the container as the 'node' user,
     saving the output to a temporary file. Then copies the file to the local
-    'downloads' directory using the appropriate cp command (Docker direct, Podman via ssh).
+    backup directory using the appropriate cp command (Docker direct, Podman via ssh).
     Cleans up the temporary file in the container.
 .OUTPUTS
     [bool] $true if successful, $false otherwise.
@@ -139,6 +140,9 @@ function Invoke-ExportWorkflow {
 			throw "Copy-MachineToHost command failed for workflows."
 		}
 		# Success message is now inside Copy-MachineToHost if successful
+
+		# Expand the exported JSON file
+		Expand-JsonArrayItemsToFiles -JsonFilePath $localWorkflowsPath -BaseOutputDirectory $localBackupDir
 	}
 	catch {
 		Write-Error "Workflow export step failed: $_"
@@ -164,7 +168,7 @@ function Invoke-ExportWorkflow {
 .DESCRIPTION
     Executes 'n8n export:credentials --all' inside the container as the 'node' user,
     saving the output to a temporary file. Handles the "No credentials found" case
-    as a warning. Copies the file (if created) to the local 'downloads' directory
+    as a warning. Copies the file (if created) to the local backup directory
     using the appropriate cp command. Cleans up the temporary file.
 .OUTPUTS
     [bool] $true if successful or if no credentials found, $false on other errors.
@@ -218,6 +222,9 @@ function Invoke-ExportCredential {
 				throw "Copy-MachineToHost command failed for credentials."
 			}
 			# Success message is now inside Copy-MachineToHost if successful
+
+			# Expand the exported JSON file
+			Expand-JsonArrayItemsToFiles -JsonFilePath $localCredentialsPath -BaseOutputDirectory $localBackupDir
 		}
 	}
 	catch {
@@ -406,6 +413,167 @@ function Invoke-ImportCredential {
 	return $importSuccess
 }
 
+#==============================================================================
+# Function: Expand-JsonArrayItemsToFiles
+#==============================================================================
+<#
+.SYNOPSIS
+    Reads a JSON file containing an array of objects and saves each object as a separate JSON file.
+.DESCRIPTION
+    Takes the path to a JSON file as input. Assumes the file contains a JSON array.
+    Creates a subdirectory within the specified base output directory (defaults to $global:backupDir) named after the input JSON file (without extension).
+    Iterates through each object in the array. If an object has a 'name' property, it saves the object as a JSON file named '{sanitized_name}.json' in the created subdirectory.
+    If the 'name' property is missing or empty, a warning is issued, and the item is skipped.
+.PARAMETER JsonFilePath
+    The full path to the input JSON file containing the array.
+.PARAMETER BaseOutputDirectory
+    The base directory where the new subdirectory for expanded files will be created. Defaults to $global:backupDir.
+.EXAMPLE
+    PS C:\> Expand-JsonArrayItemsToFiles -JsonFilePath ".\Backup\n8n_workflows.json" -BaseOutputDirectory ".\Backup"
+    Reads 'n8n_workflows.json', creates '.\Backup\n8n_workflows\', and saves each workflow object like '.\Backup\n8n_workflows\My Workflow Name.json'.
+.OUTPUTS
+    [void] This function does not return a value but writes output to the console and creates files.
+.NOTES
+    Relies on the $global:backupDir variable being set if BaseOutputDirectory is not provided.
+    Sanitizes the 'name' property to remove characters invalid for Windows filenames.
+    Uses ConvertTo-Json with -Depth 10 to preserve nested structures.
+#>
+function Expand-JsonArrayItemsToFiles {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, HelpMessage = "Path to the input JSON file containing an array.")]
+        [string]$JsonFilePath,
+
+        [Parameter(Mandatory = $false, HelpMessage = "Base directory for output. Defaults to global backup dir.")]
+        [string]$BaseOutputDirectory = $global:backupDir
+    )
+
+    Write-Host "--- Expanding JSON items from '$JsonFilePath' ---"
+
+    # Validate input file path
+    if (-not (Test-Path -Path $JsonFilePath -PathType Leaf)) {
+        Write-Error "Input JSON file not found: '$JsonFilePath'"
+        return
+    }
+
+    # Determine output directory name and path
+    $InputFileName = Split-Path -Path $JsonFilePath -Leaf
+    $OutputDirectoryName = [System.IO.Path]::GetFileNameWithoutExtension($InputFileName)
+
+    # Resolve the base output directory path correctly
+    $ResolvedBaseOutputDir = $BaseOutputDirectory
+    if (-not [System.IO.Path]::IsPathRooted($ResolvedBaseOutputDir)) {
+        # If the provided path is relative, join it with the script root
+        $ResolvedBaseOutputDir = Join-Path -Path $PSScriptRoot -ChildPath $ResolvedBaseOutputDir
+    }
+    # Ensure the path is fully resolved/cleaned up
+    $ResolvedBaseOutputDir = Resolve-Path -Path $ResolvedBaseOutputDir -ErrorAction SilentlyContinue
+
+    if (-not $ResolvedBaseOutputDir) {
+        Write-Error "Could not resolve base output directory path: '$BaseOutputDirectory'"
+        return
+    }
+
+    $FullOutputDirectoryPath = Join-Path -Path $ResolvedBaseOutputDir -ChildPath $OutputDirectoryName
+
+    # Create output directory if it doesn't exist
+    if (-not (Test-Path -Path $FullOutputDirectoryPath -PathType Container)) {
+        try {
+            Write-Host "Creating output directory: '$FullOutputDirectoryPath'"
+            New-Item -Path $FullOutputDirectoryPath -ItemType Directory -Force -ErrorAction Stop | Out-Null
+        }
+        catch {
+            Write-Error "Failed to create output directory '$FullOutputDirectoryPath': $_"
+            return
+        }
+    }
+    else {
+        Write-Host "Output directory already exists: '$FullOutputDirectoryPath'"
+    }
+
+    # Read and parse JSON file
+    $jsonContent = $null
+    $jsonArray = $null
+    try {
+        $jsonContent = Get-Content -Path $JsonFilePath -Raw -ErrorAction Stop
+        # Handle empty file case gracefully
+        if ([string]::IsNullOrWhiteSpace($jsonContent)) {
+             Write-Warning "JSON file '$JsonFilePath' is empty. No items to expand."
+             return
+        }
+        $jsonArray = $jsonContent | ConvertFrom-Json -ErrorAction Stop
+    }
+    catch {
+        Write-Error "Failed to read or parse JSON file '$JsonFilePath': $_"
+        return
+    }
+
+    # Check if it's an array
+    if ($jsonArray -isnot [array]) {
+        # Handle single object case? For now, strictly array as per requirement.
+        # If the file contains a single JSON object not in an array, ConvertFrom-Json might return a PSCustomObject directly.
+        # Check if it's a single object and wrap it in an array if needed, or error out.
+        # Let's stick to the requirement: expect an array.
+        Write-Error "JSON content in '$JsonFilePath' is not an array."
+        return
+    }
+
+    Write-Host "Found $($jsonArray.Count) items in '$JsonFilePath'."
+
+    # Process each item in the array
+    $itemsProcessed = 0
+    $itemsSkipped = 0
+    foreach ($item in $jsonArray) {
+        # Check for 'name' property
+        $itemName = $null
+        if ($item -is [pscustomobject] -and $item.PSObject.Properties.Name -contains 'name') {
+            $itemName = $item.name
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($itemName)) {
+            # Sanitize the name for use as a filename
+            # Remove invalid characters: \ / : * ? " < > | and control characters
+            $invalidChars = [System.IO.Path]::GetInvalidFileNameChars() -join ''
+            $regexInvalidChars = [regex]::Escape($invalidChars)
+            $sanitizedName = $itemName -replace "[$regexInvalidChars]", '_' -replace '[\p{C}]', '' # Also remove control chars
+            # Replace potential leading/trailing dots or spaces which can cause issues
+            $sanitizedName = $sanitizedName.Trim().Trim('.')
+            # Prevent excessively long filenames (Windows MAX_PATH is 260, leave room for path)
+            if ($sanitizedName.Length -gt 100) {
+                Write-Warning "Sanitized name '$sanitizedName' is too long, truncating to 100 characters."
+                $sanitizedName = $sanitizedName.Substring(0, 100)
+            }
+
+            if ([string]::IsNullOrWhiteSpace($sanitizedName)) {
+                 Write-Warning "Item name '$itemName' resulted in an empty sanitized name. Skipping item."
+                 $itemsSkipped++
+                 continue
+            }
+
+            $outputFileName = "$($sanitizedName).json"
+            $outputFilePath = Join-Path -Path $FullOutputDirectoryPath -ChildPath $outputFileName
+
+            try {
+                Write-Host "Saving item '$itemName' to '$outputFilePath'..."
+                # Convert item back to JSON with sufficient depth
+                $itemJson = $item | ConvertTo-Json -Depth 10 -ErrorAction Stop
+                Set-Content -Path $outputFilePath -Value $itemJson -Encoding UTF8 -Force -ErrorAction Stop
+                $itemsProcessed++
+            }
+            catch {
+                Write-Error "Failed to save item '$itemName' to '$outputFilePath': $_"
+                # Continue with the next item
+            }
+        }
+        else {
+            Write-Warning "Skipping item because it lacks a 'name' property or the name is empty. Item index: $($jsonArray.IndexOf($item)). Item details: $($item | ConvertTo-Json -Depth 2 -Compress)"
+            $itemsSkipped++
+        }
+    }
+
+    Write-Host "--- Finished expanding JSON items. Processed $itemsProcessed/$($jsonArray.Count) items to '$FullOutputDirectoryPath' ($itemsSkipped skipped) ---"
+}
+
 
 ################################################################################
 # Main Menu Loop using Generic Function
@@ -439,10 +607,10 @@ $menuActions = @{
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
-# Ensure downloads directory exists before showing menu
-if (-not (Test-Path -Path $localDownloadsDir -PathType Container)) {
-	Write-Host "Creating downloads directory: $localDownloadsDir"
-	New-Item -Path $localDownloadsDir -ItemType Directory -Force | Out-Null
+# Ensure backup directory exists before showing menu
+if (-not (Test-Path -Path $localBackupDir -PathType Container)) {
+	Write-Host "Creating directory: $localBackupDir"
+	New-Item -Path $localBackupDir -ItemType Directory -Force | Out-Null
 }
 
 # Invoke the Menu Loop
