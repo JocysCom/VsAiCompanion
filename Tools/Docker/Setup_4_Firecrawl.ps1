@@ -377,10 +377,12 @@ $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container (includes Redis)"
 	"3" = "Uninstall container (includes Redis)"
-	"4" = "Backup Live container"
-	"5" = "Restore Live container"
-	"6" = "Update System"
-	"7" = "Update User Data"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (User Data)"
+	"7" = "Import Volume (User Data)"
+	"8" = "Update System"
+	"9" = "Update User Data"
 	"0" = "Exit menu"
 }
 
@@ -415,10 +417,16 @@ $menuActions = @{
 			& $global:enginePath rm --force $global:redisContainerName
 		}
 	}
-	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
-	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
-	"6" = { Update-FirecrawlContainer } # Calls the dedicated update function
-	"7" = { Update-FirecrawlUserData }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
+		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Write-Host "Restarting container '$($global:firecrawlName)' to apply imported volume data..."
+		& $global:enginePath restart $global:firecrawlName
+	}
+	"8" = { Update-FirecrawlContainer } # Calls the dedicated update function
+	"9" = { Update-FirecrawlUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

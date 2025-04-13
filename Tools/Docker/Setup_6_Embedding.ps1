@@ -295,8 +295,12 @@ $menuTitle = "Embedding API Container Menu (Podman Only)"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install/Rebuild container"
-	"3" = "Update container (Rebuild & Run)"
-	"4" = "Uninstall container"
+	"3" = "Uninstall container"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (User Data - *Likely Unused*)"
+	"7" = "Import Volume (User Data - *Likely Unused*)"
+	"8" = "Update container (Rebuild & Run)"
 	"0" = "Exit menu"
 }
 
@@ -313,8 +317,19 @@ $menuActions = @{
 			-AdditionalInfo @{ "Build Dir" = $global:buildDir }
 	}
 	"2" = { Install-EmbeddingContainer }
-	"3" = { Update-EmbeddingContainer }
-	"4" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName } # Call shared function directly
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = {
+		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
+		Write-Warning "Container image restored from backup. A rebuild (option 2 or 8) might be needed if source code changed."
+	}
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
+		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+		& $global:enginePath restart $global:containerName
+	}
+	"8" = { Update-EmbeddingContainer }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

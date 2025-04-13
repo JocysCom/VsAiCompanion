@@ -283,9 +283,11 @@ $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install/Rebuild container"
 	"3" = "Uninstall container"
-	"4" = "Backup container state"
-	"5" = "Restore container state"
-	"6" = "Update container (Pull source & Rebuild)"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (User Data)"
+	"7" = "Import Volume (User Data)"
+	"8" = "Update container (Pull source & Rebuild)"
 	"0" = "Exit menu"
 }
 
@@ -306,12 +308,18 @@ $menuActions = @{
 	}
 	"2" = { Install-QdrantMCPServerContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
 	"5" = {
-		Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
-		Write-Warning "Container state restored from image backup. You may need to manually restart the container with correct environment variables if they were changed since the backup (use option 2)."
+		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
+		Write-Warning "Container image restored from backup. You may need to manually restart the container with correct environment variables if they were changed since the backup (use option 2)."
 	}
-	"6" = { Update-QdrantMCPServerContainer }
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
+		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+		& $global:enginePath restart $global:containerName
+	}
+	"8" = { Update-QdrantMCPServerContainer }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

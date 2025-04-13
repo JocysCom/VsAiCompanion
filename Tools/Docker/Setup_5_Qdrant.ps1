@@ -314,10 +314,12 @@ $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"
 	"3" = "Uninstall container"
-	"4" = "Backup Live container"
-	"5" = "Restore Live container"
-	"6" = "Update System"
-	"7" = "Update User Data"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (User Data)"
+	"7" = "Import Volume (User Data)"
+	"8" = "Update System"
+	"9" = "Update User Data"
 	"0" = "Exit menu"
 }
 
@@ -334,10 +336,16 @@ $menuActions = @{
 	}
 	"2" = { Install-QdrantContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"6" = { Update-QdrantContainer } # Calls the dedicated update function
-	"7" = { Update-QdrantUserData }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
+		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+		& $global:enginePath restart $global:containerName
+	}
+	"8" = { Update-QdrantContainer } # Calls the dedicated update function
+	"9" = { Update-QdrantUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

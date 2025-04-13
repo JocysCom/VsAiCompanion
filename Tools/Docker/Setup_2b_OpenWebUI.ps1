@@ -454,11 +454,13 @@ $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"
 	"3" = "Uninstall container"
-	"4" = "Backup Live container"
-	"5" = "Restore Live container"
-	"6" = "Update System"
-	"7" = "Update User Data"
-	"8" = "Check for Updates"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (User Data)"
+	"7" = "Import Volume (User Data)"
+	"8" = "Update System"
+	"9" = "Update User Data"
+	"10" = "Check for Updates"
 	"0" = "Exit"
 }
 
@@ -476,11 +478,17 @@ $menuActions = @{
 	}
 	"2" = { Install-OpenWebUIContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
-	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"6" = { Update-OpenWebUIContainer } # Calls the dedicated update function
-	"7" = { Update-OpenWebUIUserData }
-	"8" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
+		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+		& $global:enginePath restart $global:containerName
+	}
+	"8" = { Update-OpenWebUIContainer } # Calls the dedicated update function
+	"9" = { Update-OpenWebUIUserData }
+	"10" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

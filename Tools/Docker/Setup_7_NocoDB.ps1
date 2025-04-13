@@ -160,17 +160,9 @@ function Install-NocoDBContainer {
 	Uses Write-Host for status messages.
 #>
 function Invoke-StartNocoDBForUpdate {
-	param(
-		[string]$EnginePath,
-		[string]$ContainerEngineType, # Not used
-		[string]$ContainerName, # Should be $global:containerName
-		[string]$VolumeName, # Should be $global:volumeName
-		[string]$ImageName            # The updated image name ($global:imageName)
-	)
-
 	# Ensure the volume exists (important if it was removed manually)
-	if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
-		throw "Failed to ensure volume '$VolumeName' exists during update."
+	if (-not (Confirm-ContainerVolume -Engine $global:EnginePath -VolumeName $global:volumeName)) {
+		throw "Failed to ensure volume '$global:volumeName' exists during update."
 	}
 
 	Write-Host "Starting updated NocoDB container '$ContainerName'..."
@@ -179,21 +171,21 @@ function Invoke-StartNocoDBForUpdate {
 	$runOptions = @(
 		"--detach",
 		"--publish", "8570:8080",
-		"--volume", "$($VolumeName):/usr/app/data",
-		"--name", $ContainerName
+		"--volume", "$($global:volumeName):/usr/app/data",
+		"--name", $global:containerName
 	)
 
 	# Execute the command
-	& $EnginePath run @runOptions $ImageName
+	& $global:EnginePath run @runOptions $global:imageName
 	if ($LASTEXITCODE -ne 0) {
-		throw "Failed to run updated NocoDB container '$ContainerName'."
+		throw "Failed to run updated NocoDB container '$global:containerName'."
 	}
 
 	# Wait and Test Connectivity (same as in Install-NocoDBContainer)
 	Write-Host "Waiting 20 seconds for container startup..."
 	Start-Sleep -Seconds 20
-	Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $ContainerName
-	Test-HTTPPort -Uri "http://localhost:8570" -serviceName $ContainerName
+	Test-TCPPort -ComputerName "localhost" -Port 8570 -serviceName $global:containerName
+	Test-HTTPPort -Uri "http://localhost:8570" -serviceName $global:containerName
 	Write-Host "NocoDB container updated successfully."
 }
 
@@ -247,12 +239,7 @@ function Update-NocoDBContainer {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the dedicated start function
 		try {
-			# Invoke-StartNocoDBForUpdate expects these params, pass globals/literals
-			Invoke-StartNocoDBForUpdate -EnginePath $global:enginePath `
-				-ContainerEngineType $global:containerEngine `
-				-ContainerName $global:containerName `
-				-VolumeName $global:volumeName `
-				-ImageName $global:imageName
+			Invoke-StartNocoDBForUpdate
 			# Success message is handled within Invoke-StartNocoDBForUpdate
 		}
 		catch {
@@ -260,7 +247,7 @@ function Update-NocoDBContainer {
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
-					Restore-NocoDBContainer # Calls Restore-ContainerState
+					Restore-NocoDBContainer
 				}
 			}
 		}
@@ -270,7 +257,7 @@ function Update-NocoDBContainer {
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
-				Restore-NocoDBContainer # Calls Restore-ContainerState
+				Restore-NocoDBContainer
 			}
 		}
 	}
@@ -286,9 +273,11 @@ $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"
 	"3" = "Uninstall container"
-	"4" = "Backup container"
-	"5" = "Restore container"
-	"6" = "Update container"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (User Data)"
+	"7" = "Import Volume (User Data)"
+	"8" = "Update container"
 	"0" = "Exit menu"
 }
 
@@ -303,10 +292,16 @@ $menuActions = @{
 			-HttpPort 8570
 	}
 	"2" = { Install-NocoDBContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"5" = { Restore-ContainerState -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"6" = { Update-NocoDBContainer } # Calls the dedicated update function
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"7" = {
+		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+		& $global:enginePath restart $global:containerName
+	}
+	"8" = { Update-NocoDBContainer }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
