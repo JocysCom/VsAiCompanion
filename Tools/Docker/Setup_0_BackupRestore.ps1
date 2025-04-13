@@ -152,16 +152,12 @@ function Backup-ContainerImage {
 #==============================================================================
 <#
 .SYNOPSIS
-	Backs up a single container volume to a timestamped tar file using the temporary container method.
+	Backs up a single container volume to a timestamped tar file.
 .DESCRIPTION
 	Exports the specified container volume using the provided container engine (docker or podman)
-	to a .tar file in the specified backup folder. The filename includes the volume name,
-	type ('volume'), and a timestamp (YYYYMMdd-HHMM). Creates the backup folder if it doesn't exist.
-	Uses a temporary alpine container and the 'tar' command for compatibility.
-.PARAMETER Engine
-	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+	to a .tar file in the specified backup folder.
 .PARAMETER EngineType
-	The type of the container engine ('docker' or 'podman'). Mandatory. Used to select the correct command.
+	The type of the container engine ('docker' or 'podman').
 .PARAMETER VolumeName
 	The name of the container volume to back up. Mandatory.
 .PARAMETER BackupFolder
@@ -169,102 +165,38 @@ function Backup-ContainerImage {
 .OUTPUTS
 	[string] Returns the full path to the created backup file on success, $null on failure.
 .EXAMPLE
-	Backup-ContainerVolume -Engine "podman" -EngineType "podman" -VolumeName "my_data" -BackupFolder "C:\MyBackups"
+	Backup-ContainerVolume -EngineType "podman" -VolumeName "my_data" -BackupFolder "C:\MyBackups"
 .EXAMPLE
-	Backup-ContainerVolume -Engine "docker" -EngineType "docker" -VolumeName "app_data"
-.NOTES
-	Uses $LASTEXITCODE to check command success. Requires 'alpine' image.
+	Backup-ContainerVolume -EngineType "docker" -VolumeName "app_data"
 #>
 function Backup-ContainerVolume {
-	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType([string])]
 	param(
 		[Parameter(Mandatory = $true)]
-		[string]$Engine, # Path to podman/docker executable
-
-		[Parameter(Mandatory = $true)]
 		[ValidateSet("docker", "podman")]
-		[string]$EngineType, # Type of engine
+		[string]$EngineType,
 
 		[Parameter(Mandatory = $true)]
-		[string]$VolumeName, # Name of the volume to backup
+		[string]$VolumeName,
 
-		[string]$BackupFolder = ".\Backup" # Destination folder for the backup file
+		[string]$BackupFolder = ".\Backup"
 	)
 
 	# Ensure backup folder exists
 	if (-not (Test-Path $BackupFolder)) {
-		if ($PSCmdlet.ShouldProcess($BackupFolder, "Create Directory")) {
-			New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
-			Write-Host "Created backup folder: $BackupFolder"
-		}
-		else {
-			Write-Warning "Backup folder creation skipped due to -WhatIf."
-			return $null
-		}
+		New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
+		Write-Host "Created backup folder: $BackupFolder"
 	}
 
 	# Generate timestamped filename using .tar extension
 	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
-	$backupFileName = "$VolumeName-volume-$timestamp.tar" # Use .tar extension
-	$backupFilePath = Join-Path $BackupFolder $backupFileName
+	$backupFileName = "$VolumeName-volume-$timestamp.tar"
+	$hostWinFilePath = Join-Path $BackupFolder $backupFileName
+	$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
 
-	$targetDescription = "volume '$VolumeName' to '$backupFilePath'"
-	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Backup")) {
-		Write-Host "Skipped backup due to -WhatIf."
-		return $null
-	}
-
-	Write-Host "Backing up volume '$VolumeName' to '$backupFilePath' using $EngineType (tar method)..."
-
-	# Use the temporary container method for both Docker and Podman
-	$tempImage = "alpine" # Use alpine as it's common and has tar/sh
-	$containerBackupPath = "/backup/$backupFileName"
-	# Define the actual command to run inside the container's shell
-	# Use tar 'c'reate, 'v'erbose, 'f'ile. Use 'z' for gzip compression if desired (change extension too).
-	$innerTarCommand = "tar cvf ""$containerBackupPath"" -C /volume_data ." # -C changes dir first
-
-	# Construct the volume mount arguments carefully
-	$volumeMount = """$VolumeName`:/volume_data"""
-	# Ensure BackupFolder is absolute for reliable mounting
-	$absoluteBackupFolder = Convert-Path $BackupFolder
-	$backupMount = """$absoluteBackupFolder`:/backup"""
-
-	# Build arguments for splatting
-	$runArgs = @(
-		"run",
-		"--rm",
-		"-v", $volumeMount,
-		"-v", $backupMount,
-		$tempImage, # Image name
-		"sh", # Command
-		"-c", # Argument to sh
-		$innerTarCommand # Argument to -c
-	)
-
-	# Execute the command using splatting
-	Write-Host "Running command: $Engine $($runArgs -join ' ')"
-	& $Engine @runArgs
-
-	if ($LASTEXITCODE -eq 0) {
-		# Verify the file was created on the host
-		if (Test-Path $backupFilePath -PathType Leaf) {
-			Write-Host "Successfully backed up volume '$VolumeName' to '$backupFilePath'" -ForegroundColor Green
-			return $backupFilePath
-		}
-		else {
-			Write-Error "Engine command succeeded, but backup file '$backupFilePath' was not found on the host. Check volume mount permissions/paths or tar command output."
-			return $null
-		}
-	}
-	else {
-		Write-Error "Backup container failed for volume '$VolumeName'. Exit code: $LASTEXITCODE"
-		# Clean up potentially empty/failed backup file
-		if (Test-Path $backupFilePath -PathType Leaf) {
-			Remove-Item $backupFilePath -Force -ErrorAction SilentlyContinue
-		}
-		return $null
-	}
+	# Command runs inside the container engine's context.
+	& $EngineType machine ssh "$EngineType volume export '$VolumeName' --output '$hostWslFilePath'"
+	return $hostWinFilePath 
 }
 
 #==============================================================================
@@ -278,8 +210,6 @@ function Backup-ContainerVolume {
 	Presents a numbered list sorted by date (newest first) and prompts the user to select one.
 	Restores the selected backup into the specified volume using a temporary alpine container
 	and the 'tar' command. Creates the volume if it doesn't exist.
-.PARAMETER Engine
-	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
 .PARAMETER EngineType
 	The type of the container engine ('docker' or 'podman'). Mandatory. Used to select the correct command.
 .PARAMETER VolumeName
@@ -297,24 +227,20 @@ function Backup-ContainerVolume {
 	Will overwrite existing volume content.
 #>
 function Restore-ContainerVolume {
-	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType([bool])]
 	param(
 		[Parameter(Mandatory = $true)]
-		[string]$Engine, # Path to podman/docker executable
-
-		[Parameter(Mandatory = $true)]
 		[ValidateSet("docker", "podman")]
-		[string]$EngineType, # Type of engine
+		[string]$EngineType,
 
 		[Parameter(Mandatory = $true)]
-		[string]$VolumeName, # Name of the volume to restore into
+		[string]$VolumeName,
 
-		[string]$BackupFolder = ".\Backup" # Source folder for backup files
+		[string]$BackupFolder = ".\Backup"
 	)
 
 	# Find available backup files for the specified volume
-	$backupPattern = "$VolumeName-volume-*.tar" # Use .tar extension filter
+	$backupPattern = "$VolumeName-volume-*.tar"
 	$backupFiles = Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Sort-Object LastWriteTime -Descending
 
 	if (-not $backupFiles) {
@@ -322,96 +248,21 @@ function Restore-ContainerVolume {
 		return $false
 	}
 
-	# Display available backups
-	Write-Host "Available backups for volume '$VolumeName':"
-	for ($i = 0; $i -lt $backupFiles.Count; $i++) {
-		Write-Host ("{0}. {1} ({2})" -f ($i + 1), $backupFiles[$i].Name, $backupFiles[$i].LastWriteTime)
-	}
-	Write-Host "0. Cancel"
-
-	# Prompt user for selection
-	$choice = Read-Host "Enter the number of the backup to restore (or 0 to cancel)"
-	if ($choice -eq '0' -or [string]::IsNullOrWhiteSpace($choice)) {
+	[string[]]$fileNames = (Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Select-Object -ExpandProperty Name);
+	[string[]]$menuOptions = $fileNames.Clone();
+	$exit = "Exit menu"
+	$menuOptions += $exit;
+	$backupFileName = Invoke-OptionsMenu -Title "Restore Container Volume" -Options $menuOptions -ExitChoice $exit
+	if ($backupFileName -eq $exit -or [string]::IsNullOrWhiteSpace($backupFileName)) {
 		Write-Host "Restore cancelled by user."
 		return $false
 	}
 
-	# Validate selection
-	if ($choice -notmatch '^\d+$' -or [int]$choice -lt 1 -or [int]$choice -gt $backupFiles.Count) {
-		Write-Error "Invalid selection '$choice'."
-		return $false
-	}
+	$hostWinFilePath = Join-Path $BackupFolder $backupFileName
+	$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
 
-	# Get the selected file
-	$selectedBackup = $backupFiles[[int]$choice - 1]
-	$selectedBackupFile = $selectedBackup.FullName
-	Write-Host "Selected backup: $($selectedBackup.Name)"
-
-	$targetDescription = "volume '$VolumeName' from '$selectedBackupFile'"
-	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Restore")) {
-		Write-Host "Skipped restore due to -WhatIf or user cancellation."
-		return $false
-	}
-
-	Write-Host "Restoring volume '$VolumeName' from '$selectedBackupFile' using $EngineType (tar method)..."
-
-	# 1. Ensure the volume exists (Create if not)
-	$volumeExists = & $Engine volume inspect $VolumeName --format '{{.Name}}' 2>$null
-	if (-not $volumeExists) {
-		Write-Host "Volume '$VolumeName' does not exist. Creating it..."
-		& $Engine volume create $VolumeName | Out-Null
-		if ($LASTEXITCODE -ne 0) {
-			Write-Error "Failed to create volume '$VolumeName'. Restore aborted."
-			return $false
-		}
-	}
-	else {
-		# Consider prompting if user wants to overwrite? For now, proceed.
-		Write-Host "Volume '$VolumeName' already exists. Contents will be overwritten by restore."
-		# Optionally, could clear the volume first, but cp should overwrite.
-	}
-
-	# 2. Use a temporary container to extract the tarball into the volume
-	$tempImage = "alpine" # Use alpine as it's common and has tar/sh
-	$backupFileName = Split-Path $selectedBackupFile -Leaf
-	$backupFolderHost = Split-Path $selectedBackupFile -Parent
-	# Ensure BackupFolder is absolute for reliable mounting
-	$absoluteBackupFolder = Convert-Path $backupFolderHost
-	$containerBackupPath = "/backup/$backupFileName"
-	# Use sh -c to change directory *inside* the container before extracting
-	# Use tar 'x'tract, 'v'erbose, 'f'ile. Use 'z' for gzip if backup used it.
-	# Add --strip-components=1 to remove the top-level '.' directory often included by 'tar cvf ... .'
-	$innerTarCommand = "cd /volume_data && tar xvf ""$containerBackupPath"" --strip-components=1"
-
-	# Construct the volume mount arguments carefully
-	$volumeMount = """$VolumeName`:/volume_data"""
-	$backupMount = """$absoluteBackupFolder`:/backup"""
-
-	# Build arguments for splatting
-	$runArgs = @(
-		"run",
-		"--rm",
-		"-v", $volumeMount,
-		"-v", $backupMount,
-		$tempImage, # Image name
-		"sh", # Command
-		"-c", # Argument to sh
-		$innerTarCommand # Argument to -c
-	)
-
-	# Execute the command using splatting
-	Write-Host "Running command: $Engine $($runArgs -join ' ')"
-	& $Engine @runArgs
-
-	if ($LASTEXITCODE -eq 0) {
-		Write-Host "Successfully restored volume '$VolumeName' from '$selectedBackupFile'" -ForegroundColor Green
-		return $true
-	}
-	else {
-		Write-Error "Restore container failed for volume '$VolumeName'. Exit code: $LASTEXITCODE"
-		return $false
-	}
-	# No complex try/catch/finally needed here as the tar command does the work
+	# Command runs inside the container engine's context.
+	& $EngineType machine ssh "$EngineType volume import '$VolumeName' '$hostWslFilePath'"
 }
 
 #==============================================================================

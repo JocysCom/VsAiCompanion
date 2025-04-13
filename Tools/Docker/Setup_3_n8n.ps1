@@ -31,7 +31,7 @@ Set-ScriptLocation
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
 $global:containerName = "n8n"
-$global:volumeName = $global:containerName # Default: same as container name.
+$global:volumeName = "n8n_data"
 $global:containerPort = 5678
 
 # --- Engine Selection ---
@@ -489,22 +489,13 @@ $menuActions = @{
 		}
 	}
 	"6" = {
-		# Export Volume
 		Write-Host "Exporting n8n Volume ($($global:volumeName))..."
-		Backup-ContainerVolume -Engine $global:enginePath -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 	}
 	"7" = {
-		# Import Volume - Function now handles file selection
 		Write-Host "Importing n8n Volume ($($global:volumeName))..."
-		# Call Restore-ContainerVolume without BackupFile parameter
-		if (Restore-ContainerVolume -Engine $global:enginePath -EngineType $global:containerEngine -VolumeName $global:volumeName) {
-			# Note: Volume restore might require a container restart to take effect.
-			Write-Host "Volume imported successfully. You may need to 'Restart' the container for changes to apply."
-		}
-		else {
-			# Error message or cancellation message is handled within Restore-ContainerVolume
-			# No need to write an error here as the function does it.
-		}
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		Restart-n8nContainer
 	}
 	"8" = { Update-n8nContainer } # Calls the dedicated update function
 	"9" = { Update-n8nUserData }

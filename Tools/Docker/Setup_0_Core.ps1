@@ -281,6 +281,76 @@ function Update-EnvironmentVariable {
 }
 
 #==============================================================================
+# Function: Invoke-OptionsMenu
+#==============================================================================
+<#
+.SYNOPSIS
+    Displays a menu of options and returns the key corresponding to the user's choice.
+.DESCRIPTION
+    Generates a dynamic menu based on the provided items array. It assigns numeric/alphabetic keys
+    to each item and uses Invoke-MenuLoop to handle the user interaction. The function returns
+    the key (e.g., "1", "2", "A") selected by the user.
+#>
+function Invoke-OptionsMenu {
+	# Set type to null to avoid outputting extra information.
+	[OutputType([System.Void])]
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Title,
+		[Parameter(Mandatory = $true)]
+		[array]$Options,
+		[string]$ExitChoice = $null,
+		[string]$DefaultChoice = $null
+	)
+	do {
+		$keys = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		$MenuItems = [ordered]@{}
+		[int]$i = 0
+		foreach ($value in $Options) {
+			if ([string]::IsNullOrWhiteSpace($value)) {
+				continue
+			}
+			if ($i -ge $keys.Length) {
+				Write-Warning "Too many menu items. Maximum supported is $($keys.Length)."
+				break
+			}
+			$key = $keys[$i]
+			$MenuItems["$key"] = $value
+			$i++
+		}
+
+		# Display Menu Title
+		Write-Host "===========================================" -ForegroundColor Yellow
+		Write-Host $Title -ForegroundColor White
+		Write-Host "===========================================" -ForegroundColor Yellow
+		# Display Menu Items from Ordered Hashtable
+		foreach ($key in $MenuItems.Keys) {
+			$line = ("{0}. {1}" -f $key, $MenuItems[$key])
+			if ($key -eq $DefaultChoice) {
+				$line += " (Default)"
+			}
+			Write-Host $line -ForegroundColor Cyan
+		}
+		Write-Host "-------------------------------------------" -ForegroundColor Yellow
+		[string]$choice = Read-Host "Enter your choice"
+		if ([string]::IsNullOrEmpty($choice)) {
+			$choice = $DefaultChoice
+		}
+		if ($null -ne $ExitChoice -and $ExitChoice -eq $choice) {
+			Write-Host "Exiting menu." -ForegroundColor Green
+			return $null
+		}
+		if ($MenuItems.Keys.Contains($choice)) {
+			Write-Host "Choice: $($MenuItems[$choice])" -ForegroundColor Green
+			return $MenuItems[$choice]
+		}
+		Write-Warning "Invalid selection."
+	} while ($choice -ne $ExitChoice)
+	return $null
+}
+
+#==============================================================================
 # Function: Invoke-MenuLoop
 #==============================================================================
 <#
@@ -325,18 +395,13 @@ function Invoke-MenuLoop {
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$MenuTitle,
-
 		[Parameter(Mandatory = $true)]
 		[System.Collections.Specialized.OrderedDictionary]$MenuItems, # Use [ordered] or this type
-
 		[Parameter(Mandatory = $true)]
 		[hashtable]$ActionMap,
-
 		[string]$ExitChoice = $null,
-
 		[string]$DefaultChoice = $null
 	)
-
 	do {
 		# Display Menu Title
 		Write-Host "===========================================" -ForegroundColor Yellow
@@ -351,23 +416,22 @@ function Invoke-MenuLoop {
 			Write-Host $line -ForegroundColor Cyan
 		}
 		Write-Host "-------------------------------------------" -ForegroundColor Yellow
-		$message = "Enter your choice"
-		[string]$choice = Read-Host $message
+		[string]$choice = Read-Host "Enter your choice"
 		if ([string]::IsNullOrEmpty($choice)) {
 			$choice = $DefaultChoice
 		}
-		# Execute Action or Exit
-		if ($ActionMap.ContainsKey($choice)) {
-			Write-Host "Choice: $($MenuItems[$choice])" -ForegroundColor Green
+		Write-Host "Choice: $($MenuItems[$choice])" -ForegroundColor Green
+		if ($null -ne $ExitChoice -and $ExitChoice -eq $choice) {
+			Write-Host "Exiting menu." -ForegroundColor Green
+			return
+		}
+		if ($null -ne $ActionMap -and $ActionMap.ContainsKey($choice)) {
 			try {
 				. $ActionMap[$choice] # Use dot sourcing to execute in current scope
 			}
 			catch {
 				Write-Error "An error occurred executing action for choice '$choice': $_"
 			}
-			return
-		} elseif ($null -ne $ExitChoice -and $ExitChoice -eq $choice) {
-			Write-Host "Exiting menu." -ForegroundColor Green
 			return
 		}
 		Write-Warning "Invalid selection."
