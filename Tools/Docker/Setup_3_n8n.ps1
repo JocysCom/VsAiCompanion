@@ -474,7 +474,6 @@ $menuActions = @{
 	"5" = {
 		Write-Host "Loading '$($global:containerName)' Container Image..."
 		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-		Write-Host "Image imported. You may need to 'Install container' or 'Restart' to use it."
 	}
 	"6" = {
 		Write-Host "Exporting '$($global:volumeName)' Volume..."

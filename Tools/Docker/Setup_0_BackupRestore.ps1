@@ -100,10 +100,8 @@ function Backup-ContainerImage {
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
-
 		[Parameter(Mandatory = $true)]
 		[string]$ContainerName,
-
 		[string]$BackupFolder = ".\Backup"
 	)
 
@@ -141,6 +139,112 @@ function Backup-ContainerImage {
 		Write-Error "Failed to backup image '$ImageName'"
 	}
 	return $success
+}
+
+#==============================================================================
+# Function: Restore-ContainerImage
+#==============================================================================
+<#
+.SYNOPSIS
+	Restores a container image from a backup .tar file.
+.DESCRIPTION
+	Loads a container image from the specified .tar backup file using the provided container engine.
+	If the load is successful and the -RunContainer switch is provided, it attempts to parse the
+	loaded image name from the engine's output and then calls Start-RestoredContainer.
+.PARAMETER Engine
+	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.PARAMETER BackupFile
+	The full path to the .tar file containing the image backup. Mandatory.
+.PARAMETER RunContainer
+	Switch parameter. If present, attempts to start a container from the restored image. Defaults to $false.
+.OUTPUTS
+	[bool] Returns $true if the image was loaded successfully, $false otherwise. Note: Success is based on loading,
+		   not necessarily on parsing the name or starting the container.
+.EXAMPLE
+	Restore-ContainerImage -Engine "podman" -BackupFile "C:\MyBackups\alpine_latest.tar"
+.EXAMPLE
+	Restore-ContainerImage -Engine "docker" -BackupFile "D:\DockerBackups\nginx_latest.tar" -RunContainer
+.NOTES
+	Relies on the output format of 'engine load --input ...' to parse the image name (e.g., "Loaded image: ...").
+	Uses $LASTEXITCODE to check the success of the engine's load command.
+#>
+function Restore-ContainerImage {
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine,
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
+		[string]$BackupFolder = ".\Backup"
+	)
+
+	if (-not (Test-Path $BackupFile)) {
+		Write-Error "Backup file '$BackupFile' not found."
+		return $false
+	}
+
+	# Use the current image name associated with the running container if possible, else default
+	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
+	if (-not $containerInfo) {
+		Write-Error "Container '$ContainerName' not found. Cannot back up image."
+		return $false
+	}
+
+	# Container exists, try to preserve existing vars and image name
+	$ImageName = $containerInfo.Config.Image
+
+	# Find available backup files for the specified volume
+	$backupPattern = "$ContainerName-image-*.tar"
+	$backupFiles = Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Sort-Object LastWriteTime -Descending
+
+	if (-not $backupFiles) {
+		Write-Error "No backup files found for '$ContainerName' images in folder '$BackupFolder' matching pattern '$backupPattern'."
+		return $false
+	}
+
+	[string[]]$fileNames = (Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Select-Object -ExpandProperty Name);
+	[string[]]$menuOptions = $fileNames.Clone();
+	$exit = "Exit menu"
+	$menuOptions += $exit;
+	$backupFileName = Invoke-OptionsMenu -Title "Restore Container Volume" -Options $menuOptions -ExitChoice $exit
+	if ($backupFileName -eq $exit -or [string]::IsNullOrWhiteSpace($backupFileName)) {
+		Write-Host "Restore cancelled by user."
+		return $false
+	}
+
+	$hostWinFilePath = Join-Path $BackupFolder $backupFileName
+
+	$output = & $Engine load --input $hostWinFilePath
+
+	if ($LASTEXITCODE -eq 0) {
+		# Use Write-Host for status messages
+		Write-Host "Successfully restored image from '$hostWinFilePath'."
+
+		# Attempt to parse the image name from the load output
+		# Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
+		$imageName = $null
+		if ($output -match "Loaded image:\s*(\S+)") {
+			$imageName = $matches[1].Trim()
+			# Use Write-Host for status messages
+			Write-Host "Parsed image name: $imageName"
+
+			if ($RunContainer) {
+				Start-RestoredContainer -Engine $Engine -ImageName $imageName
+			}
+			return $true
+		}
+		else {
+			# Use Write-Host for status messages
+			Write-Host "Could not parse image name from the load output."
+			# Still return true as the image was loaded, just couldn't parse name
+			return $true
+		}
+	}
+	else {
+		Write-Error "Failed to restore image from '$hostWinFilePath'."
+		return $false
+	}
 }
 
 #==============================================================================
@@ -601,88 +705,6 @@ function Invoke-ContainerImageBackup {
 	# Use Write-Host for status messages
 	Write-Host "Backed up $successCount out of $($images.Count) images."
 	return ($successCount -gt 0)
-}
-
-#==============================================================================
-# Function: Restore-ContainerImage
-#==============================================================================
-<#
-.SYNOPSIS
-	Restores a container image from a backup .tar file.
-.DESCRIPTION
-	Loads a container image from the specified .tar backup file using the provided container engine.
-	If the load is successful and the -RunContainer switch is provided, it attempts to parse the
-	loaded image name from the engine's output and then calls Start-RestoredContainer.
-.PARAMETER Engine
-	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
-.PARAMETER BackupFile
-	The full path to the .tar file containing the image backup. Mandatory.
-.PARAMETER RunContainer
-	Switch parameter. If present, attempts to start a container from the restored image. Defaults to $false.
-.OUTPUTS
-	[bool] Returns $true if the image was loaded successfully, $false otherwise. Note: Success is based on loading,
-		   not necessarily on parsing the name or starting the container.
-.EXAMPLE
-	Restore-ContainerImage -Engine "podman" -BackupFile "C:\MyBackups\alpine_latest.tar"
-.EXAMPLE
-	Restore-ContainerImage -Engine "docker" -BackupFile "D:\DockerBackups\nginx_latest.tar" -RunContainer
-.NOTES
-	Relies on the output format of 'engine load --input ...' to parse the image name (e.g., "Loaded image: ...").
-	Uses $LASTEXITCODE to check the success of the engine's load command.
-#>
-function Restore-ContainerImage {
-	[CmdletBinding()]
-	[OutputType([bool])]
-	param(
-		[Parameter(Mandatory = $true)]
-		[string]$Engine,
-
-		[Parameter(Mandatory = $true)]
-		[string]$BackupFile,
-
-		[switch]$RunContainer = $false
-	)
-
-	if (-not (Test-Path $BackupFile)) {
-		Write-Error "Backup file '$BackupFile' not found."
-		return $false
-	}
-
-	# Use Write-Host for status messages
-	Write-Host "Restoring image from '$BackupFile'..."
-	# podman load [options]
-	# load       Load an image from a tar archive.
-	# --input string   Specify the input file containing the saved image.
-	$output = & $Engine load --input $BackupFile
-
-	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Host for status messages
-		Write-Host "Successfully restored image from '$BackupFile'."
-
-		# Attempt to parse the image name from the load output
-		# Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
-		$imageName = $null
-		if ($output -match "Loaded image:\s*(\S+)") {
-			$imageName = $matches[1].Trim()
-			# Use Write-Host for status messages
-			Write-Host "Parsed image name: $imageName"
-
-			if ($RunContainer) {
-				Start-RestoredContainer -Engine $Engine -ImageName $imageName
-			}
-			return $true
-		}
-		else {
-			# Use Write-Host for status messages
-			Write-Host "Could not parse image name from the load output."
-			# Still return true as the image was loaded, just couldn't parse name
-			return $true
-		}
-	}
-	else {
-		Write-Error "Failed to restore image from '$BackupFile'."
-		return $false
-	}
 }
 
 #==============================================================================
