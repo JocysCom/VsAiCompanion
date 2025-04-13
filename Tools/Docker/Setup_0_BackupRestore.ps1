@@ -102,49 +102,45 @@ function Backup-ContainerImage {
 		[string]$Engine,
 
 		[Parameter(Mandatory = $true)]
-		[string]$ImageName,
+		[string]$ContainerName,
 
 		[string]$BackupFolder = ".\Backup"
 	)
 
+	# Ensure backup folder exists
 	if (-not (Test-Path $BackupFolder)) {
 		New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
-		# Use Write-Host for status messages
 		Write-Host "Created backup folder: $BackupFolder"
 	}
 
-	# Generate timestamped filename based on Container Name (more logical association)
-	# Assuming ContainerName is available or passed, otherwise fallback needed.
-	# For now, let's derive from ImageName but aim for ContainerName if possible in calling script.
-	# Using the guide's pattern: {name}-image-{timestamp}.tar
-	# We'll use the base image name part before the first ':' or '/' as the {name} for now.
-	$baseName = ($ImageName -split '[:/]')[0]
-	# If ImageName was something like 'docker.io/n8nio/n8n', baseName is 'docker.io'. Let's try to get the last part.
-	if ($ImageName -match '.*/([^:]+)(:.+)?$') {
-		$baseName = $matches[1] # e.g., 'n8n' from 'docker.io/n8nio/n8n:latest'
+	# Use the current image name associated with the running container if possible, else default
+	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
+	if (-not $containerInfo) {
+		Write-Error "Container '$ContainerName' not found. Cannot back up image."
+		return $false
 	}
-	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
-	# Use ContainerName if available globally, otherwise derived baseName (Reverted change)
-	$namePart = if ($global:containerName) { $global:containerName } else { Write-Warning "Global variable 'containerName' not found for image backup naming. Falling back to derived name '$baseName'."; $baseName }
-	$backupFileName = "$namePart-image-$timestamp.tar"
-	$backupFile = Join-Path $BackupFolder $backupFileName
 
-	# Use Write-Host for status messages
-	Write-Host "Backing up image '$ImageName' to '$backupFile'..." # Keep original image name in message
+	# Container exists, try to preserve existing vars and image name
+	$ImageName = $containerInfo.Config.Image
+
+	# Generate timestamped filename using .tar extension
+	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
+	$backupFileName = "$containerName-image-$timestamp.tar"
+	$hostWinFilePath = Join-Path $BackupFolder $backupFileName
+
 	# podman save [options] IMAGE
 	# save      Save an image to a tar archive.
 	# --output string   Specify the output file for saving the image.
-	& $Engine save --output $backupFile $ImageName
-
-	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Host for status messages
-		Write-Host "Successfully backed up image '$ImageName'"
-		return $true
+	Write-Host "& $Engine save --output '$hostWinFilePath' '$ImageName'"
+	& $Engine save --output $hostWinFilePath $ImageName
+	$success = $LASTEXITCODE -eq 0
+	if ($success) {
+		Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
 	}
 	else {
 		Write-Error "Failed to backup image '$ImageName'"
-		return $false
 	}
+	return $success
 }
 
 #==============================================================================
@@ -195,8 +191,16 @@ function Backup-ContainerVolume {
 	$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
 
 	# Command runs inside the container engine's context.
+	Write-Output "$EngineType machine ssh ""$EngineType volume export '$VolumeName' --output '$hostWslFilePath'"""
 	& $EngineType machine ssh "$EngineType volume export '$VolumeName' --output '$hostWslFilePath'"
-	return $hostWinFilePath 
+	$success = $LASTEXITCODE -eq 0
+	if ($success) {
+		Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+	}
+	else {
+		Write-Error "Failed to backup image '$ImageName'"
+	}
+	return $hostWinFilePath
 }
 
 #==============================================================================
@@ -262,7 +266,16 @@ function Restore-ContainerVolume {
 	$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
 
 	# Command runs inside the container engine's context.
+	Write-Output "$EngineType machine ssh ""$EngineType volume import '$VolumeName' '$hostWslFilePath'"""
 	& $EngineType machine ssh "$EngineType volume import '$VolumeName' '$hostWslFilePath'"
+	$success = $LASTEXITCODE -eq 0
+	if ($success) {
+		Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+	}
+	else {
+		Write-Error "Failed to backup image '$ImageName'"
+	}
+	return $success
 }
 
 #==============================================================================

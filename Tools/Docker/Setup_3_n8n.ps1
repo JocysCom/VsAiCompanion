@@ -444,8 +444,8 @@ $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"
 	"3" = "Uninstall container (preserves user data volume)"
-	"4" = "Export Image (App)"
-	"5" = "Import Image (App)"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
 	"6" = "Export Volume (User Data)"
 	"7" = "Import Volume (User Data)"
 	"8" = "Update System (Image)"
@@ -468,36 +468,24 @@ $menuActions = @{
 	"2" = { Install-n8nContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
 	"4" = {
-		# Export Image
-		Write-Host "Exporting n8n Image..."
-		# Use the current image name associated with the running container if possible, else default
-		$currentConfig = Get-n8nContainerConfig # Reuse config getter to find current image
-		$imageToBackup = if ($currentConfig) { $currentConfig.Image } else { $global:imageName }
-		Backup-ContainerImage -Engine $global:enginePath -ImageName $imageToBackup
+		Write-Host "Saving '$containerName' Container Image..."
+		Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
 	}
 	"5" = {
-		# Import Image
-		$backupFile = Read-Host "Enter the full path to the image backup file (.tar)"
-		if (-not [string]::IsNullOrWhiteSpace($backupFile) -and (Test-Path $backupFile -PathType Leaf)) {
-			Restore-ContainerImage -Engine $global:enginePath -BackupFile $backupFile
-			# Note: Restore-ContainerImage doesn't automatically restart the container.
-			# User might need to Install/Restart manually after image import.
-			Write-Host "Image imported. You may need to 'Install container' or 'Restart' to use it."
-		}
-		else {
-			Write-Warning "Invalid path or file not found: '$backupFile'"
-		}
+		Write-Host "Loading '$($global:containerName)' Container Image..."
+		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+		Write-Host "Image imported. You may need to 'Install container' or 'Restart' to use it."
 	}
 	"6" = {
-		Write-Host "Exporting n8n Volume ($($global:volumeName))..."
+		Write-Host "Exporting '$($global:volumeName)' Volume..."
 		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 	}
 	"7" = {
-		Write-Host "Importing n8n Volume ($($global:volumeName))..."
+		Write-Host "Importing '$($global:volumeName)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Restart-n8nContainer
 	}
-	"8" = { Update-n8nContainer } # Calls the dedicated update function
+	"8" = { Update-n8nContainer }
 	"9" = { Update-n8nUserData }
 	"A" = { Restart-n8nContainer }
 	"B" = { Reset-AdminPassword }
