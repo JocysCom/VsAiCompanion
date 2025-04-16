@@ -531,13 +531,14 @@ function Expand-JsonArrayItemsToFiles {
         }
 
         if (-not [string]::IsNullOrWhiteSpace($itemName)) {
-            # Sanitize the name for use as a filename
+            $sanitizedName = $itemName -replace '[^a-zA-Z0-9]', '_'
+			# Sanitize the name for use as a filename
             # Remove invalid characters: \ / : * ? " < > | and control characters
-            $invalidChars = [System.IO.Path]::GetInvalidFileNameChars() -join ''
-            $regexInvalidChars = [regex]::Escape($invalidChars)
-            $sanitizedName = $itemName -replace "[$regexInvalidChars]", '_' -replace '[\p{C}]', '' # Also remove control chars
+            #$invalidChars = [System.IO.Path]::GetInvalidFileNameChars() -join ''
+            #$regexInvalidChars = [regex]::Escape($invalidChars)
+            #$sanitizedName = $itemName -replace "[$regexInvalidChars]", '_' -replace '[\p{C}]', '' # Also remove control chars
             # Replace potential leading/trailing dots or spaces which can cause issues
-            $sanitizedName = $sanitizedName.Trim().Trim('.')
+            #$sanitizedName = $sanitizedName.Trim().Trim('.')
             # Prevent excessively long filenames (Windows MAX_PATH is 260, leave room for path)
             if ($sanitizedName.Length -gt 100) {
                 Write-Warning "Sanitized name '$sanitizedName' is too long, truncating to 100 characters."
