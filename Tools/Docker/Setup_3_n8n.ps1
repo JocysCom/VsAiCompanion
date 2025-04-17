@@ -295,7 +295,6 @@ function Update-n8nContainer {
 	}
 
 	Write-Host "Initiating update for n8n..."
-	$backupMade = $false
 	$config = Get-n8nContainerConfig # Get config before potential removal (includes domain prompt)
 	if (-not $config) {
 		# Get-n8nContainerConfig handles the case where container doesn't exist,
@@ -309,10 +308,10 @@ function Update-n8nContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			# Backup-ContainerImage uses global:containerName for naming convention
-			if (Backup-ContainerImage -Engine $global:enginePath -ImageName $config.Image) {
-				$backupMade = $true
-			}
+			Write-Host "Saving '$containerName' Container Image..."
+			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Write-Host "Exporting '$($global:volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		}
 	}
 	else {
@@ -326,27 +325,11 @@ function Update-n8nContainer {
 		# Start the new container using the config retrieved earlier
 		if (-not (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars)) {
 			Write-Error "Failed to start updated n8n container."
-			if ($backupMade) {
-				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-				if ($restore -ne "N") {
-					# Restore-ContainerImage requires backup file path, which isn't easily known here.
-					# Directing user to use menu option 5 is safer.
-					Write-Warning "Please use menu option '5 - Import Image (App)' to restore the backup."
-					# Restore-ContainerImage -Engine $global:enginePath -BackupFile ???
-				}
-			}
 		}
 		# Success message is handled within Start-n8nContainer if successful
 	}
 	else {
 		Write-Error "Update process failed during check, removal, or pull."
-		if ($backupMade) {
-			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-			if ($restore -ne "N") {
-				Write-Warning "Please use menu option '5 - Import Image (App)' to restore the backup."
-				# Restore-ContainerImage -Engine $global:enginePath -BackupFile ???
-			}
-		}
 	}
 }
 
