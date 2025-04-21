@@ -29,7 +29,8 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
+#$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
+$global:imageName = "docker.io/n8nio/n8n:1.86.1" # Use docker.io for both now - Pinned to specific version
 $global:containerName = "n8n"
 $global:volumeName = "n8n_data"
 $global:containerPort = 5678
@@ -105,12 +106,22 @@ function Get-n8nContainerConfig {
 	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
 	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
 	$envVars += "N8N_RUNNERS_ENABLED=true"
+	$envVars += "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true"
+	#$envVars += "N8N_PUSH_BACKEND=websocket"
+	#$envVars += "N8N_LOG_LEVEL=debug"
+	#$envVars += "N8N_PUSH_BACKEND=sse"
+	#$envVars += "N8N_PROXY_HOPS=1"
+	#$envVars += "N8N_EXPRESS_TRUST_PROXY=true"
+	#$envVars += "N8N_PROTOCOL=https"
+	#$envVars += "N8N_TRUST_PROXY=127.0.0.1/32,::1/128"
 
 	# Prompt user for external domain configuration.
 	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
 	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
-		$envVars += "N8N_HOST=$externalDomain"
-		$envVars += "WEBHOOK_URL=https://$externalDomain"
+		$envVars += "N8N_PUBLIC_API_BASE_URL=https://$externalDomain"
+		#$envVars += "N8N_HOST=$externalDomain"
+		$envVars += "WEBHOOK_URL=https://$externalDomain/"
+		#$envVars += "N8N_EDITOR_BASE_URL=https://n8n.jocys.com/"
 	}
 
 	# Return a custom object
@@ -158,6 +169,8 @@ function Start-n8nContainer {
 
 	# Build the run command
 	$runOptions = @(
+		"--env", "GENERIC_TIMEZONE=Europe/London",            # n8n’s internal TZ
+		"--env", "TZ=Europe/London",                          # Linux tzdata TZ
 		"--detach", # Run container in background.
 		"--publish", "5678:5678", # Map host port 5678 to container port 5678.
 		"--volume", "$($global:volumeName):/home/node/.n8n", # Mount the named volume for persistent data.
@@ -227,10 +240,10 @@ function Start-n8nContainer {
 #>
 function Install-n8nContainer {
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
-		Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
-		return
-	}
+	#if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+	#	Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
+	#	return
+	#}
 	Write-Host "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
 
 	# Check if the n8n image is already available, restore from backup, or pull new.
@@ -433,7 +446,7 @@ $menuItems = [ordered]@{
 	"7" = "Import Volume (User Data)"
 	"8" = "Update System (Image)"
 	"9" = "Update User Data (Not Implemented)"
-	"A" = "Restart with Community Packages Enabled"
+	"A" = "Restart"
 	"B" = "Reset Admin Password"
 	"0" = "Exit menu"
 }

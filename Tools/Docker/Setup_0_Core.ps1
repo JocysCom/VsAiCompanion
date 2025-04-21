@@ -288,8 +288,7 @@ function Update-EnvironmentVariable {
     Displays a menu of options and returns the key corresponding to the user's choice.
 .DESCRIPTION
     Generates a dynamic menu based on the provided items array. It assigns numeric/alphabetic keys
-    to each item and uses Invoke-MenuLoop to handle the user interaction. The function returns
-    the key (e.g., "1", "2", "A") selected by the user.
+    to each item. The function returns the value selected by the user.
 #>
 function Invoke-OptionsMenu {
 	# Set type to null to avoid outputting extra information.
