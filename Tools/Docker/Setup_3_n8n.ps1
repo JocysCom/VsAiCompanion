@@ -29,8 +29,8 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-#$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
-$global:imageName = "docker.io/n8nio/n8n:1.86.1" # Use docker.io for both now - Pinned to specific version
+$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
+#$global:imageName = "docker.io/n8nio/n8n:1.86.1" # Use docker.io for both now - Pinned to specific version
 $global:containerName = "n8n"
 $global:volumeName = "n8n_data"
 $global:containerPort = 5678
@@ -118,10 +118,13 @@ function Get-n8nContainerConfig {
 	# Prompt user for external domain configuration.
 	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
 	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
-		$envVars += "N8N_PUBLIC_API_BASE_URL=https://$externalDomain"
-		#$envVars += "N8N_HOST=$externalDomain"
+		$envVars += "N8N_PUBLIC_API_BASE_URL=https://$externalDomain/"
 		$envVars += "WEBHOOK_URL=https://$externalDomain/"
-		#$envVars += "N8N_EDITOR_BASE_URL=https://n8n.jocys.com/"
+		# old
+		#$envVars += "N8N_EDITOR_BASE_URL=https://$externalDomain"
+		#$envVars += "N8N_PROTOCOL=https"
+		#$envVars += "N8N_HOST=$externalDomain"
+		#$envVars += "N8N_PORT=443"
 	}
 
 	# Return a custom object
@@ -342,7 +345,8 @@ function Update-n8nContainer {
 		# Success message is handled within Start-n8nContainer if successful
 	}
 	else {
-		Write-Error "Update process failed during check, removal, or pull."
+		# Update-Container already wrote a message explaining why it returned false (e.g., no update available).
+		# No need to write an error here.
 	}
 }
 
