@@ -107,8 +107,9 @@ function Get-n8nContainerConfig {
 	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
 	$envVars += "N8N_RUNNERS_ENABLED=true"
 	$envVars += "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true"
-	#$envVars += "N8N_PUSH_BACKEND=websocket"
+	$envVars += "N8N_TRUST_HOST_HEADERS=true"
 	#$envVars += "N8N_LOG_LEVEL=debug"
+	#$envVars += "N8N_PUSH_BACKEND=websocket"
 	#$envVars += "N8N_PUSH_BACKEND=sse"
 	#$envVars += "N8N_PROXY_HOPS=1"
 	#$envVars += "N8N_EXPRESS_TRUST_PROXY=true"
@@ -120,11 +121,11 @@ function Get-n8nContainerConfig {
 	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
 		$envVars += "N8N_PUBLIC_API_BASE_URL=https://$externalDomain/"
 		$envVars += "WEBHOOK_URL=https://$externalDomain/"
-		# old
-		#$envVars += "N8N_EDITOR_BASE_URL=https://$externalDomain"
+		$envVars += "N8N_CORS_ALLOW_ORIGIN=https://$externalDomain"
 		#$envVars += "N8N_PROTOCOL=https"
 		#$envVars += "N8N_HOST=$externalDomain"
 		#$envVars += "N8N_PORT=443"
+		#$envVars += "N8N_EDITOR_BASE_URL=https://$externalDomain"
 	}
 
 	# Return a custom object
@@ -177,6 +178,8 @@ function Start-n8nContainer {
 		"--detach", # Run container in background.
 		"--publish", "5678:5678", # Map host port 5678 to container port 5678.
 		"--volume", "$($global:volumeName):/home/node/.n8n", # Mount the named volume for persistent data.
+		#"--cap-add", "NET_RAW",
+		#"--cap-add", "NET_ADMIN",
 		"--name", $global:containerName         # Assign a name to the container.
 	)
 
@@ -189,6 +192,7 @@ function Start-n8nContainer {
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting n8n container with image: $Image"
+		Write-Host "& $global:enginePath run $runOptions $Image"
 		& $global:enginePath run $runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {

@@ -184,7 +184,7 @@ function Remove-ContainerAndVolume {
 		[Parameter(Mandatory = $true)]
 		[string]$ContainerName,
 
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $false)] # Made optional
 		[string]$VolumeName
 	)
 
@@ -214,36 +214,45 @@ function Remove-ContainerAndVolume {
 		Write-Host "Container '$ContainerName' removed successfully."
 	}
 
-	# Check if volume exists
-	$existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
-	if ($existingVolume) {
-		# Use Write-Host for status messages
-		Write-Host "Data volume '$VolumeName' exists."
-		$removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
-		if ($removeVolume -eq 'Y') {
-			if ($PSCmdlet.ShouldProcess($VolumeName, "Remove Volume")) {
-				# Use Write-Host for status messages
-				Write-Host "Removing volume '$VolumeName'..."
-				& $Engine volume rm $VolumeName
-				if ($LASTEXITCODE -eq 0) {
+	# Only proceed with volume check/removal if a VolumeName was provided
+	if (-not [string]::IsNullOrWhiteSpace($VolumeName)) {
+		# Check if volume exists
+		$existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
+		if ($existingVolume -eq $VolumeName) { # Ensure exact match
+			# Use Write-Host for status messages
+			Write-Host "Data volume '$VolumeName' exists."
+			$removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
+			if ($removeVolume -eq 'Y') {
+				if ($PSCmdlet.ShouldProcess($VolumeName, "Remove Volume")) {
 					# Use Write-Host for status messages
-					Write-Host "Volume '$VolumeName' removed successfully."
+					Write-Host "Removing volume '$VolumeName'..."
+					& $Engine volume rm $VolumeName
+					if ($LASTEXITCODE -eq 0) {
+						# Use Write-Host for status messages
+						Write-Host "Volume '$VolumeName' removed successfully."
+					}
+					else {
+						Write-Error "Failed to remove volume '$VolumeName'."
+						# Continue even if volume removal fails, as container was removed
+					}
+				} else {
+					Write-Warning "Volume removal skipped due to -WhatIf."
 				}
-				else {
-					Write-Error "Failed to remove volume '$VolumeName'."
-					# Continue even if volume removal fails, as container was removed
-				}
+			}
+			else {
+				# Use Write-Host for status messages
+				Write-Host "Volume '$VolumeName' was not removed."
 			}
 		}
 		else {
 			# Use Write-Host for status messages
-			Write-Host "Volume '$VolumeName' was not removed."
+			Write-Host "Volume '$VolumeName' not found."
 		}
-	}
-	else {
+	} else {
 		# Use Write-Host for status messages
-		Write-Host "Volume '$VolumeName' not found."
+		Write-Host "No volume name provided, skipping volume removal check."
 	}
+
 
 	return $true
 }
@@ -426,7 +435,7 @@ function Test-ImageUpdateAvailable {
 	This simplified function focuses on the non-interactive parts of an update:
 	1. Checks if the container exists.
 	2. Checks if a remote image update is available using Test-ImageUpdateAvailable (prompts to force if not).
-	3. Removes the existing container using Remove-ContainerAndVolume (which handles ShouldProcess).
+	3. Removes the existing container using Remove-ContainerAndVolume (which handles ShouldProcess and optional volume removal).
 	4. Pulls the latest version of the specified image using Invoke-PullImage (which handles ShouldProcess).
 	It does NOT handle backup, restore, or starting the new container. These steps should be
 	orchestrated by the calling script (e.g., the menu action).
@@ -435,7 +444,7 @@ function Test-ImageUpdateAvailable {
 .PARAMETER ContainerName
 	The name of the container to update. Mandatory.
 .PARAMETER VolumeName
-	The name of the volume associated with the container (used for removal step). Mandatory.
+	The name of the volume associated with the container (used for removal step). Optional. If provided, Remove-ContainerAndVolume will check/prompt for its removal.
 .PARAMETER ImageName
 	The full name and tag of the container image to update to (e.g., 'nginx:latest'). Mandatory.
 .PARAMETER Platform
@@ -464,7 +473,7 @@ function Update-Container {
 		[Parameter(Mandatory = $true)]
 		[string]$ContainerName,
 
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $false)] # Made optional here too, as it's passed down
 		[string]$VolumeName, # Needed for Remove-ContainerAndVolume
 
 		[Parameter(Mandatory = $true)]
