@@ -71,13 +71,6 @@ Write-Host "Engine executable: $global:enginePath"
 	Uses Write-Host for status messages.
 #>
 function Install-QdrantContainer {
-	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
-		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
-		return
-	}
-	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
-
 	# Check if image exists locally, restore from backup, or pull new
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
