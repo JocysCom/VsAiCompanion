@@ -108,7 +108,7 @@ function Get-n8nContainerConfig {
 	$envVars += "N8N_RUNNERS_ENABLED=true"
 	$envVars += "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true"
 	$envVars += "N8N_TRUST_HOST_HEADERS=true"
-	#$envVars += "N8N_LOG_LEVEL=debug"
+	$envVars += "N8N_LOG_LEVEL=debug"
 	#$envVars += "N8N_PUSH_BACKEND=websocket"
 	#$envVars += "N8N_PUSH_BACKEND=sse"
 	#$envVars += "N8N_PROXY_HOPS=1"
@@ -171,16 +171,28 @@ function Start-n8nContainer {
 		[array]$EnvVars = @()
 	)
 
+	# Get the host's IP as seen by Podman/WSL2
+	$HostIpForContainer = (podman machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2").Trim()
+	if (-not [string]::IsNullOrWhiteSpace($HostIpForContainer)) {
+		Write-Host "Host IP for container: $HostIpForContainer"
+	} else {
+		Write-Error "Could not determine host IP for container."
+	}
+	
 	# Build the run command
 	$runOptions = @(
+		# Workaround: Accept self-signed certificates.
+		#"--env", "NODE_TLS_REJECT_UNAUTHORIZED=0",
+		"--dns", "1.1.1.1", "--dns", "8.8.8.8",
+		"--add-host", "host.local:$HostIpForContainer",
 		"--env", "GENERIC_TIMEZONE=Europe/London",            # n8n’s internal TZ
 		"--env", "TZ=Europe/London",                          # Linux tzdata TZ
 		"--detach", # Run container in background.
 		"--publish", "5678:5678", # Map host port 5678 to container port 5678.
 		"--volume", "$($global:volumeName):/home/node/.n8n", # Mount the named volume for persistent data.
+		"--name", $global:containerName         # Assign a name to the container.
 		#"--cap-add", "NET_RAW",
 		#"--cap-add", "NET_ADMIN",
-		"--name", $global:containerName         # Assign a name to the container.
 	)
 
 	# Add all environment variables
@@ -192,8 +204,8 @@ function Start-n8nContainer {
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting n8n container with image: $Image"
-		Write-Host "& $global:enginePath run $runOptions $Image"
-		& $global:enginePath run $runOptions $Image
+		Write-Host "& podman machine ssh sudo podman run $runOptions $Image"
+		& podman machine ssh sudo podman run $runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."
