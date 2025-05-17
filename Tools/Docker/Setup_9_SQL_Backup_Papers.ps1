@@ -13,7 +13,7 @@ param(
     [string]$Database,
     [string]$SchemaName     = "Research",   #   schema
     [string]$TableName      = "Paper",      #   table
-    [string]$OutputFolder   = "$PSScriptRoot\Papers"    #   where files are written
+    [string]$OutputFolder   = "$PSScriptRoot\Backup\Papers"    #   where files are written
 )
 
 # Prompt for ServerInstance if not provided via command line
