@@ -35,6 +35,15 @@ $global:containerName = "n8n"
 $global:volumeName = "n8n_data"
 $global:containerPort = 5678
 
+# Rule of thumb: heap ≈ 75–80 % of the VM / host RAM, container limit ≈ 110 % of that.
+# Host RAM	--max-old-space-size  --memory / --memory-swap
+#   2 GB     1024 MB                 1.5 GB                   Leaves ≥25 % for OS & DB.
+#   4 GB     3072 MB	             4 GB                     Most users report this is enough for 100k-row workflows n8n Community
+#   8 GB     6144 MB                 7 GB                     Lets you process ~500 k rows or large binary files n8n Community
+#  16 GB	12288 MB                14 GB                     Heavy AI chains, large spreadsheets.
+$global:n8nHeapMiB   = 12288
+$global:n8nMemLimitG = 14
+
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
@@ -109,6 +118,7 @@ function Get-n8nContainerConfig {
 	$envVars += "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true"
 	$envVars += "N8N_TRUST_HOST_HEADERS=true"
 	$envVars += "N8N_LOG_LEVEL=debug"
+	$envVars += "NODE_OPTIONS=--max_old_space_size=$($global:n8nHeapMiB)"
 	#$envVars += "N8N_PUSH_BACKEND=websocket"
 	#$envVars += "N8N_PUSH_BACKEND=sse"
 	#$envVars += "N8N_PROXY_HOPS=1"
@@ -183,10 +193,12 @@ function Start-n8nContainer {
 	$runOptions = @(
 		# Workaround: Accept self-signed certificates.
 		#"--env", "NODE_TLS_REJECT_UNAUTHORIZED=0",
-		"--dns", "1.1.1.1", "--dns", "8.8.8.8",
+		#"--dns", "1.1.1.1", "--dns", "8.8.8.8",
 		"--add-host", "host.local:$HostIpForContainer",
 		"--env", "GENERIC_TIMEZONE=Europe/London",            # n8n’s internal TZ
 		"--env", "TZ=Europe/London",                          # Linux tzdata TZ
+		"--memory",      "$($global:n8nMemLimitG)g",
+		"--memory-swap", "$($global:n8nMemLimitG)g",
 		"--detach", # Run container in background.
 		"--publish", "5678:5678", # Map host port 5678 to container port 5678.
 		"--volume", "$($global:volumeName):/home/node/.n8n", # Mount the named volume for persistent data.
@@ -204,8 +216,8 @@ function Start-n8nContainer {
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting n8n container with image: $Image"
-		Write-Host "& podman machine ssh sudo podman run $runOptions $Image"
-		& podman machine ssh sudo podman run $runOptions $Image
+		Write-Host "& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image"
+		& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."
