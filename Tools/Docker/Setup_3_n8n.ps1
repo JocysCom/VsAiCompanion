@@ -118,7 +118,7 @@ function Get-n8nContainerConfig {
 	$envVars += "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true"
 	$envVars += "N8N_TRUST_HOST_HEADERS=true"
 	$envVars += "N8N_LOG_LEVEL=debug"
-	$envVars += "NODE_OPTIONS=--max_old_space_size=$($global:n8nHeapMiB)"
+	$envVars += "NODE_OPTIONS=--max-old-space-size=$($global:n8nHeapMiB)"
 	#$envVars += "N8N_PUSH_BACKEND=websocket"
 	#$envVars += "N8N_PUSH_BACKEND=sse"
 	#$envVars += "N8N_PROXY_HOPS=1"
@@ -156,7 +156,7 @@ function Get-n8nContainerConfig {
 	Configures standard n8n settings: detached mode, name 'n8n', mounts 'n8n_data' volume
 	to '/home/node/.n8n', and maps host port 5678 to container port 5678.
 	Applies any additional environment variables provided via the EnvVars parameter.
-	After starting, waits 20 seconds and performs TCP and HTTP connectivity tests.
+	After starting, waits 30 seconds and performs TCP and HTTP connectivity tests.
 	Supports -WhatIf.
 .PARAMETER Image
 	The n8n container image to use (e.g., 'docker.n8n.io/n8nio/n8n:latest'). Mandatory.
@@ -221,7 +221,7 @@ function Start-n8nContainer {
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."
-			Start-Sleep -Seconds 20
+			Start-Sleep -Seconds 30
 
 			# Test connectivity
 			$tcpTest = Test-TCPPort -ComputerName "localhost" -Port $global:containerPort -serviceName $global:containerName
