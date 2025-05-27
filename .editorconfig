@@ -12,13 +12,13 @@ end_of_line = crlf
 insert_final_newline = true
 
 # Tab indentation
-[*.{c,h,def,vb,cs,html,xaml,XAML,css,ps1}]
+[*.{c,h,def,vb,cs,html,xaml,XAML,css,ps1,config}]
 indent_style = tab
 # Comment i.e. allow each user to customize.
 #indent_size = 4
 
 # Trim trailing white spaces
-[*.{c,h,def,txt,vb,cs,html,xaml,XAML,css,ps1}]
+[*.{c,h,def,txt,vb,cs,html,xaml,XAML,css,ps1,config}]
 trim_trailing_whitespace = true
 
 # UTF-8
