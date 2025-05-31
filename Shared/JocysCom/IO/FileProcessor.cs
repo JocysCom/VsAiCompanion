@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.IO
 {
+	/// <summary>
+	/// Orchestrates batch scanning and processing of files with progress reporting.
+	/// </summary>
+	/// <remarks>
+	/// Uses FileFinder for file enumeration and subscribes to its FileFound events.
+	/// Exposes a <see cref="ProcessItem"/> delegate for external processing logic.
+	/// </remarks>
 	public class FileProcessor
 	{
 
@@ -21,8 +28,14 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region ■ IProgress
 
+		/// <summary>
+		/// Raised when progress is reported during scanning and processing.
+		/// </summary>
 		public event EventHandler<ProgressEventArgs> Progress;
 
+		/// <summary>
+		/// Delegate invoked for each file to perform processing; returns a ProgressStatus indicating the result.
+		/// </summary>
 		public Func<FileProcessor, ProgressEventArgs, Task<ProgressStatus>> ProcessItem;
 
 		public void Report(ProgressEventArgs e)
@@ -30,6 +43,9 @@ namespace JocysCom.ClassLibrary.IO
 
 		#endregion
 
+		/// <summary>
+		/// CancellationTokenSource used to request cancellation of the current scan operation.
+		/// </summary>
 		public CancellationTokenSource Cancellation;
 
 		public DateTime DateStarted => _DateStarted;
@@ -37,6 +53,9 @@ namespace JocysCom.ClassLibrary.IO
 		public DateTime DateEnded => _DateEnded;
 		private DateTime _DateEnded;
 
+		/// <summary>
+		/// Tracks counts of processed items by their ProgressStatus.
+		/// </summary>
 		public Dictionary<ProgressStatus, int> ProcessItemStates =
 			Enum.GetValues(typeof(ProgressStatus))
 				.Cast<ProgressStatus>()
@@ -48,6 +67,16 @@ namespace JocysCom.ClassLibrary.IO
 
 		public readonly FileFinder FileFinder;
 
+		/// <summary>
+		/// Scans the specified directories for files matching <paramref name="searchPattern"/>,
+		/// processes each file via <see cref="ProcessItem"/>, and raises <see cref="Progress"/> events.
+		/// </summary>
+		/// <param name="paths">Directories to scan; Windows system folders are excluded.</param>
+		/// <param name="searchPattern">Optional pattern for file search (e.g., "*.txt").</param>
+		/// <param name="allDirectories">True to include all subdirectories; otherwise only top-level.</param>
+		/// <remarks>
+		/// Initializes DateStarted, resets ProcessItemStates, and reports Started/Completed states.
+		/// </remarks>
 		public async Task Scan(string[] paths, string searchPattern = null, bool allDirectories = false)
 		{
 			_DateStarted = DateTime.Now;
@@ -113,6 +142,10 @@ namespace JocysCom.ClassLibrary.IO
 			Report(e);
 		}
 
+		/// <summary>
+		/// Constructs a summary message listing counts per ProgressStatus and total count.
+		/// </summary>
+		/// <returns>A multi-line string with individual and total counts.</returns>
 		public string GetProcessCompletedMessage()
 		{
 			var states =
@@ -126,6 +159,5 @@ namespace JocysCom.ClassLibrary.IO
 			var message = $"\r\nProcess Completed\r\n{logMessage}\r\n";
 			return message;
 		}
-
 	}
 }

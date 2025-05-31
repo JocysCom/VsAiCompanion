@@ -1,10 +1,16 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
+	/// <summary>
+	/// INotifyPropertyChanged base with optional WPF Dispatcher marshalling of property-change notifications to the UI thread.
+	/// </summary>
+	/// <remarks>
+	/// Supports MVVM data binding scenarios, with optional UI-thread invocation of property change events.
+	/// </remarks>
 	public class NotifyPropertyChanged : INotifyPropertyChanged
 	{
 
@@ -19,7 +25,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
-		/// Rase event that notifies clients that a property value has changed.
+		/// Raises the PropertyChanged event. When UseApplicationDispatcher is true, the invocation is marshaled to the WPF UI thread via Application.Current.Dispatcher.
 		/// </summary>
 		/// <param name="propertyName">Name of the property.</param>
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -37,9 +43,19 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// When true, marshals property-change notifications to the WPF UI thread via Application.Current.Dispatcher. Defaults to false.
+		/// </summary>
 		[field: NonSerialized, DefaultValue(false)]
 		public bool UseApplicationDispatcher = false;
 
+		/// <summary>
+		/// Sets the backing field if the new value differs (per Equals), then invokes OnPropertyChanged. Skips notifications when value is unchanged.
+		/// </summary>
+		/// <typeparam name="T">Type of the backing field.</typeparam>
+		/// <param name="property">Reference to the backing field.</param>
+		/// <param name="value">New value to assign.</param>
+		/// <param name="propertyName">Name of the property; supplied by CallerMemberName automatically.</param>
 		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
 		{
 			if (Equals(property, value))

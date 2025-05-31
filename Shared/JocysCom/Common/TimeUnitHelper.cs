@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,12 +6,24 @@ namespace JocysCom.ClassLibrary
 {
 
 	/// <summary>
-	/// Set of methods to manipulate time values.
+	/// Provides utility methods for generating date/time sequences and intervals based on TimeUnitType values.
 	/// </summary>
 	public static class TimeUnitHelper
 	{
 
-		/// <summary>GetTime Values.</summary>
+		/// <summary>
+		/// Generates a list of dates starting at the specified date, incremented by the given time unit.
+		/// </summary>
+		/// <param name="start">The starting DateTime value.</param>
+		/// <param name="count">The number of dates to generate; must be non-negative.</param>
+		/// <param name="unit">The unit of time to increment by, as defined in TimeUnitType.</param>
+		/// <param name="preserveEndOfMonth">
+		/// When true and the start date is the last day of a month, subsequent dates will also be on month ends.
+		/// </param>
+		/// <returns>A list of DateTime values of length count.</returns>
+		/// <remarks>
+		/// Throws <see cref="NotImplementedException"/> if unit is not supported.
+		/// </remarks>
 		public static List<DateTime> GetDateTimes(
 			DateTime start, int count,
 			TimeUnitType unit = TimeUnitType.Day,
@@ -56,7 +68,16 @@ namespace JocysCom.ClassLibrary
 			}
 		}
 
-		/// <summary>GetTime Span.</summary>
+		/// <summary>
+		/// Returns a TimeSpan representing the specified count of the given time unit.
+		/// </summary>
+		/// <param name="count">The number of units; must be non-negative.</param>
+		/// <param name="unit">The time unit for the interval, as defined in TimeUnitType.</param>
+		/// <returns>A TimeSpan equivalent to count units.</returns>
+		/// <remarks>
+		/// Supported units: Millisecond, Second, Minute, Hour, Day, Week, Fortnight.
+		/// Throws <see cref="NotImplementedException"/> for other units.
+		/// </remarks>
 		public static TimeSpan GetInterval(int count, TimeUnitType unit = TimeUnitType.Day)
 		{
 			switch (unit)
@@ -81,22 +102,32 @@ namespace JocysCom.ClassLibrary
 		}
 
 		/// <summary>
-		/// Add months.
+		/// Adds the specified number of months to a date, optionally preserving end-of-month alignment.
 		/// </summary>
+		/// <param name="start">The original date.</param>
+		/// <param name="count">The number of months to add.</param>
+		/// <param name="preserveEndOfMonth">
+		/// If true and start is the last day of its month, the result will also be the last day of the target month.
+		/// </param>
+		/// <returns>A DateTime offset by the given number of months.</returns>
 		public static DateTime AddMonths(DateTime start, int count, bool preserveEndOfMonth = false)
 			=> preserveEndOfMonth && IsEndOfMonth(start)
 				? GetEndOfMonth(start.AddMonths(count))
 				: start.AddMonths(count);
 
 		/// <summary>
-		/// Verify if a date is at the end of month.
+		/// Determines whether the specified date is the last day of its month.
 		/// </summary>
+		/// <param name="date">The date to evaluate.</param>
+		/// <returns>True if date is the final day of its month; otherwise false.</returns>
 		public static bool IsEndOfMonth(DateTime date)
 			=> date.Day == DateTime.DaysInMonth(date.Year, date.Month);
 
 		/// <summary>
-		/// Get last day of month for a date.
+		/// Returns a DateTime for the last day of the month for a given date.
 		/// </summary>
+		/// <param name="date">The date whose month-end is desired.</param>
+		/// <returns>A DateTime set to the last day of date's month.</returns>
 		public static DateTime GetEndOfMonth(DateTime date)
 			=> new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
 

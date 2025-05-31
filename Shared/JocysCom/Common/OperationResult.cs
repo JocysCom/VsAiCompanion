@@ -1,26 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace JocysCom.ClassLibrary
 {
 	/// <summary>
-	/// Encapsulates the outcome of an operation including result, status code, and errors.
+	/// Encapsulates the outcome of an operation, including a unique RequestId, result value, status code, and errors.
 	/// </summary>
 	/// <typeparam name="T">Type of result value.</typeparam>
 	public class OperationResult<T>
 	{
-		/// <summary>
-		/// Default constructor assigns a unique identifier and initializes the error list.
-		/// </summary>
+		/// <summary>Initializes a new instance with a unique RequestId.</summary>
 		public OperationResult()
 		{
 			RequestId = Guid.NewGuid().ToString("N");
 		}
 
-		/// <summary>
-		/// Constructor for success scenarios, setting result and OK status.
-		/// </summary>
+		/// <summary>Initializes a successful result: sets Data, StatusCode = 0, and StatusText to "Success".</summary>
 		/// <param name="data">Result data value of the operation.</param>
 		public OperationResult(T data) : this()
 		{
@@ -29,9 +25,7 @@ namespace JocysCom.ClassLibrary
 			Data = data;
 		}
 
-		/// <summary>
-		/// Constructor for failure scenarios, setting errors and Internal Server Error status.
-		/// </summary>
+		/// <summary>Initializes a failure result: sets StatusCode = 1, StatusText to the exception message, and populates Errors with exception details.</summary>
 		/// <param name="error">Exception related to operation failure.</param>
 		public OperationResult(Exception error) : this()
 		{
@@ -41,10 +35,7 @@ namespace JocysCom.ClassLibrary
 			Errors.Add(error.ToString());
 		}
 
-
-		/// <summary>
-		/// Constructor for failure scenarios, setting errors and Internal Server Error status.
-		/// </summary>
+		/// <summary>Initializes a failure result: sets StatusCode = 1, StatusText to "Error", and populates Errors with details of each exception.</summary>
 		/// <param name="errors">Collection of exceptions related to operation failure.</param>
 		public OperationResult(IEnumerable<Exception> errors) : this()
 		{
@@ -55,12 +46,10 @@ namespace JocysCom.ClassLibrary
 				Errors.Add(error.ToString());
 		}
 
-		/// <summary>
-		/// Constructor for handling both successful and failed operations with customizable parameters.
-		/// </summary>
+		/// <summary>Initializes a result with provided Data, StatusCode, StatusText (fallback to code if null), and optional Errors.</summary>
 		/// <param name="data">Result data value of the operation.</param>
 		/// <param name="statusCode">Status code representing operation outcome.</param>
-		/// <param name="statusText">Descriptive text providing additional details.</param>
+		/// <param name="statusText">Descriptive text providing additional details (fallback to statusCode.ToString() if null).</param>
 		/// <param name="errors">Collection of exceptions related to operation failure.</param>
 		public OperationResult(T data, int statusCode, string statusText, IEnumerable<Exception> errors = null) : this()
 		{
@@ -73,10 +62,9 @@ namespace JocysCom.ClassLibrary
 					Errors.Add(error.ToString());
 		}
 
-		/// <summary>
-		/// Convert result to other type.
-		/// </summary>
-		/// <param name="result">Result data value of the operation.</param>
+		/// <summary>Maps this instance to OperationResult&lt;T2&gt;, copying Data, StatusCode, StatusText, and Errors.</summary>
+		/// <typeparam name="T2">Type of result value for the new OperationResult.</typeparam>
+		/// <param name="data">Result data value for the new OperationResult.</param>
 		public OperationResult<T2> ToResult<T2>(T2 data)
 		{
 			var newResult = new OperationResult<T2>();
@@ -116,6 +104,5 @@ namespace JocysCom.ClassLibrary
 		/// Result data value of the operation.
 		/// </summary>
 		public T Data { get; set; }
-
 	}
 }

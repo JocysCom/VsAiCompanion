@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
 
@@ -10,6 +10,10 @@ namespace JocysCom.ClassLibrary.Data
 	public partial class SqlHelper
 	{
 
+		/// <summary>
+		/// Retrieves the SQL Server extended property value for a database object
+		/// (schema, table, or column); returns null if not found.
+		/// </summary>
 		public static string GetProperty(string connectionString, string name, string schema = null, string table = null, string column = null)
 		{
 			var level0 = string.IsNullOrEmpty(schema) ? null : "SCHEMA";
@@ -25,6 +29,9 @@ namespace JocysCom.ClassLibrary.Data
 			return value;
 		}
 
+		/// <summary>
+		/// Adds, updates, or deletes a SQL Server extended property on a database object (schema, table, or column).
+		/// </summary>
 		/// <returns>0 (success) or 1 (failure).</returns>
 		public static int SetProperty(string connectionString, string name, string value, string schema = null, string table = null, string column = null)
 		{
@@ -51,15 +58,18 @@ namespace JocysCom.ClassLibrary.Data
 				);
 			}
 			return sp_extendedproperty(
-					connectionString,
-					row == null ? 1 : 0,
-					name, value,
-					level0, schema,
-					level1, table,
-					level2, column
+				connectionString,
+				row == null ? 1 : 0,
+				name, value,
+				level0, schema,
+				level1, table,
+				level2, column
 				);
 		}
 
+		/// <summary>
+		/// Queries sys.fn_listextendedproperty for the specified property and returns the first matching row.
+		/// </summary>
 		private static DataRow fn_listextendedproperty(
 			string connectionString,
 			string name,
@@ -87,6 +97,9 @@ namespace JocysCom.ClassLibrary.Data
 			return data;
 		}
 
+		/// <summary>
+		/// Executes the appropriate system stored procedure to add, update, or delete a SQL Server extended property.
+		/// </summary>
 		private static int sp_extendedproperty(
 			string connectionString,
 			int action,
