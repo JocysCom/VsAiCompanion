@@ -1,6 +1,6 @@
 ## User Instructions to create `repository-analysis.md`
 
-Explore the entire repository to understand the codebase from multiple angles: as a software architect, software developer and product manager. Compile your findings into a very extensive Markdown document in the `.github` folder named `repository-analysis.md`. Include Mermaid diagrams for describing technical concepts.
+Explore the entire repository to understand the codebase from multiple angles: as a software architect, software developer and product manager. Compile your findings into a very extensive Markdown document in the `.ai` folder named `repository-analysis.md`. Include Mermaid diagrams for describing technical concepts.
 
 ## Install the Mermaid preview plug-in
 
