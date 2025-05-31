@@ -13,3 +13,8 @@ Explore the entire repository to understand the codebase from multiple angles: a
 	1. Open the menu on the tab header of the file.
 	2. Click "Open Preview" – or hit Ctrl + Shift + V.
 	
+## Re Open Preview
+
+	1. Open the menu on the tab header of the file.
+	2. Click "Reopen Editor With..."
+	3. Click "Markdown Preview (Built-In)"

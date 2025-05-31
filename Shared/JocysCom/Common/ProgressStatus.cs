@@ -1,11 +1,15 @@
-﻿using System;
+using System;
 
 namespace JocysCom.ClassLibrary
 {
 	/// <summary>
+	/// Bitmask representing the task status as flags.
 	/// Universal state that describes a task, including its progress and data processing status.
 	/// </summary>
-	/// <remarks>Enum allows for the insertion of an additional state between the current states in the future.</remarks>
+	/// <remarks>
+	/// Uses two-bit spacing between flag values to reserve gaps for future intermediate states without renumbering.
+	/// Enum allows for the insertion of an additional state between the current states in the future.
+	/// </remarks>
 	[Flags]
 	public enum ProgressStatus
 	{

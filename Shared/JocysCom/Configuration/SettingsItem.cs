@@ -1,9 +1,14 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.ComponentModel;
 using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	/// <inheritdoc />
+	/// <summary>Base configuration entity implementing ISettingsItem with change notification support.</summary>
+	/// <remarks>
+	/// Exposes enabled state and emptiness checks.
+	/// Extended by SettingsFileItem for file-based entries.
+	/// Edited via a WinForms SettingsItemForm.
+	/// </remarks>
 	public class SettingsItem : NotifyPropertyChanged, ISettingsItem
 	{
 		/// <inheritdoc />
