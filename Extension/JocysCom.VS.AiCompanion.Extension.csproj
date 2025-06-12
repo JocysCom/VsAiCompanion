@@ -131,6 +131,8 @@
     <PackageReference Include="System.Linq.Async" />
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.Threading.Tasks.Extensions" />
+    <!-- Included to Enforce the Version -->
+	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico">
