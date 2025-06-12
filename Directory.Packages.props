@@ -59,11 +59,11 @@
 		<PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.12.0" />
 		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.24" />
 		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.24" />
-		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.12.40390" />
-		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.12.40390" />
+		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.13.40008" />
+		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.13.40008" />
 		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="[17.9.37000,$(MaxVsVersion))" />
-		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.12.2069" />
-		<PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.13.2126" />
+		<PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.3296.44" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="[8.0.11,$(MaxDnVersion))" />
 		<PackageVersion Include="NAudio" Version="2.2.1" />
 		<PackageVersion Include="NJsonSchema" Version="11.3.2" />
