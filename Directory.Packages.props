@@ -24,9 +24,9 @@
 		<PackageVersion Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />
 		<!-- Other Packages -->
 		<PackageVersion Include="Azure.ResourceManager" Version="1.13.0" />
-		<PackageVersion Include="bblanchon.PDFium.Linux" Version="133.0.6872" />
-		<PackageVersion Include="bblanchon.PDFium.macOS" Version="133.0.6872" />
-		<PackageVersion Include="bblanchon.PDFium.Win32" Version="133.0.6872" />
+		<PackageVersion Include="bblanchon.PDFium.Linux" Version="139.0.7228" />
+		<PackageVersion Include="bblanchon.PDFium.macOS" Version="139.0.7228" />
+		<PackageVersion Include="bblanchon.PDFium.Win32" Version="139.0.7228" />
 		<PackageVersion Include="BouncyCastle.Cryptography" Version="2.5.0" />
 		<PackageVersion Include="ColorCode.HTML" Version="2.0.15" />
 		<PackageVersion Include="CsvHelper" Version="33.0.1" />
@@ -57,8 +57,8 @@
 		<PackageVersion Include="Microsoft.Identity.Web" Version="3.9.3" />
 		<PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.9.3" />
 		<PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.12.0" />
-		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
-		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
+		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.24" />
+		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.24" />
 		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.12.40390" />
 		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.12.40390" />
 		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="[17.9.37000,$(MaxVsVersion))" />
@@ -66,9 +66,9 @@
 		<PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="[8.0.11,$(MaxDnVersion))" />
 		<PackageVersion Include="NAudio" Version="2.2.1" />
-		<PackageVersion Include="NJsonSchema" Version="11.1.0" />
-		<PackageVersion Include="NPOI" Version="2.7.2" />
-		<PackageVersion Include="PdfPig" Version="0.1.9" />
+		<PackageVersion Include="NJsonSchema" Version="11.3.2" />
+		<PackageVersion Include="NPOI" Version="2.7.3" />
+		<PackageVersion Include="PdfPig" Version="0.1.10" />
 		<PackageVersion Include="PDFtoImage" Version="5.1.1" />
 		<PackageVersion Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageVersion Include="SharpVectors" Version="1.8.4.2" />

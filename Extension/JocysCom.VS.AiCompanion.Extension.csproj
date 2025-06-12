@@ -137,6 +137,7 @@
 	<PackageReference Include="Azure.AI.OpenAI" />
 	<PackageReference Include="System.Collections.Immutable" />
 	<PackageReference Include="MessagePack" />
+	<PackageReference Include="NJsonSchema" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico">
