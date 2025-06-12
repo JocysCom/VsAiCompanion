@@ -39,7 +39,7 @@
 		<PackageVersion Include="HtmlRenderer.PdfSharp" Version="1.5.0.6" />
 		<PackageVersion Include="HtmlRenderer.PdfSharp.NetStandard2" Version="1.5.1.3" />
 		<PackageVersion Include="Ignore" Version="0.2.1" />
-		<PackageVersion Include="MailKit" Version="4.8.0" />
+		<PackageVersion Include="MailKit" Version="4.12.1" />
 		<PackageVersion Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="[8.0.11,$(MaxDnVersion))" />
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="[8.0.0,$(MaxDnVersion))" />
 		<PackageVersion Include="Microsoft.Build" Version="[17.9.5,$(MaxVsVersion))" />
@@ -114,7 +114,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Security Workaround: Transitive Packages -->
-		<PackageVersion Include="MessagePack" Version="2.5.192" />
+		<PackageVersion Include="MessagePack" Version="3.1.3" />
 		<PackageVersion Include="System.Private.Uri" Version="4.3.2" />
 		<PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" />
 	</ItemGroup>

@@ -138,6 +138,8 @@
 	<PackageReference Include="System.Collections.Immutable" />
 	<PackageReference Include="MessagePack" />
 	<PackageReference Include="NJsonSchema" />
+	<PackageReference Include="Azure.ResourceManager" />
+	<PackageReference Include="MailKit" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico">
