@@ -21,7 +21,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			ExtraButtonsPanel.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			LogPanel.ClearLogButton.Visibility = Visibility.Collapsed;
+			LogPanel.RefreshLogButton.Visibility = Visibility.Collapsed;
 			UpdateButtons();
 		}
 
