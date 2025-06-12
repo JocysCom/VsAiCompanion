@@ -45,8 +45,8 @@
 		<PackageVersion Include="Microsoft.Build" Version="[17.9.5,$(MaxVsVersion))" />
 		<PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
 		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageVersion Include="Microsoft.Data.SqlClient" Version="5.2.2" />
-		<PackageVersion Include="Microsoft.Data.Sqlite.Core" Version="[8.0.11,$(MaxDnVersion))" />
+		<PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+		<PackageVersion Include="Microsoft.Data.Sqlite.Core" Version="9.0.6" />
 		<PackageVersion Include="Microsoft.EntityFramework.SqlServer" Version="6.5.1" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[8.0.11,$(MaxDnVersion))" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[8.0.11,$(MaxDnVersion))" />

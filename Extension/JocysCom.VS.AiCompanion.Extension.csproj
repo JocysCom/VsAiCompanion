@@ -140,6 +140,7 @@
 	<PackageReference Include="NJsonSchema" />
 	<PackageReference Include="Azure.ResourceManager" />
 	<PackageReference Include="MailKit" />
+	<PackageReference Include="Microsoft.Data.SqlClient" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico">
