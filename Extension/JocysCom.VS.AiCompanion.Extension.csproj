@@ -99,8 +99,10 @@
 		Make sure not to copy some assemblies that exist in Visual Studio.
 		Otherwise, different versions of assemblies will be loaded and
 		code will fail by trying to access a non-existent method in the wrong assemblies.
+		Use 
 	-->
     <!--<VSIXSourceItem Include="$(OutputPath)\Microsoft.Bcl.AsyncInterfaces.dll" />-->
+	<!--<VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Extensions.dll" />-->
     <!-- Include Assemblies -->
 	<VSIXSourceItem Include="$(OutputPath)\e_sqlite3.dll" />
     <VSIXSourceItem Include="$(OutputPath)\SQLitePCLRaw.batteries_v2.dll" />
@@ -119,7 +121,6 @@
     <VSIXSourceItem Include="$(OutputPath)\System.Security.AccessControl.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Security.Principal.Windows.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Dataflow.dll" />
-	<VSIXSourceItem Include="$(OutputPath)\System.Threading.Tasks.Extensions.dll" />
     <VSIXSourceItem Include="$(OutputPath)\System.ValueTuple.dll" />
     <!-- Include all locally copied assemblies in the VSIX package -->
     <VSIXSourceItem Include="@(ReferenceCopyLocalPaths)" />
