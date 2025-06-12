@@ -20,8 +20,8 @@
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageVersion Include="Microsoft.ML" Version="3.0.1" />
 		<!-- OpenAI Packages -->
-		<PackageVersion Include="OpenAI" Version="2.2.0-beta.2" />
-		<PackageVersion Include="Azure.AI.OpenAI" Version="2.2.0-beta.2" />
+		<PackageVersion Include="OpenAI" Version="2.2.0-beta.4" />
+		<PackageVersion Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />
 		<!-- Other Packages -->
 		<PackageVersion Include="Azure.ResourceManager" Version="1.13.0" />
 		<PackageVersion Include="bblanchon.PDFium.Linux" Version="133.0.6872" />
@@ -81,7 +81,7 @@
 		<PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
 		<PackageVersion Include="SQLitePCLRaw.core" Version="2.1.10" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="7.1.0" />
-		<PackageVersion Include="System.Collections.Immutable" Version="[8.0.0,$(MaxDnVersion))" />
+		<PackageVersion Include="System.Collections.Immutable" Version="9.0.6" />
 		<PackageVersion Include="System.Composition" Version="[8.0.0,$(MaxDnVersion))" />
 		<PackageVersion Include="System.Configuration.ConfigurationManager" Version="[8.0.1,$(MaxDnVersion))" />
 		<PackageVersion Include="System.Data.Common" Version="4.3.0" />

@@ -133,6 +133,9 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" />
     <!-- Included to Enforce the Version -->
 	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
+	<PackageReference Include="OpenAI" />
+	<PackageReference Include="Azure.AI.OpenAI" />
+	<PackageReference Include="System.Collections.Immutable" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico">
