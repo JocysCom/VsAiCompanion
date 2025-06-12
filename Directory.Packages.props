@@ -11,7 +11,10 @@
 		<MaxVsVersion>17.10</MaxVsVersion>
 	</PropertyGroup>
 	<ItemGroup>
+		<!-- Make sure that  -->
+		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
 		<!-- Updating to new version can break extension compatibility with VS 2022. -->
+
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<!-- OpenAI Packages -->
 		<PackageVersion Include="OpenAI" Version="2.2.0-beta.4" />
@@ -41,7 +44,6 @@
 		<PackageVersion Include="Ignore" Version="0.2.1" />
 		<PackageVersion Include="MailKit" Version="4.12.1" />
 		<PackageVersion Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="[8.0.11,$(MaxDnVersion))" />
-		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.6" />
 		<PackageVersion Include="Microsoft.Build" Version="[17.9.5,$(MaxVsVersion))" />
 		<PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
 		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />

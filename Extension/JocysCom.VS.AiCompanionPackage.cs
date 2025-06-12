@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
@@ -46,9 +48,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
 		protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
 		{
-			//var extensionPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			//Assembly.LoadFrom(Path.Combine(extensionPath, "Microsoft.Bcl.AsyncInterfaces.dll"));
-			//Assembly.LoadFrom(Path.Combine(extensionPath, "System.ClientModel.dll"));
 			// When initialized asynchronously, the current thread may be a background thread at this point.
 			// Do any initialization that requires the UI thread after switching to the UI thread.
 			await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);

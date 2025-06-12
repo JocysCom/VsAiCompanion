@@ -1,32 +1,16 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using DocumentFormat.OpenXml.Math;
+using JocysCom.ClassLibrary.Controls;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
-	/// <summary>
-	/// Class to store assembly information with detection timestamp
-	/// </summary>
-	public class AssemblyRecord
-	{
-		public DateTime DetectedAt { get; set; }
-		public string Name { get; set; }
-		public string Version { get; set; }
-		public string Location { get; set; }
-
-		public AssemblyRecord(DateTime detectedAt, string name, string version, string location)
-		{
-			DetectedAt = detectedAt;
-			Name = name;
-			Version = version;
-			Location = location;
-		}
-	}
-
 	/// <summary>
 	/// Interaction logic for ErrorsControl.xaml
 	/// </summary>
@@ -103,6 +87,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Assemblies
 
+		/// <summary>
+		/// Class to store assembly information with detection timestamp
+		/// </summary>
+		public class AssemblyRecord
+		{
+			public DateTime DetectedAt { get; set; }
+			public string Name { get; set; }
+			public string Version { get; set; }
+			public string Location { get; set; }
+
+			public int Count { get; set; } = 1;
+
+			public AssemblyRecord(DateTime detectedAt, string name, string version, string location)
+			{
+				DetectedAt = detectedAt;
+				Name = name;
+				Version = version;
+				Location = location;
+			}
+		}
+
+
 		bool isRunning;
 		private readonly List<AssemblyRecord> _assemblyRecords = new List<AssemblyRecord>();
 
@@ -160,20 +166,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 				// Clear and display all records
 				AssembliesLogPanel.Clear();
-				AssembliesLogPanel.Add($"DateTime Added\t\t{"Name",-48}\t\t\t{"Version",-10}\t\tLocation\r\n");
+				AssembliesLogPanel.Add($"{"Datae",20} {"N", 2} {"Name",-48} {"Version",-10} {"Location"}\r\n");
 				AssembliesLogPanel.Add(new string('-', 120) + "\r\n");
+
+
+				foreach (var record in _assemblyRecords)
+					record.Count = _assemblyRecords.Count(x => x.Name == record.Name);
 
 				// Sort by detection time (newest first) then by name
 				var sortedRecords = _assemblyRecords
-					.OrderByDescending(r => r.DetectedAt)
+					.OrderByDescending(r => r.Count)
 					.ThenBy(r => r.Name);
 
 				foreach (var record in sortedRecords)
 				{
 					var dateTimeStr = record.DetectedAt.ToString("yyyy-MM-dd HH:mm:ss");
-					AssembliesLogPanel.Add($"{dateTimeStr}\t{record.Name,-48}\t{record.Version,-10}\t{record.Location}\r\n");
+					AssembliesLogPanel.Add($"{dateTimeStr} {record.Count} {record.Name,-48} {record.Version,-10} {record.Location}\r\n");
 				}
-
+				AssembliesLogPanel.Add("If different versions of assemblies are loaded, then code could fail by trying to access a non-existent method in the wrong assemblies.");
 				AssembliesLogPanel.Add($"\r\nTotal assemblies: {_assemblyRecords.Count}\r\n");
 				AssembliesLogPanel.Add("Done\r\n");
 				isRunning = false;
