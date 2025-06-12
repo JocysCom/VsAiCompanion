@@ -23,13 +23,13 @@
 		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal" />
 		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
-				Name="ClearLogButton"
+				Name="RefreshLogButton"
 				Margin="0,3,3,3"
 				HorizontalAlignment="Right"
 				VerticalAlignment="Center"
 				x:FieldModifier="public"
-				Click="ClearLogButton_Click">
-				<ContentControl Content="{StaticResource Icon_Cleanup}" Focusable="False" />
+				Click="RefreshLogButton_Click">
+				<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
 			</Button>
 		</StackPanel>
 		<Border Grid.Row="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,0">

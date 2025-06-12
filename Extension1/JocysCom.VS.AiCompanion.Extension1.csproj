@@ -57,6 +57,7 @@
 		<PackageReference Include="System.Linq.Async" />
 		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" />
+        <PackageReference Include="MessagePack" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />

@@ -133,7 +133,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// <param name="sender">The source of the event, in this case, the current AppDomain.</param>
 		/// <param name="e">The arguments for the resolve event, containing the name of the assembly that failed to load.</param>
 		/// <returns>The resolved assembly, or null if the assembly could not be found.</returns>
-		private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
+		public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
 		{
 			// Extract the simple name of the assembly from the full assembly name.
 			// Full assembly names are in the form 'SimpleName, Version, Culture, PublicKeyToken'

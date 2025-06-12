@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.ClassLibrary.Controls
@@ -14,9 +15,17 @@ namespace JocysCom.ClassLibrary.Controls
 			LogTextBox.Text = "";
 		}
 
-		private void ClearLogButton_Click(object sender, RoutedEventArgs e)
+		/// <summary>
+		/// Event fired when refresh is requested
+		/// </summary>
+		public event EventHandler RefreshRequested;
+
+		private void RefreshLogButton_Click(object sender, RoutedEventArgs e)
 		{
+			// Clear the current content
 			LogTextBox.Clear();
+			// Fire the refresh event so parent controls can reload data
+			RefreshRequested?.Invoke(this, EventArgs.Empty);
 		}
 
 		public void Clear()
