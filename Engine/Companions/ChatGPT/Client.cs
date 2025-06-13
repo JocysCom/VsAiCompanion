@@ -345,7 +345,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var requestBodyData = new Dictionary<string, string>();
 			if (item != null && item.ReasoningEffort != reasoning_effort.medium)
 				requestBodyData.Add(nameof(reasoning_effort), item.ReasoningEffort.ToString());
-			foreach (var kv in item.RequestBodyData.Items.Where(x=>!string.IsNullOrEmpty(x.Key)))
+			foreach (var kv in item.RequestBodyData.Items.Where(x => !string.IsNullOrEmpty(x.Key)))
 				requestBodyData.Add(kv.Key, kv.Value);
 			// Always create a custom transport so the pipeline is used.
 			HttpMessageHandler handler = new HttpClientHandler();
@@ -512,7 +512,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 				});
 				var client = await GetAiClient(true, item);
+				// Use by most chat models.
 				var chatClient = client.GetChatClient(modelName);
+				// Used by o3-pro
+				//var responsesClient = client.GetOpenAIResponseClient(modelName);
+
 				var toolCalls = new List<ChatToolCall>();
 				// If streaming  mode is enabled and AI model supports streaming then...
 				if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
