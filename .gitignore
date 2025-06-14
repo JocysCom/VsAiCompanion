@@ -411,3 +411,4 @@ FodyWeavers.xsd
 /Tools/pandoc.exe
 /Tools/Docker/temp
 /Tools/Docker/Files
+/.vscode
