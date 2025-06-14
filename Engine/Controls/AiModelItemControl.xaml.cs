@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -78,6 +79,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set => _FeaturesItemsSource = value;
 		}
 		ObservableCollection<CheckBoxViewModel> _FeaturesItemsSource;
+
+
+		public AiModelEndpointType[] EndpointTypeItemsSource { get; set; } =
+			(AiModelEndpointType[])Enum.GetValues(typeof(AiModelEndpointType));
 
 		void UpdateControlVilibility()
 		{

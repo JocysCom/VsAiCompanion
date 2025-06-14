@@ -286,6 +286,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Override_API_version => FindResource(nameof(main_Override_API_version));
         public static string main_Override_API_version_Help => FindResource(nameof(main_Override_API_version_Help));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
+        public static string main_AiModelEndpointType => FindResource(nameof(main_AiModelEndpointType));
+        public static string main_AiModelEndpointType_Help => FindResource(nameof(main_AiModelEndpointType_Help));
         public static string main_Max_Input_Tokens => FindResource(nameof(main_Max_Input_Tokens));
         public static string main_Max_Output_Tokens => FindResource(nameof(main_Max_Output_Tokens));
         public static string main_Max_Output_Tokens_Help => FindResource(nameof(main_Max_Output_Tokens_Help));

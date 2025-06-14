@@ -305,6 +305,8 @@
 
 	<!--  Options → AI Models  -->
 	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
+	<sys:String x:Key="main_AiModelEndpointType">AI Model Endpoint Type</sys:String>
+	<sys:String x:Key="main_AiModelEndpointType_Help">Specifies the endpoint type that determines which client to use for communicating with the AI service.</sys:String>
 	<sys:String x:Key="main_Max_Input_Tokens">Max Input Tokens</sys:String>
 	<sys:String x:Key="main_Max_Output_Tokens">Max Output Tokens</sys:String>
 	<sys:String x:Key="main_Max_Output_Tokens_Help">The maximum number of tokens that can be generated in a completion includes both displayed output tokens and reasoning tokens. This can help manage costs.</sys:String>
