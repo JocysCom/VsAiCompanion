@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI.Chat;
+using OpenAI.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -270,6 +271,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				item.Features = AiModelFeatures.ChatSupport;
 				item.IsFeaturesKnown = true;
+			}
+			else if (item.Name.Contains("o3-pro"))
+			{
+				// o3-pro models use Response endpoint and have advanced reasoning capabilities
+				item.Features = AiModelFeatures.ChatSupport | AiModelFeatures.SystemMessages | AiModelFeatures.Streaming;
+				item.IsFeaturesKnown = true;
+				item.EndpointType = AiModelEndpointType.OpenAI_Response;
+				item.Instructions = "Use your advanced reasoning capabilities to provide detailed, step-by-step analysis.";
 			}
 			else if (item.Name.StartsWith("o1"))
 			{

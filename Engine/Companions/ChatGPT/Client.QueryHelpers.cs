@@ -2,6 +2,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI.Chat;
+using OpenAI.Responses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -152,6 +153,66 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return (addToolsToOptions, addToolsToMessage);
 		}
 
+		/// <summary>
+		/// Convert ChatMessage list to ResponseItem list for Response API
+		/// </summary>
+		private List<ResponseItem> ConvertChatMessagesToResponseItems(List<ChatMessage> messages)
+		{
+			var responseItems = new List<ResponseItem>();
+			foreach (var message in messages)
+			{
+				if (message is UserChatMessage userMessage)
+				{
+					var textContent = userMessage.Content?.FirstOrDefault()?.Text ?? "";
+					if (!string.IsNullOrEmpty(textContent))
+						responseItems.Add(ResponseItem.CreateUserMessageItem(textContent));
+				}
+				else if (message is SystemChatMessage systemMessage)
+				{
+					var textContent = systemMessage.Content?.FirstOrDefault()?.Text ?? "";
+					if (!string.IsNullOrEmpty(textContent))
+						responseItems.Add(ResponseItem.CreateSystemMessageItem(textContent));
+				}
+				else if (message is AssistantChatMessage assistantMessage)
+				{
+					var textContent = assistantMessage.Content?.FirstOrDefault()?.Text ?? "";
+					if (!string.IsNullOrEmpty(textContent))
+						responseItems.Add(ResponseItem.CreateAssistantMessageItem(textContent, null));
+				}
+			}
+			return responseItems;
+		}
+
+		/// <summary>
+		/// Convert ChatCompletionOptions to ResponseCreationOptions
+		/// </summary>
+		private ResponseCreationOptions ConvertToResponseCreationOptions(ChatCompletionOptions completionsOptions)
+		{
+			var responseOptions = new ResponseCreationOptions();
+			
+			// Map compatible properties from ChatCompletionOptions to ResponseCreationOptions
+			if (completionsOptions.Temperature.HasValue)
+				responseOptions.Temperature = completionsOptions.Temperature;
+			
+			if (completionsOptions.MaxOutputTokenCount.HasValue)
+				responseOptions.MaxOutputTokenCount = completionsOptions.MaxOutputTokenCount;
+			
+			if (completionsOptions.TopP.HasValue)
+				responseOptions.TopP = completionsOptions.TopP;
+			
+			if (completionsOptions.EndUserId != null)
+				responseOptions.EndUserId = completionsOptions.EndUserId;
+			
+			// Response API specific properties that don't have Chat equivalents:
+			// - Instructions (set via system messages instead)
+			// - ReasoningOptions (o3-pro specific)
+			// - TextOptions (formatting)
+			// - ToolChoice, Tools (if Response API supports tools)
+			// - StoredOutputEnabled, PreviousResponseId, etc.
+			
+			return responseOptions;
+		}
+
 		#endregion
 
 		#region Chat Execution Methods
@@ -283,33 +344,94 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <summary>
 		/// Execute response with streaming (for o3-pro models)
 		/// </summary>
-		private Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteResponseStreamingAsync(
-			object responsesClient,
+		private async Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteResponseStreamingAsync(
+			OpenAIResponseClient responseClient,
 			List<ChatMessage> messages,
 			ChatCompletionOptions completionsOptions,
 			MessageItem assistantMessageItem,
 			CancellationToken cancellationToken)
 		{
-			// TODO: Implement when OpenAI Response client API is available
-			// This is a placeholder for future implementation
-			// For now, fall back to non-streaming
-			return ExecuteResponseNonStreamingAsync(responsesClient, messages, completionsOptions, cancellationToken);
+			var answer = "";
+			var toolCalls = new List<ChatToolCall>(); // Response API likely doesn't support tool calls
+			
+			try
+			{
+				var responseItems = ConvertChatMessagesToResponseItems(messages);
+				var responseOptions = ConvertToResponseCreationOptions(completionsOptions);
+				
+				var result = responseClient.CreateResponseStreamingAsync(responseItems, responseOptions, cancellationToken);
+				var updatesEnumerator = result.GetAsyncEnumerator(cancellationToken);
+				
+				try
+				{
+					while (await updatesEnumerator.MoveNextAsync().ConfigureAwait(false))
+					{
+						var update = updatesEnumerator.Current;
+						
+						// TODO: How to extract content from StreamingResponseUpdate?
+						// What properties does it have? ContentUpdate? Text? Delta?
+						
+						// For now, use ToString() as fallback
+						var contentUpdate = update?.ToString() ?? "";
+						if (!string.IsNullOrEmpty(contentUpdate))
+						{
+							answer += contentUpdate;
+							ControlsHelper.AppInvoke(() =>
+							{
+								if (assistantMessageItem.Status != null)
+									assistantMessageItem.Status = null;
+								assistantMessageItem.AddToBodyBuffer(contentUpdate);
+							});
+						}
+						
+						await Task.Yield();
+					}
+				}
+				finally
+				{
+					if (updatesEnumerator != null)
+						await updatesEnumerator.DisposeAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				answer = $"Error in Response API streaming: {ex.Message}";
+			}
+			
+			return (answer, toolCalls);
 		}
 
 		/// <summary>
 		/// Execute response without streaming (for o3-pro models)
 		/// </summary>
-		private Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteResponseNonStreamingAsync(
-			object responsesClient,
+		private async Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteResponseNonStreamingAsync(
+			OpenAIResponseClient responseClient,
 			List<ChatMessage> messages,
 			ChatCompletionOptions completionsOptions,
 			CancellationToken cancellationToken)
 		{
-			// TODO: Implement when OpenAI Response client API is available
-			// This is a placeholder for future implementation
-			var answer = "Response client not yet implemented for o3-pro models.";
-			var toolCalls = new List<ChatToolCall>();
-			return Task.FromResult((answer, toolCalls));
+			var answer = "";
+			var toolCalls = new List<ChatToolCall>(); // Response API likely doesn't support tool calls
+			
+			try
+			{
+				var responseItems = ConvertChatMessagesToResponseItems(messages);
+				var responseOptions = ConvertToResponseCreationOptions(completionsOptions);
+				
+				var result = await responseClient.CreateResponseAsync(responseItems, responseOptions, cancellationToken);
+				var response = result.Value;
+				
+				// Use the discovered GetOutputText() method to extract content
+				answer = response?.GetOutputText() ?? "No response content available";
+				
+				// Response API likely doesn't support tool calls, so toolCalls remains empty
+			}
+			catch (Exception ex)
+			{
+				answer = $"Error in Response API: {ex.Message}";
+			}
+			
+			return (answer, toolCalls);
 		}
 
 		#endregion
