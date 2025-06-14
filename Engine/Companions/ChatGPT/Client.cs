@@ -453,229 +453,164 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var service = item.AiService;
 			var modelName = item.AiModel;
 			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			var maxInputTokens = GetMaxInputTokens(item);
-			// Other settings.
-			var newMessageItems = new List<MessageItem>();
-			var functionResults = new List<MessageAttachments>();
-			var answer = "";
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
-			var id = Guid.NewGuid();
-			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
-			ControlsHelper.AppInvoke(() =>
+			
+			// Determine which endpoint type to use
+			var endpointType = aiModel?.EndpointType ?? AiModelEndpointType.Auto;
+			
+			switch (endpointType)
 			{
-				item.CancellationTokenSources.Add(cancellationTokenSource);
-				Global.MainControl.InfoPanel.AddTask(id);
-				Global.AvatarPanel?.PlayMessageSentAnimation();
-				newMessageItems.Add(assistantMessageItem);
-				item.Messages.Add(assistantMessageItem);
-				assistantMessageItem.Status = "Thinking";
-			});
-			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
+				case AiModelEndpointType.OpenAI_Chat:
+					return await QueryAI_ChatCompletion(item, messagesToSend, embeddingText);
+					
+				case AiModelEndpointType.OpenAI_Response:
+					return await QueryAI_Response(item, messagesToSend, embeddingText);
+					
+				case AiModelEndpointType.Auto:
+					// Auto-detect based on model name
+					if (IsResponseModel(modelName))
+						return await QueryAI_Response(item, messagesToSend, embeddingText);
+					else
+						return await QueryAI_ChatCompletion(item, messagesToSend, embeddingText);
+					
+				default:
+					return await QueryAI_ChatCompletion(item, messagesToSend, embeddingText); // Safe fallback
+			}
+		}
+
+		/// <summary>
+		/// Check if model should use Response endpoint (for o3-pro models)
+		/// </summary>
+		private static bool IsResponseModel(string modelName)
+		{
+			if (string.IsNullOrEmpty(modelName))
+				return false;
+			
+			var name = modelName.ToLowerInvariant();
+			// Add more patterns as needed
+			return name.Contains("o3-pro");
+		}
+
+		/// <summary>
+		/// Query AI using Chat Completion endpoint (existing logic)
+		/// </summary>
+		private async Task<List<MessageItem>> QueryAI_ChatCompletion(
+			TemplateItem item,
+			List<chat_completion_message> messagesToSend,
+			string embeddingText
+		)
+		{
+			// Service item.
+			var service = item.AiService;
+			var modelName = item.AiModel;
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+			var maxInputTokens = GetMaxInputTokens(item);
+			
+			// Setup
+			var (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id) = 
+				SetupQueryExecution(item, service);
+				
+			var answer = "";
 			try
 			{
-				var messages = new List<ChatMessage>();
-				foreach (var messageToSend in messagesToSend)
-				{
-					var stringContent = messageToSend.content as string;
-					ChatMessageContentPart[] contentItems = null;
-					if (messageToSend.content is content_item[] citems)
-						contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
-					switch (messageToSend.role)
-					{
-						case message_role.user:
-							if (contentItems != null)
-								messages.Add(new UserChatMessage(contentItems));
-							else if (!string.IsNullOrEmpty(stringContent))
-								messages.Add(new UserChatMessage(stringContent));
-							break;
-						case message_role.assistant:
-							if (!string.IsNullOrEmpty(stringContent))
-								messages.Add(new AssistantChatMessage(stringContent));
-							break;
-						case message_role.system:
-							if (!string.IsNullOrEmpty(stringContent))
-								messages.Add(new SystemChatMessage(stringContent));
-							break;
-					}
-				}
-
+				var messages = PrepareMessages(messagesToSend);
 				var completionsOptions = GetChatCompletionOptions(item);
-				var addToolsToOptions = item.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
-				var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
-				ControlsHelper.AppInvoke(() =>
-				{
-					if (addToolsToOptions)
-					{
-						var tools = PluginsManager.GetChatToolDefinitions(item);
-						PluginsManager.ProvideTools(tools, item, options: completionsOptions);
-					}
-				});
+				var (addToolsToOptions, addToolsToMessage) = SetupTools(item, aiModel, completionsOptions);
+				
 				var client = await GetAiClient(true, item);
-				// Use by most chat models.
 				var chatClient = client.GetChatClient(modelName);
-				// Used by o3-pro
-				//var responsesClient = client.GetOpenAIResponseClient(modelName);
 
 				var toolCalls = new List<ChatToolCall>();
-				// If streaming  mode is enabled and AI model supports streaming then...
+				
+				// Execute query with streaming or non-streaming
 				if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 				{
-					var toolCallIdsByIndex = new Dictionary<int, string>();
-					var functionNamesByIndex = new Dictionary<int, string>();
-					var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
-
-					var result = chatClient.CompleteChatStreamingAsync(
-						messages, completionsOptions, cancellationTokenSource.Token);
-
-					var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
-					// Loop through the enumerator asynchronously
-					try
-					{
-						while (await choicesEnumerator.MoveNextAsync().ConfigureAwait(false))
-						{
-							var choice = choicesEnumerator.Current;
-							if (choice.ContentUpdate != null)
-							{
-								foreach (var cu in choice.ContentUpdate)
-								{
-									answer += cu.Text;
-									ControlsHelper.AppInvoke(() =>
-									{
-										if (assistantMessageItem.Status != null)
-											assistantMessageItem.Status = null;
-										assistantMessageItem.AddToBodyBuffer(cu.Text);
-									});
-								}
-							}
-							if (choice.ToolCallUpdates != null)
-							{
-								foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
-								{
-									var index = update.Index;
-									if (!string.IsNullOrEmpty(update.ToolCallId))
-										toolCallIdsByIndex[index] = update.ToolCallId;
-									if (!string.IsNullOrEmpty(update.FunctionName))
-										functionNamesByIndex[index] = update.FunctionName;
-									if (update.FunctionArgumentsUpdate != null)
-									{
-										// If arguments storage doesn't exist yet, then...
-										if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
-										{
-											stream = new MemoryStream();
-											functionArgumentsByIndex[index] = stream;
-										}
-										using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
-											updateStream.CopyTo(stream);
-									}
-								}
-							}
-							// Yield control to allow UI updates or other tasks to process
-							await Task.Yield();
-						}
-					}
-					finally
-					{
-						if (choicesEnumerator != null)
-							await choicesEnumerator.DisposeAsync();
-					}
-
-					foreach (var kv in toolCallIdsByIndex)
-					{
-						var index = kv.Key;
-						var toolCallId = kv.Value;
-						var functionName = functionNamesByIndex[index];
-						// Getting function arguments.
-						var stream = functionArgumentsByIndex[index];
-						stream.Position = 0; // Reset the stream position to the beginning
-						var functionArguments = BinaryData.FromStream(stream);
-						var toolCall = ChatToolCall.CreateFunctionToolCall(toolCallId, functionName, functionArguments);
-						toolCalls.Add(toolCall);
-					}
+					(answer, toolCalls) = await ExecuteChatStreamingAsync(
+						chatClient, messages, completionsOptions, assistantMessageItem, cancellationTokenSource.Token);
 				}
-				// Streaming is not supported.
-				// Could be local non-secure HTTP connection.
 				else
 				{
-					var result = await chatClient.CompleteChatAsync(
-						messages, completionsOptions, cancellationTokenSource.Token);
-					var completion = result.Value;
-					switch (completion.FinishReason)
-					{
-						case ChatFinishReason.Stop:
-						case ChatFinishReason.ToolCalls:
-							answer = string.Join("\r\n", completion.Content?.Select(x => x.Text));
-							break;
-						case ChatFinishReason.Length:
-							answer = "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
-							break;
-						case ChatFinishReason.ContentFilter:
-							answer = "Omitted content due to a content filter flag.";
-							break;
-						default:
-							answer = result.ToString();
-							break;
-					}
-					if (completion.ToolCalls?.Any() == true)
-						toolCalls.AddRange(completion.ToolCalls);
+					(answer, toolCalls) = await ExecuteChatNonStreamingAsync(
+						chatClient, messages, completionsOptions, cancellationTokenSource.Token);
 				}
-				List<chat_completion_function> functions = null;
-				if (addToolsToMessage)
-				{
-					// Get new answer message without function JSON and function calls.
-					var (assistantMessage, functionCalls) = PluginsManager.ProcessAssistantMessage(answer);
-					if (functionCalls.Any())
-					{
-						answer = assistantMessage;
-						functions = functionCalls.ToList();
-					}
-				}
-				if (addToolsToOptions)
-				{
-					functions = ConvertChatToolCallsTo(toolCalls);
-				}
+
+				// Process tools and functions
+				var functions = ProcessToolsAndFunctions(addToolsToMessage, addToolsToOptions, answer, toolCalls);
+				answer = functions.processedAnswer;
+				
 				// Get approval and process functions.
-				await ProcessFunctions(item, functions,
-					functionResults, assistantMessageItem,
-					cancellationTokenSource);
+				await ProcessFunctions(item, functions.functions, functionResults, assistantMessageItem, cancellationTokenSource);
 			}
 			catch (Exception ex)
 			{
-				// Preserves the original stack trace as if the exception was never caught and rethrow.
-				// Allows parent catch see the exception exactly as it was at the original throw point.
 				ExceptionDispatchInfo.Capture(ex).Throw();
 			}
 			finally
 			{
-				ControlsHelper.AppInvoke(() =>
-				{
-					Global.MainControl.InfoPanel.RemoveTask(id);
-					item.CancellationTokenSources.Remove(cancellationTokenSource);
-					Global.AvatarPanel?.PlayMessageReceivedAnimation();
-				});
-				MessageDone?.Invoke(this, EventArgs.Empty);
+				FinalizeQueryExecution(item, id, cancellationTokenSource);
 			}
-			if (assistantMessageItem.Body != answer)
-				assistantMessageItem.Body = answer;
-			assistantMessageItem.Date = DateTime.Now;
-			ControlsHelper.AppInvoke(() =>
+			
+			return CompleteQueryExecution(item, newMessageItems, functionResults, assistantMessageItem, answer, cancellationTokenSource);
+		}
+
+		/// <summary>
+		/// Query AI using Response endpoint (for o3-pro models)
+		/// </summary>
+		private async Task<List<MessageItem>> QueryAI_Response(
+			TemplateItem item,
+			List<chat_completion_message> messagesToSend,
+			string embeddingText
+		)
+		{
+			// Service item.
+			var service = item.AiService;
+			var modelName = item.AiModel;
+			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+			
+			// Setup
+			var (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id) = 
+				SetupQueryExecution(item, service);
+				
+			var answer = "";
+			try
 			{
-				assistantMessageItem.Updated = DateTime.Now;
-				assistantMessageItem.Status = null;
-			});
-			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())
-			{
-				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
-				foreach (var functionResult in functionResults)
-					userAutoReplyMessageItem.Attachments.Add(functionResult);
-				userAutoReplyMessageItem.IsAutomated = true;
-				ControlsHelper.AppInvoke(() =>
+				var messages = PrepareMessages(messagesToSend);
+				var completionsOptions = GetChatCompletionOptions(item);
+				var (addToolsToOptions, addToolsToMessage) = SetupTools(item, aiModel, completionsOptions);
+				
+				var client = await GetAiClient(true, item);
+				var responsesClient = client.GetOpenAIResponseClient(modelName);
+
+				var toolCalls = new List<ChatToolCall>();
+				
+				// Execute query with streaming or non-streaming
+				if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 				{
-					newMessageItems.Add(userAutoReplyMessageItem);
-					item.Messages.Add(userAutoReplyMessageItem);
-				});
+					(answer, toolCalls) = await ExecuteResponseStreamingAsync(
+						responsesClient, messages, completionsOptions, assistantMessageItem, cancellationTokenSource.Token);
+				}
+				else
+				{
+					(answer, toolCalls) = await ExecuteResponseNonStreamingAsync(
+						responsesClient, messages, completionsOptions, cancellationTokenSource.Token);
+				}
+
+				// Process tools and functions
+				var functions = ProcessToolsAndFunctions(addToolsToMessage, addToolsToOptions, answer, toolCalls);
+				answer = functions.processedAnswer;
+				
+				// Get approval and process functions.
+				await ProcessFunctions(item, functions.functions, functionResults, assistantMessageItem, cancellationTokenSource);
 			}
-			return newMessageItems;
+			catch (Exception ex)
+			{
+				ExceptionDispatchInfo.Capture(ex).Throw();
+			}
+			finally
+			{
+				FinalizeQueryExecution(item, id, cancellationTokenSource);
+			}
+			
+			return CompleteQueryExecution(item, newMessageItems, functionResults, assistantMessageItem, answer, cancellationTokenSource);
 		}
 
 		public static ChatCompletionOptions GetChatCompletionOptions(TemplateItem item)
@@ -871,6 +806,322 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				item.IsFeaturesKnown = true;
 			}
 		}
+
+		#region Helper Methods for QueryAI
+
+		/// <summary>
+		/// Setup common query execution parameters
+		/// </summary>
+		private (List<MessageItem> newMessageItems, List<MessageAttachments> functionResults, MessageItem assistantMessageItem, CancellationTokenSource cancellationTokenSource, Guid id) SetupQueryExecution(TemplateItem item, AiService service)
+		{
+			var newMessageItems = new List<MessageItem>();
+			var functionResults = new List<MessageAttachments>();
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
+			var id = Guid.NewGuid();
+			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
+			
+			ControlsHelper.AppInvoke(() =>
+			{
+				item.CancellationTokenSources.Add(cancellationTokenSource);
+				Global.MainControl.InfoPanel.AddTask(id);
+				Global.AvatarPanel?.PlayMessageSentAnimation();
+				newMessageItems.Add(assistantMessageItem);
+				item.Messages.Add(assistantMessageItem);
+				assistantMessageItem.Status = "Thinking";
+			});
+			
+			return (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id);
+		}
+
+		/// <summary>
+		/// Prepare messages from chat_completion_message to ChatMessage format
+		/// </summary>
+		private List<ChatMessage> PrepareMessages(List<chat_completion_message> messagesToSend)
+		{
+			var messages = new List<ChatMessage>();
+			foreach (var messageToSend in messagesToSend)
+			{
+				var stringContent = messageToSend.content as string;
+				ChatMessageContentPart[] contentItems = null;
+				if (messageToSend.content is content_item[] citems)
+					contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
+				switch (messageToSend.role)
+				{
+					case message_role.user:
+						if (contentItems != null)
+							messages.Add(new UserChatMessage(contentItems));
+						else if (!string.IsNullOrEmpty(stringContent))
+							messages.Add(new UserChatMessage(stringContent));
+						break;
+					case message_role.assistant:
+						if (!string.IsNullOrEmpty(stringContent))
+							messages.Add(new AssistantChatMessage(stringContent));
+						break;
+					case message_role.system:
+						if (!string.IsNullOrEmpty(stringContent))
+							messages.Add(new SystemChatMessage(stringContent));
+						break;
+				}
+			}
+			return messages;
+		}
+
+		/// <summary>
+		/// Setup tools for the query
+		/// </summary>
+		private (bool addToolsToOptions, bool addToolsToMessage) SetupTools(TemplateItem item, AiModel aiModel, ChatCompletionOptions completionsOptions)
+		{
+			var addToolsToOptions = item.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+			var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+			
+			ControlsHelper.AppInvoke(() =>
+			{
+				if (addToolsToOptions)
+				{
+					var tools = PluginsManager.GetChatToolDefinitions(item);
+					PluginsManager.ProvideTools(tools, item, options: completionsOptions);
+				}
+			});
+			
+			return (addToolsToOptions, addToolsToMessage);
+		}
+
+		/// <summary>
+		/// Execute chat completion with streaming
+		/// </summary>
+		private async Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteChatStreamingAsync(
+			ChatClient chatClient,
+			List<ChatMessage> messages,
+			ChatCompletionOptions completionsOptions,
+			MessageItem assistantMessageItem,
+			CancellationToken cancellationToken)
+		{
+			var answer = "";
+			var toolCalls = new List<ChatToolCall>();
+			var toolCallIdsByIndex = new Dictionary<int, string>();
+			var functionNamesByIndex = new Dictionary<int, string>();
+			var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
+
+			var result = chatClient.CompleteChatStreamingAsync(messages, completionsOptions, cancellationToken);
+			var choicesEnumerator = result.GetAsyncEnumerator(cancellationToken);
+			
+			try
+			{
+				while (await choicesEnumerator.MoveNextAsync().ConfigureAwait(false))
+				{
+					var choice = choicesEnumerator.Current;
+					if (choice.ContentUpdate != null)
+					{
+						foreach (var cu in choice.ContentUpdate)
+						{
+							answer += cu.Text;
+							ControlsHelper.AppInvoke(() =>
+							{
+								if (assistantMessageItem.Status != null)
+									assistantMessageItem.Status = null;
+								assistantMessageItem.AddToBodyBuffer(cu.Text);
+							});
+						}
+					}
+					if (choice.ToolCallUpdates != null)
+					{
+						foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
+						{
+							var index = update.Index;
+							if (!string.IsNullOrEmpty(update.ToolCallId))
+								toolCallIdsByIndex[index] = update.ToolCallId;
+							if (!string.IsNullOrEmpty(update.FunctionName))
+								functionNamesByIndex[index] = update.FunctionName;
+							if (update.FunctionArgumentsUpdate != null)
+							{
+								if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
+								{
+									stream = new MemoryStream();
+									functionArgumentsByIndex[index] = stream;
+								}
+								using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
+									updateStream.CopyTo(stream);
+							}
+						}
+					}
+					await Task.Yield();
+				}
+			}
+			finally
+			{
+				if (choicesEnumerator != null)
+					await choicesEnumerator.DisposeAsync();
+			}
+
+			foreach (var kv in toolCallIdsByIndex)
+			{
+				var index = kv.Key;
+				var toolCallId = kv.Value;
+				var functionName = functionNamesByIndex[index];
+				var stream = functionArgumentsByIndex[index];
+				stream.Position = 0;
+				var functionArguments = BinaryData.FromStream(stream);
+				var toolCall = ChatToolCall.CreateFunctionToolCall(toolCallId, functionName, functionArguments);
+				toolCalls.Add(toolCall);
+			}
+
+			return (answer, toolCalls);
+		}
+
+		/// <summary>
+		/// Execute chat completion without streaming
+		/// </summary>
+		private async Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteChatNonStreamingAsync(
+			ChatClient chatClient,
+			List<ChatMessage> messages,
+			ChatCompletionOptions completionsOptions,
+			CancellationToken cancellationToken)
+		{
+			var answer = "";
+			var toolCalls = new List<ChatToolCall>();
+
+			var result = await chatClient.CompleteChatAsync(messages, completionsOptions, cancellationToken);
+			var completion = result.Value;
+			
+			switch (completion.FinishReason)
+			{
+				case ChatFinishReason.Stop:
+				case ChatFinishReason.ToolCalls:
+					answer = string.Join("\r\n", completion.Content?.Select(x => x.Text));
+					break;
+				case ChatFinishReason.Length:
+					answer = "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
+					break;
+				case ChatFinishReason.ContentFilter:
+					answer = "Omitted content due to a content filter flag.";
+					break;
+				default:
+					answer = result.ToString();
+					break;
+			}
+			
+			if (completion.ToolCalls?.Any() == true)
+				toolCalls.AddRange(completion.ToolCalls);
+
+			return (answer, toolCalls);
+		}
+
+		/// <summary>
+		/// Execute response with streaming (for o3-pro models)
+		/// </summary>
+		private Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteResponseStreamingAsync(
+			object responsesClient,
+			List<ChatMessage> messages,
+			ChatCompletionOptions completionsOptions,
+			MessageItem assistantMessageItem,
+			CancellationToken cancellationToken)
+		{
+			// TODO: Implement when OpenAI Response client API is available
+			// This is a placeholder for future implementation
+			// For now, fall back to non-streaming
+			return ExecuteResponseNonStreamingAsync(responsesClient, messages, completionsOptions, cancellationToken);
+		}
+
+		/// <summary>
+		/// Execute response without streaming (for o3-pro models)
+		/// </summary>
+		private Task<(string answer, List<ChatToolCall> toolCalls)> ExecuteResponseNonStreamingAsync(
+			object responsesClient,
+			List<ChatMessage> messages,
+			ChatCompletionOptions completionsOptions,
+			CancellationToken cancellationToken)
+		{
+			// TODO: Implement when OpenAI Response client API is available
+			// This is a placeholder for future implementation
+			var answer = "Response client not yet implemented for o3-pro models.";
+			var toolCalls = new List<ChatToolCall>();
+			return Task.FromResult((answer, toolCalls));
+		}
+
+		/// <summary>
+		/// Process tools and functions
+		/// </summary>
+		private (string processedAnswer, List<chat_completion_function> functions) ProcessToolsAndFunctions(
+			bool addToolsToMessage,
+			bool addToolsToOptions,
+			string answer,
+			List<ChatToolCall> toolCalls)
+		{
+			List<chat_completion_function> functions = null;
+			var processedAnswer = answer;
+			
+			if (addToolsToMessage)
+			{
+				var (assistantMessage, functionCalls) = PluginsManager.ProcessAssistantMessage(answer);
+				if (functionCalls.Any())
+				{
+					processedAnswer = assistantMessage;
+					functions = functionCalls.ToList();
+				}
+			}
+			
+			if (addToolsToOptions)
+			{
+				functions = ConvertChatToolCallsTo(toolCalls);
+			}
+			
+			return (processedAnswer, functions);
+		}
+
+		/// <summary>
+		/// Finalize query execution cleanup
+		/// </summary>
+		private void FinalizeQueryExecution(TemplateItem item, Guid id, CancellationTokenSource cancellationTokenSource)
+		{
+			ControlsHelper.AppInvoke(() =>
+			{
+				Global.MainControl.InfoPanel.RemoveTask(id);
+				item.CancellationTokenSources.Remove(cancellationTokenSource);
+				Global.AvatarPanel?.PlayMessageReceivedAnimation();
+			});
+			MessageDone?.Invoke(this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Complete query execution and return results
+		/// </summary>
+		private List<MessageItem> CompleteQueryExecution(
+			TemplateItem item,
+			List<MessageItem> newMessageItems,
+			List<MessageAttachments> functionResults,
+			MessageItem assistantMessageItem,
+			string answer,
+			CancellationTokenSource cancellationTokenSource)
+		{
+			if (assistantMessageItem.Body != answer)
+				assistantMessageItem.Body = answer;
+			assistantMessageItem.Date = DateTime.Now;
+			
+			ControlsHelper.AppInvoke(() =>
+			{
+				assistantMessageItem.Updated = DateTime.Now;
+				assistantMessageItem.Status = null;
+			});
+			
+			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())
+			{
+				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
+				foreach (var functionResult in functionResults)
+					userAutoReplyMessageItem.Attachments.Add(functionResult);
+				userAutoReplyMessageItem.IsAutomated = true;
+				
+				ControlsHelper.AppInvoke(() =>
+				{
+					newMessageItems.Add(userAutoReplyMessageItem);
+					item.Messages.Add(userAutoReplyMessageItem);
+				});
+			}
+			
+			return newMessageItems;
+		}
+
+		#endregion
 
 		#region Convert to Name Value Collection
 
