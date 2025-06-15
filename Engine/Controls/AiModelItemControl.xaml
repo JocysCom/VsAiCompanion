@@ -42,14 +42,24 @@
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<Label VerticalAlignment="Center" Content="{StaticResource main_Max_Input_Tokens}" />
+					<Label VerticalAlignment="Center" Content="{StaticResource main_AiModelEndpointType}" />
+					<ComboBox
+						x:Name="AiModelEndpointTypeComboBox"
+						Grid.Column="1"
+						ItemsSource="{Binding EndpointTypeItemsSource, ElementName=This}"
+						SelectedValue="{Binding EndpointType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						AutomationProperties.Name="{StaticResource main_AiModelEndpointType}"
+						AutomationProperties.HelpText="{StaticResource main_AiModelEndpointType_Help}" />
+					<Label Grid.Row="1" VerticalAlignment="Center" Content="{StaticResource main_Max_Input_Tokens}" />
 					<JcControls:NumericUpDown
 						x:Name="MaxInputTokensUpdown"
+						Grid.Row="1"
 						Grid.Column="1"
 						LargeChange="1024"
 						Maximum="9223372036854775807"

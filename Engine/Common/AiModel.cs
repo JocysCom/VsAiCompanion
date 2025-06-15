@@ -83,5 +83,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool InstructionsEnabled { get => _InstructionsEnabled; set => SetProperty(ref _InstructionsEnabled, value); }
 		bool _InstructionsEnabled;
 
+		/// <summary>AI model endpoint type that determines which client to use.</summary>
+		[DefaultValue(AiModelEndpointType.Auto)]
+		public AiModelEndpointType EndpointType { get => _EndpointType; set => SetProperty(ref _EndpointType, value); }
+		AiModelEndpointType _EndpointType;
+
 	}
 }
