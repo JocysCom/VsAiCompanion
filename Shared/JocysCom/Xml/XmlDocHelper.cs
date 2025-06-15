@@ -1,3 +1,6 @@
+#if !NETFRAMEWORK
+#nullable disable
+#endif
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,6 +21,8 @@ namespace JocysCom.ClassLibrary.Xml
 
 		#region Methods
 
+		/// <summary>Retrieves the XML &lt;summary&gt; text for a member, applying the specified formatting.</summary>
+		/// <remarks>If no member summary is present and the member is a property, falls back to the property's type summary.</remarks>
 		public static string GetSummaryText(MemberInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
@@ -36,6 +41,8 @@ namespace JocysCom.ClassLibrary.Xml
 			return s;
 		}
 
+		/// <summary>Retrieves the XML &lt;example&gt; text for a member, applying the specified formatting.</summary>
+		/// <remarks>If no example is present and the member is a property, falls back to the property's type summary.</remarks>
 		public static string GetExampleText(MemberInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
@@ -54,6 +61,8 @@ namespace JocysCom.ClassLibrary.Xml
 		}
 
 
+		/// <summary>Retrieves the XML &lt;param&gt; documentation for a method parameter, applying the specified formatting.</summary>
+		/// <remarks>If no param tag is found, falls back to the parameter type's summary.</remarks>
 		public static string GetParamText(MethodInfo mi, ParameterInfo pi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
@@ -66,6 +75,8 @@ namespace JocysCom.ClassLibrary.Xml
 			return s;
 		}
 
+		/// <summary>Retrieves the XML &lt;returns&gt; documentation for a method, applying the specified formatting.</summary>
+		/// <remarks>If no returns tag is found, falls back to the return type's summary.</remarks>
 		public static string GetReturnText(MethodInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
@@ -78,6 +89,7 @@ namespace JocysCom.ClassLibrary.Xml
 			return s;
 		}
 
+		/// <summary>Retrieves the XML &lt;summary&gt; documentation for a type, applying the specified formatting.</summary>
 		public static string GetSummary(Type type, FormatText format = FormatText.None)
 		{
 			var ti = type.GetTypeInfo();
@@ -87,6 +99,8 @@ namespace JocysCom.ClassLibrary.Xml
 			return s;
 		}
 
+		/// <summary>Applies FormatText options to a documentation string.</summary>
+		/// <remarks>Options include indentation removal, whitespace collapsing, and trimming.</remarks>
 		public static string GetFormattedText(string s, FormatText format)
 		{
 			if (format.HasFlag(FormatText.RemoveIdent))
@@ -98,8 +112,10 @@ namespace JocysCom.ClassLibrary.Xml
 			return s;
 		}
 
+		/// <summary>Compiled regex matching sequences of whitespace characters (spaces, tabs, newlines, no-break spaces).</summary>
 		public static readonly Regex RxMultiSpace = new Regex("[ \r\n\t\u00A0]+", RegexOptions.Compiled);
 
+		/// <summary>Removes common leading indentation from a multi-line string while preserving the first line.</summary>
 		public static string RemoveIdent(string s)
 		{
 			s = s.Trim('\n', '\r', ' ', '\t').Replace("\r\n", "\n");
@@ -121,6 +137,7 @@ namespace JocysCom.ClassLibrary.Xml
 			return string.Join(Environment.NewLine, lines);
 		}
 
+		/// <summary>Collapses runs of whitespace characters into a single space and trims leading/trailing whitespace.</summary>
 		public static string ReduceSpaces(string s)
 		{
 			if (string.IsNullOrEmpty(s))
@@ -128,6 +145,7 @@ namespace JocysCom.ClassLibrary.Xml
 			return TrimSpaces(RxMultiSpace.Replace(s, " "));
 		}
 
+		/// <summary>Trims whitespace characters from both ends of a string.</summary>
 		public static string TrimSpaces(string s)
 		{
 			if (string.IsNullOrEmpty(s))
@@ -135,6 +153,7 @@ namespace JocysCom.ClassLibrary.Xml
 			return s.Trim(' ', '\r', '\n', '\t', '\u00A0');
 		}
 
+		/// <summary>Concatenates InnerText of provided XmlNode array; returns null if nodes is null.</summary>
 		public static string ConvertXmlNodesToText(params XmlNode[] nodes)
 		{
 			if (nodes == null)
@@ -145,6 +164,7 @@ namespace JocysCom.ClassLibrary.Xml
 			return result;
 		}
 
+		/// <summary>Concatenates OuterXml of provided XmlNode array; returns empty string if nodes is null.</summary>
 		public static string ConvertXmlNodesToXml(params XmlNode[] nodes)
 		{
 			if (nodes == null)
@@ -158,6 +178,7 @@ namespace JocysCom.ClassLibrary.Xml
 		#endregion
 
 		/// <summary>Retrieve the XML comments for a type or a member of a type.</summary>
+		/// <remarks>For methods without a summary, attempts to find documentation on implemented interface methods.</remarks>
 		public static XmlDocMember GetMemberDoc(MemberInfo mi)
 		{
 			var memberDoc = _GetMemberDoc(mi);
@@ -183,6 +204,7 @@ namespace JocysCom.ClassLibrary.Xml
 		}
 
 		/// <summary>Retrieve the XML comments for a type or a member of a type.</summary>
+		/// <remarks>Generates documentation element names based on member type, including support for generics and operators.</remarks>
 		private static XmlDocMember _GetMemberDoc(MemberInfo mi)
 		{
 			var declType = (mi is Type) ? ((Type)mi) : mi.DeclaringType;
@@ -234,6 +256,7 @@ namespace JocysCom.ClassLibrary.Xml
 		/// <summary>Generates a parameter string used when searching XML comment files.</summary>
 		/// <param name="parameters">List of parameters to a member.</param>
 		/// <returns>A parameter string used when searching XML comment files.</returns>
+		/// <remarks>Generates comma-separated parameter type list enclosed in parentheses following XML documentation naming conventions.</remarks>
 		private static string CreateParamsDescription(ParameterInfo[] parameters)
 		{
 			var paramDesc = new StringBuilder();
@@ -259,9 +282,8 @@ namespace JocysCom.ClassLibrary.Xml
 			return paramDesc.ToString();
 		}
 
-		/// <summary>
-		/// Format the parameter type name.
-		/// </summary>
+		/// <summary>Format the parameter type name.</summary>
+		/// <remarks>Represents nullable types as System.Nullable{FullTypeName} to match XML documentation conventions.</remarks>
 		private static string FormatParamTypeName(Type paramType)
 		{
 			if (paramType.IsGenericType && paramType.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -278,7 +300,6 @@ namespace JocysCom.ClassLibrary.Xml
 		}
 
 
-
 		#endregion
 
 		#region Assembly XML Document Files.
@@ -290,6 +311,7 @@ namespace JocysCom.ClassLibrary.Xml
 		private static readonly ConcurrentDictionary<Assembly, XmlDocument> XmlDocumentCache = new ConcurrentDictionary<Assembly, XmlDocument>();
 
 		/// <summary>Get XML Doc.</summary>
+		/// <remarks>Retrieves and caches the XmlDoc model for an assembly; set cache=false to bypass the cache.</remarks>
 		public static XmlDoc GetXmlDoc(Assembly assembly, bool cache = true)
 		{
 			if (assembly is null)
@@ -300,6 +322,8 @@ namespace JocysCom.ClassLibrary.Xml
 			return XmlDocCache.GetOrAdd(assembly, x => _GetXmlDoc(x));
 		}
 
+		/// <summary>Loads XML documentation for an assembly and deserializes it into XmlDoc.</summary>
+		/// <remarks>Bypasses cache; used internally to fetch and parse XML documentation.</remarks>
 		private static XmlDoc _GetXmlDoc(Assembly assembly)
 		{
 			var xml = GetXmlDocument(assembly);
@@ -308,10 +332,11 @@ namespace JocysCom.ClassLibrary.Xml
 			//var validator = new Runtime.XmlValidator();
 			//validator.IsValid<XmlDoc>(xml.OuterXml, true);
 			//var exceptions = validator.Exceptions;
-			return Runtime.Serializer.DeserializeFromXml<XmlDoc>(xml);
+			return (XmlDoc)DeserializeFromXmlString(xml.OuterXml, typeof(XmlDoc));
 		}
 
 		/// <summary>Get XML Document.</summary>
+		/// <remarks>Retrieves and caches the XmlDocument for an assembly; set cache=false to bypass the cache.</remarks>
 		public static XmlDocument GetXmlDocument(Assembly a, bool cache = true)
 		{
 			if (a is null)
@@ -321,7 +346,6 @@ namespace JocysCom.ClassLibrary.Xml
 			// If enumeration then use value as a key, otherwise use type string.
 			return XmlDocumentCache.GetOrAdd(a, x => _GetXmlDocument(x));
 		}
-
 		private static XmlDocument _GetXmlDocument(Assembly assembly)
 		{
 			var path = GetXmlDocumentationPath(assembly);
@@ -343,7 +367,6 @@ namespace JocysCom.ClassLibrary.Xml
 				return xml;
 			}
 		}
-
 		/// <summary>Gets XML document file path by assembly.</summary>
 		public static string GetXmlDocumentationPath(Assembly assembly)
 		{
@@ -364,13 +387,59 @@ namespace JocysCom.ClassLibrary.Xml
 			}
 			return null;
 		}
-
 		#endregion
 
+		#region XML: De-serialize
+
+		static object XmlSerializersLock = new object();
+		static Dictionary<Type, XmlSerializer> XmlSerializers { get; set; } = new Dictionary<Type, XmlSerializer>();
+		/// <summary>
+		/// De-serialize object from XML string. XML string must not contain Byte Order Mark (BOM).
+		/// </summary>
+		/// <param name="xml">XML string representing object.</param>
+		/// <param name="type">Type of object.</param>
+		/// <returns>Object.</returns>
+		static object DeserializeFromXmlString(string xml, Type type)
+		{
+			if (string.IsNullOrEmpty(xml))
+				return null;
+			// Note: If you are getting de-serialization error in XML document(1,1) then there is a chance that
+			// you are trying to de-serialize string which contains Byte Order Mark (BOM) which must not be there.
+			// Probably you used "var xml = System.Text.Encoding.GetString(bytes)" directly on file content.
+			// You should use "StreamReader" on file content, because this method will strip BOM properly
+			// when converting bytes to string.
+			// Settings used to protect from
+			// SUPPRESS: CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+			// https://cwe.mitre.org/data/definitions/611.html
+			var settings = new XmlReaderSettings();
+			settings.DtdProcessing = DtdProcessing.Ignore;
+			settings.XmlResolver = null;
+			object o = null;
+			lock (XmlSerializersLock)
+			{
+				if (!XmlSerializers.ContainsKey(type))
+				{
+					var extraTypes = new Type[] { typeof(string) };
+					XmlSerializers.Add(type, new XmlSerializer(type, extraTypes));
+				}
+			}
+			var serializer = XmlSerializers[type];
+			// Stream 'sr' will be disposed by the reader.
+			using (var sr = new StringReader(xml))
+			{
+				using (var reader = XmlReader.Create(sr, settings))
+					lock (serializer) { o = serializer.Deserialize(reader); }
+				return o;
+			}
+		}
+		#endregion
 	}
 
 	#region Helper Classes
 
+	///<summary>
+	/// Specifies formatting options for XML documentation text.
+	/// </summary>
 	[Flags]
 	public enum FormatText
 	{
@@ -382,39 +451,69 @@ namespace JocysCom.ClassLibrary.Xml
 		ReduceAndTrimSpaces = ReduceSpaces | TrimSpaces,
 	}
 
+	///<summary>
+	/// Represents the type and name of an XML documentation entity.
+	/// </summary>
 	public class XmlDocName
 	{
+		/// <summary>
+		/// The type of the XML documentation entity (e.g., "T" for type, "M" for method).
+		/// </summary>
 		public string type;
+		/// <summary>
+		/// The fully qualified name of the XML documentation entity.
+		/// </summary>
 		public string name;
 	}
 
+	///<summary>
+	/// Represents the assembly information in an XML documentation file.
+	/// </summary>
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	public class XmlDocAssembly
 	{
+		/// <summary>
+		/// The name of the assembly.
+		/// </summary>
 		public string name { get; set; }
 	}
 
+	///<summary>
+	/// Represents the root element of an XML documentation file.
+	/// </summary>
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("doc")]
 	public class XmlDoc
 	{
+		/// <summary>
+		/// Information about the assembly to which the documentation belongs.
+		/// </summary>
 		public XmlDocAssembly assembly;
-
+		/// <summary>
+		/// A list of documented members.
+		/// </summary>
 		[XmlArrayItem("member")]
 		public List<XmlDocMember> members;
-
 	}
 
+	///<summary>
+	/// Represents a parameter or return value documentation in an XML documentation file.
+	/// </summary>
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("param")]
 	public partial class XmlDocParam
 	{
+		/// <summary>
+		/// The name of the parameter.
+		/// </summary>
 		[XmlAttribute]
 		public string name;
-
+		/// <summary>
+		/// The description of the parameter or return value.
+		/// </summary>
 		[XmlText]
 		public string value { get; set; }
 	}
@@ -425,41 +524,52 @@ namespace JocysCom.ClassLibrary.Xml
 	public class XmlDocMember
 	{
 		[XmlAttribute]
+		/// <summary>Name attribute.</summary>
 		public string name { get; set; }
 
+		/// <summary>Summary Nodes element</summary>
 		[XmlElement("summary")]
 		public XmlNode[] summaryNodes { get; set; }
 
+		/// <summary>Summary text</summary>
+		[XmlElement("summary")]
 		public string summary => XmlDocHelper.ConvertXmlNodesToText(summaryNodes);
 
+		/// <summary>Returns element</summary>
 		[XmlElement("returns")]
 		public List<XmlDocParam> returns { get; set; }
 
+		/// <summary>Remarks element</summary>
 		[XmlElement("remarks")]
 		public List<XmlDocParam> remarks { get; set; }
 
+		/// <summary>Example Text</summary>
 		public string example => XmlDocHelper.ConvertXmlNodesToText(exampleNodes);
 
+		/// <summary>Example nodes</summary>
 		[XmlElement("example")]
 		public XmlNode[] exampleNodes { get; set; }
 
+		/// <summary>Param element</summary>
 		[XmlElement("param")]
 		public List<XmlDocParam> param { get; set; }
 
+		/// <summary>Parameter references</summary>
 		[XmlElement("paramrefs")]
 		public List<XmlDocParam> paramrefs { get; set; }
 
+		/// <summary>Include element.</summary>
 		[XmlElement("include")]
 		public List<XmlDocParam> includes { get; set; }
 
+		/// <summary>Exceptions element</summary>
 		[XmlElement("exceptions")]
 		public List<XmlDocParam> exceptions { get; set; }
 
+		/// <summary>Permitions element</summary>
 		[XmlElement("permitions")]
 		public List<XmlDocParam> permitions { get; set; }
-
 	}
 
 	#endregion
-
 }

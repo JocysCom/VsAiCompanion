@@ -1,7 +1,7 @@
 namespace JocysCom.ClassLibrary.Collections
 {
 	/// <summary>
-	/// Defines a generic contract for a key220202–value pair.
+	/// Defines a generic contract for a key–value pair.
 	/// </summary>
 	/// <remarks>
 	/// Used throughout the JocysCom.ClassLibrary.Collections namespace.
