@@ -21,6 +21,7 @@ A concise ruleset is easier to read, understand, and follow, maximizing its effe
 To maintain code quality and catch potential issues early, all PowerShell scripts (`*.ps1`) in this project should be validated using the `PSScriptAnalyzer` module after any modifications are made.
 
 **Procedure:**
+
 1. Ensure the `PSScriptAnalyzer` module is installed:
    `Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -Confirm:$false`
 2. After modifying a `.ps1` file, run the analyzer on it:
@@ -38,9 +39,9 @@ While `PSScriptAnalyzer` is valuable, certain warnings might be acceptable or ex
 
 **Acceptable Suppressions:**
 
-*   **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
-*   **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. *Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred.*
-*   **`PSShouldProcess`**: This warning can occur in wrapper functions (like `Update-NocoDBContainer`) that are decorated with `[CmdletBinding(SupportsShouldProcess=$true)]` but delegate the actual work (and the `ShouldProcess` call) to another function (like `Update-Container`). If the wrapper function itself doesn't perform actions requiring confirmation but correctly passes `-WhatIf`/`-Confirm` down via splatting or parameter binding to the inner function that *does* call `ShouldProcess`, suppressing this warning *on the wrapper function* is acceptable. Ensure the inner function correctly implements `ShouldProcess`. *Correction: Added a top-level `ShouldProcess` check to wrapper functions like `Update-n8nContainer` to resolve this instead of suppressing.*
+-   **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
+-   **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. _Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred._
+-   **`PSShouldProcess`**: This warning can occur in wrapper functions (like `Update-NocoDBContainer`) that are decorated with `[CmdletBinding(SupportsShouldProcess=$true)]` but delegate the actual work (and the `ShouldProcess` call) to another function (like `Update-Container`). If the wrapper function itself doesn't perform actions requiring confirmation but correctly passes `-WhatIf`/`-Confirm` down via splatting or parameter binding to the inner function that _does_ call `ShouldProcess`, suppressing this warning _on the wrapper function_ is acceptable. Ensure the inner function correctly implements `ShouldProcess`. _Correction: Added a top-level `ShouldProcess` check to wrapper functions like `Update-n8nContainer` to resolve this instead of suppressing._
 
 **Procedure for Suppression (During Validation):**
 When validating a script where these specific warnings are expected and acceptable, use the `-ExcludeRule` parameter with `Invoke-ScriptAnalyzer`.
@@ -55,7 +56,7 @@ Suppressing these specific, understood warnings allows focusing on other potenti
 ## Rule: Avoid Adding Temporary/Explanatory Comments to Code
 
 **Description:**
-When modifying code (e.g., replacing functions, fixing errors, removing whitespace), do not add comments into the code itself that explain the modification action (e.g., `# Replaced Write-Host`, `# Removed trailing whitespace`, `# Fixed syntax error`, `# Renamed function`, `# Added parameter`). Such comments are temporary artifacts of the development/debugging process and should not be part of the final committed code. **Specifically, AI agents using tools like `replace_in_file` or `write_to_file` MUST NOT include comments like `# Renumbered`, `# New item`, `# Fixed error`, `# Corrected syntax`, `# Using renamed function`, etc., in the generated code. These explanations belong *exclusively* in the agent's thought process or the commit message, NEVER in the final code output.** Before completing a task, AI agents MUST perform a final review of all modified files to ensure any inadvertently added temporary comments have been removed.
+When modifying code (e.g., replacing functions, fixing errors, removing whitespace), do not add comments into the code itself that explain the modification action (e.g., `# Replaced Write-Host`, `# Removed trailing whitespace`, `# Fixed syntax error`, `# Renamed function`, `# Added parameter`). Such comments are temporary artifacts of the development/debugging process and should not be part of the final committed code. **Specifically, AI agents using tools like `replace_in_file` or `write_to_file` MUST NOT include comments like `# Renumbered`, `# New item`, `# Fixed error`, `# Corrected syntax`, `# Using renamed function`, etc., in the generated code. These explanations belong _exclusively_ in the agent's thought process or the commit message, NEVER in the final code output.** Before completing a task, AI agents MUST perform a final review of all modified files to ensure any inadvertently added temporary comments have been removed.
 
 **Rationale:**
 Temporary or explanatory comments added during modification clutter the code, provide no long-term value, and can become outdated or misleading. Code changes should be understandable through the code itself and commit messages, not through temporary inline annotations.
@@ -67,10 +68,10 @@ Select the appropriate cmdlet for script output to prevent errors and ensure pro
 
 **Guidelines:**
 
-*   **`Write-Output`**: **Strictly** for function return values intended for assignment or pipeline use.
-    *   **AVOID** using it for status messages/prompts within functions that return values. Doing so pollutes the output stream and can cause type errors (e.g., `$var = MyFunc` results in `$var` being `Object[]` instead of `string` because `Write-Output` messages were captured).
-*   **`Write-Host`**: Use when direct console display is essential and redirection is undesirable (e.g., `Read-Host` prompts).
-*   **`Write-Warning`/`Error`/`Verbose`/`Debug`**: Use for their specific semantic purposes.
+-   **`Write-Output`**: **Strictly** for function return values intended for assignment or pipeline use.
+    -   **AVOID** using it for status messages/prompts within functions that return values. Doing so pollutes the output stream and can cause type errors (e.g., `$var = MyFunc` results in `$var` being `Object[]` instead of `string` because `Write-Output` messages were captured).
+-   **`Write-Host`**: Use when direct console display is essential and redirection is undesirable (e.g., `Read-Host` prompts).
+-   **`Write-Warning`/`Error`/`Verbose`/`Debug`**: Use for their specific semantic purposes.
 
 **Rationale:**
 Prevents type mismatches when capturing function output. Improves script clarity and control over output streams.
@@ -146,3 +147,56 @@ function FunctionName {
 
 **Rationale:**
 This standard format significantly improves code readability by visually separating functions. The comment-based help block is essential for PowerShell's built-in help system (`Get-Help`) and provides rich IntelliSense information (parameter descriptions, types, summaries) in editors like VS Code, aiding development and maintenance. Consistent use of `[CmdletBinding()]` promotes robust function design.
+
+## Rule: Follow "One Script Per Container" Architecture
+
+**Description:**
+Each container or service should have its own dedicated PowerShell script. When encountering scripts that manage multiple containers, they must be split into separate scripts following clear naming conventions.
+
+**Guidelines:**
+
+-   Use descriptive naming: `Setup_4a_ServiceName_Redis.ps1`, `Setup_4b_ServiceName.ps1`
+-   Each script manages only one container's lifecycle (install, uninstall, update, backup, etc.)
+-   Dependencies between containers should be validated through dependency checking functions
+-   Shared resources (networks, volumes) should be managed by the first container that needs them
+
+**Procedure:**
+
+1. Identify all containers managed by a script
+2. Create separate scripts for each container
+3. Implement dependency checking in dependent scripts
+4. Update menu systems and documentation accordingly
+
+**Rationale:**
+Separation of concerns improves maintainability, makes troubleshooting easier, follows microservices principles, and allows independent management of each container. This architecture also prevents conflicts and makes the codebase more modular.
+
+## Rule: Eliminate All Hardcoded Values Using Global Variables
+
+**Description:**
+All hardcoded strings, numbers, and configuration values in PowerShell scripts must be replaced with descriptive global variables. This includes ports, paths, URLs, container names, network aliases, and any other configurable values.
+
+**Guidelines:**
+
+-   Define all global variables at the top of the script in a dedicated section
+-   Use descriptive names: `$global:containerPort`, `$global:dataPath`, `$global:networkAlias`
+-   Replace ALL hardcoded values systematically throughout the script
+-   Ensure consistency between related scripts (e.g., Redis and application scripts should use matching network aliases)
+
+**Common Hardcoded Values to Replace:**
+
+-   Port mappings: `"8080:8080"` → `"$($global:containerPort):$($global:containerPort)"`
+-   Volume mounts: `":/app/data"` → `":$global:dataPath"`
+-   Network aliases: `"myservice"` → `$global:networkAlias`
+-   URLs: `"http://service:8080"` → `"http://$($global:networkAlias):$($global:port)"`
+-   Container names, image names, volume names
+
+**Procedure:**
+
+1. Audit the entire script for hardcoded values
+2. Create appropriate global variables with descriptive names
+3. Replace all hardcoded occurrences systematically
+4. Verify consistency across related scripts
+5. Test the script to ensure all variables are properly referenced
+
+**Rationale:**
+Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
