@@ -3,8 +3,10 @@
     <ProjectGuid>{95297B3A-B8F1-49DC-89AF-863A6F8BE5B3}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="*.*" Exclude="*.sln*;UpgradeLog*.*" />
+    <None Include="*.*" Exclude="*.sln;*.slnx;UpgradeLog*.*" />
+    <None Include=".ai/*.*" />
     <None Include=".github/*.*" />
+    <None Include=".clinerules/*.*" />
     <None Include=".config/*.*" />
     <None Include="Tools/**/*.*" />
     <None Include="Resources/*.*" />
