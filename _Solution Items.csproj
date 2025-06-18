@@ -13,7 +13,18 @@
   </ItemGroup>
   <!-- 
 
-Disable Building:
+## Disable Building:
+
+### *.SLNX Files:
+
+```xml
+<Project Path="_Solution Items.csproj" Id="95297b3a-b8f1-49dc-89af-863a6f8be5b3">
+  <BuildType Project="DisableBuild" />
+  <Platform Project="x86" />
+</Project>
+```
+
+### *.SLN Files:
 
 The project will be added to the solution as `FAE04EC0-301F-11D3-BF4B-00C04F79EFBC` C# type.
 
