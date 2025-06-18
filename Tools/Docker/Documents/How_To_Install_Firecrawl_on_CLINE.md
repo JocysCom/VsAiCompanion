@@ -12,6 +12,36 @@ The Firecrawl MCP server integrates with [Firecrawl](https://github.com/mendable
 -   Batch processing with rate limiting
 -   Structured data extraction
 
+## When to Use Firecrawl vs Tavily
+
+### **Use Firecrawl when you need:**
+
+-   **Deep content extraction** from specific websites or pages
+-   **Structured data conversion** (HTML to markdown, JSON, etc.)
+-   **Large-scale scraping** operations across multiple pages
+-   **Building datasets** for AI training or analysis
+-   **Systematic website analysis** and content migration
+-   **Batch processing** of multiple URLs
+-   **Self-hosted control** over data processing and privacy
+-   **Detailed content transformation** and cleaning
+
+### **Use Tavily when you need:**
+
+-   **Quick research** and real-time information
+-   **Current events** and trending topics
+-   **Fact-checking** and verification
+-   **Broad topic exploration** across the web
+-   **Speed over depth** - fast answers to specific questions
+-   **AI-optimized search** results tailored for LLM consumption
+
+### **Best Practice: Use Both Together**
+
+For comprehensive web intelligence, combine both tools:
+
+1. **Start with Tavily** to research and discover relevant sources
+2. **Follow up with Firecrawl** to extract detailed content from discovered sources
+3. **Use Tavily** for current information and **Firecrawl** for historical data extraction
+
 ## Prerequisites
 
 -   Node.js installed on your system
