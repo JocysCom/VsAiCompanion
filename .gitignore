@@ -412,3 +412,4 @@ FodyWeavers.xsd
 /Tools/Docker/temp
 /Tools/Docker/Files
 /.vscode
+/.ai/temp

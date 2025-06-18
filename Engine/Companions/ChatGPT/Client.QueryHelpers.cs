@@ -1,6 +1,5 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
-using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI.Chat;
 using OpenAI.Responses;
 using System;
@@ -30,7 +29,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
 			var id = Guid.NewGuid();
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
-			
+
 			ControlsHelper.AppInvoke(() =>
 			{
 				item.CancellationTokenSources.Add(cancellationTokenSource);
@@ -40,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				item.Messages.Add(assistantMessageItem);
 				assistantMessageItem.Status = "Thinking";
 			});
-			
+
 			return (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id);
 		}
 
@@ -72,27 +71,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (assistantMessageItem.Body != answer)
 				assistantMessageItem.Body = answer;
 			assistantMessageItem.Date = DateTime.Now;
-			
+
 			ControlsHelper.AppInvoke(() =>
 			{
 				assistantMessageItem.Updated = DateTime.Now;
 				assistantMessageItem.Status = null;
 			});
-			
+
 			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
 				foreach (var functionResult in functionResults)
 					userAutoReplyMessageItem.Attachments.Add(functionResult);
 				userAutoReplyMessageItem.IsAutomated = true;
-				
+
 				ControlsHelper.AppInvoke(() =>
 				{
 					newMessageItems.Add(userAutoReplyMessageItem);
 					item.Messages.Add(userAutoReplyMessageItem);
 				});
 			}
-			
+
 			return newMessageItems;
 		}
 
@@ -140,7 +139,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var addToolsToOptions = item.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
 			var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
-			
+
 			ControlsHelper.AppInvoke(() =>
 			{
 				if (addToolsToOptions)
@@ -149,7 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					PluginsManager.ProvideTools(tools, item, options: completionsOptions);
 				}
 			});
-			
+
 			return (addToolsToOptions, addToolsToMessage);
 		}
 
@@ -189,27 +188,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		private ResponseCreationOptions ConvertToResponseCreationOptions(ChatCompletionOptions completionsOptions)
 		{
 			var responseOptions = new ResponseCreationOptions();
-			
+
 			// Map compatible properties from ChatCompletionOptions to ResponseCreationOptions
 			if (completionsOptions.Temperature.HasValue)
 				responseOptions.Temperature = completionsOptions.Temperature;
-			
+
 			if (completionsOptions.MaxOutputTokenCount.HasValue)
 				responseOptions.MaxOutputTokenCount = completionsOptions.MaxOutputTokenCount;
-			
+
 			if (completionsOptions.TopP.HasValue)
 				responseOptions.TopP = completionsOptions.TopP;
-			
+
 			if (completionsOptions.EndUserId != null)
 				responseOptions.EndUserId = completionsOptions.EndUserId;
-			
+
 			// Response API specific properties that don't have Chat equivalents:
 			// - Instructions (set via system messages instead)
 			// - ReasoningOptions (o3-pro specific)
 			// - TextOptions (formatting)
 			// - ToolChoice, Tools (if Response API supports tools)
 			// - StoredOutputEnabled, PreviousResponseId, etc.
-			
+
 			return responseOptions;
 		}
 
@@ -235,7 +234,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 			var result = chatClient.CompleteChatStreamingAsync(messages, completionsOptions, cancellationToken);
 			var choicesEnumerator = result.GetAsyncEnumerator(cancellationToken);
-			
+
 			try
 			{
 				while (await choicesEnumerator.MoveNextAsync().ConfigureAwait(false))
@@ -313,7 +312,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 			var result = await chatClient.CompleteChatAsync(messages, completionsOptions, cancellationToken);
 			var completion = result.Value;
-			
+
 			switch (completion.FinishReason)
 			{
 				case ChatFinishReason.Stop:
@@ -330,7 +329,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					answer = result.ToString();
 					break;
 			}
-			
+
 			if (completion.ToolCalls?.Any() == true)
 				toolCalls.AddRange(completion.ToolCalls);
 
@@ -353,37 +352,71 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var answer = "";
 			var toolCalls = new List<ChatToolCall>(); // Response API likely doesn't support tool calls
-			
+
 			try
 			{
 				var responseItems = ConvertChatMessagesToResponseItems(messages);
 				var responseOptions = ConvertToResponseCreationOptions(completionsOptions);
-				
+
 				var result = responseClient.CreateResponseStreamingAsync(responseItems, responseOptions, cancellationToken);
 				var updatesEnumerator = result.GetAsyncEnumerator(cancellationToken);
-				
+
 				try
 				{
 					while (await updatesEnumerator.MoveNextAsync().ConfigureAwait(false))
 					{
+						string outputText = null;
 						var update = updatesEnumerator.Current;
-						
-						// TODO: How to extract content from StreamingResponseUpdate?
-						// What properties does it have? ContentUpdate? Text? Delta?
-						
-						// For now, use ToString() as fallback
-						var contentUpdate = update?.ToString() ?? "";
-						if (!string.IsNullOrEmpty(contentUpdate))
+						if (update is StreamingResponseInProgressUpdate inProgress)
 						{
-							answer += contentUpdate;
+							outputText = inProgress.Response.GetOutputText();
+						}
+						else if (update is StreamingResponseCreatedUpdate created)
+						{
+							outputText = created.Response.GetOutputText();
+						}
+						else if (update is StreamingResponseContentPartAddedUpdate partAdded)
+						{
+							outputText = partAdded.Part.Text;
+						}
+						else if (update is StreamingResponseContentPartDoneUpdate partDone)
+						{
+							//outputText = partDone.Part.Text;
+						}
+						else if (update is StreamingResponseOutputItemAddedUpdate itemAdded)
+						{
+							// ???
+						}
+						else if (update is StreamingResponseOutputTextDeltaUpdate textDelta)
+						{
+							outputText = textDelta.Delta;
+						}
+						else if (update is StreamingResponseOutputTextDoneUpdate textDone)
+						{
+							//outputText = textDone.Text;
+						}
+						else if (update is StreamingResponseOutputItemDoneUpdate itemDone)
+						{
+							// ???
+						}
+						else if (update is StreamingResponseCompletedUpdate completed)
+						{
+							//outputText = completed.Response.GetOutputText();
+						}
+						else
+							// Use ToString() as fallback
+							outputText = update?.ToString() ?? "";
+						if (!string.IsNullOrEmpty(outputText))
+						{
+							answer += outputText;
 							ControlsHelper.AppInvoke(() =>
 							{
 								if (assistantMessageItem.Status != null)
 									assistantMessageItem.Status = null;
-								assistantMessageItem.AddToBodyBuffer(contentUpdate);
+								assistantMessageItem.AddToBodyBuffer(outputText);
 							});
 						}
-						
+
 						await Task.Yield();
 					}
 				}
@@ -397,7 +430,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				answer = $"Error in Response API streaming: {ex.Message}";
 			}
-			
+
 			return (answer, toolCalls);
 		}
 
@@ -412,25 +445,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var answer = "";
 			var toolCalls = new List<ChatToolCall>(); // Response API likely doesn't support tool calls
-			
+
 			try
 			{
 				var responseItems = ConvertChatMessagesToResponseItems(messages);
 				var responseOptions = ConvertToResponseCreationOptions(completionsOptions);
-				
+
 				var result = await responseClient.CreateResponseAsync(responseItems, responseOptions, cancellationToken);
 				var response = result.Value;
-				
+
 				// Use the discovered GetOutputText() method to extract content
 				answer = response?.GetOutputText() ?? "No response content available";
-				
+
 				// Response API likely doesn't support tool calls, so toolCalls remains empty
 			}
 			catch (Exception ex)
 			{
 				answer = $"Error in Response API: {ex.Message}";
 			}
-			
+
 			return (answer, toolCalls);
 		}
 
@@ -449,7 +482,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			List<chat_completion_function> functions = null;
 			var processedAnswer = answer;
-			
+
 			if (addToolsToMessage)
 			{
 				var (assistantMessage, functionCalls) = PluginsManager.ProcessAssistantMessage(answer);
@@ -459,12 +492,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					functions = functionCalls.ToList();
 				}
 			}
-			
+
 			if (addToolsToOptions)
 			{
 				functions = ConvertChatToolCallsTo(toolCalls);
 			}
-			
+
 			return (processedAnswer, functions);
 		}
 
