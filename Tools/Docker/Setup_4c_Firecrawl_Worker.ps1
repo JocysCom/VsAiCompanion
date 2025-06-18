@@ -206,6 +206,7 @@ function Install-FirecrawlWorkerContainer {
 		"--env", "REDIS_HOST=$global:redisNetworkAlias",
 		"--env", "REDIS_PORT=$global:redisPort",
 		"--env", "PLAYWRIGHT_MICROSERVICE_URL=http://playwright-service:3000/scrape", # Required for web scraping
+		"--env", "FLY_PROCESS_GROUP=worker", # Set process group for worker
 		"--env", "POSTHOG_API_KEY=" # Disable PostHog analytics.
 	)
 

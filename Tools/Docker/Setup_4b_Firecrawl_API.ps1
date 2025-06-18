@@ -212,6 +212,7 @@ function Install-FirecrawlContainer {
 		"--env", "PLAYWRIGHT_MICROSERVICE_URL=http://playwright-service:3000/scrape", # Required for web scraping
 		"--env", "HOST=0.0.0.0", # Bind to all interfaces
 		"--env", "PORT=$global:firecrawlPort", # Set the port
+		"--env", "FLY_PROCESS_GROUP=app", # Set process group for API
 		"--env", "POSTHOG_API_KEY=" # Disable PostHog analytics.
 	)
 
