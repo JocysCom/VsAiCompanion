@@ -387,30 +387,6 @@ function Update-FirecrawlContainer {
 	}
 }
 
-#==============================================================================
-# Function: Update-FirecrawlUserData
-#==============================================================================
-<#
-.SYNOPSIS
-	Placeholder function for updating user data in the Firecrawl container.
-.DESCRIPTION
-	Currently, this function only displays a message indicating that the functionality
-	is not implemented. Supports -WhatIf.
-.EXAMPLE
-	Update-FirecrawlUserData
-.NOTES
-	This function needs implementation if specific user data update procedures are required.
-#>
-function Update-FirecrawlUserData {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	if ($PSCmdlet.ShouldProcess("Firecrawl User Data", "Update")) {
-		# No actions implemented yet
-		Write-Host "Update User Data functionality is not implemented for Firecrawl container."
-	}
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
@@ -423,10 +399,9 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update System"
-	"9" = "Update User Data"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
 	"0" = "Exit menu"
 }
 
@@ -459,14 +434,13 @@ $menuActions = @{
 	}
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
+	"6" = { Update-FirecrawlContainer } # Calls the dedicated update function
+	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"8" = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:firecrawlName)' to apply imported volume data..."
 		& $global:enginePath restart $global:firecrawlName
 	}
-	"8" = { Update-FirecrawlContainer } # Calls the dedicated update function
-	"9" = { Update-FirecrawlUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
