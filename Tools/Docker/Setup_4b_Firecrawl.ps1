@@ -25,7 +25,7 @@ Set-ScriptLocation
 #############################################
 # Global Variables
 #############################################
-$global:imageName = "obeoneorg/firecrawl"
+$global:imageName = "ghcr.io/mendableai/firecrawl"
 $global:firecrawlName = "firecrawl" # Use this for container name
 $global:volumeName = $global:firecrawlName # Default: same as container name.
 $global:redisImage = "redis:alpine"
