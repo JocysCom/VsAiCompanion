@@ -1,10 +1,11 @@
 ################################################################################
-# File         : Setup_4b_Firecrawl.ps1
-# Description  : Script to set up and run a Firecrawl container.
-#                Requires a dedicated Redis container (use Setup_4a_Firecrawl_Redis.ps1 first).
-#                Connects to existing Redis and runs Firecrawl with proper configuration.
+# File         : Setup_4b_Firecrawl_API.ps1
+# Description  : Script to set up and run a Firecrawl API container.
+#                Requires Redis and Playwright service containers to be running first.
+#                This container provides the API endpoints and Bull queue dashboard UI.
 # Usage        : Run as Administrator if using Docker.
-#                Prerequisites: Redis container must be running (Setup_4a_Firecrawl_Redis.ps1).
+#                Prerequisites: Redis (Setup_4a_Firecrawl_Redis.ps1) and
+#                              Playwright (Setup_10_Playwright_Service.ps1) containers.
 ################################################################################
 
 using namespace System
@@ -26,15 +27,17 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 $global:imageName = "ghcr.io/mendableai/firecrawl"
-$global:firecrawlName = "firecrawl" # Use this for container name
+$global:firecrawlName = "firecrawl-api" # Use this for container name
 $global:volumeName = $global:firecrawlName # Default: same as container name.
 $global:redisImage = "redis:alpine"
 $global:redisContainerName = "firecrawl-redis"
+$global:playwrightContainerName = "playwright-service"
 $global:networkName = "firecrawl-net"
 $global:firecrawlPort = 3002
 $global:firecrawlDataPath = "/app/data"
 $global:redisNetworkAlias = "firecrawl-redis"
 $global:redisPort = 6379
+$global:playwrightPort = 3000
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -56,26 +59,28 @@ else {
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 #==============================================================================
-# Function: Test-FirecrawlRedisDependency
+# Function: Test-FirecrawlAPIDependencies
 #==============================================================================
 <#
 .SYNOPSIS
-	Tests if the required Redis container and network are available for Firecrawl.
+	Tests if the required dependencies are available for Firecrawl API.
 .DESCRIPTION
 	Checks for the following prerequisites:
 	1. The 'firecrawl-net' network exists.
 	2. The 'firecrawl-redis' container exists and is running.
-	3. TCP connectivity to Redis on port 6379 is working.
+	3. The 'playwright-service' container exists and is running.
+	4. TCP connectivity to Redis on port 6379 is working.
+	5. TCP connectivity to Playwright service on port 3000 is working.
 	Provides helpful error messages if any dependency is missing.
 .OUTPUTS
 	[bool] Returns $true if all dependencies are met, $false otherwise.
 .EXAMPLE
-	if (-not (Test-FirecrawlRedisDependency)) { exit 1 }
+	if (-not (Test-FirecrawlAPIDependencies)) { exit 1 }
 .NOTES
-	This function should be called before attempting to install Firecrawl.
+	This function should be called before attempting to install Firecrawl API.
 #>
-function Test-FirecrawlRedisDependency {
-	Write-Host "Checking Firecrawl dependencies..."
+function Test-FirecrawlAPIDependencies {
+	Write-Host "Checking Firecrawl API dependencies..."
 
 	# Check if network exists
 	$networkExists = & $global:enginePath network ls --filter "name=^$global:networkName$" --format "{{.Name}}"
@@ -93,6 +98,14 @@ function Test-FirecrawlRedisDependency {
 		return $false
 	}
 
+	# Check if Playwright service container exists and is running
+	$playwrightContainer = & $global:enginePath ps --filter "name=^$global:playwrightContainerName$" --format "{{.Names}}"
+	if ($playwrightContainer -ne $global:playwrightContainerName) {
+		Write-Error "Playwright service container '$global:playwrightContainerName' is not running."
+		Write-Host "Please run 'Setup_10_Playwright_Service.ps1' first to install and start the Playwright service container."
+		return $false
+	}
+
 	# Test Redis connectivity
 	Write-Host "Testing Redis connectivity..."
 	if (-not (Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Firecrawl Redis")) {
@@ -101,7 +114,15 @@ function Test-FirecrawlRedisDependency {
 		return $false
 	}
 
-	Write-Host "All dependencies are satisfied. Redis is ready for Firecrawl."
+	# Test Playwright service connectivity
+	Write-Host "Testing Playwright service connectivity..."
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $global:playwrightPort -serviceName "Playwright Service")) {
+		Write-Error "Cannot connect to Playwright service on port $global:playwrightPort."
+		Write-Host "Please ensure the Playwright service container is running properly using 'Setup_10_Playwright_Service.ps1'."
+		return $false
+	}
+
+	Write-Host "All dependencies are satisfied. Redis and Playwright service are ready for Firecrawl API."
 	return $true
 }
 
@@ -127,10 +148,10 @@ function Test-FirecrawlRedisDependency {
 #>
 function Install-FirecrawlContainer {
 	#############################################
-	# Step 1: Check Redis Dependencies
+	# Step 1: Check All Dependencies
 	#############################################
-	if (-not (Test-FirecrawlRedisDependency)) {
-		Write-Error "Redis dependencies not met. Exiting..."
+	if (-not (Test-FirecrawlAPIDependencies)) {
+		Write-Error "Dependencies not met. Exiting..."
 		exit 1
 	}
 
@@ -188,11 +209,12 @@ function Install-FirecrawlContainer {
 		"--env", "REDIS_RATE_LIMIT_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
 		"--env", "REDIS_HOST=$global:redisNetworkAlias",
 		"--env", "REDIS_PORT=$global:redisPort",
-		"--env", "POSTHOG_API_KEY="             # Disable PostHog analytics.
+		"--env", "PLAYWRIGHT_MICROSERVICE_URL=http://playwright-service:3000/scrape", # Required for web scraping
+		"--env", "POSTHOG_API_KEY=" # Disable PostHog analytics.
 	)
 
-	# Execute the command using splatting
-	& $global:enginePath run @runOptions $global:imageName
+	# Execute the command using splatting with the API command
+	& $global:enginePath run @runOptions $global:imageName pnpm run start:production
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run Firecrawl container '$global:firecrawlName'."
 		exit 1
@@ -280,6 +302,7 @@ function Invoke-StartFirecrawlForUpdate {
 		"--env", "REDIS_RATE_LIMIT_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
 		"--env", "REDIS_HOST=$global:redisNetworkAlias",
 		"--env", "REDIS_PORT=$global:redisPort",
+		"--env", "PLAYWRIGHT_MICROSERVICE_URL=http://playwright-service:3000/scrape", # Required for web scraping
 		"--env", "POSTHOG_API_KEY="
 	)
 
