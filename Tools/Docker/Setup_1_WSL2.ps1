@@ -42,58 +42,60 @@ function Enable-WSL2 {
 	[CmdletBinding()]
 	param()
 
-	Write-Host "Setting WSL default version to 2..."
-	$setDefaultOutput = wsl.exe --set-default-version 2 2>&1
-	if ($LASTEXITCODE -eq 0) {
-		Write-Host "WSL default version set to 2."
-	}
-	else {
-		Write-Error "Failed to set WSL default version. Output: $setDefaultOutput"
-	}
+	# For Windows Server 2022, the recommended approach is wsl --install
+	# This handles everything: features, kernel, default version, and distribution
+	Write-Host "For Windows Server 2022, using the official 'wsl --install' method..." -ForegroundColor Cyan
+	Write-Host "This will enable features, download kernel, set WSL2 as default, and install Ubuntu."
+	Write-Host ""
+	Write-Host "Installation output:" -ForegroundColor White
+	Write-Host "==================" -ForegroundColor White
 
+	# Run wsl --install and show output in real-time
 	try {
-		$wslListOutput = wsl.exe -l -v 2>&1
+		$installResult = wsl --install
+		Write-Host "Exit Code: $LASTEXITCODE" -ForegroundColor Gray
 	}
 	catch {
-		Write-Error "Failed to retrieve WSL distribution list: $_"
+		Write-Error "Failed to execute wsl --install: $_"
 		return
 	}
 
-	if ($wslListOutput -match "has no installed distributions") {
-		Write-Host "No WSL distributions found. Installing default distribution..."
-		$installOutput = wsl.exe --install 2>&1
-		if ($LASTEXITCODE -eq 0) {
-			Write-Host "Default WSL distribution installation initiated successfully."
-		}
-		else {
-			Write-Error "Failed to install default WSL distribution. Output: $installOutput"
-		}
+	# Also capture output for analysis
+	$installOutput = wsl --install 2>&1
+	$installString = $installOutput -join " "
+
+	Write-Host "==================" -ForegroundColor White
+
+	# Check if command returned help text (indicates features not enabled)
+	if ($installString -like "*Copyright (c) Microsoft Corporation*" -or $installString -like "*Usage: wsl.exe*") {
+		Write-Warning "wsl --install returned help text instead of executing."
+		Write-Host "This indicates WSL features may not be enabled yet."
+		Write-Host "The Test-WSLStatus function should have handled feature enablement."
+		Write-Host "Please restart your computer and run this script again."
+		return
+	}
+
+	if ($LASTEXITCODE -eq 0) {
+		Write-Host "WSL installation completed successfully!" -ForegroundColor Green
+		Write-Host ""
+		Write-Host "This command has:" -ForegroundColor White
+		Write-Host "- Enabled the required optional components" -ForegroundColor White
+		Write-Host "- Downloaded the latest Linux kernel" -ForegroundColor White
+		Write-Host "- Set WSL 2 as the default" -ForegroundColor White
+		Write-Host "- Installed Ubuntu Linux distribution" -ForegroundColor White
+		Write-Host ""
+		Write-Host "Please restart your computer to complete the installation." -ForegroundColor Yellow
+		Write-Host "After restart, you can run 'wsl' to start using Linux." -ForegroundColor Green
 	}
 	else {
-		Write-Host "WSL distribution(s) detected."
-		Write-Host "Currently installed WSL distributions:"
-		Write-Host $wslListOutput
-		Write-Host "Verifying that they use WSL2..."
-
-		$lines = $wslListOutput -split "`r?`n"
-		$wsl1Found = $false
-		foreach ($line in $lines) {
-			if ($line -match "^\s*(\S+)\s+\S+\s+1\s*$") {
-				$wsl1Found = $true
-				$distro = $Matches[1]
-				Write-Host "Distribution $distro is using WSL1. Converting to WSL2..."
-				$convertOutput = wsl.exe --set-version $distro 2 2>&1
-				if ($LASTEXITCODE -eq 0) {
-					Write-Host "Successfully converted $distro to WSL2."
-				}
-				else {
-					Write-Error "Failed to convert $distro to WSL2. Output: $convertOutput"
-				}
-			}
-		}
-		if (-not $wsl1Found) {
-			Write-Host "All installed WSL distributions are using WSL2."
-		}
+		Write-Error "wsl --install failed with exit code $LASTEXITCODE"
+		Write-Host "Captured output:" -ForegroundColor Gray
+		Write-Host $installOutput -ForegroundColor Gray
+		Write-Host ""
+		Write-Host "You may need to:" -ForegroundColor Yellow
+		Write-Host "1. Ensure you're running as Administrator" -ForegroundColor White
+		Write-Host "2. Check that your Windows Server 2022 is updated" -ForegroundColor White
+		Write-Host "3. Restart your computer if features were just enabled" -ForegroundColor White
 	}
 }
 
