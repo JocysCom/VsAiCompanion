@@ -209,7 +209,8 @@ function Start-OpenWebUIContainer {
 	}
 
 	# Add host networking for Docker only
-	if ($global:containerEngine -eq "docker") { # Use global var
+	if ($global:containerEngine -eq "docker") {
+		# Use global var
 		$runOptions += "--add-host"
 		$runOptions += "host.docker.internal:host-gateway"
 	}
@@ -239,7 +240,8 @@ function Start-OpenWebUIContainer {
 	#   --restart always: Always restart the container unless explicitly stopped.
 	#   --name: Assign a name to the container.
 	# Run the container with all options
-	if ($PSCmdlet.ShouldProcess($global:containerName, "Run Container with Image '$($config.Image -or $global:imageName)'")) { # Use global vars
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Run Container with Image '$($config.Image -or $global:imageName)'")) {
+		# Use global vars
 		& $global:enginePath run @runOptions # Use global var
 	}
 	else {
@@ -299,7 +301,8 @@ function Start-OpenWebUIContainer {
 #>
 function Install-OpenWebUIContainer {
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) { # Use global vars
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
+		# Use global vars
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..." # Use global var
 		return
 	}
@@ -308,10 +311,12 @@ function Install-OpenWebUIContainer {
 	# Check if image exists locally, restore from backup, or pull new
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}" # Use global vars
 	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) { # Use global vars
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
+			# Use global vars
 			Write-Host "No backup restored. Pulling Open WebUI image '$($global:imageName)'..." # Use global var
 			# Use shared pull function
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions @("--platform", "linux/amd64"))) { # Use global vars
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions @("--platform", "linux/amd64"))) {
+				# Use global vars
 				Write-Error "Pull failed. Check internet connection or image URL."
 				return
 			}
@@ -362,7 +367,8 @@ function Update-OpenWebUIContainer {
 	param()
 
 	# Check ShouldProcess before proceeding
-	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) { # Use global var
+	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
+		# Use global var
 		return
 	}
 
@@ -379,7 +385,8 @@ function Update-OpenWebUIContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-OpenWebUIContainer) { # Calls Backup-ContainerState
+			if (Backup-OpenWebUIContainer) {
+				# Calls Backup-ContainerState
 				$backupMade = $true
 			}
 		}
@@ -391,7 +398,8 @@ function Update-OpenWebUIContainer {
 
 	# Call simplified Update-Container (handles check, remove, pull)
 	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) { # Use global vars
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
+		# Use global vars
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the original config (image name is implicitly latest from pull)
 		# Update the image name in the retrieved config before starting
@@ -451,43 +459,43 @@ function Update-OpenWebUIUserData {
 # Define Menu Title and Items
 $menuTitle = "Open WebUI Container Menu"
 $menuItems = [ordered]@{
-	"1" = "Show Info & Test Connection"
-	"2" = "Install container"
-	"3" = "Uninstall container"
-	"4" = "Save Image (App)"
-	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update System"
-	"9" = "Update User Data"
+	"1"  = "Show Info & Test Connection"
+	"2"  = "Install container"
+	"3"  = "Uninstall container"
+	"4"  = "Save Image (App)"
+	"5"  = "Load Image (App)"
+	"6"  = "Export Volume (User Data)"
+	"7"  = "Import Volume (User Data)"
+	"8"  = "Update System"
+	"9"  = "Update User Data"
 	"10" = "Check for Updates"
-	"0" = "Exit"
+	"0"  = "Exit"
 }
 
 # Define Menu Actions
 $menuActions = @{
-	"1" = {
+	"1"  = {
 		Show-ContainerStatus -ContainerName $global:containerName ` # Use global var
-			-ContainerEngine $global:containerEngine `
+		-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath ` # Use global var
-			-DisplayName "Open WebUI" `
+		-DisplayName "Open WebUI" `
 			-TcpPort 3000 `
 			-HttpPort 3000 `
 			-WsPort 3000 `
 			-WsPath "/api/v1/chat/completions"
 	}
-	"2" = { Install-OpenWebUIContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
+	"2"  = { Install-OpenWebUIContainer }
+	"3"  = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
+	"4"  = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
+	"5"  = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
+	"6"  = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7"  = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Update-OpenWebUIContainer } # Calls the dedicated update function
-	"9" = { Update-OpenWebUIUserData }
+	"8"  = { Update-OpenWebUIContainer } # Calls the dedicated update function
+	"9"  = { Update-OpenWebUIUserData }
 	"10" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

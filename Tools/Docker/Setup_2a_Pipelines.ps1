@@ -68,7 +68,7 @@ function Install-PipelinesContainer {
 	Write-Host "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
 
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
@@ -237,7 +237,7 @@ function Invoke-StartPipelinesForUpdate {
 	)
 
 	# Ensure the volume exists (important if it was removed manually)
-	if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $EnginePath -ResourceType "volume" -ResourceName $VolumeName)) {
 		throw "Failed to ensure volume '$VolumeName' exists during update."
 	}
 
@@ -310,7 +310,8 @@ function Update-PipelinesContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-PipelinesContainer) { # Calls Backup-ContainerState
+			if (Backup-PipelinesContainer) {
+				# Calls Backup-ContainerState
 				$backupMade = $true
 			}
 		}
@@ -384,22 +385,22 @@ function Update-PipelinesUserData {
 # Define Menu Title and Items
 $menuTitle = "Pipelines Container Menu"
 $menuItems = [ordered]@{
-	"1" = "Show Info & Test Connection"
-	"2" = "Install container"
-	"3" = "Uninstall container"
-	"4" = "Save Image (App)"
-	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Add Azure Pipeline to Container"
-	"9" = "Update System"
+	"1"  = "Show Info & Test Connection"
+	"2"  = "Install container"
+	"3"  = "Uninstall container"
+	"4"  = "Save Image (App)"
+	"5"  = "Load Image (App)"
+	"6"  = "Export Volume (User Data)"
+	"7"  = "Import Volume (User Data)"
+	"8"  = "Add Azure Pipeline to Container"
+	"9"  = "Update System"
 	"10" = "Update User Data"
-	"0" = "Exit menu"
+	"0"  = "Exit menu"
 }
 
 # Define Menu Actions
 $menuActions = @{
-	"1" = {
+	"1"  = {
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
@@ -407,18 +408,18 @@ $menuActions = @{
 			-TcpPort 9099 `
 			-HttpPort 9099
 	}
-	"2" = { Install-PipelinesContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
+	"2"  = { Install-PipelinesContainer }
+	"3"  = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4"  = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5"  = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"6"  = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7"  = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Add-PipelineToContainer }
-	"9" = { Update-PipelinesContainer } # Calls the dedicated update function
+	"8"  = { Add-PipelineToContainer }
+	"9"  = { Update-PipelinesContainer } # Calls the dedicated update function
 	"10" = { Update-PipelinesUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
