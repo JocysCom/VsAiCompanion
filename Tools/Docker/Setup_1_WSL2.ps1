@@ -92,10 +92,162 @@ function Enable-WSL2 {
 		Write-Host "Captured output:" -ForegroundColor Gray
 		Write-Host $installOutput -ForegroundColor Gray
 		Write-Host ""
-		Write-Host "You may need to:" -ForegroundColor Yellow
-		Write-Host "1. Ensure you're running as Administrator" -ForegroundColor White
-		Write-Host "2. Check that your Windows Server 2022 is updated" -ForegroundColor White
-		Write-Host "3. Restart your computer if features were just enabled" -ForegroundColor White
+
+		# Check for specific Windows Server 2022 Virtual Machine Platform issue
+		$outputString = $installOutput -join " "
+		if ($outputString -like "*WSL2 is not supported with your current machine configuration*" -or
+			$outputString -like "*HCS_E_HYPERV_NOT_INSTALLED*" -or
+			$outputString -like "*Virtual Machine Platform*") {
+
+			Write-Host "DETECTED: Virtual Machine Platform configuration issue" -ForegroundColor Red
+			Write-Host ""
+
+			# Check if this is an Azure VM
+			$isAzureVM = $false
+			try {
+				$azureMetadata = Invoke-RestMethod -Uri "http://169.254.169.254/metadata/instance?api-version=2021-02-01" -Headers @{Metadata = "true" } -TimeoutSec 5 -ErrorAction SilentlyContinue
+				if ($azureMetadata) {
+					$isAzureVM = $true
+					$vmSize = $azureMetadata.compute.vmSize
+					Write-Host "DETECTED: Azure VM - Size: $vmSize" -ForegroundColor Yellow
+				}
+			}
+			catch {
+				# Not an Azure VM or metadata service unavailable
+			}
+
+			if ($isAzureVM) {
+				Write-Host ""
+				Write-Host "AZURE VM DETECTED - Special Requirements for WSL2" -ForegroundColor Red
+				Write-Host "=================================================" -ForegroundColor Red
+				Write-Host ""
+				Write-Host "WSL2 requires nested virtualization, which is only supported on specific Azure VM sizes:" -ForegroundColor Yellow
+				Write-Host ""
+				Write-Host "SUPPORTED Azure VM sizes for WSL2:" -ForegroundColor Green
+				Write-Host "- Dv3, Dsv3, Ev3, Esv3 series (v3 and newer)" -ForegroundColor White
+				Write-Host "- Dv4, Dsv4, Ev4, Esv4 series" -ForegroundColor White
+				Write-Host "- Dv5, Dsv5, Ev5, Esv5 series" -ForegroundColor White
+				Write-Host "- Fsv2 series" -ForegroundColor White
+				Write-Host "- M series" -ForegroundColor White
+				Write-Host ""
+				Write-Host "Your current VM size: $vmSize" -ForegroundColor Cyan
+
+				# Check if current VM size supports nested virtualization
+				$supportedSizes = @("Dv3", "Dsv3", "Ev3", "Esv3", "Dv4", "Dsv4", "Ev4", "Esv4", "Dv5", "Dsv5", "Ev5", "Esv5", "Fsv2", "M")
+				$isSupported = $false
+				$isGpuVM = $false
+
+				# Check for GPU VM series that don't support nested virtualization
+				$gpuSeries = @("NC", "ND", "NV")
+				foreach ($gpu in $gpuSeries) {
+					if ($vmSize -like "*$gpu*") {
+						$isGpuVM = $true
+						break
+					}
+				}
+
+				foreach ($size in $supportedSizes) {
+					if ($vmSize -like "*$size*") {
+						$isSupported = $true
+						break
+					}
+				}
+
+				if ($isSupported) {
+					Write-Host "✓ Your VM size supports nested virtualization" -ForegroundColor Green
+					Write-Host ""
+					Write-Host "Trying Azure-specific WSL2 setup..." -ForegroundColor Cyan
+
+					# For Azure VMs, try the no-distribution approach first
+					Write-Host "Running: wsl.exe --install --no-distribution" -ForegroundColor White
+					$fixOutput = wsl.exe --install --no-distribution 2>&1
+					Write-Host "Fix output: $fixOutput" -ForegroundColor Gray
+
+					if ($LASTEXITCODE -eq 0) {
+						Write-Host "✓ WSL components installed successfully" -ForegroundColor Green
+						Write-Host "Now trying to install Ubuntu..." -ForegroundColor White
+						$ubuntuInstall = wsl.exe --install -d Ubuntu 2>&1
+						Write-Host "Ubuntu install output: $ubuntuInstall" -ForegroundColor Gray
+					}
+					else {
+						Write-Warning "WSL component installation failed on Azure VM"
+						Write-Host "This may indicate the VM doesn't have nested virtualization enabled." -ForegroundColor Red
+					}
+				}
+				else {
+					Write-Host "✗ Your VM size ($vmSize) does not support nested virtualization" -ForegroundColor Red
+					Write-Host ""
+					Write-Host "SOLUTIONS:" -ForegroundColor Yellow
+					Write-Host "1. Resize your Azure VM to a supported size (requires VM restart)" -ForegroundColor White
+					Write-Host "2. Use Docker Desktop with WSL1 backend instead" -ForegroundColor White
+					Write-Host "3. Use Podman with a different container runtime" -ForegroundColor White
+					Write-Host ""
+					Write-Host "To resize your Azure VM:" -ForegroundColor Cyan
+					Write-Host "1. Stop the VM in Azure Portal" -ForegroundColor White
+					Write-Host "2. Go to VM Settings > Size" -ForegroundColor White
+					Write-Host "3. Select a supported size (e.g., Standard_D2s_v3)" -ForegroundColor White
+					Write-Host "4. Start the VM and run this script again" -ForegroundColor White
+				}
+			}
+			else {
+				Write-Host "Applying Windows Server 2022 specific fix..." -ForegroundColor Cyan
+
+				# Try the recommended fix from the error message
+				Write-Host "Running: wsl.exe --install --no-distribution" -ForegroundColor White
+				$fixOutput = wsl.exe --install --no-distribution 2>&1
+				Write-Host "Fix output: $fixOutput" -ForegroundColor Gray
+
+				if ($LASTEXITCODE -eq 0) {
+					Write-Host "✓ Virtual Machine Platform fix applied successfully" -ForegroundColor Green
+				}
+				else {
+					Write-Warning "Fix command failed. Trying alternative approach..."
+
+					# Alternative: Re-enable features to force refresh
+					Write-Host "Re-enabling WSL and VM Platform features..." -ForegroundColor Yellow
+
+					$wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -ErrorAction SilentlyContinue
+					$vmFeature = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -ErrorAction SilentlyContinue
+
+					if ($wslFeature.State -eq "Enabled") {
+						Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
+					}
+					if ($vmFeature.State -eq "Enabled") {
+						Disable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
+					}
+
+					Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
+					Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
+
+					Write-Host "✓ Features re-enabled" -ForegroundColor Green
+				}
+
+				# Download and install WSL2 kernel update
+				Write-Host "Installing WSL2 kernel update..." -ForegroundColor White
+				try {
+					$kernelUpdateUrl = "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi"
+					$kernelUpdatePath = "$env:TEMP\wsl_update_x64.msi"
+					Invoke-WebRequest -Uri $kernelUpdateUrl -OutFile $kernelUpdatePath -UseBasicParsing
+					Start-Process "msiexec.exe" -ArgumentList "/i `"$kernelUpdatePath`" /quiet" -NoNewWindow -Wait
+					Write-Host "✓ WSL2 kernel update installed" -ForegroundColor Green
+				}
+				catch {
+					Write-Warning "Could not install WSL2 kernel update: $_"
+				}
+
+				Write-Host ""
+				Write-Host "IMPORTANT: RESTART REQUIRED" -ForegroundColor Red
+				Write-Host "Virtual Machine Platform changes require a restart to take effect." -ForegroundColor Yellow
+				Write-Host "After restart, WSL2 should work properly." -ForegroundColor White
+			}
+		}
+		else {
+			Write-Host "General troubleshooting steps:" -ForegroundColor Yellow
+			Write-Host "1. Ensure you're running as Administrator" -ForegroundColor White
+			Write-Host "2. Check that your Windows Server 2022 is updated" -ForegroundColor White
+			Write-Host "3. Restart your computer if features were just enabled" -ForegroundColor White
+			Write-Host "4. Check BIOS virtualization settings" -ForegroundColor White
+		}
 	}
 }
 
