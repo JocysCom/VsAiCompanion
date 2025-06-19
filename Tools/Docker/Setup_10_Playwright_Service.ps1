@@ -26,7 +26,7 @@ $global:imageName = "ghcr.io/mendableai/playwright-service:latest"
 $global:containerName = "playwright-service"
 $global:volumeName = "playwright-service-data"
 $global:networkName = "firecrawl-net"
-$global:containerPort = 3000
+$global:containerPort = 3010
 $global:playwrightNetworkAlias = "playwright-service"
 $global:playwrightDataPath = "/app/data"
 

@@ -123,6 +123,12 @@ The firecrawl-mcp executable will typically be located at:
 }
 ```
 
+**Test from PowerShell**
+
+```PowerShell
+curl -X POST http://localhost:3002/v1/scrape -H "Content-Type: application/json" -d '{"url": "https://httpbin.org/html"}' --max-time 30
+```
+
 ### For Cloud Firecrawl API:
 
 ```json

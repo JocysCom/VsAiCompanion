@@ -34,7 +34,7 @@ $global:networkName = "firecrawl-net"
 $global:firecrawlDataPath = "/app/data"
 $global:redisNetworkAlias = "firecrawl-redis"
 $global:redisPort = 6379
-$global:playwrightPort = 3000
+$global:playwrightPort = 3010
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
