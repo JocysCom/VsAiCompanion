@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -80,7 +81,7 @@ namespace JocysCom.ClassLibrary.Xml
 		public static string GetReturnText(MethodInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
-			var s = member?.returns.Select(x => x.value).FirstOrDefault() ?? "";
+			var s = member?.returns ?? "";
 			if (!string.IsNullOrEmpty(s))
 				return GetFormattedText(s, format);
 			// Get return class summary.
@@ -332,7 +333,8 @@ namespace JocysCom.ClassLibrary.Xml
 			//var validator = new Runtime.XmlValidator();
 			//validator.IsValid<XmlDoc>(xml.OuterXml, true);
 			//var exceptions = validator.Exceptions;
-			return (XmlDoc)DeserializeFromXmlString(xml.OuterXml, typeof(XmlDoc));
+			var xmlDoc = (XmlDoc)DeserializeFromXmlString(xml.OuterXml, typeof(XmlDoc));
+			return xmlDoc;
 		}
 
 		/// <summary>Get XML Document.</summary>
@@ -399,7 +401,7 @@ namespace JocysCom.ClassLibrary.Xml
 		/// <param name="xml">XML string representing object.</param>
 		/// <param name="type">Type of object.</param>
 		/// <returns>Object.</returns>
-		static object DeserializeFromXmlString(string xml, Type type)
+		public static object DeserializeFromXmlString(string xml, Type type)
 		{
 			if (string.IsNullOrEmpty(xml))
 				return null;
@@ -424,6 +426,14 @@ namespace JocysCom.ClassLibrary.Xml
 				}
 			}
 			var serializer = XmlSerializers[type];
+			//serializer.UnknownElement += (s, e) =>
+			//	System.Diagnostics.Debug.WriteLine($"Unknown element: {e.Element.Name} in {e.Element.OuterXml}");
+			//serializer.UnknownAttribute += (s, e) =>
+			//	System.Diagnostics.Debug.WriteLine($"Unknown attribute: {e.Attr.Name} in {e.Attr.OuterXml}");
+			//serializer.UnknownNode += (s, e) =>
+			//	System.Diagnostics.Debug.WriteLine($"Unknown node: {e.Name}, Text: {e.Text}");
+			//serializer.UnreferencedObject += (s, e) =>
+			//	System.Diagnostics.Debug.WriteLine($"Unreferenced object: {e.UnreferencedId} in {e.UnreferencedObject.GetType().FullName}");
 			// Stream 'sr' will be disposed by the reader.
 			using (var sr = new StringReader(xml))
 			{
@@ -494,6 +504,7 @@ namespace JocysCom.ClassLibrary.Xml
 		/// <summary>
 		/// A list of documented members.
 		/// </summary>
+		[XmlArray("members")]
 		[XmlArrayItem("member")]
 		public List<XmlDocMember> members;
 	}
@@ -528,47 +539,45 @@ namespace JocysCom.ClassLibrary.Xml
 		public string name { get; set; }
 
 		/// <summary>Summary Nodes element</summary>
-		[XmlElement("summary")]
+		/// <remarks>Use `XmlAnyElement` to allow self closing tags with `XmlNode[]`.</remarks>
+		[XmlAnyElement("summary")]
 		public XmlNode[] summaryNodes { get; set; }
 
 		/// <summary>Summary text</summary>
-		[XmlElement("summary")]
+		[XmlIgnore]
 		public string summary => XmlDocHelper.ConvertXmlNodesToText(summaryNodes);
-
-		/// <summary>Returns element</summary>
-		[XmlElement("returns")]
-		public List<XmlDocParam> returns { get; set; }
-
-		/// <summary>Remarks element</summary>
-		[XmlElement("remarks")]
-		public List<XmlDocParam> remarks { get; set; }
-
-		/// <summary>Example Text</summary>
-		public string example => XmlDocHelper.ConvertXmlNodesToText(exampleNodes);
-
-		/// <summary>Example nodes</summary>
-		[XmlElement("example")]
-		public XmlNode[] exampleNodes { get; set; }
 
 		/// <summary>Param element</summary>
 		[XmlElement("param")]
 		public List<XmlDocParam> param { get; set; }
 
-		/// <summary>Parameter references</summary>
-		[XmlElement("paramrefs")]
-		public List<XmlDocParam> paramrefs { get; set; }
+		/// <summary>Returns nodes</summary>
+		/// <remarks>Use `XmlAnyElement` to allow self closing tags with `XmlNode[]`.</remarks>
+		[XmlAnyElement("returns")]
+		public XmlNode[] returnsNodes { get; set; }
 
-		/// <summary>Include element.</summary>
-		[XmlElement("include")]
-		public List<XmlDocParam> includes { get; set; }
+		/// <summary>Returns text</summary>
+		[XmlIgnore]
+		public string returns => XmlDocHelper.ConvertXmlNodesToText(returnsNodes);
 
-		/// <summary>Exceptions element</summary>
-		[XmlElement("exceptions")]
-		public List<XmlDocParam> exceptions { get; set; }
+		/// <summary>Remarks nodes</summary>
+		/// <remarks>Use `XmlAnyElement` to allow self closing tags with `XmlNode[]`.</remarks>
+		[XmlAnyElement("remarks")]
+		public XmlNode[] remarksNodes { get; set; }
 
-		/// <summary>Permitions element</summary>
-		[XmlElement("permitions")]
-		public List<XmlDocParam> permitions { get; set; }
+		/// <summary>Remarks text</summary>
+		[XmlIgnore]
+		public string remarks => XmlDocHelper.ConvertXmlNodesToText(remarksNodes);
+
+		/// <summary>Example nodes</summary>
+		/// <remarks>Use `XmlAnyElement` to allow self closing tags with `XmlNode[]`.</remarks>
+		[XmlAnyElement("example")]
+		public XmlNode[] exampleNodes { get; set; }
+
+		/// <summary>Example Text</summary>
+		[XmlIgnore]
+		public string example => XmlDocHelper.ConvertXmlNodesToText(exampleNodes);
+
 	}
 
 	#endregion
