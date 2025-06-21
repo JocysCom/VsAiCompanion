@@ -62,12 +62,6 @@
 		<Reference Include="System.Web" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-	<ItemGroup>
 		<Folder Include="JocysCom\Diagnostics\" />
 	</ItemGroup>
 	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">

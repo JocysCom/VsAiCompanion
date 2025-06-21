@@ -120,7 +120,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		/// </summary>
 		/// <param name="expandedPath">File which contains date pattern.</param>
 		/// <param name="maxLogFiles">Limit folder content to maximum files.</param>
-		/// <param name="maxLogFiles">Limit folder content to maximum bytes.</param>
+		/// <param name="maxLogBytes">Limit folder content to maximum bytes.</param>
 		public static int WipeOldLogFiles(string expandedPath, long? maxLogFiles = null, long? maxLogBytes = null)
 		{
 			// If file is not specified then return.

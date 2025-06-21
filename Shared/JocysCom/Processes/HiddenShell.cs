@@ -99,8 +99,8 @@ namespace JocysCom.ClassLibrary.Processes
 		/// </summary>
 		/// <param name="fileName">Console application to execute.</param>
 		/// <param name="arguments">Arguments.</param>
-		/// <param name="output">String builder for output.</param>
-		/// <param name="error">String builder for errors. If null then output will be used.</param>
+		/// <param name="outBuilder">String builder for output.</param>
+		/// <param name="errBuilder">String builder for errors. If null then output will be used.</param>
 		/// <param name="timeout">Timeout. Default is -1, which represents an infinite time-out.</param>
 		/// <returns>Exit code. Return null if timeout.</returns>
 		public static int? Execute(string fileName, string arguments, StringBuilder outBuilder, StringBuilder errBuilder = null, int timeout = -1)

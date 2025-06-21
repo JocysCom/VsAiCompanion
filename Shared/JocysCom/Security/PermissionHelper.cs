@@ -286,11 +286,12 @@ namespace JocysCom.ClassLibrary.Security
 		}
 
 		/// <summary>
-		/// Set specified rights to the file or directory.
+		/// Set specified rights to the registry key.
 		/// </summary>
-		/// <param name="path">The path to a file or directory.</param>
-		/// <param name="rights">Rights to check.</param>
-		/// <param name="sid">User to check.</param>
+		/// <param name="baseKey">The base registry key.</param>
+		/// <param name="registryName">The name of the registry key.</param>
+		/// <param name="rights">Rights to set.</param>
+		/// <param name="sid">User to set rights for.</param>
 		/// <param name="inheritance">Inheritance options.</param>
 		/// <param name="propagation">Propagation options.</param>
 		/// <returns>True if success, False if failed to set the rights.</returns>
@@ -440,6 +441,8 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		/// <param name="path">The path to a file or directory.</param>
 		/// <param name="sid">User Identifier.</param>
+		/// <param name="includeInherited">Whether to include inherited permissions.</param>
+		/// <param name="accessType">Type of access control to check.</param>
 		/// <returns>File or directory rights.</returns>
 		public static FileSystemRights GetRights(string path, SecurityIdentifier sid, bool includeInherited = false, AccessControlType accessType = AccessControlType.Allow)
 		{

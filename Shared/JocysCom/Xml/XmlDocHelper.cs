@@ -534,8 +534,8 @@ namespace JocysCom.ClassLibrary.Xml
 	[XmlRoot("member")]
 	public class XmlDocMember
 	{
-		[XmlAttribute]
 		/// <summary>Name attribute.</summary>
+		[XmlAttribute]
 		public string name { get; set; }
 
 		/// <summary>Summary Nodes element</summary>

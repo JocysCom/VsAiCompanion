@@ -62,10 +62,10 @@ namespace JocysCom.ClassLibrary.IO
 
 		/// <summary>
 		/// Delegate to determine if a file or directory should be ignored during scanning.
+		/// The first parameter is the original root directory path provided to <see cref="GetFiles"/>.
+		/// The second parameter is the full path of the current file or directory.
+		/// The third parameter is the size in bytes of the file (0 for directories).
 		/// </summary>
-		/// <param name="rootPath">The original root directory path provided to <see cref="GetFiles"/>.</param>
-		/// <param name="fullPath">Full path of the current file or directory.</param>
-		/// <param name="size">Size in bytes of the file (0 for directories).</param>
 		/// <returns>True to skip the item; otherwise, false.</returns>
 		public Func<string, string, long, bool> IsIgnored;
 
