@@ -112,7 +112,8 @@ function Invoke-QdrantMCPServerImageBuild {
 		return $false
 	}
 
-	if ($PSCmdlet.ShouldProcess($global:imageName, "Build Container Image from '$($global:srcDir)'")) { # Use imageName
+	if ($PSCmdlet.ShouldProcess($global:imageName, "Build Container Image from '$($global:srcDir)'")) {
+		# Use imageName
 		Write-Host "Building Qdrant MCP Server image '$($global:imageName)'..." # Use imageName
 		& $global:enginePath build --tag $global:imageName $global:srcDir # Use imageName
 		if ($LASTEXITCODE -ne 0) {
@@ -164,7 +165,7 @@ function Install-QdrantMCPServerContainer {
 	}
 
 	# Step 3: Ensure the volume exists (optional, but good practice)
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
 		Write-Warning "Failed to ensure volume '$($global:volumeName)'. Container might not persist data if it uses this path."
 		# Continue installation even if volume creation fails/skipped
 	}

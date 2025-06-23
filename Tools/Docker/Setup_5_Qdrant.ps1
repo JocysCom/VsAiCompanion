@@ -40,7 +40,8 @@ if ($global:containerEngine -eq "docker") {
 	# For Docker, set DOCKER_HOST pointing to the Docker service pipe.
 	$env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
 }
-else { # Assumes podman
+else {
+ # Assumes podman
 	Write-Host "Using Podman..."
 	# If additional Podman-specific environment settings are needed, add them here.
 }
@@ -164,7 +165,7 @@ function Invoke-StartQdrantForUpdate {
 	)
 
 	# Ensure the volume exists (important if it was removed manually)
-	if (-not (Confirm-ContainerVolume -Engine $EnginePath -VolumeName $VolumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $EnginePath -ResourceType "volume" -ResourceName $VolumeName)) {
 		throw "Failed to ensure volume '$VolumeName' exists during update."
 	}
 
@@ -229,7 +230,8 @@ function Update-QdrantContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-QdrantContainer) { # Calls Backup-ContainerState
+			if (Backup-QdrantContainer) {
+				# Calls Backup-ContainerState
 				$backupMade = $true
 			}
 		}

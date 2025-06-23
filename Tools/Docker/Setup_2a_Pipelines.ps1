@@ -52,7 +52,7 @@ if (-not $global:enginePath) {
 .SYNOPSIS
 	Installs (or reinstalls) the Pipelines container using the official pre-built image.
 .DESCRIPTION
-	Ensures the required volume exists using Confirm-ContainerVolume.
+	Ensures the required volume exists using Confirm-ContainerResource.
 	Removes any existing container named 'pipelines'.
 	Pulls and runs the 'ghcr.io/open-webui/pipelines:main' image.
 	Configures port mapping (9099:9099), volume mount, restart policy, and container name.
@@ -61,7 +61,7 @@ if (-not $global:enginePath) {
 .EXAMPLE
 	Install-PipelinesContainer
 .NOTES
-	Relies on Confirm-ContainerVolume, Test-TCPPort, Test-HTTPPort helper functions.
+	Relies on Confirm-ContainerResource, Test-TCPPort, Test-HTTPPort helper functions.
 	Uses Write-Host for status messages.
 #>
 function Install-PipelinesContainer {

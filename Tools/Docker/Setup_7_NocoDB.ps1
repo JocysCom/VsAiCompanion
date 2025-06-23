@@ -40,7 +40,8 @@ if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:pullOptions = @()
 }
-else { # Assumes podman
+else {
+ # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
 }
 # Get the engine path after setting specific options
@@ -72,7 +73,7 @@ function Install-NocoDBContainer {
 	Write-Host "Installing NocoDB container using image '$global:imageName'..."
 
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
@@ -161,7 +162,7 @@ function Install-NocoDBContainer {
 #>
 function Invoke-StartNocoDBForUpdate {
 	# Ensure the volume exists (important if it was removed manually)
-	if (-not (Confirm-ContainerVolume -Engine $global:EnginePath -VolumeName $global:volumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $global:EnginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
 		throw "Failed to ensure volume '$global:volumeName' exists during update."
 	}
 
@@ -224,7 +225,8 @@ function Update-NocoDBContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-NocoDBContainer) { # Calls Backup-ContainerState
+			if (Backup-NocoDBContainer) {
+				# Calls Backup-ContainerState
 				$backupMade = $true
 			}
 		}

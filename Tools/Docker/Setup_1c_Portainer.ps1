@@ -42,7 +42,8 @@ if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:pullOptions = @()
 }
-else { # Assumes podman
+else {
+ # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
 }
 # Get the engine path after setting specific options
@@ -232,7 +233,7 @@ function Start-PortainerContainer {
 #>
 function Install-PortainerContainer {
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
 		return
 	}
@@ -302,7 +303,8 @@ function Update-PortainerContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-PortainerContainer) { # Calls Backup-ContainerState
+			if (Backup-PortainerContainer) {
+				# Calls Backup-ContainerState
 				$backupMade = $true
 			}
 		}
