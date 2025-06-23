@@ -17,8 +17,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// <summary>
 		/// Copies the specified content as a text content and file to the clipboard.
 		/// </summary>
-		/// <param name="path">The name of the file to create (without path).</param>
-		/// <param name="contents">The string contents of the file.</param>
+		/// <param name="path">The path to the file to copy to clipboard.</param>
 		public static bool SetClipboard(string path)
 		{
 			if (!File.Exists(path))
@@ -34,6 +33,8 @@ namespace JocysCom.ClassLibrary.Windows
 			return true;
 		}
 
+		/// <param name="path">The path to the file to copy to clipboard.</param>
+		/// <param name="contents">The string contents of the file.</param>
 		private static void SetMimeContent(DataObject dataObject, string path, string contents)
 		{
 			var ext = Path.GetExtension(path);

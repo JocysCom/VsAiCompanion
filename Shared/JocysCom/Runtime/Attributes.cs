@@ -215,7 +215,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <typeparam name="T">Type of the attribute value.</typeparam>
 		/// <param name="value">An ICustomAttributeProvider or enum member.</param>
 		/// <returns>The attribute’s value, or default(T) if none is present.</returns>
-		/// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</returns>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
 		/// <remarks>
 		/// If <paramref name="value"/> is not an <see cref="ICustomAttributeProvider"/>,
 		/// it is assumed to be an enum member, and the corresponding field is inspected.

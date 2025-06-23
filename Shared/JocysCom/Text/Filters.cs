@@ -293,7 +293,7 @@ namespace JocysCom.ClassLibrary.Text
         /// <param name="ICCY">Date of birth/death code.</param>
         /// <param name="ICKNS">Key name suffix (e.g., Jr, III).</param>
         /// <param name="ICTAN">Title displayed after name.</param>
-        /// <param name="CRC">ONIX contributor role code.</n        /// </param>
+        /// <param name="CRC">ONIX contributor role code.</param>
         /// <returns>Name key appended with formatted suffix metadata.</returns>
         public string AppendNameKeySufix(string s, string ICCY, string ICKNS, string ICTAN, string CRC)
         {
@@ -327,8 +327,8 @@ namespace JocysCom.ClassLibrary.Text
         }
 
         /// <summary>
-        /// Generates a sortable key for a title: prepares text, replaces '&' with 'AND',
-        /// optionally strips leading/trailing 'The' or 'A', normalizes spaces, and trims.
+        /// Generates a sortable key for a title: prepares text, replaces &apos;&amp;&apos; with &apos;AND&apos;,
+        /// optionally strips leading/trailing &apos;The&apos; or &apos;A&apos;, normalizes spaces, and trims.
         /// </summary>
         /// <param name="s">Raw title string.</param>
         /// <param name="stripThe">Remove leading/trailing 'The' if true.</param>

@@ -337,7 +337,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// 
 		/// Option 1: Disable Deterministic build by adding
 		/// 
-		///      &gt;Deterministic&lt;False&gt;/Deterministic&lt; inside a &gt;PropertyGroup&lt section  of .csproj
+		///      &lt;Deterministic&gt;False&lt;/Deterministic&gt; inside a &lt;PropertyGroup&gt; section of .csproj
 		///
 		/// Option 2:
 		/// 

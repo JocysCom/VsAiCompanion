@@ -746,8 +746,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// Convert object with IEnumerable propertied to DataTable.
 		/// Table can be used to pass data into stored procedures.
 		/// </summary>
-		/// <param name="list">List to convert.</param>
-		/// <param name="columns">
+		/// <param name="source">Object to convert.</param>
+		/// <param name="propertyNames">
 		/// Properties to include.
 		/// For example: nameof(class1.property1), nameof(class1.property2)
 		/// </param>
@@ -978,10 +978,10 @@ namespace JocysCom.ClassLibrary.Data
 		}
 
 		/// <summary>
-		/// Get DescriptionAttribute value from object or enumeration value.
+		/// Get DbProviderFactory for the specified command.
 		/// </summary>
-		/// <param name="o">Enumeration value or object</param>
-		/// <returns>Description, class name, or enumeration property name.</returns>
+		/// <param name="cmd">Database command to get factory for.</param>
+		/// <returns>DbProviderFactory instance.</returns>
 		private static DbProviderFactory GetProviderFactory(DbCommand cmd)
 		{
 			var key = cmd.GetType();
@@ -1055,4 +1055,3 @@ namespace JocysCom.ClassLibrary.Data
 	}
 
 }
-

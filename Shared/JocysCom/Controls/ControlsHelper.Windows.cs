@@ -106,16 +106,16 @@ namespace JocysCom.ClassLibrary.Controls
 
 		internal class NativeMethods
 		{
-			/// <summary>
-			/// Retrieves a handle to the window that contains the specified point. 
-			/// </summary>
-			/// <param name="Point">The point to be checked. </param>
-			/// <returns>
-			/// The return value is a handle to the window that contains the point.
-			/// If no window exists at the given point, the return value is NULL.
-			/// If the point is over a static text control, the return value is a handle to the window under the static text control. </returns>
-			[DllImport("user32.dll", SetLastError = true)]
-			public static extern IntPtr WindowFromPoint(System.Windows.Point point);
+		/// <summary>
+		/// Retrieves a handle to the window that contains the specified point. 
+		/// </summary>
+		/// <param name="point">The point to be checked. </param>
+		/// <returns>
+		/// The return value is a handle to the window that contains the point.
+		/// If no window exists at the given point, the return value is NULL.
+		/// If the point is over a static text control, the return value is a handle to the window under the static text control. </returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern IntPtr WindowFromPoint(System.Windows.Point point);
 		}
 
 		private const int WM_SETREDRAW = 0x000B;
@@ -167,7 +167,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		/// <typeparam name="T">Type of Primary key.</typeparam>
 		/// <param name="grid">Grid for getting selection</param>
-		/// <param name="primaryKeyPropertyName">Primary key name.</param>
+		/// <param name="keyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGridView grid, string keyPropertyName = null)
 		{
 			if (grid is null)
@@ -411,6 +411,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
 		public static void SetEnabled(ToolStripItem control, bool enabled)
 		{
 			if (control is null)
@@ -422,6 +423,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
 		public static void SetEnabled(Control control, bool enabled)
 		{
 			if (control is null)
@@ -532,7 +534,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Select item first to make sure that no items are unselected.
 		/// </summary>
 		/// <param name="control">DataGridView, Control</param>
-		/// <param name="item">Data bound object to select</param>
+		/// <param name="items">Data bound objects to select</param>
 		public static void SetSelectedItem<T>(DataGridView control, params T[] items)
 		{
 			if (control is null)
@@ -990,4 +992,3 @@ namespace JocysCom.ClassLibrary.Controls
 
 	}
 }
-

@@ -75,7 +75,10 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			OpenApplicationMenu.Image = icon.ToBitmap();
 			OpenApplicationMenu.Text = "Open Application" + text;
-			TrayNotifyIcon.Text = $"{window.Title}" + text;
+			var notifyText = $"{window.Title}" + text;
+			if (notifyText.Length >= 64)
+				notifyText = notifyText.Substring(0, 64 - 1);
+			TrayNotifyIcon.Text = notifyText;
 			TrayNotifyIcon.Icon = icon;
 			TrayNotifyIcon.Visible = true;
 		}

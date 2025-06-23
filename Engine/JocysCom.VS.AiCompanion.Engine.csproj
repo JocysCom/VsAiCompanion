@@ -277,9 +277,6 @@
 		<EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-	<ItemGroup>
 		<Reference Include="System.Speech" />
 	</ItemGroup>
 	<ItemGroup>
