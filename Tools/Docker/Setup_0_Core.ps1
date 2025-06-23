@@ -281,6 +281,87 @@ function Update-EnvironmentVariable {
 }
 
 #==============================================================================
+# Function: ConvertFrom-SecureString
+#==============================================================================
+
+function ConvertFrom-SecureString {
+    param([SecureString]$SecureString)
+    $plainText = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(
+        [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString)
+    )
+    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR(
+        [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString)
+    )
+    return $plainText
+}
+
+#==============================================================================
+# Function: Get-EnvironmentVariableWithDefault
+#==============================================================================
+
+function Get-EnvironmentVariableWithDefault {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$EnvVarName,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$DefaultValue,
+        
+        [Parameter(Mandatory = $false)]
+        [string]$PromptText = ""
+    )
+    
+    # Auto-generate prompt text if not provided
+    if ([string]::IsNullOrWhiteSpace($PromptText)) {
+        $parts = $EnvVarName.Split('_') | ForEach-Object {
+            $part = $_.ToLower()
+            if (@('api', 'url', 'id', 'ai', 'db', 'sql') -contains $part) {
+                $part.ToUpper()
+            }
+            else {
+                $part.Substring(0, 1).ToUpper() + $part.Substring(1)
+            }
+        }
+        $PromptText = ($parts -join ' ')
+    }
+    
+    # Get existing environment variable value
+    $existingValue = [Environment]::GetEnvironmentVariable($EnvVarName)
+    
+    if (-not [string]::IsNullOrWhiteSpace($existingValue)) {
+        # Mask existing value for display
+        $len = $existingValue.Length
+        $pre = $existingValue.Substring(0, [Math]::Min(4, $len))
+        $suf = $existingValue.Substring([Math]::Max(0, $len - 4))
+        $masked = "$pre****$suf"
+        $prompt = "`nEnter $PromptText [default: $masked]"
+        $secureInput = Read-Host $prompt -AsSecureString
+        $inputValue = ConvertFrom-SecureString -SecureString $secureInput
+        
+        if ([string]::IsNullOrWhiteSpace($inputValue)) {
+            return $existingValue
+        }
+        else {
+            return $inputValue
+        }
+    }
+    else {
+        # Environment variable is empty or doesn't exist
+        Write-Host "`n> Environment variable '$EnvVarName' is empty or not set." -ForegroundColor Yellow
+        $prompt = "`nEnter $PromptText [default: $DefaultValue]"
+        $secureInput = Read-Host $prompt -AsSecureString
+        $inputValue = ConvertFrom-SecureString -SecureString $secureInput
+        
+        if ([string]::IsNullOrWhiteSpace($inputValue)) {
+            return $DefaultValue
+        }
+        else {
+            return $inputValue
+        }
+    }
+}
+
+#==============================================================================
 # Function: Invoke-OptionsMenu
 #==============================================================================
 <#

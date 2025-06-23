@@ -38,6 +38,8 @@ $global:firecrawlDataPath = "/app/data"
 $global:redisNetworkAlias = "firecrawl-redis"
 $global:redisPort = 6379
 $global:playwrightPort = 3010
+$global:openaiApiKey = 'dummy'
+$global:firecrawlApiKey = 'fc-dummy'
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -59,7 +61,7 @@ else {
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
 #==============================================================================
-# Function: Test-FirecrawlAPIDependencies
+# Function: Test-FirecrawlAPIDependency
 #==============================================================================
 <#
 .SYNOPSIS
@@ -75,11 +77,11 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 .OUTPUTS
 	[bool] Returns $true if all dependencies are met, $false otherwise.
 .EXAMPLE
-	if (-not (Test-FirecrawlAPIDependencies)) { exit 1 }
+    if (-not (Test-FirecrawlAPIDependency)) { exit 1 }
 .NOTES
 	This function should be called before attempting to install Firecrawl API.
 #>
-function Test-FirecrawlAPIDependencies {
+function Test-FirecrawlAPIDependency {
 	Write-Host "Checking Firecrawl API dependencies..."
 
 	# Check if network exists
@@ -150,7 +152,7 @@ function Install-FirecrawlContainer {
 	#############################################
 	# Step 1: Check All Dependencies
 	#############################################
-	if (-not (Test-FirecrawlAPIDependencies)) {
+	if (-not (Test-FirecrawlAPIDependency)) {
 		Write-Error "Dependencies not met. Exiting..."
 		exit 1
 	}
@@ -189,6 +191,8 @@ function Install-FirecrawlContainer {
 	# Step 5: Run the Firecrawl Container with Overridden Redis Settings
 	#############################################
 	Write-Host "Starting Firecrawl container '$global:firecrawlName'..."
+	# Prompt for OpenAI API Key if not set
+	$global:openaiApiKey = Get-EnvironmentVariableWithDefault -EnvVarName 'OPENAI_API_KEY' -DefaultValue $global:openaiApiKey -PromptText 'OpenAI API Key'
 	# Ensure the volume exists
 	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
 		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
@@ -204,7 +208,7 @@ function Install-FirecrawlContainer {
 		"--network", $global:networkName, # Attach the container to the specified Docker network.
 		"--name", $global:firecrawlName, # Assign the container the name 'firecrawl'.
 		"--volume", "$($global:volumeName):$global:firecrawlDataPath", # Mount the named volume for persistent data.
-		"--env", "OPENAI_API_KEY=dummy", # Set dummy OpenAI key.
+		"--env", "OPENAI_API_KEY=$($global:openaiApiKey)",
 		"--env", "REDIS_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)", # Point to the Redis container using network alias.
 		"--env", "REDIS_RATE_LIMIT_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
 		"--env", "REDIS_HOST=$global:redisNetworkAlias",
@@ -300,7 +304,7 @@ function Invoke-StartFirecrawlForUpdate {
 		"--network", $global:networkName, # Use global network name
 		"--name", $ContainerName,
 		"--volume", "$($VolumeName):$global:firecrawlDataPath",
-		"--env", "OPENAI_API_KEY=dummy",
+		"--env", "OPENAI_API_KEY=$($global:openaiApiKey)",
 		"--env", "REDIS_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
 		"--env", "REDIS_RATE_LIMIT_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
 		"--env", "REDIS_HOST=$global:redisNetworkAlias",
