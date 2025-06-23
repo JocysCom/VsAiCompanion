@@ -385,10 +385,11 @@ function Update-OpenWebUIContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-OpenWebUIContainer) {
-				# Calls Backup-ContainerState
-				$backupMade = $true
-			}
+			Write-Host "Saving '$($global:containerName)' Container Image..."
+			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Write-Host "Exporting '$($global:volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			$backupMade = $true
 		}
 	}
 	else {
@@ -409,7 +410,10 @@ function Update-OpenWebUIContainer {
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
-					Restore-OpenWebUIContainer # Calls Restore-ContainerState
+					Write-Host "Loading '$($global:containerName)' Container Image..."
+					Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+					Write-Host "Importing '$($global:volumeName)' Volume..."
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 				}
 			}
 		}
@@ -420,61 +424,33 @@ function Update-OpenWebUIContainer {
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
-				Restore-OpenWebUIContainer # Calls Restore-ContainerState
+				Write-Host "Loading '$($global:containerName)' Container Image..."
+				Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+				Write-Host "Importing '$($global:volumeName)' Volume..."
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 			}
 		}
-	}
-}
-
-#==============================================================================
-# Function: Update-OpenWebUIUserData
-#==============================================================================
-<#
-.SYNOPSIS
-	Placeholder function for updating user data; currently displays information only.
-.DESCRIPTION
-	Displays informational messages explaining that direct user data update is not implemented
-	but that data resides in the 'open-webui' volume and can be backed up or accessed via 'exec'.
-	Supports -WhatIf.
-.EXAMPLE
-	Update-OpenWebUIUserData
-.NOTES
-	This function needs implementation if specific user data update procedures are required.
-	Uses Write-Host for output.
-#>
-function Update-OpenWebUIUserData {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	if ($PSCmdlet.ShouldProcess("Open WebUI container", "Display user data information")) {
-		# Provide some helpful information
-		Write-Host "Update User Data functionality is not implemented for OpenWebUI container."
-		Write-Host "User data is stored in the '$($global:volumeName)' volume at '/app/backend/data' inside the container." # Use global var
-		Write-Host "To back up user data, you can use the 'Backup Live container' option."
-		Write-Host "To modify user data directly, you would need to access the container with:"
-		Write-Host "  $($global:enginePath) exec -it $($global:containerName) /bin/bash" # Use global vars
 	}
 }
 
 # Define Menu Title and Items
 $menuTitle = "Open WebUI Container Menu"
 $menuItems = [ordered]@{
-	"1"  = "Show Info & Test Connection"
-	"2"  = "Install container"
-	"3"  = "Uninstall container"
-	"4"  = "Save Image (App)"
-	"5"  = "Load Image (App)"
-	"6"  = "Export Volume (User Data)"
-	"7"  = "Import Volume (User Data)"
-	"8"  = "Update System"
-	"9"  = "Update User Data"
-	"10" = "Check for Updates"
-	"0"  = "Exit"
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Update System"
+	"9" = "Check for Updates"
+	"0" = "Exit"
 }
 
 # Define Menu Actions
 $menuActions = @{
-	"1"  = {
+	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName ` # Use global var
 		-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath ` # Use global var
@@ -484,19 +460,18 @@ $menuActions = @{
 			-WsPort 3000 `
 			-WsPath "/api/v1/chat/completions"
 	}
-	"2"  = { Install-OpenWebUIContainer }
-	"3"  = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
-	"4"  = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"5"  = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"6"  = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7"  = {
+	"2" = { Install-OpenWebUIContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
-	"8"  = { Update-OpenWebUIContainer } # Calls the dedicated update function
-	"9"  = { Update-OpenWebUIUserData }
-	"10" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
+	"8" = { Update-OpenWebUIContainer } # Calls the dedicated update function
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

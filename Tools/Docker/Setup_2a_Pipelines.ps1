@@ -310,10 +310,11 @@ function Update-PipelinesContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-PipelinesContainer) {
-				# Calls Backup-ContainerState
-				$backupMade = $true
-			}
+			Write-Host "Saving '$($global:containerName)' Container Image..."
+			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Write-Host "Exporting '$($global:volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			$backupMade = $true
 		}
 	}
 	else {
@@ -339,7 +340,10 @@ function Update-PipelinesContainer {
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
-					Restore-PipelinesContainer # Calls Restore-ContainerState
+					Write-Host "Loading '$($global:containerName)' Container Image..."
+					Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+					Write-Host "Importing '$($global:volumeName)' Volume..."
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 				}
 			}
 		}
@@ -349,32 +353,12 @@ function Update-PipelinesContainer {
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
-				Restore-PipelinesContainer # Calls Restore-ContainerState
+				Write-Host "Loading '$($global:containerName)' Container Image..."
+				Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+				Write-Host "Importing '$($global:volumeName)' Volume..."
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 			}
 		}
-	}
-}
-
-#==============================================================================
-# Function: Update-PipelinesUserData
-#==============================================================================
-<#
-.SYNOPSIS
-	Placeholder function for updating user data in the Pipelines container.
-.DESCRIPTION
-	Currently, this function only displays a message indicating that the functionality
-	is not implemented. Supports -WhatIf.
-.EXAMPLE
-	Update-PipelinesUserData
-.NOTES
-	This function needs implementation if specific user data update procedures are required.
-#>
-function Update-PipelinesUserData {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	if ($PSCmdlet.ShouldProcess("Pipelines container user data", "Update")) {
-		Write-Host "Update User Data functionality is not implemented for Pipelines container."
 	}
 }
 
@@ -385,22 +369,21 @@ function Update-PipelinesUserData {
 # Define Menu Title and Items
 $menuTitle = "Pipelines Container Menu"
 $menuItems = [ordered]@{
-	"1"  = "Show Info & Test Connection"
-	"2"  = "Install container"
-	"3"  = "Uninstall container"
-	"4"  = "Save Image (App)"
-	"5"  = "Load Image (App)"
-	"6"  = "Export Volume (User Data)"
-	"7"  = "Import Volume (User Data)"
-	"8"  = "Add Azure Pipeline to Container"
-	"9"  = "Update System"
-	"10" = "Update User Data"
-	"0"  = "Exit menu"
+	"1" = "Show Info & Test Connection"
+	"2" = "Install container"
+	"3" = "Uninstall container"
+	"4" = "Save Image (App)"
+	"5" = "Load Image (App)"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Add Azure Pipeline to Container"
+	"9" = "Update System"
+	"0" = "Exit menu"
 }
 
 # Define Menu Actions
 $menuActions = @{
-	"1"  = {
+	"1" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
@@ -408,19 +391,18 @@ $menuActions = @{
 			-TcpPort 9099 `
 			-HttpPort 9099
 	}
-	"2"  = { Install-PipelinesContainer }
-	"3"  = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4"  = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"5"  = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"6"  = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7"  = {
+	"2" = { Install-PipelinesContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
-	"8"  = { Add-PipelineToContainer }
-	"9"  = { Update-PipelinesContainer } # Calls the dedicated update function
-	"10" = { Update-PipelinesUserData }
+	"8" = { Add-PipelineToContainer }
+	"9" = { Update-PipelinesContainer } # Calls the dedicated update function
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

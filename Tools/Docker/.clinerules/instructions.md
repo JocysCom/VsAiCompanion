@@ -200,3 +200,7 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 
 **Rationale:**
 Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
+
+## Environment
+
+- Terminal sessions use PowerShell by default; therefore, invoke scripts directly (e.g., `.\Script.ps1 -WhatIf`) instead of wrapping them in an extra `powershell -ExecutionPolicy Bypass -File` call.
