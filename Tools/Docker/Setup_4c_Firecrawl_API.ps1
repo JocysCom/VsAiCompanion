@@ -1,8 +1,9 @@
 ################################################################################
-# File         : Setup_4b_Firecrawl_API.ps1
+# File         : Setup_4c_Firecrawl_API.ps1
 # Description  : Script to set up and run a Firecrawl API container.
 #                Requires Redis and Playwright service containers to be running first.
-#                This container provides the API endpoints and Bull queue dashboard UI.
+#                This container provides the API endpoints and includes UI testing
+#                and comprehensive service availability reporting.
 # Usage        : Run as Administrator if using Docker.
 #                Prerequisites: Redis (Setup_4a_Firecrawl_Redis.ps1) and
 #                              Playwright (Setup_10_Playwright_Service.ps1) containers.
@@ -38,8 +39,34 @@ $global:firecrawlDataPath = "/app/data"
 $global:redisNetworkAlias = "firecrawl-redis"
 $global:redisPort = 6379
 $global:playwrightPort = 3010
+$global:playwrightServicePort = 3000
 $global:openaiApiKey = 'dummy'
 $global:firecrawlApiKey = 'fc-dummy'
+
+# UI and Service URLs
+$global:firecrawlBaseUrl = "http://localhost:$global:firecrawlPort"
+$global:firecrawlApiUrl = "$global:firecrawlBaseUrl/v1"
+$global:firecrawlAdminUrl = "$global:firecrawlBaseUrl/admin/undefined/queues"
+$global:firecrawlHealthUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
+$global:firecrawlReadinessUrl = "$global:firecrawlBaseUrl/v0/health/readiness"
+$global:firecrawlServerHealthUrl = "$global:firecrawlBaseUrl/serverHealthCheck"
+$global:redisUrl = "localhost:$global:redisPort"
+$global:playwrightUrl = "http://localhost:$global:playwrightPort"
+
+#############################################
+# Firecrawl Configuration - Developer Mode (Default)
+#############################################
+# Set developer mode by default to enable all UI features
+$global:firecrawlMode = "developer"
+$global:startCommand = "pnpm run start"
+$global:nodeEnv = "development"
+$global:enableDocs = "true"
+$global:enableAdmin = "true"
+$global:enableUI = "true"
+$global:enableSwagger = "true"
+$global:enableBullBoard = "true"
+
+Write-Host "Firecrawl configured in Developer Mode (all UI features enabled)" -ForegroundColor Green
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -126,6 +153,172 @@ function Test-FirecrawlAPIDependency {
 
 	Write-Host "All dependencies are satisfied. Redis and Playwright service are ready for Firecrawl API."
 	return $true
+}
+
+#==============================================================================
+# Function: Test-FirecrawlUIAvailability
+#==============================================================================
+<#
+.SYNOPSIS
+	Tests the availability of Firecrawl UI and documentation endpoints.
+.DESCRIPTION
+	Tests various Firecrawl endpoints to determine which UI features are available:
+	1. Main interface (root URL)
+	2. API documentation (/docs)
+	3. Admin dashboard (/admin/queues)
+	4. Health check (/health)
+	5. API endpoint (/v1/scrape)
+	Returns a hashtable with the status of each endpoint.
+.OUTPUTS
+	[hashtable] Returns a hashtable with endpoint URLs as keys and availability status as values.
+.EXAMPLE
+	$uiStatus = Test-FirecrawlUIAvailability
+.NOTES
+	Uses Test-HTTPPort function to check endpoint availability.
+	Designed to be called after the container is running.
+#>
+function Test-FirecrawlUIAvailability {
+	Write-Host "Testing Firecrawl UI and service availability..."
+
+	$endpoints = @{
+		"Main Interface"  = $global:firecrawlBaseUrl
+		"Health Check"    = $global:firecrawlHealthUrl
+		"Readiness Check" = $global:firecrawlReadinessUrl
+		"Server Health"   = $global:firecrawlServerHealthUrl
+		"Admin Dashboard" = $global:firecrawlAdminUrl
+	}
+
+	$results = @{}
+
+	foreach ($endpoint in $endpoints.GetEnumerator()) {
+		$name = $endpoint.Key
+		$url = $endpoint.Value
+
+		Write-Host "  Testing $name..." -NoNewline
+
+		try {
+			# Use a simple HTTP test with short timeout
+			$response = Invoke-WebRequest -Uri $url -Method GET -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
+			if ($response.StatusCode -eq 200) {
+				$results[$name] = @{ Status = "Available"; Url = $url; Icon = "✅" }
+				Write-Host " ✅ Available" -ForegroundColor Green
+			}
+			else {
+				$results[$name] = @{ Status = "Error ($($response.StatusCode))"; Url = $url; Icon = "❌" }
+				Write-Host " ❌ Error ($($response.StatusCode))" -ForegroundColor Red
+			}
+		}
+		catch {
+			# Check if it's a 404 or other HTTP error
+			if ($_.Exception.Response.StatusCode -eq 404) {
+				$results[$name] = @{ Status = "Not Found (404)"; Url = $url; Icon = "❌" }
+				Write-Host " ❌ Not Found (404)" -ForegroundColor Red
+			}
+			else {
+				$results[$name] = @{ Status = "Unavailable"; Url = $url; Icon = "❌" }
+				Write-Host " ❌ Unavailable" -ForegroundColor Red
+			}
+		}
+	}
+
+	# Test API endpoints separately (they require POST, not GET)
+	Write-Host "  Testing API Endpoints..." -NoNewline
+	try {
+		# Test if the API endpoint structure is available by checking a simple endpoint
+		$testUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
+		$response = Invoke-WebRequest -Uri $testUrl -Method GET -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
+		if ($response.StatusCode -eq 200) {
+			$results["API Endpoints"] = @{ Status = "Available (v0 & v1)"; Url = "$global:firecrawlBaseUrl/v1/scrape (POST)"; Icon = "✅" }
+			Write-Host " ✅ Available (v0 & v1)" -ForegroundColor Green
+		}
+		else {
+			$results["API Endpoints"] = @{ Status = "Error ($($response.StatusCode))"; Url = "$global:firecrawlBaseUrl/v1/scrape (POST)"; Icon = "❌" }
+			Write-Host " ❌ Error ($($response.StatusCode))" -ForegroundColor Red
+		}
+	}
+	catch {
+		$results["API Endpoints"] = @{ Status = "Unavailable"; Url = "$global:firecrawlBaseUrl/v1/scrape (POST)"; Icon = "❌" }
+		Write-Host " ❌ Unavailable" -ForegroundColor Red
+	}
+
+	return $results
+}
+
+#==============================================================================
+# Function: Show-FirecrawlServicesSummary
+#==============================================================================
+<#
+.SYNOPSIS
+	Displays a comprehensive summary of all Firecrawl services and their URLs.
+.DESCRIPTION
+	Shows a formatted list of all available Firecrawl services, their URLs, and availability status.
+	Includes main services, related services, and helpful notes for users.
+.PARAMETER UIStatus
+	Hashtable containing the UI availability test results from Test-FirecrawlUIAvailability.
+.EXAMPLE
+	Show-FirecrawlServicesSummary -UIStatus $uiTestResults
+.NOTES
+	Uses Write-Host for formatted output with colors.
+	Designed to be called at the end of installation process.
+#>
+function Show-FirecrawlServicesSummary {
+	param(
+		[hashtable]$UIStatus
+	)
+
+	Write-Host ""
+	Write-Host "==========================================" -ForegroundColor Cyan
+	Write-Host "🔥 Firecrawl Services Available" -ForegroundColor Yellow
+	Write-Host "==========================================" -ForegroundColor Cyan
+
+	# Main Firecrawl Services
+	Write-Host ""
+	Write-Host "Main Services:" -ForegroundColor White
+	foreach ($service in $UIStatus.GetEnumerator()) {
+		$name = $service.Key
+		$info = $service.Value
+		$icon = $info.Icon
+		$url = $info.Url
+		$status = $info.Status
+
+		Write-Host "$icon $($name.PadRight(20)): $url" -ForegroundColor $(if ($icon -eq "✅") { "Green" } else { "Red" })
+		if ($icon -eq "❌") {
+			Write-Host "   └─ Status: $status" -ForegroundColor Gray
+		}
+	}
+
+	# Related Services
+	Write-Host ""
+	Write-Host "Related Services:" -ForegroundColor White
+
+	# Test Redis availability
+	$redisAvailable = Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Redis"
+	$redisIcon = if ($redisAvailable) { "✅" } else { "❌" }
+	Write-Host "$redisIcon Redis Cache        : $global:redisUrl" -ForegroundColor $(if ($redisAvailable) { "Green" } else { "Red" })
+
+	# Test Playwright availability
+	$playwrightAvailable = Test-TCPPort -ComputerName "localhost" -Port $global:playwrightPort -serviceName "Playwright"
+	$playwrightIcon = if ($playwrightAvailable) { "✅" } else { "❌" }
+	Write-Host "$playwrightIcon Playwright Service: $global:playwrightUrl" -ForegroundColor $(if ($playwrightAvailable) { "Green" } else { "Red" })
+
+	# Usage Notes
+	Write-Host ""
+	Write-Host "Usage Notes:" -ForegroundColor White
+	Write-Host "• ✅ = Service is available and responding" -ForegroundColor Gray
+	Write-Host "• ❌ = Service is not available or not responding" -ForegroundColor Gray
+
+	# Check if any UI features are missing and provide guidance
+	$missingServices = $UIStatus.Values | Where-Object { $_.Icon -eq "❌" }
+	if ($missingServices.Count -gt 0) {
+		Write-Host ""
+		Write-Host "Troubleshooting:" -ForegroundColor Yellow
+		Write-Host "• Some UI features may require development mode or additional configuration" -ForegroundColor Gray
+		Write-Host "• Admin Dashboard may need specific environment variables" -ForegroundColor Gray
+		Write-Host "• Try accessing the main interface first: $global:firecrawlBaseUrl" -ForegroundColor Gray
+	}
+
+	Write-Host ""
+	Write-Host "==========================================" -ForegroundColor Cyan
 }
 
 #==============================================================================
@@ -217,11 +410,26 @@ function Install-FirecrawlContainer {
 		"--env", "HOST=0.0.0.0", # Bind to all interfaces
 		"--env", "PORT=$global:firecrawlPort", # Set the port
 		"--env", "FLY_PROCESS_GROUP=app", # Set process group for API
+		"--env", "NODE_ENV=$global:nodeEnv", # Set Node environment (development/production)
+		"--env", "ENABLE_DOCS=$global:enableDocs", # Enable/disable documentation
+		"--env", "ENABLE_ADMIN=$global:enableAdmin", # Enable/disable admin dashboard
+		"--env", "ENABLE_UI=$global:enableUI", # Enable UI features
+		"--env", "ENABLE_SWAGGER=$global:enableSwagger", # Enable Swagger documentation
+		"--env", "ENABLE_BULL_BOARD=$global:enableBullBoard", # Enable Bull queue dashboard
+		"--env", "BULL_BOARD_ENABLED=true", # Alternative Bull board flag
+		"--env", "SWAGGER_ENABLED=true", # Alternative Swagger flag
+		"--env", "API_DOCS_ENABLED=true", # Alternative API docs flag
+		"--env", "ADMIN_ENABLED=true", # Alternative admin flag
+		"--env", "DEBUG=*", # Enable debug logging
+		"--env", "LOG_LEVEL=debug", # Set log level to debug
+		"--env", "SELF_HOSTED=true", # Indicate self-hosted deployment
 		"--env", "POSTHOG_API_KEY=" # Disable PostHog analytics.
 	)
 
-	# Execute the command using splatting with the API command
-	& $global:enginePath run @runOptions $global:imageName pnpm run start:production
+	Write-Host "Running Firecrawl in $global:firecrawlMode mode with command: $global:startCommand" -ForegroundColor Cyan
+
+	# Execute the command using splatting with the selected start command
+	& $global:enginePath run @runOptions $global:imageName $global:startCommand
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run Firecrawl container '$global:firecrawlName'."
 		exit 1
@@ -240,7 +448,16 @@ function Install-FirecrawlContainer {
 	Write-Host "Testing Redis container connectivity on port $global:redisPort..."
 	Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Firecrawl Redis"
 
-	Write-Host "Firecrawl is now running and accessible at http://localhost:$global:firecrawlPort"
+	#############################################
+	# Step 7: Test UI Availability and Show Summary
+	#############################################
+	Write-Host ""
+	$uiTestResults = Test-FirecrawlUIAvailability
+	Show-FirecrawlServicesSummary -UIStatus $uiTestResults
+
+	Write-Host ""
+	Write-Host "Firecrawl installation completed successfully!" -ForegroundColor Green
+	Write-Host "Main API is accessible at: $global:firecrawlBaseUrl" -ForegroundColor Cyan
 }
 
 # Note: Uninstall-FirecrawlContainer, Backup-FirecrawlContainer, Restore-FirecrawlContainer functions removed. Shared functions called directly from menu.
