@@ -192,8 +192,8 @@ function Start-n8nContainer {
 	# Build the run command
 	$runOptions = @(
 		# Workaround: Accept self-signed certificates.
-		"--env", "NODE_TLS_REJECT_UNAUTHORIZED=0",
-		"--dns", "1.1.1.1", "--dns", "8.8.8.8",
+		#"--env", "NODE_TLS_REJECT_UNAUTHORIZED=0",
+		#"--dns", "1.1.1.1", "--dns", "8.8.8.8",
 		"--add-host", "host.local:$HostIpForContainer",
 		"--env", "GENERIC_TIMEZONE=Europe/London",            # n8n’s internal TZ
 		"--env", "TZ=Europe/London",                          # Linux tzdata TZ
