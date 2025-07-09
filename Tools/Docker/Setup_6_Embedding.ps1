@@ -21,13 +21,42 @@ using namespace System.IO
 # Ensure the script working directory is set.
 Set-ScriptLocation
 
+# Model selection menu
+$modelConfigs = @(
+	@{ ModelName = 'sentence-transformers/all-mpnet-base-v2'; Port = 8000 },
+	@{ ModelName = 'Qwen/Qwen-3-Embedding-8B'; Port = 8001 }
+)
+Write-Host 'Select embedding model to install:'
+for ($i = 0; $i -lt $modelConfigs.Count; $i++) {
+	$cfg = $modelConfigs[$i]
+	Write-Host "[$($i+1)] $($cfg.ModelName) on port $($cfg.Port)"
+}
+$selection = Read-Host 'Enter choice number'
+if (($selection -as [int]) -lt 1 -or ($selection -as [int]) -gt $modelConfigs.Count) {
+	Write-Error 'Invalid selection'
+	exit 1
+}
+$selectedConfig = $modelConfigs[$selection - 1]
+# Derive suffix and configuration
+$suffix = $selectedConfig.ModelName.Split('/')[-1].ToLower()
+$global:ModelName = $selectedConfig.ModelName
+$global:imageName = "embedding-$suffix"
+$global:containerName = $global:imageName
+$global:volumeName = $global:containerName
+$global:Port = $selectedConfig.Port
+# Ensure downloads root directory exists
+$downloadRoot = Join-Path $PSScriptRoot "downloads"
+New-Item -ItemType Directory -Path $downloadRoot -Force | Out-Null
+$global:buildDir = Join-Path $downloadRoot $global:containerName
+
+# Prompt whether to pre-download the model into the image
+$preDownloadAnswer = Read-Host 'Pre-download model during build? (Y/N)'
+$global:PreDownload = if ($preDownloadAnswer -match '^[Yy]') { 'true' } else { 'false' }
+
 #############################################
 # Global Variables and Build Context Directory
 #############################################
-$global:imageName = "embedding-api" # Standardized variable name
-$global:containerName = "embedding-api"
-$global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
-$global:buildDir = Join-Path $PSScriptRoot "embedding_api"
+# Removed static defaults; using values from menu selection above
 
 # --- Engine Selection (Hardcoded to Podman) ---
 $global:containerEngine = "podman"
@@ -57,6 +86,8 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 function Invoke-EmbeddingImageBuild {
 	# Define file contents for the Embedding API application.
 	$dockerfileContent = @"
+ARG MODEL_NAME
+ARG PRE_DOWNLOAD=false
 FROM python:3.9-slim
 
 WORKDIR /app
@@ -67,6 +98,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the API code
 COPY embedding_api.py .
+
+# Set model environment variable
+ENV MODEL_NAME=$MODEL_NAME
+
+# Pre-download model if requested
+RUN if [ "$PRE_DOWNLOAD" = "true" ]; then python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.getenv('MODEL_NAME'))"; fi
 
 EXPOSE 8000
 
@@ -82,19 +119,20 @@ pydantic
 "@
 
 	$embeddingApiContent = @"
-from fastapi import FastAPI, HTTPException, Response
-from pydantic import BaseModel
-from typing import List, Union, Optional
-import torch
-import base64
-import struct
-from sentence-transformers import SentenceTransformer
+	from fastapi import FastAPI, HTTPException, Response
+	from pydantic import BaseModel
+	from typing import List, Union, Optional
+	import torch
+	import base64
+	import struct
+	from sentence-transformers import SentenceTransformer
+	import os
 
-app = FastAPI(title='Embedding API')
+	app = FastAPI(title='Embedding API')
 
-# Use a robust transformer model for semantic embeddings.
-MODEL_NAME = 'sentence-transformers/all-mpnet-base-v2'
-model = SentenceTransformer(MODEL_NAME)
+	# Use MODEL_NAME from environment or fallback to default
+	MODEL_NAME = os.getenv('MODEL_NAME', 'sentence-transformers/all-mpnet-base-v2')
+	model = SentenceTransformer(MODEL_NAME)
 
 class EmbeddingRequest(BaseModel):
 	# Optionally override the model (default is our MODEL_NAME).
@@ -175,7 +213,7 @@ async def options_handler(path: str):
 
 	Write-Host "Building the Embedding API container image..."
 	# Build the container image using Podman.
-	& $global:enginePath build --tag $global:imageName "`"$global:buildDir`"" # Use imageName
+	& $global:enginePath build --build-arg MODEL_NAME=$global:ModelName --build-arg PRE_DOWNLOAD=$global:PreDownload --tag $global:imageName "`"$global:buildDir`"" # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to build embedding API image."
 		exit 1
@@ -212,16 +250,16 @@ function Install-EmbeddingContainer {
 	#   --detach: runs the container in background.
 	#   --name: assigns the container the name "embedding-api".
 	#   --publish: maps host port 8000 to container port 8000.
-	& $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageName # Use imageName
+	& $global:enginePath run --detach --name $global:containerName --publish $global:Port:8000 --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run embedding API container."
 		exit 1
 	}
 
 	Start-Sleep -Seconds 10
-	Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
-	Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-	Write-Host "Embedding API is accessible at http://localhost:8000/v1/embeddings"
+	Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
+	Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
+	Write-Host "Embedding API is accessible at http://localhost:$global:Port/v1/embeddings"
 }
 
 #==============================================================================
@@ -250,7 +288,8 @@ function Update-EmbeddingContainer {
 	Write-Host "Updating the Embedding API container..."
 
 	# Rebuild the container image.
-	if ($PSCmdlet.ShouldProcess($global:imageName, "Build Image")) { # Use imageName
+	if ($PSCmdlet.ShouldProcess($global:imageName, "Build Image")) {
+		# Use imageName
 		Invoke-EmbeddingImageBuild
 	}
 	else {
@@ -271,16 +310,16 @@ function Update-EmbeddingContainer {
 		#   --detach: runs the container in background.
 		#   --name: assigns the container the name "embedding-api".
 		#   --publish: maps host port 8000 to container port 8000.
-		& $global:enginePath run --detach --name $global:containerName --publish 8000:8000 $global:imageName # Use imageName
+		& $global:enginePath run --detach --name $global:containerName --publish $global:Port:8000 --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to run updated embedding API container."
 			exit 1
 		}
 
 		Start-Sleep -Seconds 10
-		Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Embedding API"
-		Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
-		Write-Host "Embedding API container updated and accessible at http://localhost:8000/v1/embeddings"
+		Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
+		Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
+		Write-Host "Embedding API container updated and accessible at http://localhost:$global:Port/v1/embeddings"
 	}
 }
 
@@ -311,8 +350,8 @@ $menuActions = @{
 			-ContainerEngine $global:containerEngine ` # This script hardcodes podman
 		-EnginePath $global:enginePath `
 			-DisplayName "Embedding API" `
-			-TcpPort 8000 `
-			-HttpPort 8000 `
+			-TcpPort $global:Port `
+			-HttpPort $global:Port `
 			-HttpPath "/v1/models" `
 			-AdditionalInfo @{ "Build Dir" = $global:buildDir }
 	}
