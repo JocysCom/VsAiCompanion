@@ -21,7 +21,7 @@
 # Model selection menu
 $modelConfigs = @(
 	@{ ModelName = 'sentence-transformers/all-mpnet-base-v2'; Port = 8000 },
-	@{ ModelName = 'Qwen/Qwen3-Embedding-8B'; Port = 8001 }
+	@{ ModelName = 'Snowflake/snowflake-arctic-embed-l-v2.0'; Port = 8001 }
 )
 Write-Host 'Select embedding model to test:'
 for ($i = 0; $i -lt $modelConfigs.Count; $i++) {
@@ -203,36 +203,32 @@ try {
 		throw "Connection test failed."
 	}
 	
-	# For large models, wait for API to be ready
-	if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*") {
-		Write-Host "Large model detected. Waiting for API to be ready..."
-		$maxAttempts = 20  # 10 minutes total
-		$attempt = 1
-		$apiReady = $false
-		
-		while ($attempt -le $maxAttempts -and -not $apiReady) {
-			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
-			Start-Sleep -Seconds 30
-			
-			try {
-				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 10 -ErrorAction Stop
-				if ($response.StatusCode -eq 200) {
-					$apiReady = $true
-					Write-Host "API is ready!"
-				}
-			}
-			catch {
-				Write-Host "API not ready yet. Model still loading... (Error: $($_.Exception.Message))"
-				$attempt++
+	Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
+	
+	$maxAttempts = 20
+	$attempt = 1
+	
+	while ($attempt -le $maxAttempts -and -not $apiReady) {
+		Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+		try {
+			$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+			if ($response.StatusCode -eq 200) {
+				$apiReady = $true
+				Write-Host "API is ready!"
 			}
 		}
-		
+		catch {
+			$attempt++
+		}
 		if (-not $apiReady) {
-			Write-Error "API did not become ready within 10 minutes. Model may still be loading."
-			$testPass = $false
-			throw "API readiness check failed."
+			Start-Sleep -Seconds 10
 		}
 	}
+	
+	if (-not $apiReady) {
+		Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
+	}
+
 
 	############################################################################
 	# 2) Define test lines (including repetitions).

@@ -256,18 +256,25 @@ function Install-EmbeddingContainer {
 		exit 1
 	}
 
-	# Wait longer for large models to initialize
-	if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*" -or $global:ModelName -like "*snowflake*") {
-		Write-Host "Large model detected. This may take several minutes to load..."
-		Write-Host "Waiting for model to initialize (checking every 30 seconds)..."
-		
-		$maxAttempts = 20  # 10 minutes total
+	# Try API first, only wait if it fails
+	$apiReady = $false
+	try {
+		$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+		if ($response.StatusCode -eq 200) {
+			$apiReady = $true
+			Write-Host "API is ready!"
+		}
+	}
+	catch {
+		Write-Host "API not ready immediately. Checking if this is a large model that needs time to load..."
+		Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
+			
+		$maxAttempts = 20
 		$attempt = 1
-		$apiReady = $false
 		
 		while ($attempt -le $maxAttempts -and -not $apiReady) {
 			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
-			Start-Sleep -Seconds 30
+			Start-Sleep -Seconds 10
 			
 			try {
 				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
@@ -283,11 +290,8 @@ function Install-EmbeddingContainer {
 		}
 		
 		if (-not $apiReady) {
-			Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
+			Write-Warning "API did not become ready. You may need to wait longer or check container logs with: podman logs $global:containerName"
 		}
-	}
-	else {
-		Start-Sleep -Seconds 10
 	}
 	
 	Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
@@ -349,40 +353,28 @@ function Update-EmbeddingContainer {
 			exit 1
 		}
 
-		# Wait longer for large models to initialize
-		if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*" -or $global:ModelName -like "*snowflake*") {
-			Write-Host "Large model detected. This may take several minutes to load..."
-			Write-Host "Waiting for model to initialize (checking every 30 seconds)..."
-			
-			$maxAttempts = 20  # 10 minutes total
-			$attempt = 1
-			$apiReady = $false
-			
-			while ($attempt -le $maxAttempts -and -not $apiReady) {
-				Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
-				Start-Sleep -Seconds 30
-				
-				try {
-					$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
-					if ($response.StatusCode -eq 200) {
-						$apiReady = $true
-						Write-Host "API is ready!"
-					}
-				}
-				catch {
-					Write-Host "API not ready yet. Model still loading..."
-					$attempt++
-				}
-			}
-			
-			if (-not $apiReady) {
-				Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
-			}
-		}
-		else {
-			Start-Sleep -Seconds 10
-		}
+		Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
 		
+		$maxAttempts = 20
+		$attempt = 1
+		
+		while ($attempt -le $maxAttempts -and -not $apiReady) {
+			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+			try {
+				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+				if ($response.StatusCode -eq 200) {
+					$apiReady = $true
+					Write-Host "API is ready!"
+				}
+			}
+			catch {
+				$attempt++
+			}
+			if (-not $apiReady) {
+				Start-Sleep -Seconds 10
+			}
+		}
+	
 		Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 		Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 		Write-Host "Embedding API container updated and accessible at http://localhost:$global:Port/v1/embeddings"
