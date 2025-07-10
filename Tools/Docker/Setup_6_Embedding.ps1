@@ -24,7 +24,7 @@ Set-ScriptLocation
 # Model selection menu
 $modelConfigs = @(
 	@{ ModelName = 'sentence-transformers/all-mpnet-base-v2'; Port = 8000 },
-	@{ ModelName = 'Qwen/Qwen-3-Embedding-8B'; Port = 8001 }
+	@{ ModelName = 'Qwen/Qwen3-Embedding-8B'; Port = 8001 }
 )
 Write-Host 'Select embedding model to install:'
 for ($i = 0; $i -lt $modelConfigs.Count; $i++) {
@@ -119,20 +119,20 @@ pydantic
 "@
 
 	$embeddingApiContent = @"
-	from fastapi import FastAPI, HTTPException, Response
-	from pydantic import BaseModel
-	from typing import List, Union, Optional
-	import torch
-	import base64
-	import struct
-	from sentence-transformers import SentenceTransformer
-	import os
+from fastapi import FastAPI, HTTPException, Response
+from pydantic import BaseModel
+from typing import List, Union, Optional
+import torch
+import base64
+import struct
+from sentence_transformers import SentenceTransformer
+import os
 
-	app = FastAPI(title='Embedding API')
+app = FastAPI(title='Embedding API')
 
-	# Use MODEL_NAME from environment or fallback to default
-	MODEL_NAME = os.getenv('MODEL_NAME', 'sentence-transformers/all-mpnet-base-v2')
-	model = SentenceTransformer(MODEL_NAME)
+# Use MODEL_NAME from environment or fallback to default
+MODEL_NAME = os.getenv('MODEL_NAME', 'sentence-transformers/all-mpnet-base-v2')
+model = SentenceTransformer(MODEL_NAME)
 
 class EmbeddingRequest(BaseModel):
 	# Optionally override the model (default is our MODEL_NAME).
@@ -250,13 +250,46 @@ function Install-EmbeddingContainer {
 	#   --detach: runs the container in background.
 	#   --name: assigns the container the name "embedding-api".
 	#   --publish: maps host port 8000 to container port 8000.
-	& $global:enginePath run --detach --name $global:containerName --publish $global:Port:8000 --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
+	& $global:enginePath run --detach --name $global:containerName --publish "$($global:Port):8000" --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run embedding API container."
 		exit 1
 	}
 
-	Start-Sleep -Seconds 10
+	# Wait longer for large models to initialize
+	if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*") {
+		Write-Host "Large model detected. This may take several minutes to load..."
+		Write-Host "Waiting for model to initialize (checking every 30 seconds)..."
+		
+		$maxAttempts = 20  # 10 minutes total
+		$attempt = 1
+		$apiReady = $false
+		
+		while ($attempt -le $maxAttempts -and -not $apiReady) {
+			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+			Start-Sleep -Seconds 30
+			
+			try {
+				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+				if ($response.StatusCode -eq 200) {
+					$apiReady = $true
+					Write-Host "API is ready!"
+				}
+			}
+			catch {
+				Write-Host "API not ready yet. Model still loading..."
+				$attempt++
+			}
+		}
+		
+		if (-not $apiReady) {
+			Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
+		}
+	}
+	else {
+		Start-Sleep -Seconds 10
+	}
+	
 	Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
 	Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 	Write-Host "Embedding API is accessible at http://localhost:$global:Port/v1/embeddings"
@@ -310,13 +343,46 @@ function Update-EmbeddingContainer {
 		#   --detach: runs the container in background.
 		#   --name: assigns the container the name "embedding-api".
 		#   --publish: maps host port 8000 to container port 8000.
-		& $global:enginePath run --detach --name $global:containerName --publish $global:Port:8000 --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
+		& $global:enginePath run --detach --name $global:containerName --publish "$($global:Port):8000" --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to run updated embedding API container."
 			exit 1
 		}
 
-		Start-Sleep -Seconds 10
+		# Wait longer for large models to initialize
+		if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*") {
+			Write-Host "Large model detected. This may take several minutes to load..."
+			Write-Host "Waiting for model to initialize (checking every 30 seconds)..."
+			
+			$maxAttempts = 20  # 10 minutes total
+			$attempt = 1
+			$apiReady = $false
+			
+			while ($attempt -le $maxAttempts -and -not $apiReady) {
+				Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+				Start-Sleep -Seconds 30
+				
+				try {
+					$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+					if ($response.StatusCode -eq 200) {
+						$apiReady = $true
+						Write-Host "API is ready!"
+					}
+				}
+				catch {
+					Write-Host "API not ready yet. Model still loading..."
+					$attempt++
+				}
+			}
+			
+			if (-not $apiReady) {
+				Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
+			}
+		}
+		else {
+			Start-Sleep -Seconds 10
+		}
+		
 		Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
 		Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 		Write-Host "Embedding API container updated and accessible at http://localhost:$global:Port/v1/embeddings"
