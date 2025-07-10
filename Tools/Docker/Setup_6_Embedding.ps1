@@ -24,7 +24,7 @@ Set-ScriptLocation
 # Model selection menu
 $modelConfigs = @(
 	@{ ModelName = 'sentence-transformers/all-mpnet-base-v2'; Port = 8000 },
-	@{ ModelName = 'Qwen/Qwen3-Embedding-8B'; Port = 8001 }
+	@{ ModelName = 'Snowflake/snowflake-arctic-embed-l-v2.0'; Port = 8001 }
 )
 Write-Host 'Select embedding model to install:'
 for ($i = 0; $i -lt $modelConfigs.Count; $i++) {
@@ -257,7 +257,7 @@ function Install-EmbeddingContainer {
 	}
 
 	# Wait longer for large models to initialize
-	if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*") {
+	if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*" -or $global:ModelName -like "*snowflake*") {
 		Write-Host "Large model detected. This may take several minutes to load..."
 		Write-Host "Waiting for model to initialize (checking every 30 seconds)..."
 		
@@ -290,7 +290,7 @@ function Install-EmbeddingContainer {
 		Start-Sleep -Seconds 10
 	}
 	
-	Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
+	Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 	Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 	Write-Host "Embedding API is accessible at http://localhost:$global:Port/v1/embeddings"
 }
@@ -350,7 +350,7 @@ function Update-EmbeddingContainer {
 		}
 
 		# Wait longer for large models to initialize
-		if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*") {
+		if ($global:ModelName -like "*8B*" -or $global:ModelName -like "*7B*" -or $global:ModelName -like "*Qwen*" -or $global:ModelName -like "*snowflake*") {
 			Write-Host "Large model detected. This may take several minutes to load..."
 			Write-Host "Waiting for model to initialize (checking every 30 seconds)..."
 			
@@ -383,7 +383,7 @@ function Update-EmbeddingContainer {
 			Start-Sleep -Seconds 10
 		}
 		
-		Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
+		Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 		Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 		Write-Host "Embedding API container updated and accessible at http://localhost:$global:Port/v1/embeddings"
 	}
