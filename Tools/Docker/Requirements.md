@@ -233,22 +233,50 @@ $menuItems = [ordered]@{
     "6" = "Update Image (App)"
     "7" = "Export Volume (Data)"
     "8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
     # ... other options ...
-    0" = "Exit menu"
+    "0" = "Exit menu"
 }
+
+
+	"1" = {
+		Show-ContainerStatus -ContainerName $global:containerName `
+			-ContainerEngine $global:containerEngine `
+			-EnginePath $global:enginePath `
+			-DisplayName $global:containerName `
+			-TcpPort $global:containerPort `
+			-HttpPort $global:containerPort
+	}
+	"2" = { Install-n8nContainer }
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
+	"4" = {
+		Write-Host "Saving '$containerName' Container Image..."
+		Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+	}
+	"5" = {
+		Write-Host "Loading '$($global:containerName)' Container Image..."
+		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+	}
+	"6" = { Update-n8nContainer }
+	"7" = {
+		Write-Host "Exporting '$($global:volumeName)' Volume..."
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+	}
+
 
 # Define Menu Actions
 $menuActions = @{
-    "1" = { ... }
-    "2" = { ... }
-    "3" = { ... }
-    "4" = { ... }
-    "5" = { ... }
-    "6" = { ... }
-    "7" = { ... }
-    "8" = { ... }
-    # ... other actions ...
-    # "A" = { Custom-Action } # Optional
+    "1" = { Show-ContainerStatus ... }
+    "2" = { Install-n8nContainer ... }
+    "3" = { Remove-ContainerAndVolume ... }
+    "4" = { Backup-ContainerImage ... }
+    "5" = { Restore-ContainerImage ... }
+    "6" = { Update-n8nContainer ... }
+    "7" = { Backup-ContainerVolume ... }
+    "8" = { Restore-ContainerVolume ... }
+	"9" = { Test-ImageUpdateAvailable ... }
+    # ... other optional actions (use letters) ...
+    "A" = { Custom-Action }
 }
 
 # Invoke the Menu Loop

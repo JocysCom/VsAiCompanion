@@ -276,9 +276,10 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (Data)"
-	"7" = "Import Volume (Data)"
-	"8" = "Update Image (App)"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
 
@@ -296,13 +297,14 @@ $menuActions = @{
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName }
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
-	"7" = {
+	"6" = { Update-NocoDBContainer }
+	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"8" = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Update-NocoDBContainer }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

@@ -248,6 +248,7 @@ $menuItems = [ordered]@{
 	"6" = "Update Image (App)"
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
 
@@ -272,6 +273,7 @@ $menuActions = @{
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

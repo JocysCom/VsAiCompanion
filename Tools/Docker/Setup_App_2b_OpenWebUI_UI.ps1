@@ -440,9 +440,9 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (Data)"
-	"7" = "Import Volume (Data)"
-	"8" = "Update Image (App)"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
 	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
@@ -463,13 +463,13 @@ $menuActions = @{
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
+	"6" = { Update-OpenWebUIContainer } # Calls the dedicated update function
+	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"8" = {
 		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Update-OpenWebUIContainer } # Calls the dedicated update function
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

@@ -473,11 +473,12 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (Data)"
-	"7" = "Import Volume (Data)"
-	"8" = "Update Image (App)"
-	"A" = "Restart"
-	"B" = "Reset Admin Password"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
+	"R" = "Restart"
+	"P" = "Reset Admin Password"
 	"0" = "Exit menu"
 }
 
@@ -501,18 +502,19 @@ $menuActions = @{
 		Write-Host "Loading '$($global:containerName)' Container Image..."
 		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
 	}
-	"6" = {
+	"6" = { Update-n8nContainer }
+	"7" = {
 		Write-Host "Exporting '$($global:volumeName)' Volume..."
 		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 	}
-	"7" = {
+	"8" = {
 		Write-Host "Importing '$($global:volumeName)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		Restart-n8nContainer
 	}
-	"8" = { Update-n8nContainer }
-	"A" = { Restart-n8nContainer }
-	"B" = { Reset-AdminPassword }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"R" = { Restart-n8nContainer }
+	"P" = { Reset-AdminPassword }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

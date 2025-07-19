@@ -306,7 +306,8 @@ $menuItems = [ordered]@{
 	"8" = "Export Volume (Workspace Data)"
 	"9" = "Import Volume (Workspace Data)"
 	"A" = "Update Image (App)"
-	"B" = "Restart"
+	"B" = "Check for Updates"
+	"C" = "Restart"
 	"0" = "Exit menu"
 }
 
@@ -350,7 +351,8 @@ $menuActions = @{
 		Restart-CloudBeaverContainer # Restart after import
 	}
 	"A" = { Update-CloudBeaverContainer }
-	"B" = { Restart-CloudBeaverContainer }
+	"B" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"C" = { Restart-CloudBeaverContainer }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
