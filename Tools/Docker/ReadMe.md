@@ -20,6 +20,7 @@ All services are containerized and can be managed through the provided PowerShel
 - **TCP 9099** - `ghcr.io/open-webui/pipelines:main` - AI workflow orchestration and pipeline management
 - **TCP 3000** - `ghcr.io/open-webui/open-webui:main` - AI model management interface with chat capabilities
 - **TCP 5678** - `docker.io/n8nio/n8n:latest` - Visual workflow automation platform for integrating services
+- **TCP 8001** - `zepai/zep:latest` - Temporal knowledge graph-based memory layer for AI agents
 
 ### Web Scraping and Data Processing
 
@@ -119,6 +120,7 @@ These scripts handle the deployment and management of specific containerized app
 - **Setup_App_7_NocoDB_Core.ps1**: Installs the NocoDB container for no-code database management (supports Docker/Podman).
 - **Setup_App_8_CloudBeaver_Core.ps1**: Installs the CloudBeaver container for web-based database administration (supports Docker/Podman).
 - **Setup_App_9_Playwright_Service.ps1**: Installs the Playwright Service container for web rendering (supports Docker/Podman).
+- **Setup_App_Zep.ps1**: Installs the ZEP container for temporal knowledge graph-based memory layer for AI agents (supports Docker/Podman).
 
 ### Data Management (`Setup_Data_*.ps1`)
 
