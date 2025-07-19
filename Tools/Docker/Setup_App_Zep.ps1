@@ -30,8 +30,9 @@ Set-ScriptLocation
 $global:imageName = "zepai/zep:latest"
 $global:containerName = "zep"
 $global:volumeName = "zep_data"
-$global:containerPort = 8001
+$global:containerPort = 8002
 $global:volumeMountPath = "/app/data"
+$global:zepApiSecret = "zep-api-secret-key-2025-fixed-installation-key"
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -99,6 +100,23 @@ function Get-ZepContainerConfig {
 	# Set basic ZEP environment variables
 	$envVars += "ZEP_DEVELOPMENT=false"
 	$envVars += "ZEP_LOG_LEVEL=info"
+	
+	# Set required store configuration for ZEP
+	$envVars += "STORE_TYPE=sqlite"
+	$envVars += "STORE_SQLITE_PATH=/app/data/zep.db"
+	
+	# Use consistent ZEP auth secret from global variable
+	$apiSecretExists = $false
+	foreach ($env in $envVars) {
+		if ($env -match "^(ZEP_AUTH_SECRET)=") {
+			$apiSecretExists = $true
+			break
+		}
+	}
+	if (-not $apiSecretExists) {
+		$envVars += "ZEP_AUTH_SECRET=$global:zepApiSecret"
+		$envVars += "ZEP_AUTH_REQUIRED=false"
+	}
 
 	# Return a custom object
 	return [PSCustomObject]@{
@@ -116,7 +134,7 @@ function Get-ZepContainerConfig {
 .DESCRIPTION
 	Runs a new container using the selected engine with the specified image.
 	Configures standard ZEP settings: detached mode, name 'zep', mounts 'zep_data' volume
-	to '/app/data', and maps host port 8000 to container port 8000.
+	to '/app/data', and maps host port 8002 to container port 8002.
 	Applies any additional environment variables provided via the EnvVars parameter.
 	After starting, waits 30 seconds and performs TCP and HTTP connectivity tests.
 	Supports -WhatIf.
@@ -156,7 +174,7 @@ function Start-ZepContainer {
 		"--add-host", "host.local:$HostIpForContainer",
 		"--env", "TZ=Europe/London",
 		"--detach", # Run container in background.
-		"--publish", "$($global:containerPort):$($global:containerPort)", # Map host port to container port.
+		"--publish", "$($global:containerPort):8000", # Map host port 8002 to container port 8000.
 		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data.
 		"--name", $global:containerName # Assign a name to the container.
 	)
@@ -318,6 +336,34 @@ function Update-ZepContainer {
 		# No need to write an error here.
 	}
 }
+#==============================================================================
+# Function: Show-ZepLogs
+#==============================================================================
+<#
+.SYNOPSIS
+	Shows the ZEP container logs for troubleshooting.
+.DESCRIPTION
+	Displays the recent logs from the ZEP container to help diagnose configuration
+	or runtime issues. Shows the last 50 lines by default.
+.PARAMETER Lines
+	Number of log lines to display (default: 50).
+.EXAMPLE
+	Show-ZepLogs
+	Show-ZepLogs -Lines 100
+.NOTES
+	Uses 'engine logs' command to retrieve container logs.
+#>
+function Show-ZepLogs {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $false)]
+		[int]$Lines = 50
+	)
+
+	Write-Host "Showing last $Lines lines of ZEP container logs..."
+	& $global:enginePath logs --tail $Lines $global:containerName
+}
+
 
 ################################################################################
 # Main Menu Loop using Generic Function
@@ -335,6 +381,7 @@ $menuItems = [ordered]@{
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
 	"9" = "Check for Updates"
+	"L" = "Show Container Logs"
 	"R" = "Restart Container"
 	"0" = "Exit menu"
 }
@@ -360,6 +407,7 @@ $menuActions = @{
 		& $global:enginePath restart $global:containerName
 	}
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"L" = { Show-ZepLogs }
 	"R" = { & $global:enginePath restart $global:containerName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

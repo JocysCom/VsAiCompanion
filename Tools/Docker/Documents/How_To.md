@@ -66,4 +66,4 @@ exit                       # leave the container shell
 
 5. Check CGroup Version. Should print "v2":
 
-	podman info --format '{{ .Host.CgroupVersion }}'   
+	podman info --format json | Select-String -Pattern "cgroup" -CaseSensitive:$false  

@@ -20,7 +20,7 @@ All services are containerized and can be managed through the provided PowerShel
 - **TCP 9099** - `ghcr.io/open-webui/pipelines:main` - AI workflow orchestration and pipeline management
 - **TCP 3000** - `ghcr.io/open-webui/open-webui:main` - AI model management interface with chat capabilities
 - **TCP 5678** - `docker.io/n8nio/n8n:latest` - Visual workflow automation platform for integrating services
-- **TCP 8001** - `zepai/zep:latest` - Temporal knowledge graph-based memory layer for AI agents
+- **TCP 8002** - `zepai/zep:latest` - Temporal knowledge graph-based memory layer for AI agents
 
 ### Web Scraping and Data Processing
 
