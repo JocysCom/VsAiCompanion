@@ -345,9 +345,9 @@ $menuActions = @{
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName }
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName }
 	"6" = { Update-FirecrawlWorkerContainer }
-	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
 	"8" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:firecrawlName
 	}
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }

@@ -464,9 +464,9 @@ $menuActions = @{
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly, use global vars
 	"6" = { Update-OpenWebUIContainer } # Calls the dedicated update function
-	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
 	"8" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:containerName
 	}
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
