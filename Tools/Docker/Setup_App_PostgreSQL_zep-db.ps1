@@ -24,15 +24,15 @@ Set-ScriptLocation
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:imageName = "pgvector/pgvector:pg17"
-$global:containerName = "postgres"
-$global:volumeName = "postgres_data"
-$global:containerPort = 5432
+$global:containerName = "zep-db"
+$global:volumeName = "zep-db_data"
+$global:containerPort = 5433
 $global:volumeMountPath = "/var/lib/postgresql/data"
 $global:postgresUser = "postgres"
 $global:postgresPassword = "postgres"
 $global:postgresDb = "zep"
-$global:networkName = "zep_network"
-$global:networkAlias = "postgres"
+$global:networkName = "podman"
+$global:networkAlias = "zep-db"
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -326,7 +326,7 @@ function Start-PostgresContainer {
 	# Build the run command
 	$runOptions = @(
 		"--detach", # Run container in background
-		"--publish", "$($global:containerPort):$($global:containerPort)", # Map host port to container port
+		"--publish", "$($global:containerPort):5432", # Map host port 5433 to container's default PostgreSQL port 5432
 		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data
 		"--name", $global:containerName, # Assign a name to the container
 		"--network", $global:networkName, # Connect to the network

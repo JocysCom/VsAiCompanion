@@ -34,12 +34,13 @@ $global:containerPort = 8002
 $global:volumeMountPath = "/app/data"
 $global:zepOpenAiApiKey = "dummy_zep_openai_api_key"
 $global:zepApiSecret = "dummy_zep_api_secret"  # From zep.yaml
-$global:networkName = "zep_network"
-$global:postgresContainerName = "postgres"
+$global:networkName = "podman"
+$global:postgresContainerName = "zep-db"
 $global:postgresUser = "postgres"
 $global:postgresPassword = "postgres"
 $global:postgresDb = "zep"
-$global:postgresPort = 5432
+$global:postgresPort = 5433
+$global:postgresInternalPort = 5432
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -202,7 +203,7 @@ function Get-ZepContainerConfig {
 	
 	# Set required store configuration for ZEP (PostgreSQL)
 	$envVars += "ZEP_STORE_TYPE=postgres"
-	$envVars += "ZEP_STORE_POSTGRES_DSN=postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:postgresContainerName):$($global:postgresPort)/$($global:postgresDb)?sslmode=disable"
+	$envVars += "ZEP_STORE_POSTGRES_DSN=postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:postgresContainerName):$($global:postgresInternalPort)/$($global:postgresDb)?sslmode=disable"
 	
 	# Use consistent ZEP API key from global variable (required by ZEP)
 	$apiKeyExists = $false
@@ -297,6 +298,14 @@ function Start-ZepContainer {
 		Write-Error "Could not determine host IP for container."
 	}
 	
+	# Get the PostgreSQL container's IP address dynamically
+	$PostgresIp = (podman machine ssh "sudo podman inspect $($global:postgresContainerName) --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'").Trim()
+	if (-not [string]::IsNullOrWhiteSpace($PostgresIp)) {
+		Write-Host "PostgreSQL container IP: $PostgresIp"
+	} else {
+		Write-Warning "Could not determine PostgreSQL container IP. Ensure $($global:postgresContainerName) is running."
+	}
+	
 	# Build the run command
 	$runOptions = @(
 		"--add-host", "host.local:$HostIpForContainer",
@@ -308,6 +317,13 @@ function Start-ZepContainer {
 		"--name", $global:containerName, # Assign a name to the container.
 		"--network", $global:networkName # Connect to the same network as PostgreSQL
 	)
+
+	# Add PostgreSQL hostname mapping if IP was retrieved successfully
+	if (-not [string]::IsNullOrWhiteSpace($PostgresIp)) {
+		$runOptions += "--add-host"
+		$runOptions += "zep-db:$PostgresIp"
+		Write-Host "Adding host mapping: zep-db -> $PostgresIp"
+	}
 
 	# Add all environment variables
 	foreach ($env in $EnvVars) {
