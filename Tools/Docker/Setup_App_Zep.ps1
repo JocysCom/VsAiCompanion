@@ -32,7 +32,8 @@ $global:containerName = "zep"
 $global:volumeName = "zep_data"
 $global:containerPort = 8002
 $global:volumeMountPath = "/app/data"
-$global:zepOpenAiApiKey = "dummy"
+$global:zepOpenAiApiKey = "dummy_zep_openai_api_key"
+$global:zepApiSecret = "dummy_zep_api_secret"  # From zep.yaml
 $global:networkName = "zep_network"
 $global:postgresContainerName = "postgres"
 $global:postgresUser = "postgres"
@@ -215,6 +216,36 @@ function Get-ZepContainerConfig {
 		$envVars += "ZEP_OPENAI_API_KEY=$global:zepOpenAiApiKey"
 	}
 
+	# Set ZEP authentication variables (required for Zep to start)
+	$authRequiredExists = $false
+	$authSecretExists = $false
+	foreach ($env in $envVars) {
+		if ($env -match "^ZEP_AUTH_REQUIRED=") {
+			$authRequiredExists = $true
+		}
+		if ($env -match "^ZEP_AUTH_SECRET=") {
+			$authSecretExists = $true
+		}
+	}
+	if (-not $authRequiredExists) {
+		$envVars += "ZEP_AUTH_REQUIRED=true"
+	}
+	if (-not $authSecretExists) {
+		$envVars += "ZEP_AUTH_SECRET=$global:zepApiSecret"
+	}
+
+	# Set ZEP_CONFIG_FILE to point to the mounted config file
+	$configFileExists = $false
+	foreach ($env in $envVars) {
+		if ($env -match "^ZEP_CONFIG_FILE=") {
+			$configFileExists = $true
+			break
+		}
+	}
+	if (-not $configFileExists) {
+		$envVars += "ZEP_CONFIG_FILE=/app/config.yaml"
+	}
+
 	# Return a custom object
 	return [PSCustomObject]@{
 		Image   = $imageName
@@ -273,6 +304,7 @@ function Start-ZepContainer {
 		"--detach", # Run container in background.
 		"--publish", "$($global:containerPort):8000", # Map host port 8002 to container port 8000.
 		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data.
+		"--volume", "`"$PSScriptRoot/zep.yaml`":/app/config.yaml", # Mount zep.yaml config file (quoted for spaces)
 		"--name", $global:containerName, # Assign a name to the container.
 		"--network", $global:networkName # Connect to the same network as PostgreSQL
 	)
