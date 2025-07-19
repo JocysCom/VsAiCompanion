@@ -390,13 +390,13 @@ function Update-EmbeddingContainer {
 $menuTitle = "Embedding API Container Menu (Podman Only)"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
-	"2" = "Install/Rebuild container"
+	"2" = "Install container"
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data - *Likely Unused*)"
-	"7" = "Import Volume (User Data - *Likely Unused*)"
-	"8" = "Update container (Rebuild & Run)"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Update Image (App)"
 	"0" = "Exit menu"
 }
 

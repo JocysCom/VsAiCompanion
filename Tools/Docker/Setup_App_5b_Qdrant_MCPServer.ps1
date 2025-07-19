@@ -281,13 +281,13 @@ function Update-QdrantMCPServerContainer {
 $menuTitle = "Qdrant MCP Server Container Menu"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
-	"2" = "Install/Rebuild container"
+	"2" = "Install container"
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update container (Pull source & Rebuild)"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Update Image (App)"
 	"0" = "Exit menu"
 }
 

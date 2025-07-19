@@ -276,9 +276,9 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update container"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Update Image (App)"
 	"0" = "Exit menu"
 }
 

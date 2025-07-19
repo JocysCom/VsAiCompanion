@@ -442,9 +442,9 @@ $menuItems = [ordered]@{
 	"5" = "Load Image (App)"
 	"6" = "Export Volume (Data)"
 	"7" = "Import Volume (Data)"
-	"8" = "Update System"
+	"8" = "Update Image (App)"
 	"9" = "Check for Updates"
-	"0" = "Exit"
+	"0" = "Exit menu"
 }
 
 # Define Menu Actions

@@ -312,7 +312,7 @@ $menuItems = [ordered]@{
 	"5" = "Load Image (App)"
 	"6" = "Export Volume (Data)"
 	"7" = "Import Volume (Data)"
-	"8" = "Update System (App)"
+	"8" = "Update Image (App)"
 	"0" = "Exit menu"
 }
 

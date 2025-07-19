@@ -639,7 +639,7 @@ function Update-FirecrawlContainer {
 $menuTitle = "Firecrawl Container Menu"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
-	"2" = "Install container (requires Redis)"
+	"2" = "Install container"
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
