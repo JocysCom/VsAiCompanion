@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_0_BackupRestore.ps1
 # Description  : Contains container image backup/restore functions:
 #                - Backup-ContainerImage: Backup a single image.
 #                - Invoke-ContainerImageBackup: Backup all images. (Formerly Backup-ContainerImages)
@@ -7,8 +6,6 @@
 #                - Start-RestoredContainer: Helper to run a restored image.
 #                - Invoke-ContainerImageRestore: Restore all images from a folder. (Formerly Restore-ContainerImages)
 #                - Test-AndRestoreBackup: Check for backup and prompt to restore.
-# Usage        : Dot-source this script in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_BackupRestore.ps1"
 ################################################################################
 
 #==============================================================================

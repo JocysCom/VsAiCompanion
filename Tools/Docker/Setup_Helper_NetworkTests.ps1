@@ -4,8 +4,6 @@
 #                - Test-TCPPort: Test connectivity to a specific TCP port.
 #                - Test-HTTPPort: Test connectivity to an HTTP endpoint.
 #                - Test-WebSocketPort: Test connectivity to a WebSocket endpoint.
-# Usage        : Dot-source this script in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_Network.ps1"
 ################################################################################
 
 #==============================================================================

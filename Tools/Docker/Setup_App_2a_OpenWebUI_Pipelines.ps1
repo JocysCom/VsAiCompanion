@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_2a_Pipelines.ps1
 # Description  : Script to set up, update, backup, restore, uninstall the Pipelines
 #                container using Docker or Podman. This version installs Pipelines
 #                from scratch by cloning the repository (without converting LF to CRLF)
@@ -11,11 +10,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the working directory is set.
 Set-ScriptLocation

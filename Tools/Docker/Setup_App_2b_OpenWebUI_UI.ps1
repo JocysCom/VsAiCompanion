@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_2b_OpenWebUI.ps1
 # Description  : Script to set up, back up, restore, uninstall, and update the
 #                Open WebUI container using Docker/Podman support. The script
 #                provides a container menu (with install, backup, restore, uninstall,
@@ -11,12 +10,12 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
-. "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Check-WSLStatus
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
+. "$PSScriptRoot\Setup_Helper_WSLFunctions.ps1" # Needed for Check-WSLStatus
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

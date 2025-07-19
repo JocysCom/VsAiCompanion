@@ -1,5 +1,5 @@
 # Dot-source the core functions including Invoke-MenuLoop
-. "$PSScriptRoot\Setup_0_Core.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
 
 Write-Host "--- Test Script Started ---"
 

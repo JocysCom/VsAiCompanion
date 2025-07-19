@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_3_n8n.ps1
 # Description  : Script to set up and run the n8n container using Docker/Podman.
 #                Verifies volume presence, pulls the n8n image if necessary,
 #                and runs the container with port and volume mappings.
@@ -16,11 +15,11 @@ using namespace System.Diagnostics.CodeAnalysis
 # $InformationPreference = 'Continue'
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -474,10 +473,9 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container (preserves user data volume)"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update System (Image)"
-	"9" = "Update User Data (Not Implemented)"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Update System (App)"
 	"A" = "Restart"
 	"B" = "Reset Admin Password"
 	"0" = "Exit menu"
@@ -513,7 +511,6 @@ $menuActions = @{
 		Restart-n8nContainer
 	}
 	"8" = { Update-n8nContainer }
-	"9" = { Update-n8nUserData }
 	"A" = { Restart-n8nContainer }
 	"B" = { Reset-AdminPassword }
 	# Note: "0" action is handled internally by Invoke-MenuLoop

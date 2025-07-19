@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_1_WSL2.ps1
 # Description  : Script to enable virtualization features on Windows.
 #                Provides a menu to enable either Windows Subsystem for Linux (WSL)
 #                or Hyper-V. For WSL, it ensures WSL2 is the default and converts
@@ -11,8 +10,8 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_WSL.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_WSLFunctions.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
 Test-AdminPrivilege

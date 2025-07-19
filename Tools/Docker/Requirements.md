@@ -4,10 +4,10 @@
 
 **Goals:**
 
-*   Identify and define common features across the PowerShell scripts using two-letter codes.
-*   Create a table summarizing which features are present in each script.
-*   Define specific requirements for key features (e.g., shared library reference, menu structure).
-*   Provide a reference for future script maintenance, standardization, and identification of missing features or inconsistencies.
+* Identify and define common features across the PowerShell scripts using two-letter codes.
+* Create a table summarizing which features are present in each script.
+* Define specific requirements for key features (e.g., shared library reference, menu structure).
+* Provide a reference for future script maintenance, standardization, and identification of missing features or inconsistencies.
 
 **System Prompt to Recreate:**
 
@@ -53,24 +53,27 @@ ST - Show/Test Status (Displays container info, status, and tests connectivity u
 
 | Script                               | HE | SR | CS | IM | ME | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
 |--------------------------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
-| Setup_0_\*.ps1                       | HE |    |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
-| Setup_1_WSL2.ps1                     | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW | ML |    |    |
-| Setup_1a_Docker.ps1                  | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW | ML |    |    |
-| Setup_1a_Podman.ps1                  | HE | SR | CS | IM | ME | EL | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    |    | RV |    | CW | ML |    |    |
-| Setup_1a_Podman_ExportContainers.ps1 | HE |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | BC |    |    |    |    |    |    |    |    |    |    |
-| Setup_1a_Podman_Restore.ps1          | HE |    |    | IM | ME |    |    |    |    |    |    |    |    |    |    |    |    |    | RC |    |    |    |    |    | ML |    |    |
-| Setup_1b_BackupRestore.ps1           | HE | SR |    |    | ME |    | SL |    |    | GP | PP | SE |    |    |    |    | BC |    | RC |    |    |    |    |    | ML |    |    |
-| Setup_1c_Portainer.ps1               | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
-| Setup_2a_Pipelines.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
-| Setup_2b_OpenWebUI.ps1               | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI |    | ML | RM | ST |
-| Setup_3_n8n.ps1                      | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
-| Setup_3_n8n_Export.ps1               | HE | SR |    |    |    | EL | SL |    |    | GP | PP | SE |    |    |    |    |    | BS |    |    |    |    |    |    |    |    |
-| Setup_4_Firecrawl.ps1                | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
-| Setup_5_Qdrant.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
-| Setup_5_Qdrant_MCP_Server.ps1        | HE | SR | CS | IM | ME | EL | SL |    | CG | GP | PP | SE |    | TC |    |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
-| Setup_6_Embedding.ps1                | HE | SR | CS | IM | ME |    | SL |    |    |    | PP |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM | ST |
-| Setup_6_Embedding_Test.ps1           | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |    |    |
-| Setup_7_NocoDB.ps1                   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_Helper_*.ps1                   | HE |    |    |    |    | EL | SL | DF | CG | GP | PP | SE | AP | TC | HT | WB | BC | BS | RC | UP | RS | RV | CI | CW | ML | RM | ST |
+| Setup_Core_1_WSL2.ps1                | HE | SR |    |    |    | EL | SL |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | CW | ML |    |    |
+| Setup_Core_1a_Docker.ps1             | HE | SR | CS | IM |    | EL | SL | DF |    | GP |    |    | AP |    |    |    |    |    |    |    |    |    |    | CW | ML |    |    |
+| Setup_Core_1b_Podman.ps1             | HE | SR | CS | IM | ME | EL | SL | DF |    |    | PP |    | AP |    |    |    |    |    |    |    |    | RV |    | CW | ML |    |    |
+| Setup_Core_1c_ImageBackupRestore.ps1 | HE | SR |    |    | ME |    | SL |    |    | GP | PP | SE |    |    |    |    | BC |    | RC |    |    |    |    |    | ML |    |    |
+| Setup_Core_1d_Portainer.ps1          | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_2a_OpenWebUI_Pipelines.ps1 | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_2b_OpenWebUI_UI.ps1        | HE | SR | CS | IM | ME |    | SL |    |    | GP | PP | SE |    | TC | HT | WB |    | BS | RC | UP | RS |    | CI |    | ML | RM | ST |
+| Setup_App_3_n8n_Core.ps1             | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_Data_3_n8n_ExportImport.ps1    | HE | SR |    |    |    | EL | SL |    |    | GP | PP | SE |    |    |    |    |    | BS |    |    |    |    |    |    |    |    |    |
+| Setup_App_4a_Firecrawl_Redis.ps1     | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_4b_Firecrawl_Worker.ps1    | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_4c_Firecrawl_API.ps1       | HE | SR | CS | IM | ME | EL | SL |    |    | GP |    |    |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_5a_Qdrant_Core.ps1         | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_5b_Qdrant_MCPServer.ps1    | HE | SR | CS | IM | ME | EL | SL |    | CG | GP | PP | SE |    | TC |    |    |    | BS |    | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_6_Embedding_API.ps1        | HE | SR | CS | IM | ME |    | SL |    |    |    | PP |    |    | TC | HT |    |    |    |    | UP |    |    |    |    | ML | RM | ST |
+| Setup_Util_6_Embedding_Test.ps1      | HE |    |    |    |    |    |    |    |    |    |    |    |    | TC |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| Setup_App_7_NocoDB_Core.ps1          | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_8_CloudBeaver_Core.ps1     | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_Data_9_SQL_BackupPapers.ps1    | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
+| Setup_App_9_Playwright_Service.ps1   | HE | SR | CS | IM | ME | EL | SL |    |    | GP | PP | SE |    | TC | HT |    |    | BS | RC | UP | RS |    |    |    | ML | RM | ST |
 
 ## Feature requirements
 
@@ -88,20 +91,21 @@ Script must start with a standard header block:
 
 ### SR - Shared Library Reference
 
-Scripts must include the specific shared library files (`Setup_0_*.ps1`) they need using dot-sourcing at the beginning, after the header and any `using namespace` statements. Import only the necessary files based on the functions used. **Do not import `Setup_0.ps1` directly.**
+Scripts must include the specific shared library files (`Setup_Helper_*.ps1`) they need using dot-sourcing at the beginning, after the header and any `using namespace` statements. Import only the necessary files based on the functions used. **Do not import `Setup_0.ps1` directly.**
 
 **Example:** A script using core functions, network tests, and container engine selection would import:
+
 ```PowerShell
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-# Add other Setup_0_*.ps1 files as needed (e.g., Setup_0_BackupRestore.ps1)
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+# Add other Setup_Helper_*.ps1 files as needed (e.g., Setup_Helper_BackupRestore.ps1)
 ```
 
 ### EL - Ensure Elevated
 
-If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Test-AdminPrivilege` function immediately after dot-sourcing `Setup_0_Core.ps1`:
+If administrator privileges are required (e.g., for Docker Desktop, service management), the script must call the `Test-AdminPrivilege` function immediately after dot-sourcing `Setup_Helper_CoreFunctions.ps1`:
 
 ```PowerShell
 Test-AdminPrivilege
@@ -139,18 +143,19 @@ else {
 ### CS / IM - Container Installation Flow
 
 The standard flow for installing a container service and its image should be:
-1.  Check/Create necessary volumes (e.g., `[engine] volume create [volume_name]`).
-2.  Check if the image exists locally (`[engine] images ...`).
-3.  If the image doesn't exist, attempt to restore from backup (`Check-AndRestoreBackup`).
-4.  If no backup restored, pull the image (`[engine] pull [image_name]`).
-5.  Remove any existing container with the same name (`[engine] rm --force [container_name]`).
-6.  Run the new container with appropriate options (`[engine] run --detach --name ... --publish ... --volume ... [image_name]`). Add comments explaining parameters.
-7.  Wait for startup (`Start-Sleep`).
-8.  Test connectivity (using TC, HT, WB).
+
+1. Check/Create necessary volumes (e.g., `[engine] volume create [volume_name]`).
+2. Check if the image exists locally (`[engine] images ...`).
+3. If the image doesn't exist, attempt to restore from backup (`Check-AndRestoreBackup`).
+4. If no backup restored, pull the image (`[engine] pull [image_name]`).
+5. Remove any existing container with the same name (`[engine] rm --force [container_name]`).
+6. Run the new container with appropriate options (`[engine] run --detach --name ... --publish ... --volume ... [image_name]`). Add comments explaining parameters.
+7. Wait for startup (`Start-Sleep`).
+8. Test connectivity (using TC, HT, WB).
 
 ### TC / HT / WB - Port Testing
 
-After starting a container, connectivity should be tested using the relevant functions from `Setup_0_Network.ps1`:
+After starting a container, connectivity should be tested using the relevant functions from `Setup_Helper_NetworkTests.ps1`:
 
 ```PowerShell
 Test-TCPPort -ComputerName "localhost" -Port [port_number] -serviceName "[Service Name]"
@@ -160,24 +165,32 @@ Test-HTTPPort -Uri "http://localhost:[port_number]" -serviceName "[Service Name]
 
 ### BS / RC / UP / RS - Backup, Restore, Update
 
-Scripts providing Backup, Restore, and Update functionality via the menu should use the corresponding shared functions from `Setup_0_BackupRestore.ps1` and `Setup_0_ContainerMgmt.ps1`:
-*   **BS - Backup Volume:** Use `Backup-ContainerVolume` to back up the container's associated data volume to a `.tar` file.
+Scripts providing Backup, Restore, and Update functionality via the menu should use the corresponding shared functions from `Setup_Helper_BackupRestore.ps1` and `Setup_Helper_ContainerManagement.ps1`:
+
+* **BS - Backup Volume:** Use `Backup-ContainerVolume` to back up the container's associated data volume to a `.tar` file.
+
     ```PowerShell
     # Example Menu Action
     Backup-ContainerVolume -Engine $global:enginePath -EngineType $global:containerEngine -VolumeName $global:volumeName
     ```
-*   **RC - Restore Image:** Use `Restore-ContainerImage` (or `Test-AndRestoreBackup`) to restore a container image from a `.tar` file.
-    ```PowerShell
+
+* **RC - Restore Image:** Use `Restore-ContainerImage` (or `Test-AndRestoreBackup`) to restore a container image from a `.tar` file.
+
+    ```PowerPowerShell
     # Example Menu Action (prompting for file)
     $backupFile = Read-Host "Enter path to image backup file (.tar)"
     Restore-ContainerImage -Engine $global:enginePath -BackupFile $backupFile
     ```
-*   **UP - Update Container:** Use the `Update-Container` function. This function handles checking for image updates, removing the old container, and pulling the new image. The calling script's menu action must handle backup/restore prompts and starting the new container (often by providing a script block like `Invoke-StartSpecificContainerForUpdate` to the `-RunFunction` parameter, although this parameter is not currently implemented in `Update-Container`).
+
+* **UP - Update Container:** Use the `Update-Container` function. This function handles checking for image updates, removing the old container, and pulling the new image. The calling script's menu action must handle backup/restore prompts and starting the new container (often by providing a script block like `Invoke-StartSpecificContainerForUpdate` to the `-RunFunction` parameter, although this parameter is not currently implemented in `Update-Container`).
+
     ```PowerShell
     # Example Menu Action (simplified, assumes Update-Container handles start or caller does)
     Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName
     ```
-*   **RS - Restore Volume:** Use `Restore-ContainerVolume` to restore a container's data volume from a `.tar` backup file (prompts for selection).
+
+* **RS - Restore Volume:** Use `Restore-ContainerVolume` to restore a container's data volume from a `.tar` backup file (prompts for selection).
+
     ```PowerShell
     # Example Menu Action
     Restore-ContainerVolume -Engine $global:enginePath -EngineType $global:containerEngine -VolumeName $global:volumeName
@@ -189,48 +202,52 @@ Scripts with a menu must define a `Show-ContainerMenu` function that displays th
 
 ```PowerShell
 function Show-ContainerMenu {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
-	Write-Host "==========================================="
-	Write-Host "[Specific Container Name] Menu"
-	Write-Host "==========================================="
-	Write-Host "1. Install container"
-	Write-Host "2. Uninstall container"
-	Write-Host "3. Backup Live container"
-	Write-Host "4. Restore Live container"
-	Write-Host "5. Update System"
-	# Write-Host "6. Update User Data" # Optional
-	# Write-Host "[Letter]. [Custom Action]" # Optional custom actions
-	Write-Host "0. Exit menu"
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Write-Host is needed for the Read-Host prompt below.")]
+    Write-Host "==========================================="
+    Write-Host "[Specific Container Name] Menu"
+    Write-Host "==========================================="
+    Write-Host "1. Install container"
+    Write-Host "2. Uninstall container"
+    Write-Host "3. Backup Live container"
+    Write-Host "4. Restore Live container"
+    Write-Host "5. Update System"
+    # Write-Host "6. Update User Data" # Optional
+    # Write-Host "[Letter]. [Custom Action]" # Optional custom actions
+    Write-Host "0. Exit menu"
 }
 ```
 
 ### ML - Menu Loop
 
-Scripts with a menu must use the generic `Invoke-MenuLoop` function from `Setup_0_Core.ps1` to handle the menu logic. Provide the menu title, an ordered hashtable of menu items (choice string -> description), and a hashtable mapping menu choices to action script blocks.
+Scripts with a menu must use the generic `Invoke-MenuLoop` function from `Setup_Helper_CoreFunctions.ps1` to handle the menu logic. Provide the menu title, an ordered hashtable of menu items (choice string -> description), and a hashtable mapping menu choices to action script blocks.
 
 ```PowerShell
 # Define Menu Title and Items
 $menuTitle = "[Specific Container Name] Menu"
 $menuItems = [ordered]@{
-	"1" = "Show Info & Test Connection"
-	"2" = "Install container"
-	"3" = "Uninstall container"
-	"4" = "Backup Volume (User Data)"
-	"5" = "Restore Volume (User Data)"
-	"6" = "Update System (Image)"
-	# ... other options ...
-	"0" = "Exit menu"
+    "1" = "Show Info & Test Connection"
+    "2" = "Install container"
+    "3" = "Uninstall container"
+    "4" = "Save Image (App)"
+    "5" = "Load Image (App)"
+    "6" = "Update Image (App)"
+    "7" = "Export Volume (Data)"
+    "8" = "Import Volume (Data)"
+    # ... other options ...
+    0" = "Exit menu"
 }
 
 # Define Menu Actions
 $menuActions = @{
-	"1" = { Show-ContainerStatus ... }
-	"2" = { Install-SpecificContainer }
-	"3" = { Remove-ContainerAndVolume ... }
-	"4" = { Backup-ContainerVolume ... }
-	"5" = { Restore-ContainerVolume ... }
-	"6" = { Update-SpecificContainer }
-	# ... other actions ...
+    "1" = { ... }
+    "2" = { ... }
+    "3" = { ... }
+    "4" = { ... }
+    "5" = { ... }
+    "6" = { ... }
+    "7" = { ... }
+    "8" = { ... }
+    # ... other actions ...
     # "A" = { Custom-Action } # Optional
 }
 
@@ -240,7 +257,7 @@ Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActi
 
 ### RM - Remove Container
 
-Scripts should use the generic `Remove-ContainerAndVolume` function from `Setup_0_ContainerMgmt.ps1` for the uninstall action. Pass the correct engine path, container name, and volume name.
+Scripts should use the generic `Remove-ContainerAndVolume` function from `Setup_Helper_ContainerManagement.ps1` for the uninstall action. Pass the correct engine path, container name, and volume name.
 
 ```PowerShell
 function Uninstall-SpecificContainer {
@@ -249,11 +266,11 @@ function Uninstall-SpecificContainer {
 
 ### ST - Show/Test Status
 
-Scripts implementing this feature provide a menu option (typically '1') to display the container's current status and test its connectivity. This is achieved by calling the `Show-ContainerStatus` function from `Setup_0_ContainerMgmt.ps1`.
+Scripts implementing this feature provide a menu option (typically '1') to display the container's current status and test its connectivity. This is achieved by calling the `Show-ContainerStatus` function from `Setup_Helper_ContainerManagement.ps1`.
 
 **Requirements:**
-*   The script must dot-source `Setup_0_ContainerMgmt.ps1`.
-*   If network tests (TCP, HTTP, WS) are included in the status check, `Setup_0_Network.ps1` must also be dot-sourced *before* `Setup_0_ContainerMgmt.ps1`.
+*   The script must dot-source `Setup_Helper_ContainerManagement.ps1`.
+*   If network tests (TCP, HTTP, WS) are included in the status check, `Setup_Helper_NetworkTests.ps1` must also be dot-sourced *before* `Setup_Helper_ContainerManagement.ps1`.
 *   The `Show-ContainerMenu` function must be updated to include the "Show Info & Test Connection" option, and subsequent options must be renumbered.
 *   The `$menuActions` hashtable must be updated to map the corresponding menu choice (e.g., "1") to a script block that calls `Show-ContainerStatus`.
 *   The call to `Show-ContainerStatus` should pass the necessary parameters, typically using the script's global variables for `$ContainerName`, `$ContainerEngine`, `$EnginePath`, and specific ports/paths/additional info relevant to the container being managed.
@@ -261,16 +278,13 @@ Scripts implementing this feature provide a menu option (typically '1') to displ
 **Example (`$menuActions` entry):**
 ```PowerShell
 $menuActions = @{
-    "1" = {
-        Show-ContainerStatus -ContainerName $global:containerName `
-                             -ContainerEngine $global:containerEngine `
-                             -EnginePath $global:enginePath `
-                             -DisplayName "Specific Container" `
-                             -TcpPort [TCP_PORT] `
-                             -HttpPort [HTTP_PORT] `
-                             # -WsPort [WS_PORT] ` # Optional
-                             # -AdditionalInfo @{ "Key" = "Value" } # Optional
-    }
+ "1" = {
+  Show-ContainerStatus -ContainerName $global:containerName `
+   -ContainerEngine $global:containerEngine `
+   -EnginePath $global:enginePath `
+   -DisplayName $global:containerName `
+   -TcpPort $global:containerPort `
+   -HttpPort $global:containerPort
+ }
     # ... other renumbered actions ...
 }
-```

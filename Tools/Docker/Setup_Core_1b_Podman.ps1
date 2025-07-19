@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_1a_Podman.ps1
 # Description  : Script to manage Podman installation on Windows.
 #                Dependencies hierarchy:
 #                - CLI required for Machine
@@ -10,8 +9,8 @@
 ################################################################################
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_WSL.ps1" # Needed for Test-WSLStatus
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_WSLFunctions.ps1" # Needed for Test-WSLStatus
 
 # Optionally ensure the script is running as Administrator and set the working directory.
 Test-AdminPrivilege # Required for machine init/service install/remove

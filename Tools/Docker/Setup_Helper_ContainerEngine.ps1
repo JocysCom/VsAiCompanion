@@ -1,11 +1,8 @@
 ################################################################################
-# File         : Setup_0_ContainerEngine.ps1
 # Description  : Contains container engine helper functions for setup scripts:
 #                - Get-DockerPath: Find the path to the Docker executable.
 #                - Get-PodmanPath: Find the path to the Podman executable.
 #                - Select-ContainerEngine: Prompt user to choose Docker or Podman.
-# Usage        : Dot-source this script in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
 ################################################################################
 
 #==============================================================================

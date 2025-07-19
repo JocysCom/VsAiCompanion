@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_4a_Firecrawl_Redis.ps1
 # Description  : Script to set up and run a dedicated Redis container for Firecrawl.
 #                Creates a Docker network and launches Redis with proper configuration
 #                for Firecrawl integration.
@@ -10,11 +9,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_7_NocoDB.ps1
 # Description  : Script to set up, backup, restore, uninstall, and update the
 #                NocoDB container using Docker/Podman support. Provides a container
 #                menu for container operations.
@@ -11,11 +10,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script's working directory is set.
 Set-ScriptLocation

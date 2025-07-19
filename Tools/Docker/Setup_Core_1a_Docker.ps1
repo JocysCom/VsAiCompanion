@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_1a_Docker.ps1
 # Description  : Script to install and configure Docker and WSL on Windows.
 #                Includes checks for WSL, installation of Docker Desktop/Engine,
 #                and verification of Docker functionality.
@@ -10,9 +9,9 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_WSL.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_WSLFunctions.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
 Test-AdminPrivilege

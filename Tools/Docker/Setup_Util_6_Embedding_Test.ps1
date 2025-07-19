@@ -8,7 +8,7 @@
 ################################################################################
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Network.ps1" # For Test-TCPPort
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1" # For Test-TCPPort
 
 ##############################################################################
 # Purpose:

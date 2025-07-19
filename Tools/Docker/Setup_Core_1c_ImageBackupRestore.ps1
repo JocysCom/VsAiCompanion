@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_1b_BackupRestore.ps1
 # Description  : Script to backup and restore container images using Docker or Podman.
 #                Provides a menu-driven interface for backup and restore operations.
 # Usage        : Run with appropriate privileges.
@@ -9,9 +8,9 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1" # Need this for Invoke-MenuLoop
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1" # Need this for Invoke-MenuLoop
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
 
 # MAIN SCRIPT EXECUTION
 

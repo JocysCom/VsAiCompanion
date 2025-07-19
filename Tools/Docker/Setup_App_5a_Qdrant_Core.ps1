@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_5_Qdrant.ps1
 # Description  : Script to set up and run the Qdrant container with Docker/Podman support.
 #                Validates backup, pulls the Qdrant image if necessary, removes existing containers,
 #                and runs Qdrant with proper port mapping.
@@ -10,11 +9,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -311,10 +310,9 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update System"
-	"9" = "Update User Data"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
+	"8" = "Update System (App)"
 	"0" = "Exit menu"
 }
 
@@ -340,7 +338,6 @@ $menuActions = @{
 		& $global:enginePath restart $global:containerName
 	}
 	"8" = { Update-QdrantContainer } # Calls the dedicated update function
-	"9" = { Update-QdrantUserData }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

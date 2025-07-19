@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_6_Embedding.ps1
 # Description  : Script to build, run, and update the Embedding API container using Podman.
 #                Sets up the build context (Dockerfile, requirements, and API code),
 #                builds the container image, runs it on port 8000, tests connectivity,
@@ -12,11 +11,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1" # For Test-HTTPPort, Test-TCPPort
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1" # For Test-HTTPPort, Test-TCPPort
 # Note: This script specifically uses Podman, so no engine selection needed.
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1" # For Get-PodmanPath
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1" # For Remove-ContainerAndVolume
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1" # For Get-PodmanPath
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1" # For Remove-ContainerAndVolume
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

@@ -1,15 +1,9 @@
 ################################################################################
-# File         : Setup_0_ContainerMgmt.ps1
 # Description  : Contains container management functions:
 #                - Backup-ContainerState: Backup a running container's state.
 #                - Restore-ContainerState: Restore a container from state backup.
 #                - Check-ImageUpdateAvailable: Check for newer image versions.
 #                - Update-Container: Generic container update function.
-# Usage        : Dot-source this script and potentially Setup_0_BackupRestore.ps1
-#                and Setup_0_Network.ps1 in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_Network.ps1" # For Show-ContainerStatus dependency
-#                . "$PSScriptRoot\Setup_0_BackupRestore.ps1" # For Restore-ContainerState dependency
-#                . "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
 ################################################################################
 
 #==============================================================================

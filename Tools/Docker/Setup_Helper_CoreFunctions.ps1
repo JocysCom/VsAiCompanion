@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_0_Core.ps1
 # Description  : Contains core helper functions for setup scripts:
 #                - Ensure-Elevated: Verify administrator privileges.
 #                - Set-ScriptLocation: Set the script's working directory.
@@ -7,8 +6,6 @@
 #                - Check-Git: Check for Git installation and add to PATH if needed.
 #                - Test-ApplicationInstalled: Check if an application is installed.
 #                - Refresh-EnvironmentVariables: Refresh PATH in the current session.
-# Usage        : Dot-source this script in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_Core.ps1"
 ################################################################################
 
 #==============================================================================

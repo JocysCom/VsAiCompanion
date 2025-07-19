@@ -1,23 +1,20 @@
 ################################################################################
-# File         : Setup_4c_Firecrawl_API.ps1
 # Description  : Script to set up and run a Firecrawl API container.
 #                Requires Redis and Playwright service containers to be running first.
 #                This container provides the API endpoints and includes UI testing
 #                and comprehensive service availability reporting.
 # Usage        : Run as Administrator if using Docker.
-#                Prerequisites: Redis (Setup_4a_Firecrawl_Redis.ps1) and
-#                              Playwright (Setup_10_Playwright_Service.ps1) containers.
 ################################################################################
 
 using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
 # Note: This script currently only supports Docker due to network alias usage.
