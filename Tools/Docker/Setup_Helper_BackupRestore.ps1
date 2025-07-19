@@ -102,6 +102,8 @@ function Backup-ContainerImage {
 		[string]$BackupFolder = ".\Backup"
 	)
 
+	Write-Host "Saving '$ContainerName' Container Image..."
+
 	# Ensure backup folder exists
 	if (-not (Test-Path $BackupFolder)) {
 		New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
@@ -175,6 +177,8 @@ function Restore-ContainerImage {
 		[string]$ContainerName,
 		[string]$BackupFolder = ".\Backup"
 	)
+
+	Write-Host "Loading '$ContainerName' Container Image..."
 
 	if (-not (Test-Path $BackupFile)) {
 		Write-Error "Backup file '$BackupFile' not found."

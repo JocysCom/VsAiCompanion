@@ -402,49 +402,6 @@ function Update-n8nUserData {
 }
 
 #==============================================================================
-# Function: Restart-n8nContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restarts the n8n container, applying current configuration (e.g., enabling community packages).
-.DESCRIPTION
-	Retrieves the current container configuration using Get-n8nContainerConfig (which also ensures
-	community packages are enabled in the config object).
-	Removes the existing container using Remove-n8nContainer.
-	Starts a new container using Start-n8nContainer with the retrieved configuration (image and env vars).
-	This effectively restarts the container with potentially updated environment variables from Get-n8nContainerConfig.
-.EXAMPLE
-	Restart-n8nContainer
-.NOTES
-	Relies on Get-n8nContainerConfig, Remove-n8nContainer, Start-n8nContainer helper functions.
-	Supports -WhatIf via helper functions.
-#>
-function Restart-n8nContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	# Get current container configuration (includes domain prompt and defaults)
-	$config = Get-n8nContainerConfig
-
-	# Remove the existing container using the shared function
-	if (-not (Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName)) {
-		Write-Error "Failed to remove existing container or action skipped. Restart aborted."
-		return
-	}
-
-	# Start a new container with the same image and configuration
-	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
-		# This function now supports ShouldProcess
-		Write-Host "n8n container restarted successfully with community packages enabled!"
-	}
-	else {
-		Write-Error "Failed to restart container or action skipped."
-	}
-}
-
-
-
-#==============================================================================
 # Function: Reset-AdminPassword
 #==============================================================================
 <#
@@ -477,7 +434,7 @@ $menuItems = [ordered]@{
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
 	"9" = "Check for Updates"
-	"R" = "Restart"
+	"R" = "Restart Container"
 	"P" = "Reset Admin Password"
 	"0" = "Exit menu"
 }
@@ -494,26 +451,16 @@ $menuActions = @{
 	}
 	"2" = { Install-n8nContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = {
-		Write-Host "Saving '$containerName' Container Image..."
-		Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"5" = {
-		Write-Host "Loading '$($global:containerName)' Container Image..."
-		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
 	"6" = { Update-n8nContainer }
-	"7" = {
-		Write-Host "Exporting '$($global:volumeName)' Volume..."
-		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-	}
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
 	"8" = {
-		Write-Host "Importing '$($global:volumeName)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Restart-n8nContainer
+		& $global:enginePath restart $global:containerName
 	}
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
-	"R" = { Restart-n8nContainer }
+	"R" = { & $global:enginePath restart $global:containerName }
 	"P" = { Reset-AdminPassword }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }

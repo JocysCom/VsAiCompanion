@@ -251,44 +251,6 @@ function Update-CloudBeaverContainer {
 	}
 }
 
-#==============================================================================
-# Function: Restart-CloudBeaverContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restarts the CloudBeaver container.
-.DESCRIPTION
-	Removes the existing container using Remove-ContainerAndVolume (prompts about one volume).
-	Starts a new container using Start-CloudBeaverContainer with the global image name.
-.EXAMPLE
-	Restart-CloudBeaverContainer
-.NOTES
-	Relies on Remove-ContainerAndVolume, Start-CloudBeaverContainer helper functions.
-	Supports -WhatIf via helper functions.
-#>
-function Restart-CloudBeaverContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Restart Container")) {
-		return
-	}
-
-	# Remove the existing container using the shared function (prompts about workspace volume)
-	if (-not (Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeNameWorkspace)) {
-		Write-Error "Failed to remove existing container or action skipped. Restart aborted."
-		return
-	}
-
-	# Start a new container with the same image
-	if (Start-CloudBeaverContainer -Image $global:imageName) {
-		Write-Host "CloudBeaver container restarted successfully!"
-	}
-	else {
-		Write-Error "Failed to restart container or action skipped."
-	}
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
@@ -324,35 +286,21 @@ $menuActions = @{
 	}
 	"2" = { Install-CloudBeaverContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeNameWorkspace } # Call shared function directly
-	"4" = {
-		Write-Host "Saving '$($global:containerName)' Container Image..."
-		Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"5" = {
-		Write-Host "Loading '$($global:containerName)' Container Image..."
-		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"6" = {
-		Write-Host "Exporting '$($global:volumeNameConf)' Volume..."
-		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf
-	}
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"6" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf }
 	"7" = {
-		Write-Host "Importing '$($global:volumeNameConf)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf
-		Restart-CloudBeaverContainer # Restart after import
+		& $global:enginePath restart $global:containerName
 	}
-	"8" = {
-		Write-Host "Exporting '$($global:volumeNameWorkspace)' Volume..."
-		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameWorkspace
-	}
+	"8" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameWorkspace }
 	"9" = {
-		Write-Host "Importing '$($global:volumeNameWorkspace)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameWorkspace
-		Restart-CloudBeaverContainer # Restart after import
+		& $global:enginePath restart $global:containerName
 	}
 	"A" = { Update-CloudBeaverContainer }
 	"B" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
-	"C" = { Restart-CloudBeaverContainer }
+	"C" = { & $global:enginePath restart $global:containerName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
