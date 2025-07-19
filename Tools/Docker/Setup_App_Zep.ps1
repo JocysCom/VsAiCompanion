@@ -32,7 +32,13 @@ $global:containerName = "zep"
 $global:volumeName = "zep_data"
 $global:containerPort = 8002
 $global:volumeMountPath = "/app/data"
-$global:zepApiSecret = "zep-api-secret-key-2025-fixed-installation-key"
+$global:zepOpenAiApiKey = "dummy"
+$global:networkName = "zep_network"
+$global:postgresContainerName = "postgres"
+$global:postgresUser = "postgres"
+$global:postgresPassword = "postgres"
+$global:postgresDb = "zep"
+$global:postgresPort = 5432
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -51,6 +57,98 @@ else { # Assumes podman
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
+
+#==============================================================================
+# Function: Test-PostgresRequirement
+#==============================================================================
+<#
+.SYNOPSIS
+    Tests if PostgreSQL container is available and accessible with required pgvector extension.
+.DESCRIPTION
+    Checks if the PostgreSQL container is running, accessible on the expected port,
+    and has the pgvector extension installed. This is a prerequisite for ZEP operation.
+.PARAMETER ContainerName
+    The name of the PostgreSQL container to test.
+.PARAMETER EnginePath
+    The path to the container engine executable.
+.PARAMETER PostgresUser
+    The PostgreSQL username.
+.PARAMETER PostgresDb
+    The PostgreSQL database name.
+.PARAMETER Port
+    The PostgreSQL port number.
+.OUTPUTS
+    [bool] Returns $true if PostgreSQL is available and ready, $false otherwise.
+.EXAMPLE
+    Test-PostgresRequirement -ContainerName "postgres" -EnginePath $global:enginePath -PostgresUser "postgres" -PostgresDb "zep" -Port 5432
+.NOTES
+    This function is essential to ensure ZEP has a working PostgreSQL backend before starting.
+#>
+function Test-PostgresRequirement {
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$ContainerName,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$EnginePath,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$PostgresUser,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$PostgresDb,
+        
+        [Parameter(Mandatory=$true)]
+        [int]$Port
+    )
+
+    Write-Host "Checking PostgreSQL requirement for ZEP..."
+    
+    # Check if PostgreSQL container is running
+    $containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
+    if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
+        Write-Warning "PostgreSQL container '$ContainerName' is not running."
+        Write-Host "Please run Setup_App_PostgreSQL.ps1 first to install and start PostgreSQL."
+        return $false
+    }
+    
+    # Test TCP connectivity
+    if (-not (Test-TCPPort -ComputerName "localhost" -Port $Port -serviceName "PostgreSQL")) {
+        Write-Warning "PostgreSQL is not accessible on port $Port."
+        return $false
+    }
+    
+    # Test database connection and pgvector extension
+    try {
+        $testConnectionCmd = @(
+            "exec", $ContainerName,
+            "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-t", "-c",
+            "SELECT COUNT(*) FROM pg_extension WHERE extname = 'vector';"
+        )
+        
+        $extensionResult = & $EnginePath @testConnectionCmd 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Failed to check pgvector extension: $extensionResult"
+            return $false
+        }
+        
+        $extensionCount = ($extensionResult -replace '\s+', '').Trim()
+        if ($extensionCount -eq "0") {
+            Write-Warning "pgvector extension is not installed in PostgreSQL database."
+            Write-Host "Please run Setup_App_PostgreSQL.ps1 to ensure pgvector extension is installed."
+            return $false
+        }
+        
+        Write-Host "PostgreSQL requirement satisfied: Container running, accessible, and pgvector extension installed."
+        return $true
+    }
+    catch {
+        Write-Warning "Error checking PostgreSQL requirements: $_"
+        return $false
+    }
+}
 
 #==============================================================================
 # Function: Get-ZepContainerConfig
@@ -101,21 +199,20 @@ function Get-ZepContainerConfig {
 	$envVars += "ZEP_DEVELOPMENT=false"
 	$envVars += "ZEP_LOG_LEVEL=info"
 	
-	# Set required store configuration for ZEP
-	$envVars += "STORE_TYPE=sqlite"
-	$envVars += "STORE_SQLITE_PATH=/app/data/zep.db"
+	# Set required store configuration for ZEP (PostgreSQL)
+	$envVars += "ZEP_STORE_TYPE=postgres"
+	$envVars += "ZEP_STORE_POSTGRES_DSN=postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:postgresContainerName):$($global:postgresPort)/$($global:postgresDb)?sslmode=disable"
 	
-	# Use consistent ZEP auth secret from global variable
-	$apiSecretExists = $false
+	# Use consistent ZEP API key from global variable (required by ZEP)
+	$apiKeyExists = $false
 	foreach ($env in $envVars) {
-		if ($env -match "^(ZEP_AUTH_SECRET)=") {
-			$apiSecretExists = $true
+		if ($env -match "^(ZEP_OPENAI_API_KEY)=") {
+			$apiKeyExists = $true
 			break
 		}
 	}
-	if (-not $apiSecretExists) {
-		$envVars += "ZEP_AUTH_SECRET=$global:zepApiSecret"
-		$envVars += "ZEP_AUTH_REQUIRED=false"
+	if (-not $apiKeyExists) {
+		$envVars += "ZEP_OPENAI_API_KEY=$global:zepOpenAiApiKey"
 	}
 
 	# Return a custom object
@@ -176,7 +273,8 @@ function Start-ZepContainer {
 		"--detach", # Run container in background.
 		"--publish", "$($global:containerPort):8000", # Map host port 8002 to container port 8000.
 		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data.
-		"--name", $global:containerName # Assign a name to the container.
+		"--name", $global:containerName, # Assign a name to the container.
+		"--network", $global:networkName # Connect to the same network as PostgreSQL
 	)
 
 	# Add all environment variables
@@ -206,6 +304,7 @@ function Start-ZepContainer {
 			}
 			else {
 				Write-Warning "ZEP container started but connectivity tests failed. Please check the container logs."
+				& $global:enginePath logs --tail $Lines 100
 				return $false
 			}
 		}
@@ -240,6 +339,16 @@ function Start-ZepContainer {
 #>
 function Install-ZepContainer {
 	Write-Host "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
+
+	# Test PostgreSQL requirement before proceeding
+	if (-not (Test-PostgresRequirement -ContainerName $global:postgresContainerName -EnginePath $global:enginePath -PostgresUser $global:postgresUser -PostgresDb $global:postgresDb -Port $global:postgresPort)) {
+		Write-Error "PostgreSQL requirement not met. ZEP installation cannot proceed."
+		Write-Host "Please run Setup_App_PostgreSQL.ps1 first to install and configure PostgreSQL with pgvector extension."
+		return
+	}
+
+	# Prompt for OpenAI API Key if not set
+	$global:zepOpenAiApiKey = Get-EnvironmentVariableWithDefault -EnvVarName 'ZEP_OPENAI_API_KEY' -DefaultValue $global:zepOpenAiApiKey -PromptText 'OpenAI API Key for ZEP'
 
 	# Check if the ZEP image is already available, restore from backup, or pull new.
 	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
@@ -336,34 +445,6 @@ function Update-ZepContainer {
 		# No need to write an error here.
 	}
 }
-#==============================================================================
-# Function: Show-ZepLogs
-#==============================================================================
-<#
-.SYNOPSIS
-	Shows the ZEP container logs for troubleshooting.
-.DESCRIPTION
-	Displays the recent logs from the ZEP container to help diagnose configuration
-	or runtime issues. Shows the last 50 lines by default.
-.PARAMETER Lines
-	Number of log lines to display (default: 50).
-.EXAMPLE
-	Show-ZepLogs
-	Show-ZepLogs -Lines 100
-.NOTES
-	Uses 'engine logs' command to retrieve container logs.
-#>
-function Show-ZepLogs {
-	[CmdletBinding()]
-	param(
-		[Parameter(Mandatory = $false)]
-		[int]$Lines = 50
-	)
-
-	Write-Host "Showing last $Lines lines of ZEP container logs..."
-	& $global:enginePath logs --tail $Lines $global:containerName
-}
-
 
 ################################################################################
 # Main Menu Loop using Generic Function
@@ -381,6 +462,7 @@ $menuItems = [ordered]@{
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
 	"9" = "Check for Updates"
+	"P" = "Test PostgreSQL Requirement"
 	"L" = "Show Container Logs"
 	"R" = "Restart Container"
 	"0" = "Exit menu"
@@ -407,7 +489,8 @@ $menuActions = @{
 		& $global:enginePath restart $global:containerName
 	}
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
-	"L" = { Show-ZepLogs }
+	"P" = { Test-PostgresRequirement -ContainerName $global:postgresContainerName -EnginePath $global:enginePath -PostgresUser $global:postgresUser -PostgresDb $global:postgresDb -Port $global:postgresPort }
+	"L" = { & $global:enginePath logs --tail 100 $global:containerName }
 	"R" = { & $global:enginePath restart $global:containerName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
