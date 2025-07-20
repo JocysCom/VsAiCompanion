@@ -254,56 +254,6 @@ function Get-ZepContainerConfig {
 }
 
 #==============================================================================
-# Function: New-ZepConfigFile
-#==============================================================================
-<#
-.SYNOPSIS
-	Creates or updates the zep.yaml configuration file with current settings.
-.DESCRIPTION
-	Generates the zep.yaml configuration file using global variables defined in the script.
-	This file contains the API secret and PostgreSQL connection settings required by ZEP.
-	The file is created in the script directory and will be mounted into the container.
-.OUTPUTS
-	[bool] Returns $true if the configuration file was created successfully, $false otherwise.
-.EXAMPLE
-	New-ZepConfigFile
-.NOTES
-	Uses global variables: $global:zepApiSecret, $global:postgresContainerName, etc.
-#>
-function New-ZepConfigFile {
-	[CmdletBinding(SupportsShouldProcess=$true)]
-	[OutputType([bool])]
-	param()
-
-	$configPath = "$PSScriptRoot/zep.yaml"
-	
-	if ($PSCmdlet.ShouldProcess($configPath, "Create ZEP Configuration File")) {
-		try {
-			# Create config file with api_secret and DSN-based database configuration
-			$dsnString = "postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:postgresContainerName):$($global:postgresInternalPort)/$($global:postgresDb)?sslmode=disable"
-			$configContent = @"
-api_secret: $global:zepApiSecret
-store:
-  type: postgres
-  postgres:
-    dsn: $dsnString
-"@
-			
-			Set-Content -Path $configPath -Value $configContent -Encoding UTF8
-			Write-Host "Created complete ZEP configuration file: $configPath"
-			return $true
-		}
-		catch {
-			Write-Error "Failed to create ZEP configuration file: $_"
-			return $false
-		}
-	}
-	else {
-		return $false # Action skipped due to -WhatIf
-	}
-}
-
-#==============================================================================
 # Function: Start-ZepContainer
 #==============================================================================
 <#
@@ -355,6 +305,19 @@ function Start-ZepContainer {
 		Write-Warning "Could not determine PostgreSQL container IP. Ensure $($global:postgresContainerName) is running."
 	}
 	
+	# Create zep.yaml inside Podman VM line by line with LF endings
+	podman machine ssh "sudo echo 'api_secret: $($global:zepApiSecret)' > /root/zep.yaml"
+	podman machine ssh "sudo echo 'store:' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '  type: postgres' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '  postgres:' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    dsn: postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:postgresContainerName):$($global:postgresInternalPort)/$($global:postgresDb)?sslmode=disable' >> /root/zep.yaml"
+	# Display the created zep.yaml for verification	
+	Write-Host "-------------------------------------------"
+	Write-Host "/root/zep.yaml:/app/config.yaml"
+	Write-Host "-------------------------------------------"
+	podman machine ssh "sudo cat /root/zep.yaml"
+	Write-Host "-------------------------------------------"
+
 	# Build the run command
 	$runOptions = @(
 		"--add-host", "host.local:$HostIpForContainer",
@@ -362,7 +325,7 @@ function Start-ZepContainer {
 		"--detach", # Run container in background.
 		"--publish", "$($global:containerPort):8000", # Map host port 8002 to container port 8000.
 		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data.
-		"--volume", "`"$PSScriptRoot/zep.yaml`":/app/config.yaml", # Mount zep.yaml config file (quoted for spaces)
+		"--volume", "/root/zep.yaml:/app/config.yaml", # Mount zep.yaml from VM path
 		"--name", $global:containerName, # Assign a name to the container.
 		"--network", $global:networkName # Connect to the same network as PostgreSQL
 	)
@@ -469,12 +432,6 @@ function Install-ZepContainer {
 	# Remove any existing container using the shared function
 	# Pass container name and volume name. It will prompt about volume removal.
 	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
-
-	# Create the minimal ZEP configuration file (api_secret only, database via env vars)
-	if (-not (New-ZepConfigFile)) {
-		Write-Error "Failed to create ZEP configuration file. Installation cannot proceed."
-		return
-	}
 
 	# Get the configuration (which includes setting default environment variables)
 	$config = Get-ZepContainerConfig
