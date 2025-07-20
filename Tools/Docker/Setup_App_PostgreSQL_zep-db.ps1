@@ -23,7 +23,7 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "pgvector/pgvector:pg17"
+$global:imageName = "pgvector/pgvector:pg16"
 $global:containerName = "zep-db"
 $global:volumeName = "zep-db_data"
 $global:containerPort = 5433
@@ -375,7 +375,7 @@ function Start-PostgresContainer {
 					Write-Host "Database: $global:postgresDb"
 					Write-Host "User: $global:postgresUser"
 					Write-Host "pgvector extension is enabled and ready for use."
-					Write-Host "Connection string for ZEP: postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:networkAlias):$($global:containerPort)/$($global:postgresDb)?sslmode=disable"
+					Write-Host "Connection string for ZEP: postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:networkAlias):5432/$($global:postgresDb)?sslmode=disable"
 					return $true
 				}
 				else {
