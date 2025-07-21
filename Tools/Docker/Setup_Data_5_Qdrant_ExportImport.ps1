@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_5_Qdrant_Export.ps1
 # Description  : Provides menu options to export or import Qdrant collections
 #                for a running container using the Qdrant REST API.
 # Usage        : Run with appropriate permissions. Requires the Qdrant container
@@ -10,10 +9,10 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

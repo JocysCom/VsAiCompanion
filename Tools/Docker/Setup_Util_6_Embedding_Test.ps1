@@ -8,7 +8,7 @@
 ################################################################################
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Network.ps1" # For Test-TCPPort
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1" # For Test-TCPPort
 
 ##############################################################################
 # Purpose:
@@ -17,6 +17,28 @@
 #   consistency, checks that distinct lines exhibit lower similarity, and then
 #   prints "TEST PASS" or "TEST FAIL" accordingly.
 ##############################################################################
+
+# Model selection menu
+$modelConfigs = @(
+	@{ ModelName = 'sentence-transformers/all-mpnet-base-v2'; Port = 8000 },
+	@{ ModelName = 'Snowflake/snowflake-arctic-embed-l-v2.0'; Port = 8001 }
+)
+Write-Host 'Select embedding model to test:'
+for ($i = 0; $i -lt $modelConfigs.Count; $i++) {
+	$cfg = $modelConfigs[$i]
+	Write-Host "[$($i+1)] $($cfg.ModelName) on port $($cfg.Port)"
+}
+$selection = Read-Host 'Enter choice number'
+if (($selection -as [int]) -lt 1 -or ($selection -as [int]) -gt $modelConfigs.Count) {
+	Write-Error 'Invalid selection'
+	exit 1
+}
+$selectedConfig = $modelConfigs[$selection - 1]
+$global:ModelName = $selectedConfig.ModelName
+$global:Port = $selectedConfig.Port
+
+Write-Host "Testing model: $global:ModelName on port: $global:Port"
+Write-Host ""
 
 # Overall test flag.
 $testPass = $true
@@ -106,7 +128,7 @@ Function Get-CosineSimilarity {
 .SYNOPSIS
 	Requests an embedding for a given text line from the local Embedding API.
 .DESCRIPTION
-	Sends a POST request to 'http://localhost:8000/v1/embeddings' with a JSON body
+	Sends a POST request to the configured embedding API endpoint with a JSON body
 	containing the specified model name and input text line. Parses the response,
 	extracts the base64 encoded embedding, decodes it using ConvertFrom-Embedding,
 	and returns the resulting list of floats.
@@ -114,11 +136,13 @@ Function Get-CosineSimilarity {
 	The string of text to get an embedding for. Mandatory.
 .PARAMETER modelName
 	The name of the embedding model to use (passed in the API request). Mandatory.
+.PARAMETER port
+	The port number where the API is running. Mandatory.
 .OUTPUTS
 	[System.Collections.Generic.List[float]] A list of floats representing the embedding,
 											 or $null if the API call or decoding fails.
 .EXAMPLE
-	$embedding = Get-EmbeddingFromAPI -textLine "Example sentence" -modelName "model-name"
+	$embedding = Get-EmbeddingFromAPI -textLine "Example sentence" -modelName "model-name" -port 8000
 .NOTES
 	Uses Invoke-RestMethod for the API call and ConvertFrom-Embedding for decoding.
 	Includes basic validation of the API response structure.
@@ -126,7 +150,8 @@ Function Get-CosineSimilarity {
 Function Get-EmbeddingFromAPI {
 	param(
 		[Parameter(Mandatory)] [string] $textLine,
-		[Parameter(Mandatory)] [string] $modelName
+		[Parameter(Mandatory)] [string] $modelName,
+		[Parameter(Mandatory)] [int] $port
 	)
 
 	$requestJson = @{
@@ -140,7 +165,8 @@ Function Get-EmbeddingFromAPI {
 	# -Headers: includes the Content-Type header.
 	# -Body: contains the JSON payload.
 	$headers = @{ "Content-Type" = "application/json" }
-	$response = Invoke-RestMethod -Method Post -Uri "http://localhost:8000/v1/embeddings" -Body $requestJson -Headers $headers
+	$apiUrl = "http://localhost:$port/v1/embeddings"
+	$response = Invoke-RestMethod -Method Post -Uri $apiUrl -Body $requestJson -Headers $headers
 
 	# Validate basic structure.
 	if ($response.object -ne "list") {
@@ -167,21 +193,46 @@ Function Get-EmbeddingFromAPI {
 try {
 
 	############################################################################
-	# 1) Check TCP connectivity.
+	# 1) Check TCP connectivity and API readiness.
 	############################################################################
-	Write-Host "Checking TCP connectivity on port 8000..."
-	$tcpOk = Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Embedding API"
+	Write-Host "Checking TCP connectivity on port $global:Port..."
+	$tcpOk = Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 	if (-not $tcpOk) {
 		Write-Error "TCP connectivity check failed."
 		$testPass = $false
 		throw "Connection test failed."
 	}
+	
+	Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
+	
+	$maxAttempts = 20
+	$attempt = 1
+	
+	while ($attempt -le $maxAttempts -and -not $apiReady) {
+		Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+		try {
+			$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+			if ($response.StatusCode -eq 200) {
+				$apiReady = $true
+				Write-Host "API is ready!"
+			}
+		}
+		catch {
+			$attempt++
+		}
+		if (-not $apiReady) {
+			Start-Sleep -Seconds 10
+		}
+	}
+	
+	if (-not $apiReady) {
+		Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
+	}
+
 
 	############################################################################
 	# 2) Define test lines (including repetitions).
 	############################################################################
-	# The API model is 'sentence-transformers/all-mpnet-base-v2'.
-	$modelName = "sentence-transformers/all-mpnet-base-v2"
 	$testLines = @(
 		"Hello world",
 		"Hello",
@@ -200,7 +251,7 @@ try {
 	for ($i = 0; $i -lt $testLines.Count; $i++) {
 		$text = $testLines[$i]
 		Write-Host "`n[$($i+1)/$($testLines.Count)] Requesting embedding for: '$text'"
-		$floats = Get-EmbeddingFromAPI -textLine $text -modelName $modelName
+		$floats = Get-EmbeddingFromAPI -textLine $text -modelName $global:ModelName -port $global:Port
 		if (-not $floats) {
 			Write-Error "Failed to obtain embedding for '$text'."
 			$testPass = $false

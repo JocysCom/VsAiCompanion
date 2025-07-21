@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_10_Playwright_Service.ps1
 # Description  : Script to set up and run a Playwright service container.
 #                This is a shared service that can be used by multiple applications
 #                including Firecrawl for web scraping and rendering.
@@ -10,11 +9,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -249,6 +248,7 @@ $menuItems = [ordered]@{
 	"6" = "Update Image (App)"
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
 
@@ -267,12 +267,12 @@ $menuActions = @{
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
 	"6" = { Update-PlaywrightServiceContainer }
-	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
 	"8" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:containerName
 	}
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

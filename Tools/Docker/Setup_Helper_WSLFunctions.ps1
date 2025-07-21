@@ -2,8 +2,6 @@
 # File         : Setup_0_WSL.ps1
 # Description  : Contains WSL helper functions for setup scripts:
 #                - Check-WSLStatus: Verify WSL installation and required features.
-# Usage        : Dot-source this script in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_WSL.ps1"
 ################################################################################
 
 #==============================================================================

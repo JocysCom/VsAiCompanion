@@ -12,8 +12,8 @@ A concise ruleset is easier to read, understand, and follow, maximizing its effe
 
 **Important:** Before modifying files in this directory, please consult the following files for essential context:
 
-- **`ReadMe.md`**: Provides an overview of the project, the tools involved, and the purpose of each `Setup_*.ps1` script.
-- **`Requirements.md`**: Details the coding standards, common features (identified by two-letter codes), and specific implementation requirements for the PowerShell scripts. Understanding these requirements is crucial for maintaining consistency.
+-   **`ReadMe.md`**: Provides an overview of the project, the tools involved, and the purpose of each `Setup_*.ps1` script.
+-   **`Requirements.md`**: Details the coding standards, common features (identified by two-letter codes), and specific implementation requirements for the PowerShell scripts. Understanding these requirements is crucial for maintaining consistency.
 
 ## Rule: Validate PowerShell Scripts After Modification
 
@@ -39,9 +39,9 @@ While `PSScriptAnalyzer` is valuable, certain warnings might be acceptable or ex
 
 **Acceptable Suppressions:**
 
-- **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
-- **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. _Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred._
-- **`PSShouldProcess`**: This warning can occur in wrapper functions (like `Update-NocoDBContainer`) that are decorated with `[CmdletBinding(SupportsShouldProcess=$true)]` but delegate the actual work (and the `ShouldProcess` call) to another function (like `Update-Container`). If the wrapper function itself doesn't perform actions requiring confirmation but correctly passes `-WhatIf`/`-Confirm` down via splatting or parameter binding to the inner function that _does_ call `ShouldProcess`, suppressing this warning _on the wrapper function_ is acceptable. Ensure the inner function correctly implements `ShouldProcess`. _Correction: Added a top-level `ShouldProcess` check to wrapper functions like `Update-n8nContainer` to resolve this instead of suppressing._
+-   **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
+-   **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. _Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred._
+-   **`PSShouldProcess`**: This warning can occur in wrapper functions (like `Update-NocoDBContainer`) that are decorated with `[CmdletBinding(SupportsShouldProcess=$true)]` but delegate the actual work (and the `ShouldProcess` call) to another function (like `Update-Container`). If the wrapper function itself doesn't perform actions requiring confirmation but correctly passes `-WhatIf`/`-Confirm` down via splatting or parameter binding to the inner function that _does_ call `ShouldProcess`, suppressing this warning _on the wrapper function_ is acceptable. Ensure the inner function correctly implements `ShouldProcess`. _Correction: Added a top-level `ShouldProcess` check to wrapper functions like `Update-n8nContainer` to resolve this instead of suppressing._
 
 **Procedure for Suppression (During Validation):**
 When validating a script where these specific warnings are expected and acceptable, use the `-ExcludeRule` parameter with `Invoke-ScriptAnalyzer`.
@@ -68,10 +68,10 @@ Select the appropriate cmdlet for script output to prevent errors and ensure pro
 
 **Guidelines:**
 
-- **`Write-Output`**: **Strictly** for function return values intended for assignment or pipeline use.
-  - **AVOID** using it for status messages/prompts within functions that return values. Doing so pollutes the output stream and can cause type errors (e.g., `$var = MyFunc` results in `$var` being `Object[]` instead of `string` because `Write-Output` messages were captured).
-- **`Write-Host`**: Use when direct console display is essential and redirection is undesirable (e.g., `Read-Host` prompts).
-- **`Write-Warning`/`Error`/`Verbose`/`Debug`**: Use for their specific semantic purposes.
+-   **`Write-Output`**: **Strictly** for function return values intended for assignment or pipeline use.
+    -   **AVOID** using it for status messages/prompts within functions that return values. Doing so pollutes the output stream and can cause type errors (e.g., `$var = MyFunc` results in `$var` being `Object[]` instead of `string` because `Write-Output` messages were captured).
+-   **`Write-Host`**: Use when direct console display is essential and redirection is undesirable (e.g., `Read-Host` prompts).
+-   **`Write-Warning`/`Error`/`Verbose`/`Debug`**: Use for their specific semantic purposes.
 
 **Rationale:**
 Prevents type mismatches when capturing function output. Improves script clarity and control over output streams.
@@ -134,18 +134,16 @@ function FunctionName {
 
 **Key Requirements:**
 
-1. **Separator Block:** Each function MUST be preceded by the exact separator block:
-
+1.  **Separator Block:** Each function MUST be preceded by the exact separator block:
     ```powershell
     #==============================================================================
     # Function: FunctionName
     #==============================================================================
     ```
-
     Replace `FunctionName` with the actual name of the function.
-2. **Comment-Based Help:** A comment-based help block (`<# ... #>`) MUST be placed immediately before the `function` keyword (after the separator block).
-3. **Help Block Content:** The help block SHOULD contain at least `.SYNOPSIS` and `.DESCRIPTION`. Include `.PARAMETER`, `.EXAMPLE`, `.OUTPUTS`, and `.NOTES` where applicable and helpful.
-4. **`[CmdletBinding()]`:** Use the `[CmdletBinding()]` attribute for advanced functions, enabling common parameters and parameter validation. Use `[CmdletBinding(SupportsShouldProcess=$true)]` if the function performs actions that should support `-WhatIf` and `-Confirm`, and ensure `$PSCmdlet.ShouldProcess()` or `$PSCmdlet.ShouldContinue()` is called within the function body before performing the action.
+2.  **Comment-Based Help:** A comment-based help block (`<# ... #>`) MUST be placed immediately before the `function` keyword (after the separator block).
+3.  **Help Block Content:** The help block SHOULD contain at least `.SYNOPSIS` and `.DESCRIPTION`. Include `.PARAMETER`, `.EXAMPLE`, `.OUTPUTS`, and `.NOTES` where applicable and helpful.
+4.  **`[CmdletBinding()]`:** Use the `[CmdletBinding()]` attribute for advanced functions, enabling common parameters and parameter validation. Use `[CmdletBinding(SupportsShouldProcess=$true)]` if the function performs actions that should support `-WhatIf` and `-Confirm`, and ensure `$PSCmdlet.ShouldProcess()` or `$PSCmdlet.ShouldContinue()` is called within the function body before performing the action.
 
 **Rationale:**
 This standard format significantly improves code readability by visually separating functions. The comment-based help block is essential for PowerShell's built-in help system (`Get-Help`) and provides rich IntelliSense information (parameter descriptions, types, summaries) in editors like VS Code, aiding development and maintenance. Consistent use of `[CmdletBinding()]` promotes robust function design.
@@ -157,10 +155,10 @@ Each container or service should have its own dedicated PowerShell script. When 
 
 **Guidelines:**
 
-- Use descriptive naming: `Setup_4a_ServiceName_Redis.ps1`, `Setup_4b_ServiceName.ps1`
-- Each script manages only one container's lifecycle (install, uninstall, update, backup, etc.)
-- Dependencies between containers should be validated through dependency checking functions
-- Shared resources (networks, volumes) should be managed by the first container that needs them
+-   Use descriptive naming: `Setup_4a_ServiceName_Redis.ps1`, `Setup_4b_ServiceName.ps1`
+-   Each script manages only one container's lifecycle (install, uninstall, update, backup, etc.)
+-   Dependencies between containers should be validated through dependency checking functions
+-   Shared resources (networks, volumes) should be managed by the first container that needs them
 
 **Procedure:**
 
@@ -179,18 +177,18 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 
 **Guidelines:**
 
-- Define all global variables at the top of the script in a dedicated section
-- Use descriptive names: `$global:containerPort`, `$global:dataPath`, `$global:networkAlias`
-- Replace ALL hardcoded values systematically throughout the script
-- Ensure consistency between related scripts (e.g., Redis and application scripts should use matching network aliases)
+-   Define all global variables at the top of the script in a dedicated section
+-   Use descriptive names: `$global:containerPort`, `$global:dataPath`, `$global:networkAlias`
+-   Replace ALL hardcoded values systematically throughout the script
+-   Ensure consistency between related scripts (e.g., Redis and application scripts should use matching network aliases)
 
 **Common Hardcoded Values to Replace:**
 
-- Port mappings: `"8080:8080"` → `"$($global:containerPort):$($global:containerPort)"`
-- Volume mounts: `":/app/data"` → `":$global:dataPath"`
-- Network aliases: `"myservice"` → `$global:networkAlias`
-- URLs: `"http://service:8080"` → `"http://$($global:networkAlias):$($global:port)"`
-- Container names, image names, volume names
+-   Port mappings: `"8080:8080"` → `"$($global:containerPort):$($global:containerPort)"`
+-   Volume mounts: `":/app/data"` → `":$global:dataPath"`
+-   Network aliases: `"myservice"` → `$global:networkAlias`
+-   URLs: `"http://service:8080"` → `"http://$($global:networkAlias):$($global:port)"`
+-   Container names, image names, volume names
 
 **Procedure:**
 

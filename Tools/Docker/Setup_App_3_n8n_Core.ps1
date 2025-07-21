@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_3_n8n.ps1
 # Description  : Script to set up and run the n8n container using Docker/Podman.
 #                Verifies volume presence, pulls the n8n image if necessary,
 #                and runs the container with port and volume mappings.
@@ -16,11 +15,11 @@ using namespace System.Diagnostics.CodeAnalysis
 # $InformationPreference = 'Continue'
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -403,49 +402,6 @@ function Update-n8nUserData {
 }
 
 #==============================================================================
-# Function: Restart-n8nContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restarts the n8n container, applying current configuration (e.g., enabling community packages).
-.DESCRIPTION
-	Retrieves the current container configuration using Get-n8nContainerConfig (which also ensures
-	community packages are enabled in the config object).
-	Removes the existing container using Remove-n8nContainer.
-	Starts a new container using Start-n8nContainer with the retrieved configuration (image and env vars).
-	This effectively restarts the container with potentially updated environment variables from Get-n8nContainerConfig.
-.EXAMPLE
-	Restart-n8nContainer
-.NOTES
-	Relies on Get-n8nContainerConfig, Remove-n8nContainer, Start-n8nContainer helper functions.
-	Supports -WhatIf via helper functions.
-#>
-function Restart-n8nContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	# Get current container configuration (includes domain prompt and defaults)
-	$config = Get-n8nContainerConfig
-
-	# Remove the existing container using the shared function
-	if (-not (Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName)) {
-		Write-Error "Failed to remove existing container or action skipped. Restart aborted."
-		return
-	}
-
-	# Start a new container with the same image and configuration
-	if (Start-n8nContainer -Image $config.Image -EnvVars $config.EnvVars) {
-		# This function now supports ShouldProcess
-		Write-Host "n8n container restarted successfully with community packages enabled!"
-	}
-	else {
-		Write-Error "Failed to restart container or action skipped."
-	}
-}
-
-
-
-#==============================================================================
 # Function: Reset-AdminPassword
 #==============================================================================
 <#
@@ -471,15 +427,15 @@ $menuTitle = "n8n Container & Data Management Menu" # Updated Title
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"
-	"3" = "Uninstall container (preserves user data volume)"
+	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update System (Image)"
-	"9" = "Update User Data (Not Implemented)"
-	"A" = "Restart"
-	"B" = "Reset Admin Password"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
+	"R" = "Restart Container"
+	"P" = "Reset Admin Password"
 	"0" = "Exit menu"
 }
 
@@ -495,27 +451,17 @@ $menuActions = @{
 	}
 	"2" = { Install-n8nContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = {
-		Write-Host "Saving '$containerName' Container Image..."
-		Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"5" = {
-		Write-Host "Loading '$($global:containerName)' Container Image..."
-		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"6" = {
-		Write-Host "Exporting '$($global:volumeName)' Volume..."
-		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-	}
-	"7" = {
-		Write-Host "Importing '$($global:volumeName)' Volume ..."
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"6" = { Update-n8nContainer }
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"8" = {
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Restart-n8nContainer
+		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Update-n8nContainer }
-	"9" = { Update-n8nUserData }
-	"A" = { Restart-n8nContainer }
-	"B" = { Reset-AdminPassword }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"R" = { & $global:enginePath restart $global:containerName }
+	"P" = { Reset-AdminPassword }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

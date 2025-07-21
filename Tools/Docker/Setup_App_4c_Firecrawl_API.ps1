@@ -1,23 +1,20 @@
 ################################################################################
-# File         : Setup_4c_Firecrawl_API.ps1
 # Description  : Script to set up and run a Firecrawl API container.
 #                Requires Redis and Playwright service containers to be running first.
 #                This container provides the API endpoints and includes UI testing
 #                and comprehensive service availability reporting.
 # Usage        : Run as Administrator if using Docker.
-#                Prerequisites: Redis (Setup_4a_Firecrawl_Redis.ps1) and
-#                              Playwright (Setup_10_Playwright_Service.ps1) containers.
 ################################################################################
 
 using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script is running as Administrator and set the working directory.
 # Note: This script currently only supports Docker due to network alias usage.
@@ -642,13 +639,14 @@ function Update-FirecrawlContainer {
 $menuTitle = "Firecrawl Container Menu"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
-	"2" = "Install container (requires Redis)"
+	"2" = "Install container"
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
 	"6" = "Update Image (App)"
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
 
@@ -682,12 +680,12 @@ $menuActions = @{
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
 	"6" = { Update-FirecrawlContainer } # Calls the dedicated update function
-	"7" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
 	"8" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Write-Host "Restarting container '$($global:firecrawlName)' to apply imported volume data..."
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:firecrawlName
 	}
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

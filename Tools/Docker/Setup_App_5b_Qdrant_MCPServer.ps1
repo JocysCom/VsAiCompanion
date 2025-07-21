@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_5_Qdrant_MCP_Server.ps1
 # Description  : Script to build, run, update, backup, restore, and uninstall the
 #                Qdrant MCP Server container using Docker/Podman.
 #                Clones the source code, builds the image, and runs the container.
@@ -10,11 +9,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -282,13 +281,14 @@ function Update-QdrantMCPServerContainer {
 $menuTitle = "Qdrant MCP Server Container Menu"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
-	"2" = "Install/Rebuild container"
+	"2" = "Install container"
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data)"
-	"7" = "Import Volume (User Data)"
-	"8" = "Update container (Pull source & Rebuild)"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
 
@@ -314,13 +314,13 @@ $menuActions = @{
 		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
 		Write-Warning "Container image restored from backup. You may need to manually restart the container with correct environment variables if they were changed since the backup (use option 2)."
 	}
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+	"6" = { Update-QdrantMCPServerContainer }
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"8" = {
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Update-QdrantMCPServerContainer }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

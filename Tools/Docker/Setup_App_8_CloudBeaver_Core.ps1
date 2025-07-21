@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_8_CloudBeaver.ps1
 # Description  : Script to set up and run the CloudBeaver Community Edition
 #                container using Docker/Podman.
 #                Verifies volume presence, pulls the image if necessary,
@@ -12,11 +11,11 @@ using namespace System.IO
 using namespace System.Diagnostics.CodeAnalysis
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -252,44 +251,6 @@ function Update-CloudBeaverContainer {
 	}
 }
 
-#==============================================================================
-# Function: Restart-CloudBeaverContainer
-#==============================================================================
-<#
-.SYNOPSIS
-	Restarts the CloudBeaver container.
-.DESCRIPTION
-	Removes the existing container using Remove-ContainerAndVolume (prompts about one volume).
-	Starts a new container using Start-CloudBeaverContainer with the global image name.
-.EXAMPLE
-	Restart-CloudBeaverContainer
-.NOTES
-	Relies on Remove-ContainerAndVolume, Start-CloudBeaverContainer helper functions.
-	Supports -WhatIf via helper functions.
-#>
-function Restart-CloudBeaverContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	param()
-
-	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Restart Container")) {
-		return
-	}
-
-	# Remove the existing container using the shared function (prompts about workspace volume)
-	if (-not (Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeNameWorkspace)) {
-		Write-Error "Failed to remove existing container or action skipped. Restart aborted."
-		return
-	}
-
-	# Start a new container with the same image
-	if (Start-CloudBeaverContainer -Image $global:imageName) {
-		Write-Host "CloudBeaver container restarted successfully!"
-	}
-	else {
-		Write-Error "Failed to restart container or action skipped."
-	}
-}
-
 ################################################################################
 # Main Menu Loop using Generic Function
 ################################################################################
@@ -299,15 +260,16 @@ $menuTitle = "CloudBeaver Container & Data Management Menu"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"
-	"3" = "Uninstall container (prompts about workspace volume)"
+	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (Conf Data)"
-	"7" = "Import Volume (Conf Data)"
+	"6" = "Export Volume (Data)"
+	"7" = "Import Volume (Data)"
 	"8" = "Export Volume (Workspace Data)"
 	"9" = "Import Volume (Workspace Data)"
-	"A" = "Update System (Image)"
-	"B" = "Restart"
+	"A" = "Update Image (App)"
+	"B" = "Check for Updates"
+	"C" = "Restart"
 	"0" = "Exit menu"
 }
 
@@ -324,34 +286,21 @@ $menuActions = @{
 	}
 	"2" = { Install-CloudBeaverContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeNameWorkspace } # Call shared function directly
-	"4" = {
-		Write-Host "Saving '$($global:containerName)' Container Image..."
-		Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"5" = {
-		Write-Host "Loading '$($global:containerName)' Container Image..."
-		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-	}
-	"6" = {
-		Write-Host "Exporting '$($global:volumeNameConf)' Volume..."
-		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf
-	}
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"6" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf }
 	"7" = {
-		Write-Host "Importing '$($global:volumeNameConf)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf
-		Restart-CloudBeaverContainer # Restart after import
+		& $global:enginePath restart $global:containerName
 	}
-	"8" = {
-		Write-Host "Exporting '$($global:volumeNameWorkspace)' Volume..."
-		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameWorkspace
-	}
+	"8" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameWorkspace }
 	"9" = {
-		Write-Host "Importing '$($global:volumeNameWorkspace)' Volume ..."
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameWorkspace
-		Restart-CloudBeaverContainer # Restart after import
+		& $global:enginePath restart $global:containerName
 	}
 	"A" = { Update-CloudBeaverContainer }
-	"B" = { Restart-CloudBeaverContainer }
+	"B" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"C" = { & $global:enginePath restart $global:containerName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

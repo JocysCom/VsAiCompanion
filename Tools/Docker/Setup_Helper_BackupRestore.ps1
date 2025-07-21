@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_0_BackupRestore.ps1
 # Description  : Contains container image backup/restore functions:
 #                - Backup-ContainerImage: Backup a single image.
 #                - Invoke-ContainerImageBackup: Backup all images. (Formerly Backup-ContainerImages)
@@ -7,8 +6,6 @@
 #                - Start-RestoredContainer: Helper to run a restored image.
 #                - Invoke-ContainerImageRestore: Restore all images from a folder. (Formerly Restore-ContainerImages)
 #                - Test-AndRestoreBackup: Check for backup and prompt to restore.
-# Usage        : Dot-source this script in other setup scripts:
-#                . "$PSScriptRoot\Setup_0_BackupRestore.ps1"
 ################################################################################
 
 #==============================================================================
@@ -105,6 +102,8 @@ function Backup-ContainerImage {
 		[string]$BackupFolder = ".\Backup"
 	)
 
+	Write-Host "Saving '$ContainerName' Container Image..."
+
 	# Ensure backup folder exists
 	if (-not (Test-Path $BackupFolder)) {
 		New-Item -ItemType Directory -Force -Path $BackupFolder | Out-Null
@@ -178,6 +177,8 @@ function Restore-ContainerImage {
 		[string]$ContainerName,
 		[string]$BackupFolder = ".\Backup"
 	)
+
+	Write-Host "Loading '$ContainerName' Container Image..."
 
 	if (-not (Test-Path $BackupFile)) {
 		Write-Error "Backup file '$BackupFile' not found."

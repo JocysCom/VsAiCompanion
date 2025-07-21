@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_2a_Pipelines.ps1
 # Description  : Script to set up, update, backup, restore, uninstall the Pipelines
 #                container using Docker or Podman. This version installs Pipelines
 #                from scratch by cloning the repository (without converting LF to CRLF)
@@ -11,11 +10,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1"
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1"
 
 # Ensure the working directory is set.
 Set-ScriptLocation
@@ -374,10 +373,11 @@ $menuItems = [ordered]@{
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (Data)"
-	"7" = "Import Volume (Data)"
-	"8" = "Add Azure Pipeline to Container"
-	"9" = "Update System"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
+	"A" = "Add Pipeline"
 	"0" = "Exit menu"
 }
 
@@ -395,14 +395,14 @@ $menuActions = @{
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+	"6" = { Update-PipelinesContainer } # Calls the dedicated update function
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"8" = {
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Add-PipelineToContainer }
-	"9" = { Update-PipelinesContainer } # Calls the dedicated update function
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName "ghcr.io/open-webui/pipelines:main" }
+	"A" = { Add-PipelineToContainer }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

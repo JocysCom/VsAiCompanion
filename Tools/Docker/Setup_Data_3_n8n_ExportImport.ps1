@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_3_n8n_ExportImport.ps1 # Renamed conceptually
 # Description  : Provides menu options to export or import n8n workflows and
 #                credentials for a running container.
 # Usage        : Run with appropriate permissions. Requires the n8n container
@@ -7,10 +6,10 @@
 ################################################################################
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1"
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1" # Needed for Show-ContainerStatus potentially
-. "$PSScriptRoot\Setup_0_BackupRestore.ps1" # Needed for Copy-MachineToHost
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1"
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1" # Needed for Show-ContainerStatus potentially
+. "$PSScriptRoot\Setup_Helper_BackupRestore.ps1" # Needed for Copy-MachineToHost
 
 # Ensure the script working directory is set.
 Set-ScriptLocation

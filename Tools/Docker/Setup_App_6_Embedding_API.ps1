@@ -1,5 +1,4 @@
 ################################################################################
-# File         : Setup_6_Embedding.ps1
 # Description  : Script to build, run, and update the Embedding API container using Podman.
 #                Sets up the build context (Dockerfile, requirements, and API code),
 #                builds the container image, runs it on port 8000, tests connectivity,
@@ -12,11 +11,11 @@ using namespace System
 using namespace System.IO
 
 # Dot-source the necessary helper function files.
-. "$PSScriptRoot\Setup_0_Core.ps1"
-. "$PSScriptRoot\Setup_0_Network.ps1" # For Test-HTTPPort, Test-TCPPort
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1" # For Test-HTTPPort, Test-TCPPort
 # Note: This script specifically uses Podman, so no engine selection needed.
-. "$PSScriptRoot\Setup_0_ContainerEngine.ps1" # For Get-PodmanPath
-. "$PSScriptRoot\Setup_0_ContainerMgmt.ps1" # For Remove-ContainerAndVolume
+. "$PSScriptRoot\Setup_Helper_ContainerEngine.ps1" # For Get-PodmanPath
+. "$PSScriptRoot\Setup_Helper_ContainerManagement.ps1" # For Remove-ContainerAndVolume
 
 # Ensure the script working directory is set.
 Set-ScriptLocation
@@ -24,7 +23,7 @@ Set-ScriptLocation
 # Model selection menu
 $modelConfigs = @(
 	@{ ModelName = 'sentence-transformers/all-mpnet-base-v2'; Port = 8000 },
-	@{ ModelName = 'Qwen/Qwen-3-Embedding-8B'; Port = 8001 }
+	@{ ModelName = 'Snowflake/snowflake-arctic-embed-l-v2.0'; Port = 8001 }
 )
 Write-Host 'Select embedding model to install:'
 for ($i = 0; $i -lt $modelConfigs.Count; $i++) {
@@ -119,20 +118,20 @@ pydantic
 "@
 
 	$embeddingApiContent = @"
-	from fastapi import FastAPI, HTTPException, Response
-	from pydantic import BaseModel
-	from typing import List, Union, Optional
-	import torch
-	import base64
-	import struct
-	from sentence-transformers import SentenceTransformer
-	import os
+from fastapi import FastAPI, HTTPException, Response
+from pydantic import BaseModel
+from typing import List, Union, Optional
+import torch
+import base64
+import struct
+from sentence_transformers import SentenceTransformer
+import os
 
-	app = FastAPI(title='Embedding API')
+app = FastAPI(title='Embedding API')
 
-	# Use MODEL_NAME from environment or fallback to default
-	MODEL_NAME = os.getenv('MODEL_NAME', 'sentence-transformers/all-mpnet-base-v2')
-	model = SentenceTransformer(MODEL_NAME)
+# Use MODEL_NAME from environment or fallback to default
+MODEL_NAME = os.getenv('MODEL_NAME', 'sentence-transformers/all-mpnet-base-v2')
+model = SentenceTransformer(MODEL_NAME)
 
 class EmbeddingRequest(BaseModel):
 	# Optionally override the model (default is our MODEL_NAME).
@@ -250,14 +249,51 @@ function Install-EmbeddingContainer {
 	#   --detach: runs the container in background.
 	#   --name: assigns the container the name "embedding-api".
 	#   --publish: maps host port 8000 to container port 8000.
-	& $global:enginePath run --detach --name $global:containerName --publish $global:Port:8000 --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
+	& $global:enginePath run --detach --name $global:containerName --publish "$($global:Port):8000" --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run embedding API container."
 		exit 1
 	}
 
-	Start-Sleep -Seconds 10
-	Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
+	# Try API first, only wait if it fails
+	$apiReady = $false
+	try {
+		$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+		if ($response.StatusCode -eq 200) {
+			$apiReady = $true
+			Write-Host "API is ready!"
+		}
+	}
+	catch {
+		Write-Host "API not ready immediately. Checking if this is a large model that needs time to load..."
+		Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
+			
+		$maxAttempts = 20
+		$attempt = 1
+		
+		while ($attempt -le $maxAttempts -and -not $apiReady) {
+			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+			Start-Sleep -Seconds 10
+			
+			try {
+				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+				if ($response.StatusCode -eq 200) {
+					$apiReady = $true
+					Write-Host "API is ready!"
+				}
+			}
+			catch {
+				Write-Host "API not ready yet. Model still loading..."
+				$attempt++
+			}
+		}
+		
+		if (-not $apiReady) {
+			Write-Warning "API did not become ready. You may need to wait longer or check container logs with: podman logs $global:containerName"
+		}
+	}
+	
+	Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 	Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 	Write-Host "Embedding API is accessible at http://localhost:$global:Port/v1/embeddings"
 }
@@ -310,14 +346,35 @@ function Update-EmbeddingContainer {
 		#   --detach: runs the container in background.
 		#   --name: assigns the container the name "embedding-api".
 		#   --publish: maps host port 8000 to container port 8000.
-		& $global:enginePath run --detach --name $global:containerName --publish $global:Port:8000 --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
+		& $global:enginePath run --detach --name $global:containerName --publish "$($global:Port):8000" --env MODEL_NAME=$global:ModelName $global:imageName # Use imageName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to run updated embedding API container."
 			exit 1
 		}
 
-		Start-Sleep -Seconds 10
-		Test-HTTPPort -Uri "http://localhost:$global:Port" -serviceName "Embedding API"
+		Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
+		
+		$maxAttempts = 20
+		$attempt = 1
+		
+		while ($attempt -le $maxAttempts -and -not $apiReady) {
+			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
+			try {
+				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
+				if ($response.StatusCode -eq 200) {
+					$apiReady = $true
+					Write-Host "API is ready!"
+				}
+			}
+			catch {
+				$attempt++
+			}
+			if (-not $apiReady) {
+				Start-Sleep -Seconds 10
+			}
+		}
+	
+		Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 		Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 		Write-Host "Embedding API container updated and accessible at http://localhost:$global:Port/v1/embeddings"
 	}
@@ -333,13 +390,14 @@ function Update-EmbeddingContainer {
 $menuTitle = "Embedding API Container Menu (Podman Only)"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
-	"2" = "Install/Rebuild container"
+	"2" = "Install container"
 	"3" = "Uninstall container"
 	"4" = "Save Image (App)"
 	"5" = "Load Image (App)"
-	"6" = "Export Volume (User Data - *Likely Unused*)"
-	"7" = "Import Volume (User Data - *Likely Unused*)"
-	"8" = "Update container (Rebuild & Run)"
+	"6" = "Update Image (App)"
+	"7" = "Export Volume (Data)"
+	"8" = "Import Volume (Data)"
+	"9" = "Check for Updates"
 	"0" = "Exit menu"
 }
 
@@ -362,13 +420,13 @@ $menuActions = @{
 		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
 		Write-Warning "Container image restored from backup. A rebuild (option 2 or 8) might be needed if source code changed."
 	}
-	"6" = { Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
-	"7" = {
-		Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		Write-Host "Restarting container '$($global:containerName)' to apply imported volume data..."
+	"6" = { Update-EmbeddingContainer }
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"8" = {
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"8" = { Update-EmbeddingContainer }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
