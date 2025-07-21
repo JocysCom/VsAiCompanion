@@ -199,7 +199,7 @@ function Get-ZepContainerConfig {
 
 	# Set basic ZEP environment variables
 	$envVars += "ZEP_DEVELOPMENT=false"
-	$envVars += "ZEP_LOG_LEVEL=info"
+	$envVars += "ZEP_LOG_LEVEL=debug"
 	
 	# Note: PostgreSQL configuration is handled via zep.yaml config file
 	# No need to set ZEP_STORE_TYPE, ZEP_DATABASE__URL, or ZEP_STORE_POSTGRES_DSN environment variables
@@ -310,7 +310,12 @@ function Start-ZepContainer {
 	podman machine ssh "sudo echo 'store:' >> /root/zep.yaml"
 	podman machine ssh "sudo echo '  type: postgres' >> /root/zep.yaml"
 	podman machine ssh "sudo echo '  postgres:' >> /root/zep.yaml"
-	podman machine ssh "sudo echo '    dsn: postgres://$($global:postgresUser):$($global:postgresPassword)@$($global:postgresContainerName):$($global:postgresInternalPort)/$($global:postgresDb)?sslmode=disable' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    user: $($global:postgresUser)' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    password: $($global:postgresPassword)' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    host: $($global:postgresContainerName)' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    port: $($global:postgresInternalPort)' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    database: $($global:postgresDb)' >> /root/zep.yaml"
+	podman machine ssh "sudo echo '    sslmode: disable' >> /root/zep.yaml"
 	# Display the created zep.yaml for verification	
 	Write-Host "-------------------------------------------"
 	Write-Host "/root/zep.yaml:/app/config.yaml"
