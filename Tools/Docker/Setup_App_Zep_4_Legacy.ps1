@@ -30,16 +30,16 @@ Set-ScriptLocation
 $global:imageName = "zepai/zep:latest"
 $global:containerName = "zep"
 $global:volumeName = "zep_data"
-$global:containerPort = 8000 # Changed from 8002 to 8000 for legacy Zep
+$global:containerPort = 8004
 $global:volumeMountPath = "/app/data"
 $global:zepOpenAiApiKey = "dummy_zep_openai_api_key"
 $global:zepApiSecret = "dummy_zep_api_secret"
-$global:networkName = "podman" # Reverted to "podman" as per user instruction
-$global:postgresContainerName = "zep-ce-postgres" # Changed from "zep-db" to "zep-ce-postgres"
+$global:networkName = "podman"
+$global:postgresContainerName = "zep-db"
 $global:postgresUser = "postgres"
 $global:postgresPassword = "postgres"
-$global:postgresDb = "postgres" # Changed from "zep" to "postgres"
-$global:postgresPort = 5432 # Changed from 5433 to 5432
+$global:postgresDb = "zep"
+$global:postgresPort = 5433
 $global:postgresInternalPort = 5432
 
 # New global variables for Graphiti and Neo4j
@@ -67,7 +67,8 @@ if ($global:containerEngine -eq "docker") {
 	Test-AdminPrivilege
 	$global:pullOptions = @()
 }
-else { # Assumes podman
+else {
+ # Assumes podman
 	$global:pullOptions = @("--tls-verify=false")
 }
 # Get the engine path after setting specific options
@@ -100,69 +101,69 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
     This function is essential to ensure ZEP has a working PostgreSQL backend before starting.
 #>
 function Test-PostgresRequirement {
-    [CmdletBinding()]
-    [OutputType([bool])]
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$ContainerName,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$EnginePath,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$PostgresUser,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$PostgresDb,
-        
-        [Parameter(Mandatory=$true)]
-        [int]$Port
-    )
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
 
-    Write-Host "Checking PostgreSQL requirement for ZEP..."
-    
-    # Check if PostgreSQL container is running
-    $containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
-    if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
-        Write-Warning "PostgreSQL container '$ContainerName' is not running."
-        Write-Host "Please run Setup_App_Zep_1_PostgreSQL.ps1 first to install and start PostgreSQL."
-        return $false
-    }
-    
-    # Test TCP connectivity
-    if (-not (Test-TCPPort -ComputerName "localhost" -Port $Port -serviceName "PostgreSQL")) {
-        Write-Warning "PostgreSQL is not accessible on port $Port."
-        return $false
-    }
-    
-    # Test database connection and pgvector extension
-    try {
-        $testConnectionCmd = @(
-            "exec", $ContainerName,
-            "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-t", "-c",
-            "SELECT COUNT(*) FROM pg_extension WHERE extname = 'vector';"
-        )
-        
-        $extensionResult = & $EnginePath @testConnectionCmd 2>&1
-        if ($LASTEXITCODE -ne 0) {
-            Write-Warning "Failed to check pgvector extension: $extensionResult"
-            return $false
-        }
-        
-        $extensionCount = ($extensionResult -replace '\s+', '').Trim()
-        if ($extensionCount -eq "0") {
-            Write-Warning "pgvector extension is not installed in PostgreSQL database."
-            Write-Host "Please run Setup_App_PostgreSQL_zep-db.ps1 to ensure pgvector extension is installed."
-            return $false
-        }
-        
-        Write-Host "PostgreSQL requirement satisfied: Container running, accessible, and pgvector extension installed."
-        return $true
-    }
-    catch {
-        Write-Warning "Error checking PostgreSQL requirements: $_"
-        return $false
-    }
+		[Parameter(Mandatory = $true)]
+		[string]$EnginePath,
+
+		[Parameter(Mandatory = $true)]
+		[string]$PostgresUser,
+
+		[Parameter(Mandatory = $true)]
+		[string]$PostgresDb,
+
+		[Parameter(Mandatory = $true)]
+		[int]$Port
+	)
+
+	Write-Host "Checking PostgreSQL requirement for ZEP..."
+
+	# Check if PostgreSQL container is running
+	$containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
+	if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
+		Write-Warning "PostgreSQL container '$ContainerName' is not running."
+		Write-Host "Please run Setup_App_Zep_1_PostgreSQL.ps1 first to install and start PostgreSQL."
+		return $false
+	}
+
+	# Test TCP connectivity
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $Port -serviceName "PostgreSQL")) {
+		Write-Warning "PostgreSQL is not accessible on port $Port."
+		return $false
+	}
+
+	# Test database connection and pgvector extension
+	try {
+		$testConnectionCmd = @(
+			"exec", $ContainerName,
+			"psql", "-U", $PostgresUser, "-d", $PostgresDb, "-t", "-c",
+			"SELECT COUNT(*) FROM pg_extension WHERE extname = 'vector';"
+		)
+
+		$extensionResult = & $EnginePath @testConnectionCmd 2>&1
+		if ($LASTEXITCODE -ne 0) {
+			Write-Warning "Failed to check pgvector extension: $extensionResult"
+			return $false
+		}
+
+		$extensionCount = ($extensionResult -replace '\s+', '').Trim()
+		if ($extensionCount -eq "0") {
+			Write-Warning "pgvector extension is not installed in PostgreSQL database."
+			Write-Host "Please run Setup_App_PostgreSQL_zep-db.ps1 to ensure pgvector extension is installed."
+			return $false
+		}
+
+		Write-Host "PostgreSQL requirement satisfied: Container running, accessible, and pgvector extension installed."
+		return $true
+	}
+	catch {
+		Write-Warning "Error checking PostgreSQL requirements: $_"
+		return $false
+	}
 }
 
 #==============================================================================
@@ -188,37 +189,37 @@ function Test-PostgresRequirement {
     This function is essential to ensure ZEP has a working Graphiti backend before starting.
 #>
 function Test-GraphitiRequirement {
-    [CmdletBinding()]
-    [OutputType([bool])]
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$ContainerName,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$EnginePath,
-        
-        [Parameter(Mandatory=$true)]
-        [int]$Port
-    )
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
 
-    Write-Host "Checking Graphiti requirement for ZEP..."
-    
-    # Check if Graphiti container is running
-    $containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
-    if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
-        Write-Warning "Graphiti container '$ContainerName' is not running."
-        Write-Host "Please run Setup_App_Zep_3_Graphiti.ps1 first to install and start Graphiti."
-        return $false
-    }
-    
-    # Test TCP connectivity
-    if (-not (Test-TCPPort -ComputerName "localhost" -Port $Port -serviceName "Graphiti")) {
-        Write-Warning "Graphiti is not accessible on port $Port."
-        return $false
-    }
-    
-    Write-Host "Graphiti requirement satisfied: Container running and accessible."
-    return $true
+		[Parameter(Mandatory = $true)]
+		[string]$EnginePath,
+
+		[Parameter(Mandatory = $true)]
+		[int]$Port
+	)
+
+	Write-Host "Checking Graphiti requirement for ZEP..."
+
+	# Check if Graphiti container is running
+	$containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
+	if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
+		Write-Warning "Graphiti container '$ContainerName' is not running."
+		Write-Host "Please run Setup_App_Zep_3_Graphiti.ps1 first to install and start Graphiti."
+		return $false
+	}
+
+	# Test TCP connectivity
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $Port -serviceName "Graphiti")) {
+		Write-Warning "Graphiti is not accessible on port $Port."
+		return $false
+	}
+
+	Write-Host "Graphiti requirement satisfied: Container running and accessible."
+	return $true
 }
 
 #==============================================================================
@@ -246,46 +247,46 @@ function Test-GraphitiRequirement {
     This function is essential to ensure ZEP has a working Neo4j backend before starting.
 #>
 function Test-Neo4jRequirement {
-    [CmdletBinding()]
-    [OutputType([bool])]
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$ContainerName,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$EnginePath,
-        
-        [Parameter(Mandatory=$true)]
-        [int]$BoltPort,
-        
-        [Parameter(Mandatory=$true)]
-        [int]$HttpPort
-    )
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
 
-    Write-Host "Checking Neo4j requirement for ZEP..."
-    
-    # Check if Neo4j container is running
-    $containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
-    if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
-        Write-Warning "Neo4j container '$ContainerName' is not running."
-        Write-Host "Please run Setup_App_Zep_2_Neo4j.ps1 first to install and start Neo4j."
-        return $false
-    }
-    
-    # Test TCP connectivity for Bolt port
-    if (-not (Test-TCPPort -ComputerName "localhost" -Port $BoltPort -serviceName "Neo4j Bolt")) {
-        Write-Warning "Neo4j Bolt is not accessible on port $BoltPort."
-        return $false
-    }
+		[Parameter(Mandatory = $true)]
+		[string]$EnginePath,
 
-    # Test TCP connectivity for HTTP port
-    if (-not (Test-TCPPort -ComputerName "localhost" -Port $HttpPort -serviceName "Neo4j HTTP")) {
-        Write-Warning "Neo4j HTTP is not accessible on port $HttpPort."
-        return $false
-    }
-    
-    Write-Host "Neo4j requirement satisfied: Container running and accessible."
-    return $true
+		[Parameter(Mandatory = $true)]
+		[int]$BoltPort,
+
+		[Parameter(Mandatory = $true)]
+		[int]$HttpPort
+	)
+
+	Write-Host "Checking Neo4j requirement for ZEP..."
+
+	# Check if Neo4j container is running
+	$containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
+	if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
+		Write-Warning "Neo4j container '$ContainerName' is not running."
+		Write-Host "Please run Setup_App_Zep_2_Neo4j.ps1 first to install and start Neo4j."
+		return $false
+	}
+
+	# Test TCP connectivity for Bolt port
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $BoltPort -serviceName "Neo4j Bolt")) {
+		Write-Warning "Neo4j Bolt is not accessible on port $BoltPort."
+		return $false
+	}
+
+	# Test TCP connectivity for HTTP port
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $HttpPort -serviceName "Neo4j HTTP")) {
+		Write-Warning "Neo4j HTTP is not accessible on port $HttpPort."
+		return $false
+	}
+
+	Write-Host "Neo4j requirement satisfied: Container running and accessible."
+	return $true
 }
 
 
@@ -337,10 +338,10 @@ function Get-ZepContainerConfig {
 	# Set basic ZEP environment variables
 	$envVars += "ZEP_DEVELOPMENT=false"
 	$envVars += "ZEP_LOG_LEVEL=debug"
-	
+
 	# Note: PostgreSQL configuration is handled via zep.yaml config file
 	# No need to set ZEP_STORE_TYPE, ZEP_DATABASE__URL, or ZEP_STORE_POSTGRES_DSN environment variables
-	
+
 	# Use consistent ZEP API key from global variable (required by ZEP)
 	$apiKeyExists = $false
 	foreach ($env in $envVars) {
@@ -430,10 +431,11 @@ function Start-ZepContainer {
 	$HostIpForContainer = (podman machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2").Trim()
 	if (-not [string]::IsNullOrWhiteSpace($HostIpForContainer)) {
 		Write-Host "Host IP for container: $HostIpForContainer"
-	} else {
+	}
+ else {
 		Write-Error "Could not determine host IP for container."
 	}
-	
+
 	# Create zep.yaml inside Podman VM line by line with LF endings
 	# This is the content from the legacy zep.yaml, adapted for dynamic values
 	podman machine ssh "sudo echo 'log:' > /root/zep.yaml"
@@ -537,7 +539,7 @@ function Start-ZepContainer {
 	Install-ZepContainer
 .NOTES
 	Orchestrates image acquisition, cleanup, environment configuration, and container start.
-	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume, 
+	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume,
 	Get-ZepContainerConfig, and Start-ZepContainer helper functions.
 #>
 function Install-ZepContainer {
