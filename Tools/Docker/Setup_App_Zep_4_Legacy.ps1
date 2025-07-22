@@ -3,6 +3,7 @@
 #                Verifies volume presence, pulls the ZEP image if necessary,
 #                and runs the container with port and volume mappings.
 #                ZEP is a temporal knowledge graph-based memory layer for AI agents.
+#                https://github.com/getzep/zep/tree/main/legacy
 # Usage        : Run as Administrator if using Docker.
 ################################################################################
 
@@ -126,7 +127,7 @@ function Test-PostgresRequirement {
 	$containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
 	if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
 		Write-Warning "PostgreSQL container '$ContainerName' is not running."
-		Write-Host "Please run Setup_App_Zep_1_PostgreSQL.ps1 first to install and start PostgreSQL."
+		Write-Host "Please setup PostgreSQL first to install and start PostgreSQL."
 		return $false
 	}
 
@@ -153,7 +154,7 @@ function Test-PostgresRequirement {
 		$extensionCount = ($extensionResult -replace '\s+', '').Trim()
 		if ($extensionCount -eq "0") {
 			Write-Warning "pgvector extension is not installed in PostgreSQL database."
-			Write-Host "Please run Setup_App_PostgreSQL_zep-db.ps1 to ensure pgvector extension is installed."
+			Write-Host "Please setup PostgreSQL to ensure pgvector extension is installed."
 			return $false
 		}
 
@@ -208,7 +209,7 @@ function Test-GraphitiRequirement {
 	$containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
 	if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
 		Write-Warning "Graphiti container '$ContainerName' is not running."
-		Write-Host "Please run Setup_App_Zep_3_Graphiti.ps1 first to install and start Graphiti."
+		Write-Host "Please setup Graphiti first to install and start Graphiti."
 		return $false
 	}
 
@@ -269,7 +270,7 @@ function Test-Neo4jRequirement {
 	$containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
 	if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
 		Write-Warning "Neo4j container '$ContainerName' is not running."
-		Write-Host "Please run Setup_App_Zep_2_Neo4j.ps1 first to install and start Neo4j."
+		Write-Host "Please setup Neo4j first to install and start Neo4j."
 		return $false
 	}
 
@@ -491,8 +492,8 @@ function Start-ZepContainer {
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting ZEP container with image: $Image"
-		Write-Host "& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image"
-		& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image
+		Write-Host "& $global:enginePath run @runOptions $Image"
+		& $global:enginePath run @runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."
@@ -548,21 +549,21 @@ function Install-ZepContainer {
 	# Test PostgreSQL requirement before proceeding
 	if (-not (Test-PostgresRequirement -ContainerName $global:postgresContainerName -EnginePath $global:enginePath -PostgresUser $global:postgresUser -PostgresDb $global:postgresDb -Port $global:postgresPort)) {
 		Write-Error "PostgreSQL requirement not met. ZEP installation cannot proceed."
-		Write-Host "Please run Setup_App_Zep_1_PostgreSQL.ps1 first to install and configure PostgreSQL with pgvector extension."
+		Write-Host "Please setup PostgreSQL first to install and configure PostgreSQL with pgvector extension."
 		return
 	}
 
 	# Test Neo4j requirement before proceeding
 	if (-not (Test-Neo4jRequirement -ContainerName $global:neo4jContainerName -EnginePath $global:enginePath -BoltPort $global:neo4jBoltPort -HttpPort $global:neo4jHttpPort)) {
 		Write-Error "Neo4j requirement not met. ZEP installation cannot proceed."
-		Write-Host "Please run Setup_App_Zep_2_Neo4j.ps1 first to install and start Neo4j."
+		Write-Host "Please setup Neo4j first to install and start Neo4j."
 		return
 	}
 
 	# Test Graphiti requirement before proceeding
 	if (-not (Test-GraphitiRequirement -ContainerName $global:graphitiContainerName -EnginePath $global:enginePath -Port $global:graphitiPort)) {
 		Write-Error "Graphiti requirement not met. ZEP installation cannot proceed."
-		Write-Host "Please run Setup_App_Zep_3_Graphiti.ps1 first to install and start Graphiti."
+		Write-Host "Please setup Graphiti first to install and start Graphiti."
 		return
 	}
 
