@@ -165,8 +165,7 @@ function Get-GraphitiContainerConfig {
 	}
 
 	# Set basic Graphiti environment variables from docker-compose.ce.yaml
-	$envVars += "OPENAI_API_KEY=dummy_openai_api_key" # Will be prompted for
-	$envVars += "MODEL_NAME=gpt-4o-mini"
+	$envVars += "MODEL_NAME=gpt-4.1"
 	$envVars += "NEO4J_URI=bolt://$($global:neo4jContainerName):$($global:neo4jBoltPort)"
 	$envVars += "NEO4J_USER=$($global:neo4jUser)"
 	$envVars += "NEO4J_PASSWORD=$($global:neo4jPassword)"
@@ -240,12 +239,15 @@ function Start-GraphitiContainer {
 		"--network", $global:networkName # Connect to the same network as Neo4j
 	)
 
-	# No need to add Neo4j hostname mapping, as we are using default network and container name resolution
-	# if (-not [string]::IsNullOrWhiteSpace($Neo4jIp)) {
-	# 	$runOptions += "--add-host"
-	# 	$runOptions += "$($global:neo4jContainerName):$Neo4jIp"
-	# 	Write-Host "Adding host mapping: $($global:neo4jContainerName) -> $Neo4jIp"
-	# }
+	# Add Neo4j hostname mapping for direct IP resolution
+	$Neo4jIp = (podman machine ssh "sudo podman inspect $($global:neo4jContainerName) --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'").Trim()
+	if (-not [string]::IsNullOrWhiteSpace($Neo4jIp)) {
+		$runOptions += "--add-host"
+		$runOptions += "$($global:neo4jContainerName):$Neo4jIp"
+		Write-Host "Adding host mapping: $($global:neo4jContainerName) -> $Neo4jIp"
+	} else {
+		Write-Warning "Could not determine Neo4j container IP. Ensure $($global:neo4jContainerName) is running and accessible on the 'podman' network."
+	}
 
 	# Add all environment variables
 	foreach ($env in $EnvVars) {
@@ -345,6 +347,9 @@ function Install-GraphitiContainer {
 
 	# Get the configuration (which includes setting default environment variables)
 	$config = Get-GraphitiContainerConfig
+
+	# Add the obtained OpenAI API Key to the environment variables
+	$config.EnvVars += "OPENAI_API_KEY=$($global:zepOpenAiApiKey)"
 
 	# Start the container using the global image name and the retrieved config
 	Start-GraphitiContainer -Image $global:imageName -EnvVars $config.EnvVars
