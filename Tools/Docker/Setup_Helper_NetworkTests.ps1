@@ -178,6 +178,42 @@ function Test-WebSocketPort {
 			$client.Dispose()
 			return $false
 		}
+
+		#==============================================================================
+		# Function: Ensure-NetworkExists
+		#==============================================================================
+		function Ensure-NetworkExists {
+			[CmdletBinding(SupportsShouldProcess = $true)]
+			[OutputType([bool])]
+			param(
+				[Parameter(Mandatory = $true)]
+				[string]$NetworkName,
+
+				[Parameter(Mandatory = $true)]
+				[string]$EnginePath
+			)
+
+			# Check if network exists
+			$networkExists = & $EnginePath network ls --format "{{.Name}}" | Where-Object { $_ -eq $NetworkName }
+			if ($networkExists) {
+				Write-Host "Network '$NetworkName' already exists."
+				return $true
+			}
+			if ($PSCmdlet.ShouldProcess($NetworkName, "Create Network")) {
+				Write-Host "Creating network '$NetworkName'..."
+				& $EnginePath network create $NetworkName
+				if ($LASTEXITCODE -eq 0) {
+					Write-Host "Network '$NetworkName' created successfully."
+					return $true
+				}
+				else {
+					Write-Warning "Failed to create network '$NetworkName'."
+					return $false
+				}
+			}
+
+			return $false
+		}
 	}
 	catch {
 		Write-Error "$serviceName WebSocket test failed at $Uri. Error details: $_"

@@ -492,8 +492,8 @@ function Start-ZepContainer {
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting ZEP container with image: $Image"
-		Write-Host "& $global:enginePath run @runOptions $Image"
-		& $global:enginePath run @runOptions $Image
+		Write-Host "& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image"
+		& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."
