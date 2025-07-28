@@ -65,25 +65,29 @@ $menuActions = @{
 	"5" = { Invoke-ContainerImageRestore -Engine $containerEngine }
 	"6" = { Invoke-ContainerVolumeRestore -EngineType $containerEngine }
 	"7" = {
-		$backupFiles = Get-ChildItem -Path ".\Backup" -Filter "*-image-*.tar" | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name
+		# Get list of available image backup files from helper function
+		$backupFiles = Get-AvailableImageBackups
 		if ($backupFiles.Count -eq 0) {
 			Write-Host "No image backup files found."
 			return
 		}
 		$selection = Invoke-OptionsMenu -Title "Select Image Backup to Restore" -Options $backupFiles -ExitChoice "Exit menu"
 		if ($selection -ne "Exit menu" -and -not [string]::IsNullOrWhiteSpace($selection)) {
-			Restore-ContainerImage -Engine $containerEngine -BackupFile (Join-Path ".\Backup" $selection)
+			Restore-ContainerImageFromFile -Engine $containerEngine -BackupFileName $selection
 		}
 	}
 	"8" = {
-		$backupFiles = Get-ChildItem -Path ".\Backup" -Filter "*-volume-*.tar" | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name
+		# Get list of available volume backup files from helper function
+		$backupFiles = Get-AvailableVolumeBackups
 		if ($backupFiles.Count -eq 0) {
 			Write-Host "No volume backup files found."
 			return
 		}
 		$selection = Invoke-OptionsMenu -Title "Select Volume Backup to Restore" -Options $backupFiles -ExitChoice "Exit menu"
 		if ($selection -ne "Exit menu" -and -not [string]::IsNullOrWhiteSpace($selection)) {
-			Restore-ContainerVolume -EngineType $containerEngine -VolumeName ($selection -replace "-volume-\d{8}-\d{4}\.tar$", "") -BackupFile (Join-Path ".\Backup" $selection)
+			# Extract volume name from filename pattern
+			$volumeName = $selection -replace "-volume-\d{8}-\d{4}\.tar$", ""
+			Restore-ContainerVolume -EngineType $containerEngine -VolumeName $volumeName
 		}
 	}
 	# "0" action is handled internally by Invoke-MenuLoop
