@@ -98,11 +98,11 @@ function Backup-ContainerImage {
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
 		[Parameter(Mandatory = $true)]
-		[string]$ContainerName,
+		[string]$ImageName, # Changed from ContainerName to ImageName
 		[string]$BackupFolder = ".\Backup"
 	)
 
-	Write-Host "Saving '$ContainerName' Container Image..."
+	Write-Host "Saving image '$ImageName'..."
 
 	# Ensure backup folder exists
 	if (-not (Test-Path $BackupFolder)) {
@@ -110,19 +110,11 @@ function Backup-ContainerImage {
 		Write-Host "Created backup folder: $BackupFolder"
 	}
 
-	# Use the current image name associated with the running container if possible, else default
-	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
-	if (-not $containerInfo) {
-		Write-Error "Container '$ContainerName' not found. Cannot back up image."
-		return $false
-	}
-
-	# Container exists, try to preserve existing vars and image name
-	$ImageName = $containerInfo.Config.Image
-
 	# Generate timestamped filename using .tar extension
 	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
-	$backupFileName = "$containerName-image-$timestamp.tar"
+	# Use a safe name for the file, replacing problematic characters
+	$safeImageName = $ImageName -replace "[:/]", "_"
+	$backupFileName = "$safeImageName-image-$timestamp.tar"
 	$hostWinFilePath = Join-Path $BackupFolder $backupFileName
 
 	# podman save [options] IMAGE
@@ -174,47 +166,32 @@ function Restore-ContainerImage {
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
 		[Parameter(Mandatory = $true)]
-		[string]$ContainerName,
-		[string]$BackupFolder = ".\Backup"
+		[string]$BackupFile, # Changed to accept BackupFile directly
+		[Parameter(Mandatory = $false)]
+		[switch]$RunContainer = $false # Added RunContainer parameter
 	)
 
-	Write-Host "Loading '$ContainerName' Container Image..."
+	Write-Host "Loading image from '$BackupFile'..."
 
 	if (-not (Test-Path $BackupFile)) {
 		Write-Error "Backup file '$BackupFile' not found."
 		return $false
 	}
 
-	# Use the current image name associated with the running container if possible, else default
-	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
-	if (-not $containerInfo) {
-		Write-Error "Container '$ContainerName' not found. Cannot back up image."
-		return $false
-	}
+	# No need to inspect container or get image name from it.
+	# The image name will be parsed from the 'load' command output.
 
-	# Container exists, try to preserve existing vars and image name
-	$ImageName = $containerInfo.Config.Image
-
-	# Find available backup files for the specified volume
-	$backupPattern = "$ContainerName-image-*.tar"
-	$backupFiles = Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Sort-Object LastWriteTime -Descending
+	# The original code here was trying to find backup files for a *volume* based on a *container name*, which was incorrect.
+	# I will remove the incorrect logic and rely on BackupFile being the direct path.
 
 	if (-not $backupFiles) {
 		Write-Error "No backup files found for '$ContainerName' images in folder '$BackupFolder' matching pattern '$backupPattern'."
 		return $false
 	}
 
-	[string[]]$fileNames = (Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Select-Object -ExpandProperty Name);
-	[string[]]$menuOptions = $fileNames.Clone();
-	$exit = "Exit menu"
-	$menuOptions += $exit;
-	$backupFileName = Invoke-OptionsMenu -Title "Restore Container Volume" -Options $menuOptions -ExitChoice $exit
-	if ($backupFileName -eq $exit -or [string]::IsNullOrWhiteSpace($backupFileName)) {
-		Write-Host "Restore cancelled by user."
-		return $false
-	}
+	# The selection logic will be moved to the calling function for single image restore.
 
-	$hostWinFilePath = Join-Path $BackupFolder $backupFileName
+	$hostWinFilePath = $BackupFile # BackupFile is already the full path
 
 	$output = & $Engine load --input $hostWinFilePath
 
@@ -296,14 +273,14 @@ function Backup-ContainerVolume {
 	$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
 
 	# Command runs inside the container engine's context.
-	Write-Output "$EngineType machine ssh ""$EngineType volume export '$VolumeName' --output '$hostWslFilePath'"""
+	Write-Host "$EngineType machine ssh ""$EngineType volume export '$VolumeName' --output '$hostWslFilePath'"""
 	& $EngineType machine ssh "$EngineType volume export '$VolumeName' --output '$hostWslFilePath'"
 	$success = $LASTEXITCODE -eq 0
 	if ($success) {
-		Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+		Write-Host "Successfully backed up volume '$VolumeName' to '$hostWinFilePath'" -ForegroundColor Green
 	}
 	else {
-		Write-Error "Failed to backup image '$ImageName'"
+		Write-Error "Failed to backup volume '$VolumeName'"
 	}
 	return $hostWinFilePath
 }
@@ -371,14 +348,14 @@ function Restore-ContainerVolume {
 	$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
 
 	# Command runs inside the container engine's context.
-	Write-Output "$EngineType machine ssh ""$EngineType volume import '$VolumeName' '$hostWslFilePath'"""
+	Write-Host "$EngineType machine ssh ""$EngineType volume import '$VolumeName' '$hostWslFilePath'"""
 	& $EngineType machine ssh "$EngineType volume import '$VolumeName' '$hostWslFilePath'"
 	$success = $LASTEXITCODE -eq 0
 	if ($success) {
-		Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+		Write-Host "Successfully restored volume '$VolumeName' from '$hostWinFilePath'" -ForegroundColor Green
 	}
 	else {
-		Write-Error "Failed to backup image '$ImageName'"
+		Write-Error "Failed to restore volume '$VolumeName'"
 	}
 	return $success
 }
@@ -883,7 +860,7 @@ function Test-AndRestoreBackup {
 	Write-Host "Backup file found for image '$ImageName': $backupFile"
 	$choice = Read-Host "Do you want to restore the backup for '$ImageName'? (Y/N, default N)"
 	if ($choice -and $choice.ToUpper() -eq "Y") {
-		# Call the singular version
+		# Call the singular version with the correct parameter
 		return (Restore-ContainerImage -Engine $Engine -BackupFile $backupFile)
 	}
 	else {
@@ -891,4 +868,206 @@ function Test-AndRestoreBackup {
 		Write-Host "User opted not to restore backup for image '$ImageName'."
 		return $false
 	}
+}
+
+#==============================================================================
+# Function: Get-AvailableImages
+#==============================================================================
+<#
+.SYNOPSIS
+	Retrieves a list of all available container images.
+.DESCRIPTION
+	Queries the specified container engine for a list of all images,
+	excluding intermediate or untagged images (<none>:<none>).
+.PARAMETER Engine
+	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.OUTPUTS
+	[string[]] An array of image names (e.g., 'nginx:latest', 'ubuntu:20.04').
+.EXAMPLE
+	$images = Get-AvailableImages -Engine "docker"
+	$images | ForEach-Object { Write-Host $_ }
+.NOTES
+	Uses 'engine images --format' to get a clean list.
+#>
+function Get-AvailableImages {
+	[CmdletBinding()]
+	[OutputType([string[]])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine
+	)
+
+	Write-Host "Retrieving list of available images..."
+	try {
+		$images = & $Engine images --format "{{.Repository}}:{{.Tag}}" 2>$null | Where-Object { $_ -ne "<none>:<none>" }
+		if ($images) {
+			Write-Host "Found $($images.Count) images." -ForegroundColor Green
+			return $images
+		}
+		else {
+			Write-Host "No images found." -ForegroundColor Yellow
+			return @()
+		}
+	}
+	catch {
+		Write-Error "Failed to retrieve images: $_"
+		return @()
+	}
+}
+
+#==============================================================================
+# Function: Get-AvailableVolumes
+#==============================================================================
+<#
+.SYNOPSIS
+	Retrieves a list of all available container volumes.
+.DESCRIPTION
+	Queries the specified container engine for a list of all named volumes.
+.PARAMETER Engine
+	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
+.OUTPUTS
+	[string[]] An array of volume names.
+.EXAMPLE
+	$volumes = Get-AvailableVolumes -Engine "podman"
+	$volumes | ForEach-Object { Write-Host $_ }
+.NOTES
+	Uses 'engine volume ls --format' to get a clean list.
+#>
+function Get-AvailableVolumes {
+	[CmdletBinding()]
+	[OutputType([string[]])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine
+	)
+
+	Write-Host "Retrieving list of available volumes..."
+	try {
+		$volumes = & $Engine volume ls --format "{{.Name}}" 2>$null
+		if ($volumes) {
+			Write-Host "Found $($volumes.Count) volumes." -ForegroundColor Green
+			return $volumes
+		}
+		else {
+			Write-Host "No volumes found." -ForegroundColor Yellow
+			return @()
+		}
+	}
+	catch {
+		Write-Error "Failed to retrieve volumes: $_"
+		return @()
+	}
+}
+
+#==============================================================================
+# Function: Invoke-ContainerVolumeBackup
+#==============================================================================
+<#
+.SYNOPSIS
+	Backs up all available container volumes using the specified engine.
+.DESCRIPTION
+	Retrieves a list of all named volumes known to the container engine.
+	For each volume found, it calls the Backup-ContainerVolume function to save it to a .tar file
+	in the specified backup folder.
+.PARAMETER EngineType
+	The type of the container engine ('docker' or 'podman'). Mandatory.
+.PARAMETER BackupFolder
+	The directory where the backup .tar files will be saved. Defaults to '.\Backup'.
+.OUTPUTS
+	[bool] Returns $true if at least one volume was successfully backed up, $false otherwise.
+.EXAMPLE
+	Invoke-ContainerVolumeBackup -EngineType "docker" -BackupFolder "D:\DockerBackups"
+.NOTES
+	Relies on Get-AvailableVolumes.
+#>
+function Invoke-ContainerVolumeBackup {
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$EngineType,
+
+		[string]$BackupFolder = ".\Backup"
+	)
+
+	Write-Host "Retrieving list of volumes for $EngineType..."
+	$volumes = Get-AvailableVolumes -Engine $EngineType
+
+	if (-not $volumes) {
+		Write-Host "No volumes found for $EngineType."
+		return $false
+	}
+
+	$successCount = 0
+	foreach ($volume in $volumes) {
+		Write-Host "Backing up volume: $volume"
+		if (Backup-ContainerVolume -EngineType $EngineType -VolumeName $volume -BackupFolder $BackupFolder) {
+			$successCount++
+		}
+	}
+
+	Write-Host "Backed up $successCount out of $($volumes.Count) volumes."
+	return ($successCount -gt 0)
+}
+
+#==============================================================================
+# Function: Invoke-ContainerVolumeRestore
+#==============================================================================
+<#
+.SYNOPSIS
+	Restores all container volumes found in .tar files within a specified backup folder.
+.DESCRIPTION
+	Searches the specified backup folder for files matching '*-volume-*.tar'. For each file found,
+	it attempts to parse the volume name from the filename and then calls the Restore-ContainerVolume function.
+.PARAMETER EngineType
+	The type of the container engine ('docker' or 'podman'). Mandatory.
+.PARAMETER BackupFolder
+	The directory containing the .tar backup files. Defaults to '.\Backup'.
+.OUTPUTS
+	[bool] Returns $true if at least one volume was successfully restored, $false otherwise.
+.EXAMPLE
+	Invoke-ContainerVolumeRestore -EngineType "docker" -BackupFolder "D:\DockerBackups"
+.NOTES
+	Assumes backup filenames follow the pattern '{VolumeName}-volume-*.tar'.
+#>
+function Invoke-ContainerVolumeRestore {
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[ValidateSet("docker", "podman")]
+		[string]$EngineType,
+
+		[string]$BackupFolder = ".\Backup"
+	)
+
+	if (-not (Test-Path $BackupFolder)) {
+		Write-Host "Backup folder '$BackupFolder' does not exist. Nothing to restore."
+		return $false
+	}
+
+	$tarFiles = Get-ChildItem -Path $BackupFolder -Filter "*-volume-*.tar"
+	if (-not $tarFiles) {
+		Write-Host "No volume backup tar files found in '$BackupFolder'."
+		return $false
+	}
+
+	$successCount = 0
+	foreach ($file in $tarFiles) {
+		# Attempt to parse volume name from filename (e.g., "myvolume-volume-20231026-1230.tar")
+		if ($file.Name -match "^(.+)-volume-\d{8}-\d{4}\.tar$") {
+			$volumeName = $matches[1]
+			Write-Host "Restoring volume '$volumeName' from file: $($file.Name)"
+			if (Restore-ContainerVolume -EngineType $EngineType -VolumeName $volumeName -BackupFolder $BackupFolder -BackupFile $file.FullName) {
+				$successCount++
+			}
+		}
+		else {
+			Write-Warning "Skipping file '$($file.Name)': Does not match expected volume backup filename pattern."
+		}
+	}
+
+	Write-Host "Restored $successCount out of $($tarFiles.Count) volume backups."
+	return ($successCount -gt 0)
 }

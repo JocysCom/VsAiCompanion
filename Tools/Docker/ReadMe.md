@@ -101,7 +101,7 @@ These scripts handle the initial setup of the container environment and core man
 - **Setup_Core_1_WSL2.ps1**: Ensures Windows Subsystem for Linux (WSL2) is installed and configured, which is often required for Docker/Podman on Windows.
 - **Setup_Core_1a_Docker.ps1**: Installs and configures Docker Desktop or Docker Engine on Windows.
 - **Setup_Core_1b_Podman.ps1**: Installs and configures Podman, including the CLI, machine, service, and optionally Podman Desktop.
-- **Setup_Core_1c_ImageBackupRestore.ps1**: Provides a menu-driven interface for backing up or restoring container _images_ using functions from `Setup_Helper_BackupRestore.ps1`.
+- **Setup_Core_1c_ImageVolumeBackupRestore.ps1**: Provides a menu-driven interface for backing up or restoring container images and volumes using functions from `Setup_Helper_BackupRestore.ps1`.
 - **Setup_Core_1d_Portainer.ps1**: Installs and configures the Portainer container management UI (supports Docker/Podman).
 
 ### Application Suites - Deployment & Management (`Setup_App_*.ps1`)
