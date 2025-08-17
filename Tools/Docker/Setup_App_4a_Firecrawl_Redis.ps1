@@ -28,6 +28,7 @@ $global:networkName = "firecrawl-net"
 $global:containerPort = 6379
 $global:redisNetworkAlias = "firecrawl-redis"
 $global:redisDataPath = "/data"
+$global:hostPort = $global:containerPort
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -47,6 +48,29 @@ else {
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
+
+# Load settings from native Aspire manifest if available (override image and ports only)
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+if (Test-Path $aspireManifestPath) {
+    try {
+        $manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+        $res = $manifest.resources[$global:containerName]
+        if ($res) {
+            if ($res.properties.image) {
+                $global:imageName = $res.properties.image
+            }
+            $binding = $res.properties.bindings | Where-Object { $_.protocol -eq "tcp" } | Select-Object -First 1
+            if ($binding.containerPort) {
+                $global:containerPort = $binding.containerPort
+            }
+            if ($binding.hostPort) {
+                $global:hostPort = $binding.hostPort
+            }
+        }
+    } catch {
+        Write-Warning "Failed to parse Aspire manifest at $aspireManifestPath: $_"
+    }
+}
 
 #==============================================================================
 # Function: Install-FirecrawlRedisContainer
@@ -123,7 +147,7 @@ function Install-FirecrawlRedisContainer {
 		"--name", $global:containerName, # Assign a name to the container.
 		"--network", $global:networkName, # Connect container to the specified network.
 		"--network-alias", $global:redisNetworkAlias, # Assign a unique alias for use within the network.
-		"--publish", "$($global:containerPort):$($global:containerPort)", # Map host port to container port.
+		"--publish", "$($global:hostPort):$($global:containerPort)", # Map host port to container port.
 		"--volume", "$($global:volumeName):$global:redisDataPath", # Mount the named volume for persistent Redis data.
 		"--restart", "always" # Always restart the container unless explicitly stopped.
 	)
@@ -142,8 +166,8 @@ function Install-FirecrawlRedisContainer {
 	Start-Sleep -Seconds 10
 
 	Write-Host "Testing Redis container connectivity on port $global:containerPort..."
-	if (Test-TCPPort -ComputerName "localhost" -Port $global:containerPort -serviceName "Firecrawl Redis") {
-		Write-Host "Redis is now running and accessible at localhost:$global:containerPort"
+	if (Test-TCPPort -ComputerName "localhost" -Port $global:hostPort -serviceName "Firecrawl Redis") {
+		Write-Host "Redis is now running and accessible at localhost:$global:hostPort"
 		Write-Host "Network alias '$global:redisNetworkAlias' is available for other containers on the '$global:networkName' network."
 	}
 	else {
@@ -254,12 +278,12 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
-		Show-ContainerStatus -ContainerName $global:containerName `
-			-ContainerEngine $global:containerEngine `
-			-EnginePath $global:enginePath `
-			-DisplayName "Firecrawl Redis" `
-			-TcpPort $global:containerPort `
-			-DelaySeconds 3
+	    Show-ContainerStatus -ContainerName $global:containerName `
+	        -ContainerEngine $global:containerEngine `
+	        -EnginePath $global:enginePath `
+	        -DisplayName "Firecrawl Redis" `
+	        -TcpPort $global:hostPort `
+	        -DelaySeconds 3
 	}
 	"2" = { Install-FirecrawlRedisContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName }

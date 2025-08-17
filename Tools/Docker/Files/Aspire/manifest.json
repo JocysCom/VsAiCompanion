@@ -1,0 +1,19 @@
+{
+    "schemaVersion": "0.1",
+    "resources": {
+        "firecrawl-redis": {
+            "type": "container.v0",
+            "properties": {
+                "image": "redis:alpine",
+                "bindings": [
+                    {
+                        "name": "redis",
+                        "protocol": "tcp",
+                        "containerPort": 6379,
+                        "hostPort": 6379
+                    }
+                ]
+            }
+        }
+    }
+}
