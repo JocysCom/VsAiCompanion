@@ -1,6 +1,0 @@
-Data/
-.terraform
-*.tfstate
-*.backup
-*.tmp
-*.hcl

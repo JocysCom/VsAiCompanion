@@ -1,0 +1,24 @@
+# Ignore actual environment files with secrets
+*.env
+!*.env.template
+
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Ignore Terraform variable files with actual values
+*.auto.tfvars
+terraform.tfvars
+
+# Allow template variable files
+!*.tfvars.template
+!variables.*.tfvars
+
+# Ignore PowerShell execution logs
+*.log
+
+# Ignore backup files
+*.bak
+*~
