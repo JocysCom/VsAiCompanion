@@ -37,25 +37,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var service = item.AiService;
 			var modelName = item.AiModel;
 			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			
+
 			// Determine which endpoint type to use
 			var endpointType = aiModel?.EndpointType ?? AiModelEndpointType.Auto;
-			
+
 			switch (endpointType)
 			{
 				case AiModelEndpointType.OpenAI_Chat:
 					return await QueryAI_ChatCompletion(item, messagesToSend, embeddingText);
-					
+
 				case AiModelEndpointType.OpenAI_Response:
 					return await QueryAI_Response(item, messagesToSend, embeddingText);
-					
+
 				case AiModelEndpointType.Auto:
 					// Auto-detect based on model name
 					if (IsResponseModel(modelName))
 						return await QueryAI_Response(item, messagesToSend, embeddingText);
 					else
 						return await QueryAI_ChatCompletion(item, messagesToSend, embeddingText);
-					
+
 				default:
 					return await QueryAI_ChatCompletion(item, messagesToSend, embeddingText); // Safe fallback
 			}
@@ -75,23 +75,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var modelName = item.AiModel;
 			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 			var maxInputTokens = GetMaxInputTokens(item);
-			
+
 			// Setup
-			var (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id) = 
+			var (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id) =
 				SetupQueryExecution(item, service);
-				
+
 			var answer = "";
 			try
 			{
 				var messages = PrepareMessages(messagesToSend);
 				var completionsOptions = GetChatCompletionOptions(item);
 				var (addToolsToOptions, addToolsToMessage) = SetupTools(item, aiModel, completionsOptions);
-				
+
 				var client = await GetAiClient(true, item);
 				var chatClient = client.GetChatClient(modelName);
 
 				var toolCalls = new List<ChatToolCall>();
-				
+
 				// Execute query with streaming or non-streaming
 				if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 				{
@@ -107,7 +107,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// Process tools and functions
 				var functions = ProcessToolsAndFunctions(addToolsToMessage, addToolsToOptions, answer, toolCalls);
 				answer = functions.processedAnswer;
-				
+
 				// Get approval and process functions.
 				await ProcessFunctions(item, functions.functions, functionResults, assistantMessageItem, cancellationTokenSource);
 			}
@@ -119,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				FinalizeQueryExecution(item, id, cancellationTokenSource);
 			}
-			
+
 			return CompleteQueryExecution(item, newMessageItems, functionResults, assistantMessageItem, answer, cancellationTokenSource);
 		}
 
@@ -136,23 +136,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var service = item.AiService;
 			var modelName = item.AiModel;
 			var aiModel = Global.AiModels.Items.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			
+
 			// Setup
-			var (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id) = 
+			var (newMessageItems, functionResults, assistantMessageItem, cancellationTokenSource, id) =
 				SetupQueryExecution(item, service);
-				
+
 			var answer = "";
 			try
 			{
 				var messages = PrepareMessages(messagesToSend);
 				var completionsOptions = GetChatCompletionOptions(item);
 				var (addToolsToOptions, addToolsToMessage) = SetupTools(item, aiModel, completionsOptions);
-				
+
 				var client = await GetAiClient(true, item);
 				var responsesClient = client.GetOpenAIResponseClient(modelName);
 
 				var toolCalls = new List<ChatToolCall>();
-				
+
 				// Execute query with streaming or non-streaming
 				if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 				{
@@ -168,7 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// Process tools and functions
 				var functions = ProcessToolsAndFunctions(addToolsToMessage, addToolsToOptions, answer, toolCalls);
 				answer = functions.processedAnswer;
-				
+
 				// Get approval and process functions.
 				await ProcessFunctions(item, functions.functions, functionResults, assistantMessageItem, cancellationTokenSource);
 			}
@@ -180,7 +180,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				FinalizeQueryExecution(item, id, cancellationTokenSource);
 			}
-			
+
 			return CompleteQueryExecution(item, newMessageItems, functionResults, assistantMessageItem, answer, cancellationTokenSource);
 		}
 
@@ -195,7 +195,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			if (string.IsNullOrEmpty(modelName))
 				return false;
-			
+
 			var name = modelName.ToLowerInvariant();
 			// Add more patterns as needed
 			return name.Contains("o3-pro");
@@ -224,41 +224,105 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <returns>Maximum input tokens for the model.</returns>
 		public static int GetMaxInputTokens(string modelName)
 		{
-			// Autodetect.
+			// Autodetect - Order matters: Most specific patterns first!
 			modelName = modelName.ToLowerInvariant();
-			// Final o1 and o3 supports 200K tokens.
-			if ((modelName.StartsWith("o1") || modelName.StartsWith("o3"))
-				&& !modelName.Contains("o1-preview"))
+
+			// === High-context models (1M+ tokens) ===
+			// Gemini 1.5+ models support 1M+ context
+			if (modelName.Contains("gemini-1.5") ||
+				modelName.Contains("gemini-2.0") ||
+				modelName.Contains("gemini-pro-1.5") ||
+				(modelName.Contains("gemini") && modelName.Contains("1m")))
+				return 1000 * 1000; // 1M tokens
+
+			// Claude 3.5 Sonnet and other high-context Claude models
+			if (modelName.Contains("claude-3.5") ||
+				(modelName.Contains("claude") && modelName.Contains("200k")))
 				return 200 * 1000;
-			// All GPT-4 preview models support 128K tokens (2024-01-28).
-			if (modelName.Contains("-128k") ||
-				modelName.StartsWith("o1") ||
-				modelName.Contains("gpt-4o") ||
-				modelName.Contains("grok") ||
-				modelName.Contains("gemini") ||
-				(modelName.Contains("gpt-4") && modelName.Contains("preview")))
+
+			// === Very high-context models (400K+ tokens) ===
+			// GPT-5 supports 400K tokens
+			if (modelName.Contains("gpt-5"))
+				return 400 * 1000;
+
+			// === Medium-high context models (200K-300K tokens) ===
+			// Grok-4 supports 256K tokens
+			if (modelName.Contains("grok-4"))
+				return 256 * 1000;
+
+			// Final o1 and o3 models support 200K tokens (excluding o1-preview)
+			if (modelName.StartsWith("o3") ||
+				(modelName.StartsWith("o1") && !modelName.Contains("preview")))
+				return 200 * 1000;
+
+			// === Standard high-context models (128K tokens) ===
+			// Explicit 128K models
+			if (modelName.Contains("-128k"))
 				return 128 * 1000;
+
+			// o1-preview models
+			if (modelName.Contains("o1-preview"))
+				return 128 * 1000;
+
+			// GPT-4o models
+			if (modelName.Contains("gpt-4o"))
+				return 128 * 1000;
+
+			// GPT-4.1 models (newer generation, likely high context)
+			if (modelName.Contains("gpt-4.1"))
+				return 128 * 1000;
+
+			// Other Grok models (not grok-4)
+			if (modelName.Contains("grok"))
+				return 128 * 1000;
+
+			// Legacy Gemini models (pre-1.5)
+			if (modelName.Contains("gemini"))
+				return 128 * 1000;
+
+			// GPT-4 with preview
+			if (modelName.Contains("gpt-4") && modelName.Contains("preview"))
+				return 128 * 1000;
+
+			// === Medium context models (32K-64K tokens) ===
 			if (modelName.Contains("-64k") || modelName.Contains("deepseek"))
 				return 64 * 1024;
+
 			if (modelName.Contains("-32k") || modelName.Contains("text-moderation"))
 				return 32 * 1024;
+
+			// === Lower context models (16K and below) ===
 			if (modelName.Contains("-16k") || modelName.Contains("gpt-3.5-turbo-1106"))
 				return 16 * 1024;
-			if (modelName.Contains("gpt-4") || modelName.Contains("text-embedding"))
+
+			// Standard GPT-4 models (8K)
+			if (modelName.Contains("gpt-4"))
 				return 8192;
+
+			// Text embedding models
+			if (modelName.Contains("text-embedding"))
+				return 8192;
+
+			// GPT-3.5-turbo models
 			if (modelName.Contains("gpt-3.5-turbo"))
 				return 4096;
-			if (modelName.Contains("gpt"))
-				return 4097; // Default for gpt
+
+			// === Legacy models ===
 			if (modelName.Contains("code-davinci-002"))
 				return 8001;
+
 			if (modelName.Contains("text-davinci-002") || modelName.Contains("text-davinci-003"))
 				return 4097;
-			if (modelName.Contains("ada") || modelName.Contains("babbage") || modelName.Contains("curie") || modelName.Contains("davinci"))
-				return 2049; // Default for ada, babbage, curie, davinci
+
+			if (modelName.Contains("ada") || modelName.Contains("babbage") ||
+				modelName.Contains("curie") || modelName.Contains("davinci"))
+				return 2049;
+
 			if (modelName.Contains("code-cushman-001"))
 				return 2048;
-			return 128 * 1000; // Default for other models
+
+			// Default for unknown models - use a reasonable high context size
+			return 128 * 1000;
 		}
 
 		/// <summary>
