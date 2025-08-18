@@ -10,16 +10,21 @@
 	Ensure PSScriptAnalyzer module is installed: Install-Module -Name PSScriptAnalyzer -Scope CurrentUser
 #>
 
+param(
+	[Parameter(Mandatory = $false)]
+	[string]$FilePattern = '*.ps1'
+)
+
 # Set Information Preference (commented out as Write-Host is used now)
 # $InformationPreference = 'Continue'
 
 # Get the directory where the script is located
 $scriptDir = $PSScriptRoot
 
-Write-Host "Starting script validation in directory: $scriptDir"
+Write-Host "Starting script validation in directory: $scriptDir (Pattern: $FilePattern)"
 
-# Get all PowerShell script files in the directory
-$scriptFiles = Get-ChildItem -Path $scriptDir -Filter *.ps1 -File
+# Get all PowerShell script files in the directory matching pattern
+$scriptFiles = Get-ChildItem -Path $scriptDir -Filter $FilePattern -File
 
 if (-not $scriptFiles) {
 	Write-Warning "No PowerShell script files found in $scriptDir."
@@ -36,12 +41,12 @@ $excludedRules = @(
 )
 
 $formattRules = @(
-  'PSAvoidTrailingWhitespace',
-  'PSUseConsistentWhitespace',
-  'PSUseConsistentIndentation',
-  'PSPlaceOpenBrace',
-  'PSPlaceCloseBrace',
-  'AlignAssignmentStatement'
+	'PSAvoidTrailingWhitespace',
+	'PSUseConsistentWhitespace',
+	'PSUseConsistentIndentation',
+	'PSPlaceOpenBrace',
+	'PSPlaceCloseBrace',
+	'AlignAssignmentStatement'
 )
 
 # Variable to track if any errors were found
