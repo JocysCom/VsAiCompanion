@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Contains container image backup/restore functions:
 #                - Backup-ContainerImage: Backup a single image.
 #                - Invoke-ContainerImageBackup: Backup all images. (Formerly Backup-ContainerImages)
@@ -857,7 +857,7 @@ function Test-AndRestoreBackup {
 	)
 
 	$imageBackupPath = Join-Path $BackupFolder $global:dockerImagesFolder
-	
+
 	# Look for backup files matching the image pattern
 	$safeName = $ImageName -replace "[:/]", "_"
 	$backupPattern = "$safeName-image-*.tar"
@@ -1201,17 +1201,17 @@ function Restore-ContainerImageFromFile {
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
-		
+
 		[Parameter(Mandatory = $true)]
 		[string]$BackupFileName,
-		
+
 		[Parameter(Mandatory = $false)]
 		[switch]$RunContainer = $false
 	)
 
 	$imageBackupPath = Join-Path $global:backupFolder $global:dockerImagesFolder
 	$fullBackupPath = Join-Path $imageBackupPath $BackupFileName
-	
+
 	if (-not (Test-Path $fullBackupPath)) {
 		Write-Error "Backup file not found: $fullBackupPath"
 		return $false

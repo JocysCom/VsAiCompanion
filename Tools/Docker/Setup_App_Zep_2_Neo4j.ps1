@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to set up and run the Neo4j container using Docker/Podman.
 #                Verifies volume presence, pulls the Neo4j image if necessary,
 #                and runs the container with port and volume mappings.
@@ -156,7 +156,7 @@ function Start-Neo4jContainer {
 	} else {
 		Write-Error "Could not determine host IP for container."
 	}
-	
+
 	# Build the run command
 	$runOptions = @(
 		"--env", "TZ=Europe/London", # Removed --add-host "host.local:$HostIpForContainer"
@@ -224,7 +224,7 @@ function Start-Neo4jContainer {
 	Install-Neo4jContainer
 .NOTES
 	Orchestrates image acquisition, cleanup, environment configuration, and container start.
-	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume, 
+	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume,
 	Get-Neo4jContainerConfig, and Start-Neo4jContainer helper functions.
 #>
 function Install-Neo4jContainer {

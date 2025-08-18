@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # File         : Setup_6_Embedding_Test.ps1
 # Description  : Script to test the Embedding API.
 #                Calls the API with sample text lines, decodes the base64 embeddings,
@@ -202,12 +202,12 @@ try {
 		$testPass = $false
 		throw "Connection test failed."
 	}
-	
+
 	Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
-	
+
 	$maxAttempts = 20
 	$attempt = 1
-	
+
 	while ($attempt -le $maxAttempts -and -not $apiReady) {
 		Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
 		try {
@@ -224,7 +224,7 @@ try {
 			Start-Sleep -Seconds 10
 		}
 	}
-	
+
 	if (-not $apiReady) {
 		Write-Warning "API did not become ready within 10 minutes. You may need to wait longer or check container logs with: podman logs $global:containerName"
 	}

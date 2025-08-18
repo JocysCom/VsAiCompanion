@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to set up and run the n8n container using Docker/Podman.
 #                Verifies volume presence, pulls the n8n image if necessary,
 #                and runs the container with port and volume mappings.
@@ -187,7 +187,7 @@ function Start-n8nContainer {
 	} else {
 		Write-Error "Could not determine host IP for container."
 	}
-	
+
 	# Build the run command
 	$runOptions = @(
 		# Workaround: Accept self-signed certificates.

@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Contains core helper functions for setup scripts:
 #                - Ensure-Elevated: Verify administrator privileges.
 #                - Set-ScriptLocation: Set the script's working directory.
@@ -300,14 +300,14 @@ function Get-EnvironmentVariableWithDefault {
     param(
         [Parameter(Mandatory = $true)]
         [string]$EnvVarName,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$DefaultValue,
-        
+
         [Parameter(Mandatory = $false)]
         [string]$PromptText = ""
     )
-    
+
     # Auto-generate prompt text if not provided
     if ([string]::IsNullOrWhiteSpace($PromptText)) {
         $parts = $EnvVarName.Split('_') | ForEach-Object {
@@ -321,10 +321,10 @@ function Get-EnvironmentVariableWithDefault {
         }
         $PromptText = ($parts -join ' ')
     }
-    
+
     # Get existing environment variable value
     $existingValue = [Environment]::GetEnvironmentVariable($EnvVarName)
-    
+
     if (-not [string]::IsNullOrWhiteSpace($existingValue)) {
         # Mask existing value for display
         $len = $existingValue.Length
@@ -334,7 +334,7 @@ function Get-EnvironmentVariableWithDefault {
         $prompt = "`nEnter $PromptText [default: $masked]"
         $secureInput = Read-Host $prompt -AsSecureString
         $inputValue = ConvertFrom-SecureString -SecureString $secureInput
-        
+
         if ([string]::IsNullOrWhiteSpace($inputValue)) {
             return $existingValue
         }
@@ -348,7 +348,7 @@ function Get-EnvironmentVariableWithDefault {
         $prompt = "`nEnter $PromptText [default: $DefaultValue]"
         $secureInput = Read-Host $prompt -AsSecureString
         $inputValue = ConvertFrom-SecureString -SecureString $secureInput
-        
+
         if ([string]::IsNullOrWhiteSpace($inputValue)) {
             return $DefaultValue
         }

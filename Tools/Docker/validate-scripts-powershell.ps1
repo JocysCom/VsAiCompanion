@@ -8,8 +8,6 @@
 	The Information (6) and Error (2) streams are redirected to the Success (1) output stream, making the messages visible to the AI agent.
 .NOTES
 	Ensure PSScriptAnalyzer module is installed: Install-Module -Name PSScriptAnalyzer -Scope CurrentUser
-.EXAMPLE
-	.\Validate-AllScripts.ps1
 #>
 
 # Set Information Preference (commented out as Write-Host is used now)
@@ -37,6 +35,15 @@ $excludedRules = @(
 	'PSAvoidUsingWriteHost'
 )
 
+$formattRules = @(
+  'PSAvoidTrailingWhitespace',
+  'PSUseConsistentWhitespace',
+  'PSUseConsistentIndentation',
+  'PSPlaceOpenBrace',
+  'PSPlaceCloseBrace',
+  'AlignAssignmentStatement'
+)
+
 # Variable to track if any errors were found
 $anyErrorsFound = $false
 
@@ -46,6 +53,8 @@ foreach ($file in $scriptFiles) {
 	Write-Host "Validating: $($file.FullName)"
 	Write-Host "--------------------------------------------------"
 	try {
+		# Fix code formatting first.
+		$results = Invoke-ScriptAnalyzer -Path $file.FullName -IncludeRule $formattRules -Fix -ErrorAction Stop 6>&1 3>&1
 		# Redirect streams 3(Warn) to 1(Success) for capture (Info stream 6 removed)
 		$results = Invoke-ScriptAnalyzer -Path $file.FullName -ExcludeRule $excludedRules -ErrorAction Stop 6>&1 3>&1
 		if ($results) {

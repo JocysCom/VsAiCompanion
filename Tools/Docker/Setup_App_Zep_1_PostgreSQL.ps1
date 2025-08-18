@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to set up and run the PostgreSQL container with pgvector.
 #                Creates a PostgreSQL database with pgvector extension enabled.
 #                This database is required for ZEP container operations.
@@ -150,25 +150,25 @@ function Test-PostgresConnectionAndExtension {
     param(
         [Parameter(Mandatory=$true)]
         [string]$ContainerName,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$EnginePath,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$PostgresUser,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$PostgresDb
     )
 
     Write-Host "Testing PostgreSQL connection and pgvector extension..."
-    
+
     # Test basic connection
     $testConnectionCmd = @(
         "exec", $ContainerName,
         "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-c", "SELECT version();"
     )
-    
+
     try {
         $connectionResult = & $EnginePath @testConnectionCmd 2>&1
         if ($LASTEXITCODE -ne 0) {
@@ -185,28 +185,28 @@ function Test-PostgresConnectionAndExtension {
     # Check if pgvector extension exists, if not create it
     $checkExtensionCmd = @(
         "exec", $ContainerName,
-        "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-t", "-c", 
+        "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-t", "-c",
         "SELECT COUNT(*) FROM pg_extension WHERE extname = 'vector';"
     )
-    
+
     try {
         $extensionResult = & $EnginePath @checkExtensionCmd 2>&1
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "Failed to check pgvector extension: $extensionResult"
             return $false
         }
-        
+
         $extensionCount = ($extensionResult -replace '\s+', '').Trim()
         if ($extensionCount -eq "0") {
             Write-Host "pgvector extension not found. Installing..."
-            
+
             # Create pgvector extension
             $createExtensionCmd = @(
                 "exec", $ContainerName,
-                "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-c", 
+                "psql", "-U", $PostgresUser, "-d", $PostgresDb, "-c",
                 "CREATE EXTENSION IF NOT EXISTS vector;"
             )
-            
+
             $createResult = & $EnginePath @createExtensionCmd 2>&1
             if ($LASTEXITCODE -ne 0) {
                 Write-Warning "Failed to create pgvector extension: $createResult"
@@ -217,7 +217,7 @@ function Test-PostgresConnectionAndExtension {
         else {
             Write-Host "pgvector extension is already installed."
         }
-        
+
         return $true
     }
     catch {
@@ -252,23 +252,23 @@ function Ensure-NetworkExists {
     param(
         [Parameter(Mandatory=$true)]
         [string]$NetworkName,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$EnginePath
     )
 
     # Check if network exists
     $networkExists = & $EnginePath network ls --format "{{.Name}}" | Where-Object { $_ -eq $NetworkName }
-    
+
     if ($networkExists) {
         Write-Host "Network '$NetworkName' already exists."
         return $true
     }
-    
+
     if ($PSCmdlet.ShouldProcess($NetworkName, "Create Network")) {
         Write-Host "Creating network '$NetworkName'..."
         & $EnginePath network create $NetworkName
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Network '$NetworkName' created successfully."
             return $true
@@ -278,7 +278,7 @@ function Ensure-NetworkExists {
             return $false
         }
     }
-    
+
     return $false
 }
 
@@ -347,13 +347,13 @@ function Start-PostgresContainer {
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for PostgreSQL to be ready..."
 			Start-Sleep -Seconds 10
-			
+
 			# Wait for PostgreSQL to accept connections (up to 60 seconds)
 			$maxWaitTime = 60
 			$waitInterval = 5
 			$elapsed = 0
 			$isReady = $false
-			
+
 			while ($elapsed -lt $maxWaitTime -and -not $isReady) {
 				$tcpTest = Test-TCPPort -ComputerName "localhost" -Port $global:containerPort -serviceName $global:containerName
 				if ($tcpTest) {
@@ -416,7 +416,7 @@ function Start-PostgresContainer {
 	Install-PostgresContainer
 .NOTES
 	Orchestrates image acquisition, cleanup, environment configuration, and container start.
-	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume, 
+	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume,
 	Get-PostgresContainerConfig, and Start-PostgresContainer helper functions.
 #>
 function Install-PostgresContainer {

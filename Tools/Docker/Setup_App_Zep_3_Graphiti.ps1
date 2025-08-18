@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to set up and run the Graphiti container using Docker/Podman.
 #                Verifies volume presence, pulls the Graphiti image if necessary,
 #                and runs the container with port and volume mappings.
@@ -83,19 +83,19 @@ function Test-Neo4jRequirement {
     param(
         [Parameter(Mandatory=$true)]
         [string]$ContainerName,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$EnginePath,
-        
+
         [Parameter(Mandatory=$true)]
         [int]$BoltPort,
-        
+
         [Parameter(Mandatory=$true)]
         [int]$HttpPort
     )
 
     Write-Host "Checking Neo4j requirement for Graphiti..."
-    
+
     # Check if Neo4j container is running
     $containerStatus = & $EnginePath ps --filter "name=$ContainerName" --filter "status=running" --format "{{.Names}}"
     if (-not $containerStatus -or $containerStatus -ne $ContainerName) {
@@ -103,7 +103,7 @@ function Test-Neo4jRequirement {
         Write-Host "Please run Setup_App_Zep_2_Neo4j.ps1 first to install and start Neo4j."
         return $false
     }
-    
+
     # Test TCP connectivity for Bolt port
     if (-not (Test-TCPPort -ComputerName "localhost" -Port $BoltPort -serviceName "Neo4j Bolt")) {
         Write-Warning "Neo4j Bolt is not accessible on port $BoltPort."
@@ -115,7 +115,7 @@ function Test-Neo4jRequirement {
         Write-Warning "Neo4j HTTP is not accessible on port $HttpPort."
         return $false
     }
-    
+
     Write-Host "Neo4j requirement satisfied: Container running and accessible."
     return $true
 }
@@ -221,7 +221,7 @@ function Start-GraphitiContainer {
 	} else {
 		Write-Error "Could not determine host IP for container."
 	}
-	
+
 	# No need to get Neo4j IP, as we are using default network and container name resolution
 	# $Neo4jIp = (podman machine ssh "sudo podman inspect $($global:neo4jContainerName) --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'").Trim()
 	# if (-not [string]::IsNullOrWhiteSpace($Neo4jIp)) {
@@ -306,7 +306,7 @@ function Start-GraphitiContainer {
 	Install-GraphitiContainer
 .NOTES
 	Orchestrates image acquisition, cleanup, environment configuration, and container start.
-	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume, 
+	Relies on Test-AndRestoreBackup, Invoke-PullImage, Remove-ContainerAndVolume,
 	Get-GraphitiContainerConfig, and Start-GraphitiContainer helper functions.
 #>
 function Install-GraphitiContainer {

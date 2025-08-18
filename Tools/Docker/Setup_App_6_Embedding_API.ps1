@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to build, run, and update the Embedding API container using Podman.
 #                Sets up the build context (Dockerfile, requirements, and API code),
 #                builds the container image, runs it on port 8000, tests connectivity,
@@ -267,14 +267,14 @@ function Install-EmbeddingContainer {
 	catch {
 		Write-Host "API not ready immediately. Checking if this is a large model that needs time to load..."
 		Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
-			
+
 		$maxAttempts = 20
 		$attempt = 1
-		
+
 		while ($attempt -le $maxAttempts -and -not $apiReady) {
 			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
 			Start-Sleep -Seconds 10
-			
+
 			try {
 				$response = Invoke-WebRequest -Uri "http://localhost:$global:Port/v1/models" -Method GET -TimeoutSec 5 -ErrorAction Stop
 				if ($response.StatusCode -eq 200) {
@@ -287,12 +287,12 @@ function Install-EmbeddingContainer {
 				$attempt++
 			}
 		}
-		
+
 		if (-not $apiReady) {
 			Write-Warning "API did not become ready. You may need to wait longer or check container logs with: podman logs $global:containerName"
 		}
 	}
-	
+
 	Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 	Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 	Write-Host "Embedding API is accessible at http://localhost:$global:Port/v1/embeddings"
@@ -353,10 +353,10 @@ function Update-EmbeddingContainer {
 		}
 
 		Write-Host "Waiting for model to initialize (checking every 10 seconds)..."
-		
+
 		$maxAttempts = 20
 		$attempt = 1
-		
+
 		while ($attempt -le $maxAttempts -and -not $apiReady) {
 			Write-Host "Attempt $attempt/$maxAttempts - Checking if API is ready..."
 			try {
@@ -373,7 +373,7 @@ function Update-EmbeddingContainer {
 				Start-Sleep -Seconds 10
 			}
 		}
-	
+
 		Test-HTTPPort -Uri "http://localhost:$global:Port/v1/models" -serviceName "Embedding API"
 		Test-TCPPort -ComputerName "localhost" -Port $global:Port -serviceName "Embedding API"
 		Write-Host "Embedding API container updated and accessible at http://localhost:$global:Port/v1/embeddings"
