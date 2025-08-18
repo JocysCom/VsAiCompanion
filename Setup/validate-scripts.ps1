@@ -1,4 +1,4 @@
-# Generic Terraform validation script for multiple projects
+﻿# Generic Terraform validation script for multiple projects
 # This script validates Terraform configuration and formatting for any project directory
 
 param(
@@ -10,12 +10,12 @@ param(
 # Auto-discover Terraform projects if not specified
 if (-not $ProjectPath) {
 	$terraformProjects = Get-ChildItem -Directory -Name "Terraform-*" | Sort-Object
-    
+
 	if ($terraformProjects.Count -eq 0) {
 		Write-Error "No Terraform projects found (looking for Terraform-* directories)."
 		exit 1
 	}
-    
+
 	if ($terraformProjects.Count -eq 1) {
 		$ProjectPath = $terraformProjects[0]
 		Write-Host "Auto-selected project: $ProjectPath" -ForegroundColor Green
@@ -25,7 +25,7 @@ if (-not $ProjectPath) {
 		for ($i = 0; $i -lt $terraformProjects.Count; $i++) {
 			Write-Host "$($i + 1). $($terraformProjects[$i])" -ForegroundColor White
 		}
-        
+
 		do {
 			$choice = Read-Host "`nSelect project (1-$($terraformProjects.Count))"
 			$choiceIndex = try { [int]$choice - 1 } catch { -1 }
@@ -55,24 +55,24 @@ if (-not $Environment) {
 	Write-Host "1. dev (Development)" -ForegroundColor White
 	Write-Host "2. prod (Production)" -ForegroundColor White
 	Write-Host "3. local (Local validation only - no backend access)" -ForegroundColor White
-    
+
 	do {
 		$choice = Read-Host "`nEnter your choice (1-3)"
 		switch ($choice) {
-			"1" { 
+			"1" {
 				$Environment = "dev"
-				break 
+				break
 			}
-			"2" { 
+			"2" {
 				$Environment = "prod"
-				break 
+				break
 			}
-			"3" { 
+			"3" {
 				$Environment = "dev"  # Default for local validation
 				$LocalValidationOnly = $true
-				break 
+				break
 			}
-			default { 
+			default {
 				Write-Host "Invalid choice. Please enter 1, 2, or 3." -ForegroundColor Red
 			}
 		}
@@ -119,10 +119,10 @@ try {
 
 	# Check if Terraform is initialized
 	Write-Host "`nChecking Terraform initialization..." -ForegroundColor Yellow
-    
+
 	if ($LocalValidationOnly) {
 		Write-Host "Local validation mode - downloading providers only..." -ForegroundColor Yellow
-        
+
 		# For local validation, just init without backend
 		if (-not (Test-Path ".terraform") -or -not (Test-Path ".terraform/providers")) {
 			terraform init -backend=false
@@ -141,7 +141,7 @@ try {
 		if (-not (Test-Path ".terraform") -or -not (Test-Path ".terraform/providers")) {
 			# Determine which backend file to use
 			$backendFile = "backend.$Environment.tfvars"
-            
+
 			if ($backendFile) {
 				Write-Host "Running 'terraform init' with backend config: $backendFile..." -ForegroundColor Yellow
 				terraform init -backend-config="$backendFile"
@@ -150,7 +150,7 @@ try {
 				Write-Host "Running 'terraform init' (no backend config found)..." -ForegroundColor Yellow
 				terraform init
 			}
-            
+
 			if ($LASTEXITCODE -ne 0) {
 				Write-Warning "Terraform initialization with backend failed."
 				Write-Host "This is usually due to storage account permissions." -ForegroundColor Yellow
@@ -185,7 +185,7 @@ try {
 	$commonFiles = @("main.tf", "variables.tf")
 	$foundFiles = @()
 	$missingFiles = @()
-	
+
 	foreach ($file in $commonFiles) {
 		if (Test-Path $file) {
 			$foundFiles += $file
@@ -198,7 +198,7 @@ try {
 	if ($foundFiles.Count -gt 0) {
 		Write-Host "✓ Common Terraform files found: $($foundFiles -join ', ')" -ForegroundColor Green
 	}
-	
+
 	if ($missingFiles.Count -gt 0) {
 		Write-Warning "Optional files not found: $($missingFiles -join ', ')"
 	}
@@ -209,10 +209,10 @@ try {
 
 	# Check for backend configuration files
 	$backendFiles = @("backend.dev.tfvars", "backend.prod.tfvars")
-    
+
 	# Also check for legacy naming
 	$legacyBackendFiles = @("backend.sandbox.tfvars", "backend.production.tfvars")
-    
+
 	$foundBackends = @()
 	foreach ($file in ($backendFiles + $legacyBackendFiles)) {
 		if (Test-Path $file) {
@@ -222,7 +222,7 @@ try {
 
 	if ($foundBackends.Count -gt 0) {
 		Write-Host "✓ Backend configuration files found: $($foundBackends -join ', ')" -ForegroundColor Green
-        
+
 		# Warn about legacy naming
 		$legacyFound = $foundBackends | Where-Object { $_ -in $legacyBackendFiles }
 		if ($legacyFound.Count -gt 0) {
@@ -235,7 +235,7 @@ try {
 
 	# Check for variable files
 	$varFiles = @("variables.dev.tfvars", "variables.prod.tfvars")
-    
+
 	$foundVars = @()
 	foreach ($file in ($varFiles)) {
 		if (Test-Path $file) {
@@ -252,7 +252,7 @@ try {
 
 	# Display next steps with appropriate file names
 	Write-Host "`nNext steps:" -ForegroundColor Yellow
-    
+
 	if ($LocalValidationOnly) {
 		Write-Host "For actual deployment, you'll need:" -ForegroundColor White
 		Write-Host "1. Storage account permissions for backend access" -ForegroundColor White
@@ -263,7 +263,7 @@ try {
  else {
 		# Determine which backend and variable files to use
 		$backendFile = "backend.$Environment.tfvars"
-		      
+
 		$varFile = "variables.$Environment.tfvars"
 
 		Write-Host "1. Show deployment plan: .\validate-plan.ps1" -ForegroundColor White

@@ -1,4 +1,4 @@
-# Generic Terraform plan script for multiple projects
+﻿# Generic Terraform plan script for multiple projects
 # This script shows what Terraform will create/modify/destroy without making changes
 
 param(
@@ -11,12 +11,12 @@ param(
 # Auto-discover Terraform projects if not specified
 if (-not $ProjectPath) {
 	$terraformProjects = Get-ChildItem -Directory -Name "Terraform-*" | Sort-Object
-    
+
 	if ($terraformProjects.Count -eq 0) {
 		Write-Error "No Terraform projects found (looking for Terraform-* directories)."
 		exit 1
 	}
-    
+
 	if ($terraformProjects.Count -eq 1) {
 		$ProjectPath = $terraformProjects[0]
 		Write-Host "Auto-selected project: $ProjectPath" -ForegroundColor Green
@@ -26,7 +26,7 @@ if (-not $ProjectPath) {
 		for ($i = 0; $i -lt $terraformProjects.Count; $i++) {
 			Write-Host "$($i + 1). $($terraformProjects[$i])" -ForegroundColor White
 		}
-        
+
 		do {
 			$choice = Read-Host "`nSelect project (1-$($terraformProjects.Count))"
 			$choiceIndex = try { [int]$choice - 1 } catch { -1 }
@@ -55,19 +55,19 @@ if (-not $Environment) {
 	Write-Host "`nWhich environment do you want to plan for?" -ForegroundColor Yellow
 	Write-Host "1. dev (Development)" -ForegroundColor White
 	Write-Host "2. prod (Production)" -ForegroundColor White
-    
+
 	do {
 		$choice = Read-Host "`nEnter your choice (1-2)"
 		switch ($choice) {
-			"1" { 
+			"1" {
 				$Environment = "dev"
-				break 
+				break
 			}
-			"2" { 
+			"2" {
 				$Environment = "prod"
-				break 
+				break
 			}
-			default { 
+			default {
 				Write-Host "Invalid choice. Please enter 1 or 2." -ForegroundColor Red
 			}
 		}
@@ -179,7 +179,7 @@ try {
 	# Check if Terraform is properly initialized for planning (needs backend)
 	$needsInit = $false
 	$initMessage = ""
-    
+
 	if (-not (Test-Path ".terraform") -or -not (Test-Path ".terraform/providers")) {
 		$needsInit = $true
 		$initMessage = "Terraform not initialized."
@@ -189,18 +189,18 @@ try {
 		$needsInit = $true
 		$initMessage = "Terraform initialized in local mode only. Planning requires backend initialization."
 	}
-    
+
 	if ($needsInit) {
 		Write-Warning $initMessage
 		Write-Host "`nPlanning requires full Terraform initialization with backend access." -ForegroundColor Yellow
 		Write-Host "This will attempt to connect to the Azure storage account backend." -ForegroundColor Yellow
 		Write-Host "`nWould you like to initialize now? (y/n): " -ForegroundColor Yellow -NoNewline
 		$runInit = Read-Host
-        
+
 		if ($runInit -eq "y" -or $runInit -eq "Y") {
 			# Determine which backend file to use
 			$backendFile = "backend.$Environment.tfvars"
-            
+
 			if ($backendFile) {
 				Write-Host "Initializing with backend config: $backendFile..." -ForegroundColor Yellow
 				terraform init -reconfigure -backend-config="$backendFile"
@@ -209,7 +209,7 @@ try {
 				Write-Host "Initializing without specific backend config..." -ForegroundColor Yellow
 				terraform init -reconfigure
 			}
-            
+
 			if ($LASTEXITCODE -ne 0) {
 				Write-Error "Terraform initialization with backend failed."
 				Write-Host "`nThis usually means you need storage account permissions." -ForegroundColor Yellow
@@ -236,7 +236,7 @@ try {
 
 	# Determine which variable file to use
 	$varFile = "variables.$Environment.tfvars"
-	
+
 	# Check if variable file exists
 	if (-not (Test-Path $varFile)) {
 		Write-Error "Variable file '$varFile' not found."
@@ -248,11 +248,11 @@ try {
 
 	# Prepare plan command
 	$planArgs = @("-var-file=$varFile")
-    
+
 	if ($DetailedOutput) {
 		$planArgs += "-detailed-exitcode"
 	}
-    
+
 	if ($SavePlan) {
 		$planFile = "tfplan-$Environment-$(Get-Date -Format 'yyyyMMdd-HHmmss').out"
 		$planArgs += "-out=$planFile"
@@ -276,14 +276,14 @@ try {
 
 	# Interpret exit codes
 	switch ($planExitCode) {
-		0 { 
-			Write-Host "✓ No changes required - infrastructure matches configuration" -ForegroundColor Green 
+		0 {
+			Write-Host "✓ No changes required - infrastructure matches configuration" -ForegroundColor Green
 		}
-		1 { 
+		1 {
 			Write-Host "✗ Plan failed - please check errors above" -ForegroundColor Red
 			exit 1
 		}
-		2 { 
+		2 {
 			if ($DetailedOutput) {
 				Write-Host "✓ Plan succeeded - changes are required" -ForegroundColor Yellow
 			}
@@ -291,7 +291,7 @@ try {
 				Write-Host "✓ Plan completed successfully" -ForegroundColor Green
 			}
 		}
-		default { 
+		default {
 			Write-Host "? Unexpected exit code: $planExitCode" -ForegroundColor Magenta
 		}
 	}
@@ -314,7 +314,7 @@ try {
  else {
  	Write-Host "• Review the changes above carefully" -ForegroundColor White
  	Write-Host "• If changes look correct, run: terraform apply -var-file=$varFile" -ForegroundColor White
- 	
+
  	# Check for post-deployment scripts
  	if (Test-Path "..\Manage-AzureAppPermissions.ps1") {
  		Write-Host "• After deployment, configure permissions: ..\Manage-AzureAppPermissions.ps1" -ForegroundColor White

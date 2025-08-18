@@ -1,361 +1,363 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
-		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
-		<ProjectDir Condition="'$(ProjectDir)' == '' Or '$(ProjectDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\.\'))</ProjectDir>
-	</PropertyGroup>
-	<PropertyGroup>
-		<!--
+    <PropertyGroup>
+        <!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
+        <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
+        <ProjectDir Condition="'$(ProjectDir)' == '' Or '$(ProjectDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\.\'))</ProjectDir>
+    </PropertyGroup>
+    <PropertyGroup>
+        <!--
 		<DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		-->
-		<OutputType>Library</OutputType>
-		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
-		<Nullable>disable</Nullable>
-		<UseWindowsForms>true</UseWindowsForms>
-		<UseWPF>true</UseWPF>
-		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Copyright>Jocys.com</Copyright>
-		<Company>Jocys.com</Company>
-		<Authors>Jocys.com Team</Authors>
-		<AssemblyVersion>1.17.23</AssemblyVersion>
-		<FileVersion>1.17.23</FileVersion>
-		<Title>Jocys.com VS AI Companion</Title>
-		<Description>AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
-		<Product>VS AI Companion</Product>
-		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
-		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Platforms>AnyCPU</Platforms>
-		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
-		<!-- Set the target platform to Windows -->
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-		<!-- Include only English language resources; exclude all other language folders from the bin directory -->
-		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-		<NeutralLanguage>en</NeutralLanguage>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<PlatformTarget>x64</PlatformTarget>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
-		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
-		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Azure.AI.OpenAI" />
-		<PackageReference Include="Azure.Identity" />
-		<PackageReference Include="Azure.ResourceManager" />
-		<PackageReference Include="Azure.Security.KeyVault.Secrets" />
-		<PackageReference Include="BouncyCastle.Cryptography" />
-		<PackageReference Include="CsvHelper" />
-		<PackageReference Include="DiffPlex.Wpf" />
-		<PackageReference Include="DnsClient" />
-		<PackageReference Include="DocumentFormat.OpenXml" />
-		<PackageReference Include="HtmlAgilityPack" />
-		<PackageReference Include="Ignore" />
-		<PackageReference Include="MailKit" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
-		<PackageReference Include="Microsoft.CognitiveServices.Speech" />
-		<PackageReference Include="Microsoft.Graph" />
-		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
-		<PackageReference Include="Microsoft.ML" />
-		<PackageReference Include="Microsoft.OpenApi" />
-		<PackageReference Include="Microsoft.OpenApi.Readers" />
-		<PackageReference Include="NAudio" />
-		<PackageReference Include="NJsonSchema" />
-		<PackageReference Include="RtfPipe" />
-		<PackageReference Include="SharpVectors" />
-		<PackageReference Include="System.Collections.Immutable" />
-		<PackageReference Include="System.Composition" />
-		<PackageReference Include="System.Net.Http" />
-		<PackageReference Include="System.Runtime.Loader" />
-		<PackageReference Include="YamlDotNet" />
-		<PackageReference Include="Microsoft.Web.WebView2" />
+        <OutputType>Library</OutputType>
+        <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+        <Nullable>disable</Nullable>
+        <UseWindowsForms>true</UseWindowsForms>
+        <UseWPF>true</UseWPF>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <Copyright>Jocys.com</Copyright>
+        <Company>Jocys.com</Company>
+        <Authors>Jocys.com Team</Authors>
+        <AssemblyVersion>1.17.23</AssemblyVersion>
+        <FileVersion>1.17.23</FileVersion>
+        <Title>Jocys.com VS AI Companion</Title>
+        <Description>AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
+        <Product>VS AI Companion</Product>
+        <PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
+        <RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Platforms>AnyCPU</Platforms>
+        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+        <!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
+        <!-- Set the target platform to Windows -->
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <!-- Include only English language resources; exclude all other language folders from the bin directory -->
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+        <NeutralLanguage>en</NeutralLanguage>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+        <!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+        <!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.AI.OpenAI" />
+        <PackageReference Include="Azure.Identity" />
+        <PackageReference Include="Azure.ResourceManager" />
+        <PackageReference Include="Azure.Security.KeyVault.Secrets" />
+        <PackageReference Include="BouncyCastle.Cryptography" />
+        <PackageReference Include="CsvHelper" />
+        <PackageReference Include="DiffPlex.Wpf" />
+        <PackageReference Include="DnsClient" />
+        <PackageReference Include="DocumentFormat.OpenXml" />
+        <PackageReference Include="HtmlAgilityPack" />
+        <PackageReference Include="Ignore" />
+        <PackageReference Include="MailKit" />
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+        <PackageReference Include="Microsoft.CognitiveServices.Speech" />
+        <PackageReference Include="Microsoft.Graph" />
+        <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
+        <PackageReference Include="Microsoft.ML" />
+        <PackageReference Include="Microsoft.OpenApi" />
+        <PackageReference Include="Microsoft.OpenApi.Readers" />
+        <PackageReference Include="NAudio" />
+        <PackageReference Include="NJsonSchema" />
+        <PackageReference Include="RtfPipe" />
+        <PackageReference Include="SharpVectors" />
+        <PackageReference Include="System.Collections.Immutable" />
+        <PackageReference Include="System.Composition" />
+        <PackageReference Include="System.Net.Http" />
+        <PackageReference Include="System.Runtime.Loader" />
+        <PackageReference Include="YamlDotNet" />
+        <PackageReference Include="Microsoft.Web.WebView2" />
         <PackageReference Include="System.Threading.Tasks.Extensions" />
-	</ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<Reference Include="System.DirectoryServices" />
-		<Reference Include="System.DirectoryServices.AccountManagement" />
-		<PackageReference Include="Unofficial.Microsoft.mshtml" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />
-		<ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
-		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.Data.ConnectionUI.Dialog.csproj" />
-		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI\Microsoft.Data.ConnectionUI.csproj" />
-	</ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
-		<PackageReference Include="GeoCoordinate.NetCore" />
-		<PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard" />
-		<PackageReference Include="Microsoft.CSharp" />
-		<PackageReference Include="System.Dynamic.Runtime" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
-		<PackageReference Include="System.Diagnostics.EventLog" />
-		<PackageReference Include="System.Drawing.Common" />
-		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" />
-		<PackageReference Include="System.IO.FileSystem.AccessControl" />
-		<PackageReference Include="System.Data.OleDb" />
-		<PackageReference Include="System.Data.Odbc" />
-		<PackageReference Include="System.Data.OracleClient" />
-		<PackageReference Include="System.Data.Common" />
-		<PackageReference Include="System.Text.RegularExpressions" />
-	</ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="Accessibility" />
-		<Reference Include="PresentationCore" />
-		<Reference Include="PresentationFramework" />
-		<Reference Include="System.configuration" />
-		<Reference Include="System.ComponentModel.DataAnnotations" />
-		<Reference Include="System.Configuration.Install" />
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="System.Data.Linq" />
-		<Reference Include="System.Design" />
-		<Reference Include="System.Runtime.Serialization" />
-		<Reference Include="System.Security" />
-		<Reference Include="System.ServiceModel" />
-		<Reference Include="System.ServiceModel.Web" />
-		<Reference Include="System.ServiceProcess" />
-		<Reference Include="System.Transactions" />
-		<Reference Include="System.Web" />
-		<Reference Include="System.Web.ApplicationServices" />
-		<Reference Include="System.Web.Extensions" />
-		<Reference Include="System.Web.Services" />
-		<Reference Include="System.Windows.Forms" />
-		<Reference Include="System.Net.Http" />
-		<Reference Include="System.Xaml" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Remove="AiCompanion.svg" />
-		<None Remove="App.ico" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Add.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Cancel.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Delete.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Edit.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Error.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Exit.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Export.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\FolderOpen.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Ignore.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Import.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Information.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\OK.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Play.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Question.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Record.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Refresh.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Remove.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Reset.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Save.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\SelectAll.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\SelectInverse.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\SelectNone.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Stop.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
-		<None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
-		<Compile Remove="Resources\Embeddings\**" />
-		<EmbeddedResource Remove="Resources\Embeddings\**" />
-		<None Remove="Resources\BuildDate.*" />
-		<None Remove="Resources\Embeddings\**" />
-		<None Remove="Resources\AI Service - DeepSeek.rtf" />
-		<None Remove="Resources\AI Service - Google Gemini.rtf" />
-		<None Remove="Resources\AI Service - Open AI.rtf" />
-		<None Remove="Resources\AI Service - Speech Service.rtf" />
-		<None Remove="Resources\AI Service - xAi Grok.rtf" />
-		<None Remove="Resources\AI Service - xAi.rtf" />
-		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
-		<None Remove="Resources\Documents.zip" />
-		<None Remove="Resources\IconExperience.License.txt" />
-		<None Remove="Resources\Icons\Icons_Default\chart_radar.svg" />
-		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
-		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
-		<None Remove="Resources\Icons\Icons_Default\list.svg" />
-		<None Remove="Resources\Icons\Icons_Default\microsoft_login.svg" />
-		<None Remove="Resources\Icons\Icons_Default\user_azure.svg" />
-		<None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
-		<None Remove="Resources\Icons\Templates\code_template.svg" />
-		<None Remove="Resources\Icons\Templates\control_panel.svg" />
-		<None Remove="Resources\Images\AiCompanion.png" />
-		<None Remove="Resources\Images\AudioDemo.wav" />
-		<None Remove="Resources\Images\AvatarBackground.jpg" />
-		<None Remove="Resources\Images\AvatarBackground.png" />
-		<None Remove="Resources\Images\AvatarBackgroundMask.png" />
-		<None Remove="Resources\Images\AvatarMouth.png" />
-		<None Remove="Resources\Images\BrainGlow.png" />
-		<None Remove="Resources\Images\EyeBackground.jpg" />
-		<None Remove="Resources\Images\EyeIris.png" />
-		<None Remove="Resources\Images\JawImage.png" />
-		<None Remove="Resources\Images\LipBottom.png" />
-		<None Remove="Resources\Images\LipBottomBackground.png" />
-		<None Remove="Resources\Images\LipTop0.png" />
-		<None Remove="Resources\Images\LipTop1.png" />
-		<None Remove="Resources\Images\LipTopBackground.png" />
-		<None Remove="Resources\Images\SparkBlue.png" />
-		<None Remove="Resources\Images\SparkBrown.png" />
-		<None Remove="Resources\Images\SparkYellow.png" />
-		<None Remove="Resources\MainWindowCommand.png" />
-		<None Remove="Resources\PromptItems.xml" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="App.ico" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Add.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Cancel.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Delete.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Edit.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Error.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Exit.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Export.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\FolderOpen.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Ignore.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Import.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Information.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\OK.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Play.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Question.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Record.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Refresh.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Remove.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Reset.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Save.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\SelectAll.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\SelectInverse.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\SelectNone.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Stop.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
-		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
-		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
-		<EmbeddedResource Include="Controls\Chat\ChatListControl\**\*.*" />
-		<EmbeddedResource Include="Resources\AI Service - DeepSeek.rtf" />
-		<EmbeddedResource Include="Resources\AI Service - Google Gemini.rtf" />
-		<EmbeddedResource Include="Resources\AI Service - Open AI.rtf" />
-		<EmbeddedResource Include="Resources\AI Service - Speech Service.rtf" />
-		<EmbeddedResource Include="Resources\AI Service - xAi.rtf" />
-		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
-		<EmbeddedResource Include="Resources\Documents.zip" />
-		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
-		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
-		<EmbeddedResource Include="Resources\Icons\Icons_Default\user_azure.svg" />
-		<EmbeddedResource Include="Resources\Settings.zip" />
-		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
-		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
-		<Content Include="Resources\MainWindowCommand.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Remove="Resources\Embeddings\**" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\BuildDate.*" />
-		<EmbeddedResource Include="Resources\Settings\Templates\*.xml" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Remove="Controls\AiServiceListControl.xaml.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Remove="Controls\AiServiceListControl.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
-		<EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
-		<EmbeddedResource Include="Resources\Icons\Icons_Default\user_comment.svg" />
-		<EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
-	</ItemGroup>
-	<ItemGroup>
-		<Reference Include="System.Speech" />
-	</ItemGroup>
-	<ItemGroup>
-		<Resource Include="AiCompanion.svg" />
-		<Resource Include="Resources\Icons\Templates\code_template.svg" />
-		<Resource Include="Resources\Images\AiCompanion.png" />
-		<Resource Include="Resources\Images\AudioDemo.wav" />
-		<Resource Include="Resources\Images\AvatarBackground.jpg" />
-		<Resource Include="Resources\Images\AvatarBackgroundMask.png" />
-		<Resource Include="Resources\Images\AvatarMouth.png" />
-		<Resource Include="Resources\Images\EyeBackground.jpg" />
-		<Resource Include="Resources\Images\EyeIris.png" />
-		<Resource Include="Resources\Images\BrainGlow.png" />
-		<Resource Include="Resources\Images\JawImage.png" />
-		<Resource Include="Resources\Images\LipBottom.png" />
-		<Resource Include="Resources\Images\LipBottomBackground.png" />
-		<Resource Include="Resources\Images\LipTop0.png" />
-		<Resource Include="Resources\Images\LipTop1.png" />
-		<Resource Include="Resources\Images\LipTopBackground.png" />
-		<Resource Include="Resources\Images\SparkBlue.png" />
-		<Resource Include="Resources\Images\SparkBrown.png" />
-		<Resource Include="Resources\Images\SparkYellow.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Update="Controls\EnumItemsControl.xaml.cs">
-			<SubType>Code</SubType>
-		</Compile>
-		<Compile Update="Controls\EnumComboBox.xaml.cs">
-			<SubType>Code</SubType>
-		</Compile>
-		<Compile Update="Controls\Options\ResetSettingsControl.xaml.cs">
-			<SubType>Code</SubType>
-		</Compile>
-		<Compile Update="Resources\Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Update="Resources\Resources.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<None Include="$(ProjectDir)Resources\Microsoft.CognitiveServices.Speech\*.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>%(FileName)%(Extension)</Link>
-			<Pack>true</Pack>
-			<PackagePath>lib\$(TargetFramework)\;content;contentFiles\any\any;build\$(TargetFramework)\</PackagePath>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Resources\DataTemplates.xaml">
-			<Generator>
-			</Generator>
-		</Page>
-	</ItemGroup>
-	<Target Name="PreOuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
-		<Message Text="Running PreOuterPreBuild target" Importance="high" />
-		<!-- Execute once for multiple builds -->
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CreateBuildDateFile.ps1&quot; &quot;$(ProjectDir)Resources\BuildDate.txt&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -excludePattern &quot;Temp*&quot; -LogPrefix &quot;$(TargetFramework): &quot; -IgnoreEmptyFolders $true" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -excludePattern &quot;Temp*&quot; -LogPrefix &quot;$(TargetFramework): &quot; -IgnoreEmptyFolders $true" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -excludePattern &quot;Temp*&quot; -LogPrefix &quot;$(TargetFramework): &quot; -IgnoreEmptyFolders $true" />
-	</Target>
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	</Target>
-	<Target Name="RemoveFolders" AfterTargets="Build">
-		<!-- List of unwanted files or directories -->
-		<Message Text="Removing unwanted runtime directories..." Importance="high" />
-		<RemoveDir Directories="$(TargetDir)arm" />
-		<RemoveDir Directories="$(TargetDir)arm64" />
-		<RemoveDir Directories="$(TargetDir)musl-arm64" />
-		<RemoveDir Directories="$(TargetDir)musl-x64" />
-		<RemoveDir Directories="$(TargetDir)musl-x86" />
-		<RemoveDir Directories="$(TargetDir)x86" />
-	</Target>
+        <PackageReference Include="ModelContextProtocol" />
+        <PackageReference Include="ModelContextProtocol.Core" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+        <Reference Include="System.DirectoryServices" />
+        <Reference Include="System.DirectoryServices.AccountManagement" />
+        <PackageReference Include="Unofficial.Microsoft.mshtml" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />
+        <ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
+        <ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.Data.ConnectionUI.Dialog.csproj" />
+        <ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI\Microsoft.Data.ConnectionUI.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+        <PackageReference Include="GeoCoordinate.NetCore" />
+        <PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard" />
+        <PackageReference Include="Microsoft.CSharp" />
+        <PackageReference Include="System.Dynamic.Runtime" />
+        <PackageReference Include="System.Configuration.ConfigurationManager" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+        <PackageReference Include="System.Diagnostics.EventLog" />
+        <PackageReference Include="System.Drawing.Common" />
+        <PackageReference Include="Microsoft.Windows.Compatibility" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" />
+        <PackageReference Include="System.IO.FileSystem.AccessControl" />
+        <PackageReference Include="System.Data.OleDb" />
+        <PackageReference Include="System.Data.Odbc" />
+        <PackageReference Include="System.Data.OracleClient" />
+        <PackageReference Include="System.Data.Common" />
+        <PackageReference Include="System.Text.RegularExpressions" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="Accessibility" />
+        <Reference Include="PresentationCore" />
+        <Reference Include="PresentationFramework" />
+        <Reference Include="System.configuration" />
+        <Reference Include="System.ComponentModel.DataAnnotations" />
+        <Reference Include="System.Configuration.Install" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="System.Data.Linq" />
+        <Reference Include="System.Design" />
+        <Reference Include="System.Runtime.Serialization" />
+        <Reference Include="System.Security" />
+        <Reference Include="System.ServiceModel" />
+        <Reference Include="System.ServiceModel.Web" />
+        <Reference Include="System.ServiceProcess" />
+        <Reference Include="System.Transactions" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Web.ApplicationServices" />
+        <Reference Include="System.Web.Extensions" />
+        <Reference Include="System.Web.Services" />
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Xaml" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="AiCompanion.svg" />
+        <None Remove="App.ico" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Add.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Cancel.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Delete.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Edit.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Error.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Exit.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Export.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\FolderOpen.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Ignore.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Import.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Information.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\OK.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Play.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Question.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Record.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Refresh.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Remove.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Reset.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Save.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\SelectAll.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\SelectInverse.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\SelectNone.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Stop.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
+        <None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
+        <Compile Remove="Resources\Embeddings\**" />
+        <EmbeddedResource Remove="Resources\Embeddings\**" />
+        <None Remove="Resources\BuildDate.*" />
+        <None Remove="Resources\Embeddings\**" />
+        <None Remove="Resources\AI Service - DeepSeek.rtf" />
+        <None Remove="Resources\AI Service - Google Gemini.rtf" />
+        <None Remove="Resources\AI Service - Open AI.rtf" />
+        <None Remove="Resources\AI Service - Speech Service.rtf" />
+        <None Remove="Resources\AI Service - xAi Grok.rtf" />
+        <None Remove="Resources\AI Service - xAi.rtf" />
+        <None Remove="Resources\AxialisIconSet.Licenses.txt" />
+        <None Remove="Resources\Documents.zip" />
+        <None Remove="Resources\IconExperience.License.txt" />
+        <None Remove="Resources\Icons\Icons_Default\chart_radar.svg" />
+        <None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
+        <None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
+        <None Remove="Resources\Icons\Icons_Default\list.svg" />
+        <None Remove="Resources\Icons\Icons_Default\microsoft_login.svg" />
+        <None Remove="Resources\Icons\Icons_Default\user_azure.svg" />
+        <None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
+        <None Remove="Resources\Icons\Templates\code_template.svg" />
+        <None Remove="Resources\Icons\Templates\control_panel.svg" />
+        <None Remove="Resources\Images\AiCompanion.png" />
+        <None Remove="Resources\Images\AudioDemo.wav" />
+        <None Remove="Resources\Images\AvatarBackground.jpg" />
+        <None Remove="Resources\Images\AvatarBackground.png" />
+        <None Remove="Resources\Images\AvatarBackgroundMask.png" />
+        <None Remove="Resources\Images\AvatarMouth.png" />
+        <None Remove="Resources\Images\BrainGlow.png" />
+        <None Remove="Resources\Images\EyeBackground.jpg" />
+        <None Remove="Resources\Images\EyeIris.png" />
+        <None Remove="Resources\Images\JawImage.png" />
+        <None Remove="Resources\Images\LipBottom.png" />
+        <None Remove="Resources\Images\LipBottomBackground.png" />
+        <None Remove="Resources\Images\LipTop0.png" />
+        <None Remove="Resources\Images\LipTop1.png" />
+        <None Remove="Resources\Images\LipTopBackground.png" />
+        <None Remove="Resources\Images\SparkBlue.png" />
+        <None Remove="Resources\Images\SparkBrown.png" />
+        <None Remove="Resources\Images\SparkYellow.png" />
+        <None Remove="Resources\MainWindowCommand.png" />
+        <None Remove="Resources\PromptItems.xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="App.ico" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Add.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Cancel.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Delete.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Edit.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Error.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Exit.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Export.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\FolderOpen.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Ignore.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Import.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Information.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\OK.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Play.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Question.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Record.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Refresh.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Remove.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Reset.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Save.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\SelectAll.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\SelectInverse.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\SelectNone.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Stop.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
+        <Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
+        <Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+        <EmbeddedResource Include="Controls\Chat\ChatListControl\**\*.*" />
+        <EmbeddedResource Include="Resources\AI Service - DeepSeek.rtf" />
+        <EmbeddedResource Include="Resources\AI Service - Google Gemini.rtf" />
+        <EmbeddedResource Include="Resources\AI Service - Open AI.rtf" />
+        <EmbeddedResource Include="Resources\AI Service - Speech Service.rtf" />
+        <EmbeddedResource Include="Resources\AI Service - xAi.rtf" />
+        <EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
+        <EmbeddedResource Include="Resources\Documents.zip" />
+        <EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
+        <EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
+        <EmbeddedResource Include="Resources\Icons\Icons_Default\user_azure.svg" />
+        <EmbeddedResource Include="Resources\Settings.zip" />
+        <EmbeddedResource Include="Resources\IconExperience.License.txt" />
+        <EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
+        <Content Include="Resources\MainWindowCommand.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <Page Remove="Resources\Embeddings\**" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\BuildDate.*" />
+        <EmbeddedResource Include="Resources\Settings\Templates\*.xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Controls\AiServiceListControl.xaml.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <Page Remove="Controls\AiServiceListControl.xaml" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
+        <EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
+        <EmbeddedResource Include="Resources\Icons\Icons_Default\user_comment.svg" />
+        <EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="System.Speech" />
+    </ItemGroup>
+    <ItemGroup>
+        <Resource Include="AiCompanion.svg" />
+        <Resource Include="Resources\Icons\Templates\code_template.svg" />
+        <Resource Include="Resources\Images\AiCompanion.png" />
+        <Resource Include="Resources\Images\AudioDemo.wav" />
+        <Resource Include="Resources\Images\AvatarBackground.jpg" />
+        <Resource Include="Resources\Images\AvatarBackgroundMask.png" />
+        <Resource Include="Resources\Images\AvatarMouth.png" />
+        <Resource Include="Resources\Images\EyeBackground.jpg" />
+        <Resource Include="Resources\Images\EyeIris.png" />
+        <Resource Include="Resources\Images\BrainGlow.png" />
+        <Resource Include="Resources\Images\JawImage.png" />
+        <Resource Include="Resources\Images\LipBottom.png" />
+        <Resource Include="Resources\Images\LipBottomBackground.png" />
+        <Resource Include="Resources\Images\LipTop0.png" />
+        <Resource Include="Resources\Images\LipTop1.png" />
+        <Resource Include="Resources\Images\LipTopBackground.png" />
+        <Resource Include="Resources\Images\SparkBlue.png" />
+        <Resource Include="Resources\Images\SparkBrown.png" />
+        <Resource Include="Resources\Images\SparkYellow.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Controls\EnumItemsControl.xaml.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Controls\EnumComboBox.xaml.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Controls\Options\ResetSettingsControl.xaml.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Resources\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Resources.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+        <None Include="$(ProjectDir)Resources\Microsoft.CognitiveServices.Speech\*.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>%(FileName)%(Extension)</Link>
+            <Pack>true</Pack>
+            <PackagePath>lib\$(TargetFramework)\;content;contentFiles\any\any;build\$(TargetFramework)\</PackagePath>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Resources\DataTemplates.xaml">
+            <Generator>
+            </Generator>
+        </Page>
+    </ItemGroup>
+    <Target Name="PreOuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+        <Message Text="Running PreOuterPreBuild target" Importance="high" />
+        <!-- Execute once for multiple builds -->
+        <Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
+        <Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
+        <Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CreateBuildDateFile.ps1&quot; &quot;$(ProjectDir)Resources\BuildDate.txt&quot;" />
+        <Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -excludePattern &quot;Temp*&quot; -LogPrefix &quot;$(TargetFramework): &quot; -IgnoreEmptyFolders $true" />
+        <Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -excludePattern &quot;Temp*&quot; -LogPrefix &quot;$(TargetFramework): &quot; -IgnoreEmptyFolders $true" />
+        <Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -excludePattern &quot;Temp*&quot; -LogPrefix &quot;$(TargetFramework): &quot; -IgnoreEmptyFolders $true" />
+    </Target>
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    </Target>
+    <Target Name="RemoveFolders" AfterTargets="Build">
+        <!-- List of unwanted files or directories -->
+        <Message Text="Removing unwanted runtime directories..." Importance="high" />
+        <RemoveDir Directories="$(TargetDir)arm" />
+        <RemoveDir Directories="$(TargetDir)arm64" />
+        <RemoveDir Directories="$(TargetDir)musl-arm64" />
+        <RemoveDir Directories="$(TargetDir)musl-x64" />
+        <RemoveDir Directories="$(TargetDir)musl-x86" />
+        <RemoveDir Directories="$(TargetDir)x86" />
+    </Target>
 </Project>
