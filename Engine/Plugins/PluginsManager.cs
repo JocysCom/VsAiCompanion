@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Engine.Mcp;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using Namotion.Reflection;
@@ -26,6 +27,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 	/// </summary>
 	public partial class PluginsManager
 	{
+		#region MCP Integration
+
+		private static McpPluginsIntegration _mcpIntegration;
+
+		/// <summary>
+		/// Initialize MCP integration with server manager
+		/// </summary>
+		public static void InitializeMcpIntegration(McpServerManager serverManager)
+		{
+			_mcpIntegration = new McpPluginsIntegration(serverManager);
+		}
+
+		#endregion
 
 		#region Manage Functions
 
@@ -121,7 +135,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Deny if risk unknown.
 			if (currentPlugin.RiskLevel < RiskLevel.None)
 				return false;
-			// Deny if risk is higher than selected by the task.	
+			// Deny if risk is higher than selected by the task.
 			if (currentPlugin.RiskLevel > maxRiskLevel)
 				return false;
 			// Deny if this is not a Visual Studio extension but a plugin for Visual Studio.
@@ -139,6 +153,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (!item.PluginsEnabled)
 				return (null, null);
+
+			// Check if this is an MCP tool call
+			if (_mcpIntegration != null && function.name.StartsWith("mcp_"))
+			{
+				try
+				{
+					var properties = function.parameters?.additional_properties ?? new Dictionary<string, JsonElement>();
+					// Convert to ChatToolCall format for MCP integration
+					var chatToolCall = ChatToolCall.CreateFunctionToolCall(
+						function.id ?? Guid.NewGuid().ToString(),
+						function.name,
+						BinaryData.FromString(Mcp.Protocol.JsonHelper.Serialize(properties))
+					);
+
+					return await _mcpIntegration.ProcessMcpToolCallAsync(item, chatToolCall, cancellationTokenSource);
+				}
+				catch (Exception ex)
+				{
+					return ("text", $"MCP tool execution error: {ex.Message}");
+				}
+			}
+
+			// Handle regular plugin functions
 			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 			if (!AllowPluginFunction(function.name, maxRiskLevel))
 				return null;
@@ -459,11 +496,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Microsoft's Reinvention of the Wheel
 
-		public static List<ChatTool> GetChatToolDefinitions(TemplateItem item)
+		public static async Task<List<ChatTool>> GetChatToolDefinitionsAsync(TemplateItem item, CancellationToken cancellationToken = default)
 		{
 			var tools = new List<ChatTool>();
 			if (!item.PluginsEnabled)
 				return tools;
+
+			// Add MCP tools if integration is available
+			if (_mcpIntegration != null)
+			{
+				try
+				{
+					var mcpTools = await _mcpIntegration.GetMcpChatToolsAsync(item, cancellationToken);
+					tools.AddRange(mcpTools);
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine($"Error getting MCP tools: {ex.Message}");
+				}
+			}
+
+			// Add regular plugin tools
 			foreach (var pluginItem in GetPluginFunctions())
 			{
 				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());

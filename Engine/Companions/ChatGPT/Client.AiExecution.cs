@@ -1,14 +1,9 @@
-using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
-using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using OpenAI.Chat;
-using OpenAI.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT

@@ -8,6 +8,7 @@ using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
 using JocysCom.VS.AiCompanion.Engine.Security;
+using JocysCom.VS.AiCompanion.Engine.Mcp;
 using JocysCom.VS.AiCompanion.Engine.Settings;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -83,6 +84,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
 
 		public static TrayManager TrayManager { get; set; }
+
+		public static McpServerManager McpServerManager { get; set; }
 
 		public static AppData AppSettings
 			=> AppData.Items.FirstOrDefault();
@@ -240,6 +243,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.FineTuning: return FineTunings.Items;
 				case ItemType.Lists: return Lists.Items;
 				case ItemType.MailAccount: return AppSettings.MailAccounts;
+				case ItemType.McpServer: return AppSettings.McpServers;
 				case ItemType.Resets: return Resets.Items;
 				case ItemType.Task: return Tasks.Items;
 				case ItemType.Template: return Templates.Items;
@@ -605,6 +609,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 			InitHotKeys(Application.Current.MainWindow);
+			// Initialize MCP Server Manager
+			McpServerManager = new McpServerManager();
+
+			// Initialize MCP server discovery and configuration loading
+			_ = Task.Run(async () =>
+			{
+				try
+				{
+					await McpServerManager.InitializeAsync();
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine($"Failed to initialize MCP servers: {ex.Message}");
+				}
+			});
+
 			// Always refresh plugins.
 			var newPluginsList = Engine.AppData.RefreshPlugins(AppSettings.Plugins);
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, AppSettings.Plugins);

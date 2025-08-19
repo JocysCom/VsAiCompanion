@@ -1,4 +1,14 @@
-﻿==== START OF INSTRUCTIONS FROM: instructions.md ====
+﻿==== START OF INSTRUCTIONS FROM: developer.instructions.md ====
+
+# Instructions from: developer.instructions.md
+
+# Developer-Provided Context
+
+Use only C# language features up to and including version 7.3; do not use any features introduced in C# 8.0 or later.
+
+==== END OF INSTRUCTIONS FROM: developer.instructions.md ====
+
+==== START OF INSTRUCTIONS FROM: instructions.md ====
 
 # Instructions from: instructions.md
 

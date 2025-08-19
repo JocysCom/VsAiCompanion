@@ -72,7 +72,7 @@
 		<PackageVersion Include="PDFtoImage" Version="5.1.1" />
 		<PackageVersion Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageVersion Include="SharpVectors" Version="1.8.4.2" />
-		<PackageVersion Include="SixLabors.ImageSharp" Version="3.1.9" />
+		<PackageVersion Include="SixLabors.ImageSharp" Version="3.1.11" />
 		<PackageVersion Include="SkiaSharp" Version="3.119.0" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.0" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.macOS" Version="3.119.0" />
@@ -99,7 +99,7 @@
 		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
 		<PackageVersion Include="System.Resources.Extensions" Version="8.0.0" />
 		<PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
-		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
+		<PackageVersion Include="System.Text.Json" Version="8.0.6" />
 		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
 		<PackageVersion Include="Tiktoken" Version="2.2.0" />
 		<PackageVersion Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />

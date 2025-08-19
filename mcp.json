@@ -1,0 +1,19 @@
+{
+	"mcpServers": {
+		"firecrawl-mcp-server2": {
+			"autoApprove": [],
+			"disabled": false,
+			"timeout": 60,
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"firecrawl-mcp"
+			],
+			"env": {
+				"FIRECRAWL_API_URL": "http://localhost:3002"
+			},
+			"alwaysAllow": []
+		}
+	}
+}

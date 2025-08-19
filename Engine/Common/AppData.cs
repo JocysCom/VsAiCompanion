@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Controls.UpdateControl;
+using JocysCom.VS.AiCompanion.Engine.Mcp;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
@@ -482,6 +483,17 @@ Do not return as a code block.")]
 		}
 		private volatile Lazy<SortableBindingList<PluginItem>> _Plugins =
 			new Lazy<SortableBindingList<PluginItem>>(() => new SortableBindingList<PluginItem>());
+
+		/// <summary>MCP Servers</summary>
+		public SortableBindingList<McpServerConfig> McpServers
+		{
+			get => _McpServers.Value;
+			set => Interlocked.Exchange(ref _McpServers, new Lazy<SortableBindingList<McpServerConfig>>(() => value));
+		}
+		private volatile Lazy<SortableBindingList<McpServerConfig>> _McpServers =
+			new Lazy<SortableBindingList<McpServerConfig>>(() => new SortableBindingList<McpServerConfig>());
+
+		public bool ShouldSerializeMcpServers() => McpServers?.Count > 0;
 
 		[DefaultValue(20)]
 		public int MaxTaskItemsInTray { get => _MaxTaskItemsInTray; set => SetProperty(ref _MaxTaskItemsInTray, value); }

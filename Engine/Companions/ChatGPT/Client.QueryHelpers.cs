@@ -140,11 +140,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var addToolsToOptions = item.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
 			var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
 
-			ControlsHelper.AppInvoke(() =>
+			ControlsHelper.AppInvoke(async () =>
 			{
 				if (addToolsToOptions)
 				{
-					var tools = PluginsManager.GetChatToolDefinitions(item);
+					var tools = await PluginsManager.GetChatToolDefinitionsAsync(item);
 					PluginsManager.ProvideTools(tools, item, options: completionsOptions);
 				}
 			});

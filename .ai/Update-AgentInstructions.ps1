@@ -11,9 +11,9 @@ $ErrorActionPreference = "Stop"
 # Function to compare content and write file if different
 function Test-AndWriteFile {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$TargetPath,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$NewContent,
         [string]$FileDescription = "File" # Optional description for messages
     )
@@ -26,7 +26,7 @@ function Test-AndWriteFile {
         }
 
         # Ensure the new content ends with a newline, typical for markdown files
-        $ContentToWrite = $NewContent.TrimEnd() + "`n"
+        $ContentToWrite = $NewContent.TrimEnd() + "`r`n"
 
         if (Test-Path -Path $TargetPath) {
             $existingContent = Get-Content -Path $TargetPath -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
@@ -35,17 +35,20 @@ function Test-AndWriteFile {
             if ($existingContent -eq $ContentToWrite) {
                 Write-Host "$($FileDescription): Content is identical (direct comparison). No update needed for '$TargetPath'."
                 return $false # Indicate no update was made
-            } else {
+            }
+            else {
                 Write-Host "$($FileDescription): Updating '$TargetPath' (direct comparison showed difference)."
                 Set-Content -Path $TargetPath -Value $ContentToWrite -Encoding UTF8 -Force
                 return $true # Indicate update was made
             }
-        } else {
+        }
+        else {
             Write-Host "$($FileDescription): Creating '$TargetPath'."
             Set-Content -Path $TargetPath -Value $ContentToWrite -Encoding UTF8 -Force
             return $true # Indicate update was made
         }
-    } catch {
+    }
+    catch {
         Write-Error "Error processing file '$TargetPath': $($_.Exception.Message)"
         throw # Re-throw to be caught by main try-catch
     }
@@ -53,11 +56,12 @@ function Test-AndWriteFile {
 
 # --- Main Script ---
 try {
+    Clear-Host
     $scriptDir = $PSScriptRoot # Directory where the script itself is located (.ai)
     $repoRoot = Join-Path -Path $scriptDir -ChildPath ".." | Resolve-Path # Absolute path to the repository root
 
     # Discover source files matching *instructions.md in the .ai folder
-    $sourceInstructionFiles = Get-ChildItem -Path $scriptDir -Filter "*instructions.md" -File
+    [System.IO.FileSystemInfo[]]$sourceInstructionFiles = Get-ChildItem -Path $scriptDir -Filter "*instructions.md" -File
     if ($null -eq $sourceInstructionFiles -or $sourceInstructionFiles.Count -eq 0) {
         Write-Warning "No '*instructions.md' files found in '$scriptDir'. Nothing to process."
         exit 0
@@ -66,31 +70,31 @@ try {
     $sourceInstructionFiles | ForEach-Object { Write-Host "- $($_.Name)" }
 
     # User prompt for agent selection
-    $choiceCline = New-Object System.Management.Automation.Host.ChoiceDescription "&CLINE", "Update instructions for CLINE."
-    $choiceCopilot = New-Object System.Management.Automation.Host.ChoiceDescription "&GitHub CoPilot", "Update instructions for GitHub CoPilot."
-    $choiceAll = New-Object System.Management.Automation.Host.ChoiceDescription "&ALL", "Update instructions for both CLINE and GitHub CoPilot."
-    $choiceCancel = New-Object System.Management.Automation.Host.ChoiceDescription "&Cancel", "Exit the script."
-    
-    $choices = [System.Management.Automation.Host.ChoiceDescription[]]@($choiceCline, $choiceCopilot, $choiceAll, $choiceCancel)
-    $title = "Select Agent Instruction Set to Update"
-    $message = "Which agent's instructions do you want to update from the '*instructions.md' files in '$scriptDir'?"
-    
-    $userChoiceResult = $Host.UI.PromptForChoice($title, $message, $choices, 0) # Default to CLINE (index 0)
-
+    Write-Host "=========================================================="
+    Write-Host "Select Agent Instruction Set to Update"
+    Write-Host "----------------------------------------------------------"
+    Write-Host "1. ALL            - Update instructions for all AI agents"
+    Write-Host "2. CLINE          - Update instructions for CLINE"
+    Write-Host "3. ROO CODE       - Update instructions for ROO CODE"
+    Write-Host "4. GitHub CoPilot - Update instructions for GitHub CoPilot"
+    Write-Host "0. Exit"
+    Write-Host "=========================================================="
+    $selection = Read-Host "Enter the number of your choice (0-4)"
     $updateCline = $false
     $updateCopilot = $false
-
-    switch ($userChoiceResult) {
-        0 { $updateCline = $true; Write-Host "Selected: CLINE" }
-        1 { $updateCopilot = $true; Write-Host "Selected: GitHub CoPilot" }
-        2 { $updateCline = $true; $updateCopilot = $true; Write-Host "Selected: ALL" }
-        3 { Write-Host "Operation cancelled by user."; exit 0 }
+    $updateRooCode = $false
+    switch ($selection) {
+        '1' { $updateCline = $true; $updateCopilot = $true; $updateRooCode = $true; Write-Host "Selected: ALL" }
+        '2' { $updateCline = $true; Write-Host "Selected: CLINE" }
+        '3' { $updateRooCode = $true; Write-Host "Selected: ROO CODE" }
+        '4' { $updateCopilot = $true; Write-Host "Selected: GitHub CoPilot" }
+        '0' { Write-Host "Operation cancelled by user."; exit 0 }
         default { throw "Invalid selection. Exiting." }
     }
 
     # --- CLINE Update Logic ---
     if ($updateCline) {
-        Write-Host "`n--- Updating CLINE Instructions ---"
+        Write-Host "`r`n--- Updating CLINE Instructions ---"
         $clineRulesDir = Join-Path $repoRoot ".clinerules"
         
         foreach ($sourceFile in $sourceInstructionFiles) {
@@ -103,7 +107,7 @@ try {
 
     # --- GitHub CoPilot Update Logic ---
     if ($updateCopilot) {
-        Write-Host "`n--- Updating GitHub CoPilot Instructions ---"
+        Write-Host "`r`n--- Updating GitHub CoPilot Instructions ---"
         $githubDir = Join-Path $repoRoot ".github"
         $copilotTargetInstructionsFile = Join-Path $githubDir "copilot-instructions.md"
         
@@ -137,9 +141,22 @@ try {
         Write-Host "GitHub CoPilot instruction update process complete."
     }
 
-    Write-Host "`nAll selected operations completed successfully."
+    # --- ROO CODE Update Logic ---
+    if ($updateRooCode) {
+        Write-Host "`r`n--- Updating ROO CODE Instructions ---"
+        $rooRulesDir = Join-Path $repoRoot ".roo\rules"
+        foreach ($sourceFile in $sourceInstructionFiles) {
+            $rooTargetFile = Join-Path $rooRulesDir $sourceFile.Name
+            $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
+            Test-AndWriteFile -TargetPath $rooTargetFile -NewContent $sourceContent -FileDescription "ROO CODE instruction file ($($sourceFile.Name))"
+        }
+        Write-Host "ROO CODE instruction update process complete."
+    }
 
-} catch {
+    Write-Host "`r`nAll selected operations completed successfully."
+
+}
+catch {
     Write-Error "An unexpected error occurred: $($_.Exception.Message)"
     Write-Error "Script Stack Trace: $($_.ScriptStackTrace)"
     # For more detailed error info, you might want to access $_.Exception.ToString()

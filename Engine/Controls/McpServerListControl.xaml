@@ -1,0 +1,158 @@
+<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.McpServerListControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="250"
+	d:DesignWidth="800"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+			<!--  Collection View Source with Grouping  -->
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding CurrentItems, ElementName=This}" />
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Border Grid.Row="0" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
+			<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+				<Button
+					Name="RefreshButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="RefreshButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+						<Label Content="Refresh" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="DisableAllButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="DisableAllButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_unchecked_all}" Focusable="False" />
+						<Label Content="{StaticResource main_Disable_All}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableLowRiskButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableLowRiskButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_piece_green}" Focusable="False" />
+						<Label Content="{StaticResource main_Enable_Low_Risk}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableMediumRiskButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableMediumRiskButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_piece_yellow}" Focusable="False" />
+						<Label Content="{StaticResource main_Enable_Medium_Risk}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableHighRiskButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableHighRiskButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_piece_orange}" Focusable="False" />
+						<Label Content="{StaticResource main_Enable_High_Risk}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableAllButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableAllButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_piece_red}" Focusable="False" />
+						<Label Content="{StaticResource main_Enable_All}" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Border>
+		<Border
+			Grid.Row="0"
+			Grid.ColumnSpan="2"
+			HorizontalAlignment="Right"
+			BorderBrush="{StaticResource BorderDark}"
+			BorderThickness="0,0,0,1">
+			<StackPanel Orientation="Horizontal">
+				<Button
+					Name="AddServerButton"
+					Margin="0,3,3,3"
+					AutomationProperties.HelpText="Add MCP Server"
+					AutomationProperties.Name="Add Server Button"
+					Click="AddServerButton_Click">
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+				</Button>
+				<Button
+					Name="CopyButton"
+					Margin="0,3,3,3"
+					AutomationProperties.HelpText="Copy MCP Server Configuration"
+					AutomationProperties.Name="Copy Button"
+					Click="CopyButton_Click">
+					<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
+				</Button>
+				<Button
+					Name="SaveAsButton"
+					Margin="0,3,3,3"
+					AutomationProperties.HelpText="Save MCP Server Configuration"
+					AutomationProperties.Name="Save As Button"
+					Click="SaveAsButton_Click">
+					<ContentControl Content="{StaticResource Icon_Save}" Focusable="False" />
+				</Button>
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="1" Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="ClassDescriptionLabel" Text="{Binding ClassDescription, ElementName=This}" />
+		</Border>
+		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+			<ItemsControl
+				x:Name="MainItemsControl"
+				Margin="0,0,0,-1"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				HorizontalContentAlignment="Stretch"
+				x:FieldModifier="public"
+				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+				ClipToBounds="True"
+				ItemsSource="{Binding Source={StaticResource GroupedData}}"
+				ScrollViewer.CanContentScroll="True">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<controls:McpServerItemControl x:Name="ItemPanel" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

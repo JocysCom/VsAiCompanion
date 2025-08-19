@@ -373,9 +373,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
 					if (addToolsToMessage)
 					{
-						ControlsHelper.AppInvoke(() =>
+						ControlsHelper.AppInvoke(async () =>
 						{
-							var tools = PluginsManager.GetChatToolDefinitions(item);
+							var tools = await PluginsManager.GetChatToolDefinitionsAsync(item);
 							PluginsManager.ProvideTools(tools, item, message: m);
 						});
 					}

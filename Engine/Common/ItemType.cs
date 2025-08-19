@@ -17,5 +17,6 @@
 		VaultItem = 12,
 		UiPreset = 13,
 		Resets = 14,
+		McpServer = 15,
 	}
 }

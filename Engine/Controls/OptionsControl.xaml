@@ -140,6 +140,16 @@
 				<controls:SettingsControl x:Name="UiPresetsPanel" x:FieldModifier="public" DataType="UiPreset" />
 			</TabItem>
 
+			<TabItem x:Name="McpServersTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_gearwheel}" />
+						<Label Content="MCP Servers" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:McpServerListControl x:Name="McpServersPanel" x:FieldModifier="public" />
+			</TabItem>
+
 			<TabItem x:Name="UdpServerTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
