@@ -1,0 +1,18 @@
+# VS Code: Press Ctrl+Shift+P to open the Command Palette. Type "Convert Indentation to Tabs" and select the command.
+# VS Code: Press Ctrl+Shift+P to open the Command Palette. Type "Format Document"" and select the command.
+# Note: VS Code Document Formatting doesn't work in Restricted Mode. Switch to Trusted Window mode.
+#
+# Top-most EditorConfig file
+root = true
+
+# Default settings
+[*]
+indent_style = space
+indent_size = 4
+
+# For PowerShell scripts use tabs
+# VS Code should automatically use tabs for indentation in .ps1 files with this setting.
+[*.ps1]
+indent_style = tab
+tab_width = 4
+trim_trailing_whitespace = true
