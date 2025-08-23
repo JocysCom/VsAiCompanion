@@ -43,7 +43,7 @@ provider "azurerm" {
   client_secret   = var.ARM_CLIENT_SECRET
 }
 
-# 'TF_VAR_*' Environment variables created by `setup.ps1`
+# 'TF_VAR_*' Environment variables set by step3_switch_owning_service_principal.ps1
 
 variable "ARM_TENANT_ID" {
   description = "Directory (Tenant) ID"
@@ -63,6 +63,20 @@ variable "ARM_CLIENT_ID" {
 variable "ARM_CLIENT_SECRET" {
   description = "Service Principal Client Secret (Password)"
   type        = string
+}
+
+variable "KVS_OPENAI_VALUE" {
+  description = "The value for the OpenAI API Key secret"
+  type        = string
+  sensitive   = true
+  default     = "<Your-OpenAI-API-Key>"
+}
+
+variable "KVS_SPEECH_VALUE" {
+  description = "The value for the Speech Service API Key secret"
+  type        = string
+  sensitive   = true
+  default     = "<Your-Speech-Service-API-Key>"
 }
 
 # Retrieve Azure Client Configuration including the Tenant ID

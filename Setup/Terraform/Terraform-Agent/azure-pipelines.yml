@@ -1,0 +1,137 @@
+# Terraform-Agent Azure DevOps Pipeline
+# Deploys AI Agent service principal for n8n Azure DevOps integration
+# Supports dev and prod environments with dynamic Variable group selection
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - Setup/Terraform-Agent/*
+
+pool:
+  vmImage: 'windows-latest'
+
+parameters:
+- name: environment
+  displayName: 'Target Environment'
+  type: string
+  default: 'dev'
+  values:
+  - dev
+  - prod
+
+variables:
+# Dynamic Variable group selection based on environment parameter
+# Loads: Terraform-Agent-dev OR Terraform-Agent-prod
+- group: 'Terraform-Agent-${{ parameters.environment }}'
+# Map Variable group variables to ARM environment variables
+- name: ARM_CLIENT_ID
+  value: '$(armClientId)'
+- name: ARM_CLIENT_SECRET
+  value: '$(armClientSecret)'
+- name: ARM_TENANT_ID
+  value: '$(armTenantId)'
+- name: ARM_SUBSCRIPTION_ID
+  value: '$(armSubscriptionId)'
+
+steps:
+- task: PowerShell@2
+  displayName: '⚙️ Install Terraform'
+  inputs:
+    targetType: 'inline'
+    pwsh: true
+    script: |
+      Write-Host "📦 Installing Terraform using Chocolatey..." -ForegroundColor Green
+      
+      # Install Terraform using Chocolatey (pre-installed on Azure DevOps agents)
+      choco install terraform -y --no-progress
+      
+      # Refresh PATH to include Terraform
+      $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+      
+      # Verify installation
+      Write-Host "🔧 Verifying Terraform installation..." -ForegroundColor Yellow
+      terraform version
+      Write-Host "✅ Terraform installed successfully" -ForegroundColor Green
+
+- task: PowerShell@2
+  displayName: '🔧 Initialize & Plan Terraform (${{ parameters.environment }})'
+  inputs:
+    targetType: 'inline'
+    pwsh: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Setup/Terraform-Agent'
+    script: |
+      Write-Host "🌍 Planning deployment for ${{ parameters.environment }} environment" -ForegroundColor Cyan
+      Write-Host "Working Directory: $(System.DefaultWorkingDirectory)/Setup/Terraform-Agent" -ForegroundColor Gray
+      Write-Host "Using credentials from Variable group: Terraform-Agent-${{ parameters.environment }}" -ForegroundColor Gray
+      
+      # Verify Terraform is available
+      Write-Host "🔧 Verifying Terraform installation..." -ForegroundColor Gray
+      terraform version
+      
+      # Terraform initialization
+      Write-Host "📋 Initializing Terraform..." -ForegroundColor Yellow
+      terraform init -backend-config="backend.${{ parameters.environment }}.tfvars"
+      if ($LASTEXITCODE -ne 0) {
+          Write-Error "❌ Terraform init failed"
+          exit $LASTEXITCODE
+      }
+      
+      # Terraform plan
+      Write-Host "📊 Planning deployment..." -ForegroundColor Yellow
+      terraform plan -var-file="variables.${{ parameters.environment }}.tfvars" `
+        -var="ARM_SUBSCRIPTION_ID=$env:ARM_SUBSCRIPTION_ID" `
+        -var="ARM_CLIENT_ID=$env:ARM_CLIENT_ID" `
+        -var="ARM_CLIENT_SECRET=$env:ARM_CLIENT_SECRET" `
+        -var="ARM_TENANT_ID=$env:ARM_TENANT_ID" `
+        -out="tfplan"
+      if ($LASTEXITCODE -ne 0) {
+          Write-Error "❌ Terraform plan failed"
+          exit $LASTEXITCODE
+      }
+      
+      Write-Host "✅ Terraform plan completed successfully!" -ForegroundColor Green
+      Write-Host "📄 Plan file saved as 'tfplan'" -ForegroundColor Gray
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+
+- task: PowerShell@2
+  displayName: '🚀 Apply Terraform (${{ parameters.environment }})'
+  inputs:
+    targetType: 'inline'
+    pwsh: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Setup/Terraform-Agent'
+    script: |
+      Write-Host "🚀 Applying Terraform configuration for ${{ parameters.environment }}..." -ForegroundColor Yellow
+      
+      # Verify plan file exists
+      if (-not (Test-Path "tfplan")) {
+          Write-Error "❌ Plan file 'tfplan' not found. Plan step may have failed."
+          exit 1
+      }
+      
+      # Terraform apply
+      terraform apply -auto-approve "tfplan"
+      if ($LASTEXITCODE -ne 0) {
+          Write-Host "❌ Terraform apply failed" -ForegroundColor Red
+          Write-Host ""
+          Write-Host "🔧 Manual Creation Commands (for Global Admin fallback):" -ForegroundColor Yellow
+          Write-Host "If Terraform fails due to insufficient permissions, use these commands:" -ForegroundColor Gray
+          terraform output manual_creation_commands
+          Write-Host ""
+          exit $LASTEXITCODE
+      }
+      
+      Write-Host "✅ Deployment completed successfully!" -ForegroundColor Green
+      Write-Host "📤 Service Principal Details:" -ForegroundColor Cyan
+      terraform output
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)

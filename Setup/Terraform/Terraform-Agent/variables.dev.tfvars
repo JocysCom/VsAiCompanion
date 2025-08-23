@@ -7,9 +7,11 @@
 org = "jocyscom"
 # Application/Product
 app = "aicomp"
+# AI Agent/User name
+agent_name = "ai_agent"
 # Environment
-env = "prod"
+env = "dev"
 
 location             = "westus"
-resource_group_name  = "rg-jocyscom-aicomp-prod-westus-001"
-storage_account_name = "staicompprodwestus001"
+resource_group_name  = "rg-jocyscom-aicomp-dev-westus-001"
+storage_account_name = "staicompdevwestus001"

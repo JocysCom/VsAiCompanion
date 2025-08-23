@@ -1,4 +1,4 @@
-# Below is an example script that retrieves all Azure Virtual Networks and their subnets,
+﻿# Below is an example script that retrieves all Azure Virtual Networks and their subnets,
 # along with columns for IPv4 address range start and end (based on the CIDR).
 # Note: Subnets often have multiple address prefixes. This script will handle each prefix
 # and join them for CSV output.
@@ -9,22 +9,22 @@ function Get-IPv4Range {
         [string]$Cidr
     )
     # Split the CIDR into IP and prefix length
-    $parts      = $Cidr -split '/'
-    $ipString   = $parts[0]
-    $prefixInt  = [int]$parts[1]
+    $parts = $Cidr -split '/'
+    $ipString = $parts[0]
+    $prefixInt = [int]$parts[1]
 
     # Convert IP to 32-bit unsigned integer
     $ip = [System.Net.IPAddress]::Parse($ipString)
     $ipBytes = $ip.GetAddressBytes()
     [Array]::Reverse($ipBytes)
-    $ipAsInt  = [BitConverter]::ToUInt32($ipBytes, 0)
+    $ipAsInt = [BitConverter]::ToUInt32($ipBytes, 0)
 
     # Calculate the subnet mask as a 32-bit integer
     $mask = 0xFFFFFFFF - ([math]::Pow(2, (32 - $prefixInt)) - 1)
 
     # Calculate the network (start) and broadcast (end) addresses
     $network = $ipAsInt -band $mask
-    $bcast   = $network  -bor (-bnot $mask)
+    $bcast = $network -bor (-bnot $mask)
 
     # Helper function to convert a 32-bit integer back to an IPAddress
     function Convert-IntToIPAddress {
@@ -66,33 +66,33 @@ $subnetData = @()
 foreach ($sub in $allSubs) {
     # Set the Azure context to the subscription
     Set-AzContext -Subscription $sub.Id | Out-Null
-    
+
     # Get all virtual networks in the current subscription
     $vnets = Get-AzVirtualNetwork
 
     foreach ($vn in $vnets) {
         foreach ($sn in $vn.Subnets) {
             # If $sn.AddressPrefix is a list of prefixes, handle them all
-            $allAddressPrefixes   = $sn.AddressPrefix
-            $combinedRangeStart   = @()
-            $combinedRangeEnd     = @()
+            $allAddressPrefixes = $sn.AddressPrefix
+            $combinedRangeStart = @()
+            $combinedRangeEnd = @()
 
             foreach ($prefix in $allAddressPrefixes) {
                 $range = Get-IPv4Range -Cidr $prefix
                 $combinedRangeStart += $range.Start
-                $combinedRangeEnd   += $range.End
+                $combinedRangeEnd += $range.End
             }
 
             $subnetData += [PSCustomObject]@{
-                SubscriptionName    = $sub.Name
-                ResourceGroupName   = $vn.ResourceGroupName
-                LocationName        = $vn.Location
-                VirtualNetworkName  = $vn.Name
-                SubnetName          = $sn.Name
+                SubscriptionName   = $sub.Name
+                ResourceGroupName  = $vn.ResourceGroupName
+                LocationName       = $vn.Location
+                VirtualNetworkName = $vn.Name
+                SubnetName         = $sn.Name
                 # Join multiple prefixes with "; "
-                SubnetIPv4          = ($allAddressPrefixes -join "; ")
-                RangeStart          = ($combinedRangeStart -join "; ")
-                RangeEnd            = ($combinedRangeEnd   -join "; ")
+                SubnetIPv4         = ($allAddressPrefixes -join "; ")
+                RangeStart         = ($combinedRangeStart -join "; ")
+                RangeEnd           = ($combinedRangeEnd -join "; ")
             }
         }
     }

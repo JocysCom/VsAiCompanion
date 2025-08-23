@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     This script manages API permissions for an Azure AD application.
 
@@ -11,15 +11,15 @@
         b. Add missing API permissions (Azure Key Vault, Azure SQL Database, Microsoft Graph).
         c. Grant admin consent for the added permissions.
         d. Exit the script.
-        
-    The script uses Azure CLI commands and Microsoft's Graph API to manage and display the permissions.
+
+        The script uses Azure CLI commands and Microsoft's Graph API to manage and display the permissions.
 
 .PARAMETER
     None.
 
 .EXAMPLE
     To run the script, use the following command in PowerShell:
-    
+
         .\Manage-AzureAppPermissions.ps1
 
 .NOTES
@@ -49,14 +49,14 @@ function Show-ApiPermissions {
         [string]$AppId
     )
 
-	 # Add these lines at the beginning of the function
+    # Add these lines at the beginning of the function
     $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
     $PSDefaultParameterValues['*:Encoding'] = 'utf8'
     #$env:PYTHONIOENCODING = "UTF-8"
 
     $permissions = az ad app show --id $AppId --query "requiredResourceAccess" | ConvertFrom-Json
     foreach ($perm in $permissions) {
-        
+
         # Suppresses all warnings.
         $resourceApp = az ad sp show --id $perm.resourceAppId 2>$null | ConvertFrom-Json
 
@@ -87,10 +87,10 @@ function Show-ApiPermissions {
                     $access = $resourceApp.$location | Where-Object { $_.id -eq $resAccess.id }
                     if ($access) {
                         $accessValue = $access.value
-                        $accessDescription = $access.adminConsentDescription ?? 
-                                             $access.userConsentDescription ?? 
-                                             $access.description ??
-                                             "No description available."
+                        $accessDescription = $access.adminConsentDescription ??
+                        $access.userConsentDescription ??
+                        $access.description ??
+                        "No description available."
                         break
                     }
                 }
@@ -103,10 +103,10 @@ function Show-ApiPermissions {
                         $access = $resourceApp.$location | Where-Object { $_.value -eq $resAccess.id }
                         if ($access) {
                             $accessValue = $access.value
-                            $accessDescription = $access.adminConsentDescription ?? 
-                                                 $access.userConsentDescription ?? 
-                                                 $access.description ??
-                                                 "No description available."
+                            $accessDescription = $access.adminConsentDescription ??
+                            $access.userConsentDescription ??
+                            $access.description ??
+                            "No description available."
                             break
                         }
                     }
@@ -147,14 +147,15 @@ function Add-MissingApiPermissions {
     )
 
     foreach ($perm in $permissions) {
-        $existingPermission = $existingPermissions | Where-Object { $_.resourceAppId -eq $perm.api } | 
-                              Select-Object -ExpandProperty resourceAccess | 
-                              Where-Object { $_.id -eq $perm.permission }
+        $existingPermission = $existingPermissions | Where-Object { $_.resourceAppId -eq $perm.api } |
+        Select-Object -ExpandProperty resourceAccess |
+        Where-Object { $_.id -eq $perm.permission }
 
         if (-not $existingPermission) {
             az ad app permission add --id $AppId --api $perm.api --api-permissions "$($perm.permission)=$($perm.type)"
             Write-Host "Added permission: $($perm.api) - $($perm.permission)"
-        } else {
+        }
+        else {
             Write-Host "Permission already exists: $($perm.api) - $($perm.permission)"
         }
     }
@@ -168,7 +169,7 @@ function Grant-AdminConsent {
     $apis = @(
         "00000003-0000-0000-c000-000000000000",  # Microsoft Graph
         "cfa8b339-82a2-471a-a3c9-0fc0be7a4093",  # Azure Key Vault
-        "022907d3-0f1b-48f7-badc-1ba6abab6d66",  # Azure SQL DB and Data Warehouse
+        "022907d3-0f1b-48f7-badc-1ba6abab6d66"  # Azure SQL DB and Data Warehouse
     )
     foreach ($api in $apis) {
         az ad app permission grant --id $AppId --api $api --scope "/.default"

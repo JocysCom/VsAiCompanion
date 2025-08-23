@@ -14,6 +14,12 @@ variable "app" {
   default     = "product"
 }
 
+variable "agent_name" {
+  description = "The AI agent/user name for service principal naming"
+  type        = string
+  default     = "agent"
+}
+
 variable "env" {
   description = "The environment for the deployment (e.g., dev, test, prod)"
   type        = string

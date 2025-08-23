@@ -7,77 +7,27 @@ param(
 	[switch]$LocalValidationOnly
 )
 
-# Auto-discover Terraform projects if not specified
+# Import shared functions
+. .\shared_terraform_functions.ps1
+
+# Get project selection using shared function
+$ProjectPath = Get-TerraformProjectSelection -ProjectPath $ProjectPath
 if (-not $ProjectPath) {
-	$terraformProjects = Get-ChildItem -Directory -Name "Terraform-*" | Sort-Object
-
-	if ($terraformProjects.Count -eq 0) {
-		Write-Error "No Terraform projects found (looking for Terraform-* directories)."
-		exit 1
-	}
-
-	if ($terraformProjects.Count -eq 1) {
-		$ProjectPath = $terraformProjects[0]
-		Write-Host "Auto-selected project: $ProjectPath" -ForegroundColor Green
-	}
- else {
-		Write-Host "`nAvailable Terraform projects:" -ForegroundColor Yellow
-		for ($i = 0; $i -lt $terraformProjects.Count; $i++) {
-			Write-Host "$($i + 1). $($terraformProjects[$i])" -ForegroundColor White
-		}
-
-		do {
-			$choice = Read-Host "`nSelect project (1-$($terraformProjects.Count))"
-			$choiceIndex = try { [int]$choice - 1 } catch { -1 }
-			if ($choiceIndex -ge 0 -and $choiceIndex -lt $terraformProjects.Count) {
-				$ProjectPath = $terraformProjects[$choiceIndex]
-				break
-			}
-			else {
-				Write-Host "Invalid choice. Please enter a number between 1 and $($terraformProjects.Count)." -ForegroundColor Red
-			}
-		} while ($true)
-	}
-}
-
-# Validate project path
-if (-not (Test-Path $ProjectPath)) {
-	Write-Error "Project directory '$ProjectPath' not found."
 	exit 1
 }
 
-$ProjectName = Split-Path $ProjectPath -Leaf
+# Validate project and get name
+$ProjectName = Test-TerraformProject -ProjectPath $ProjectPath -ReturnProjectName
+if (-not $ProjectName) {
+	exit 1
+}
+
 Write-Host "=== Terraform $ProjectName Configuration Validation ===" -ForegroundColor Cyan
 
-# Ask for environment if not provided
-if (-not $Environment) {
-	Write-Host "`nWhich environment do you want to validate?" -ForegroundColor Yellow
-	Write-Host "1. dev (Development)" -ForegroundColor White
-	Write-Host "2. prod (Production)" -ForegroundColor White
-	Write-Host "3. local (Local validation only - no backend access)" -ForegroundColor White
-
-	do {
-		$choice = Read-Host "`nEnter your choice (1-3)"
-		switch ($choice) {
-			"1" {
-				$Environment = "dev"
-				break
-			}
-			"2" {
-				$Environment = "prod"
-				break
-			}
-			"3" {
-				$Environment = "dev"  # Default for local validation
-				$LocalValidationOnly = $true
-				break
-			}
-			default {
-				Write-Host "Invalid choice. Please enter 1, 2, or 3." -ForegroundColor Red
-			}
-		}
-	} while ($choice -notin @("1", "2", "3"))
-}
+# Get environment selection using shared function (with local validation option)
+$envResult = Get-EnvironmentSelection -Environment $Environment -IncludeLocalValidation
+$Environment = $envResult.Environment
+$LocalValidationOnly = $envResult.LocalValidationOnly
 
 Write-Host "`nValidating for environment: $Environment" -ForegroundColor Green
 
