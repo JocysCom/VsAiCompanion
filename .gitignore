@@ -409,7 +409,5 @@ FodyWeavers.xsd
 /Plugins/LinkReader/.config
 /Plugins/PowerShellExecutor/.config
 /Tools/pandoc.exe
-/Tools/Docker/temp
-/Tools/Docker/Files
 /.vscode
 /.ai/temp
