@@ -34,6 +34,105 @@
                     "memory": "256m"
                 }
             }
+        },
+        "firecrawl-worker": {
+            "type": "container.v0",
+            "properties": {
+                "image": "ghcr.io/mendableai/firecrawl",
+                "volumes": [
+                    {
+                        "name": "firecrawl-worker-data",
+                        "containerPath": "/app/data",
+                        "type": "named"
+                    }
+                ],
+                "networks": [
+                    {
+                        "name": "firecrawl-net",
+                        "alias": "firecrawl-worker"
+                    }
+                ],
+                "environment": {
+                    "OPENAI_API_KEY": "dummy",
+                    "REDIS_URL": "redis://firecrawl-redis:6379",
+                    "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
+                    "REDIS_HOST": "firecrawl-redis",
+                    "REDIS_PORT": "6379",
+                    "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/scrape",
+                    "FLY_PROCESS_GROUP": "worker",
+                    "POSTHOG_API_KEY": ""
+                },
+                "restart": "always",
+                "command": ["pnpm", "run", "workers"],
+                "dependencies": [
+                    "firecrawl-redis",
+                    "playwright-service"
+                ],
+                "resources": {
+                    "memory": "512m"
+                }
+            }
+        },
+        "firecrawl-api": {
+            "type": "container.v0",
+            "properties": {
+                "image": "ghcr.io/mendableai/firecrawl",
+                "bindings": [
+                    {
+                        "name": "http",
+                        "protocol": "tcp",
+                        "containerPort": 3002,
+                        "hostPort": 3002
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "firecrawl-api-data",
+                        "containerPath": "/app/data",
+                        "type": "named"
+                    }
+                ],
+                "networks": [
+                    {
+                        "name": "firecrawl-net",
+                        "alias": "firecrawl-api"
+                    }
+                ],
+                "environment": {
+                    "OPENAI_API_KEY": "dummy",
+                    "REDIS_URL": "redis://firecrawl-redis:6379",
+                    "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
+                    "REDIS_HOST": "firecrawl-redis",
+                    "REDIS_PORT": "6379",
+                    "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/scrape",
+                    "HOST": "0.0.0.0",
+                    "PORT": "3002",
+                    "FLY_PROCESS_GROUP": "app",
+                    "NODE_ENV": "development",
+                    "ENABLE_DOCS": "true",
+                    "ENABLE_ADMIN": "true",
+                    "ENABLE_UI": "true",
+                    "ENABLE_SWAGGER": "true",
+                    "ENABLE_BULL_BOARD": "true",
+                    "BULL_BOARD_ENABLED": "true",
+                    "SWAGGER_ENABLED": "true",
+                    "API_DOCS_ENABLED": "true",
+                    "ADMIN_ENABLED": "true",
+                    "DEBUG": "*",
+                    "LOG_LEVEL": "debug",
+                    "SELF_HOSTED": "true",
+                    "POSTHOG_API_KEY": ""
+                },
+                "restart": "always",
+                "command": ["pnpm", "run", "start"],
+                "dependencies": [
+                    "firecrawl-redis",
+                    "playwright-service"
+                ],
+                "resources": {
+                    "memory": "1024m"
+                }
+            }
         }
     }
 }

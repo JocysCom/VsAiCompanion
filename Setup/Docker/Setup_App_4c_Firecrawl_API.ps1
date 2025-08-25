@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to set up and run a Firecrawl API container.
 #                Requires Redis and Playwright service containers to be running first.
 #                This container provides the API endpoints and includes UI testing
@@ -22,46 +22,11 @@ using namespace System.IO
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-$global:imageName = "ghcr.io/mendableai/firecrawl"
-$global:firecrawlName = "firecrawl-api" # Use this for container name
-$global:volumeName = $global:firecrawlName # Default: same as container name.
-$global:redisImage = "redis:alpine"
+$global:containerName = "firecrawl-api"
 $global:redisContainerName = "firecrawl-redis"
 $global:playwrightContainerName = "playwright-service"
-$global:networkName = "firecrawl-net"
-$global:firecrawlPort = 3002
-$global:firecrawlDataPath = "/app/data"
-$global:redisNetworkAlias = "firecrawl-redis"
-$global:redisPort = 6379
-$global:playwrightPort = 3010
-$global:playwrightServicePort = 3000
-$global:openaiApiKey = 'dummy'
-$global:firecrawlApiKey = 'fc-dummy'
-
-# UI and Service URLs
-$global:firecrawlBaseUrl = "http://localhost:$global:firecrawlPort"
-$global:firecrawlApiUrl = "$global:firecrawlBaseUrl/v1"
-$global:firecrawlAdminUrl = "$global:firecrawlBaseUrl/admin/undefined/queues"
-$global:firecrawlHealthUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
-$global:firecrawlReadinessUrl = "$global:firecrawlBaseUrl/v0/health/readiness"
-$global:firecrawlServerHealthUrl = "$global:firecrawlBaseUrl/serverHealthCheck"
-$global:redisUrl = "localhost:$global:redisPort"
-$global:playwrightUrl = "http://localhost:$global:playwrightPort"
-
-#############################################
-# Firecrawl Configuration - Developer Mode (Default)
-#############################################
-# Set developer mode by default to enable all UI features
-$global:firecrawlMode = "developer"
-$global:startCommand = "pnpm run start"
-$global:nodeEnv = "development"
-$global:enableDocs = "true"
-$global:enableAdmin = "true"
-$global:enableUI = "true"
-$global:enableSwagger = "true"
-$global:enableBullBoard = "true"
 
 Write-Host "Firecrawl configured in Developer Mode (all UI features enabled)" -ForegroundColor Green
 
@@ -83,6 +48,47 @@ else {
 }
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'firecrawl-api'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	networkName = $manifestConfig.properties.networks[0].name
+	volumeName = $manifestConfig.properties.volumes[0].name
+	networkAlias = $manifestConfig.properties.networks[0].alias
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	environment = $manifestConfig.properties.environment
+	command = $manifestConfig.properties.command
+	dependencies = $manifestConfig.properties.dependencies
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+}
+
+# Create derived URLs from configuration
+$global:firecrawlBaseUrl = "http://localhost:$($config.hostPort)"
+$global:firecrawlApiUrl = "$global:firecrawlBaseUrl/v1"
+$global:firecrawlAdminUrl = "$global:firecrawlBaseUrl/admin/undefined/queues"
+$global:firecrawlHealthUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
+$global:firecrawlReadinessUrl = "$global:firecrawlBaseUrl/v0/health/readiness"
+$global:firecrawlServerHealthUrl = "$global:firecrawlBaseUrl/serverHealthCheck"
+$global:redisUrl = "localhost:$($config.environment.REDIS_PORT)"
+$global:playwrightUrl = "http://localhost:3010"
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 #==============================================================================
 # Function: Test-FirecrawlAPIDependency
@@ -109,42 +115,49 @@ function Test-FirecrawlAPIDependency {
 	Write-Host "Checking Firecrawl API dependencies..."
 
 	# Check if network exists
-	$networkExists = & $global:enginePath network ls --filter "name=^$global:networkName$" --format "{{.Name}}"
-	if ($networkExists -ne $global:networkName) {
-		Write-Error "Network '$global:networkName' not found."
+	$networkExists = & $global:enginePath network ls --filter "name=^$($config.networkName)$" --format "{{.Name}}"
+	if ($networkExists -ne $config.networkName) {
+		Write-Error "Network '$($config.networkName)' not found."
 		Write-Host "Please run 'Setup_4a_Firecrawl_Redis.ps1' first to create the Redis container and network."
 		return $false
 	}
 
-	# Check if Redis container exists and is running
-	$redisContainer = & $global:enginePath ps --filter "name=^$global:redisContainerName$" --format "{{.Names}}"
-	if ($redisContainer -ne $global:redisContainerName) {
-		Write-Error "Redis container '$global:redisContainerName' is not running."
-		Write-Host "Please run 'Setup_4a_Firecrawl_Redis.ps1' first to install and start the Redis container."
-		return $false
+	# Check dependencies from manifest
+	foreach ($dependency in $config.dependencies) {
+		$depContainer = & $global:enginePath ps --filter "name=^$dependency$" --format "{{.Names}}"
+		if ($depContainer -ne $dependency) {
+			Write-Error "Dependency container '$dependency' is not running."
+			switch ($dependency) {
+				"firecrawl-redis" {
+					Write-Host "Please run 'Setup_4a_Firecrawl_Redis.ps1' first to install and start the Redis container."
+				}
+				"playwright-service" {
+					Write-Host "Please run 'Setup_9_Playwright_Service.ps1' first to install and start the Playwright service container."
+				}
+				default {
+					Write-Host "Please ensure the '$dependency' container is running."
+				}
+			}
+			return $false
+		}
 	}
 
-	# Check if Playwright service container exists and is running
-	$playwrightContainer = & $global:enginePath ps --filter "name=^$global:playwrightContainerName$" --format "{{.Names}}"
-	if ($playwrightContainer -ne $global:playwrightContainerName) {
-		Write-Error "Playwright service container '$global:playwrightContainerName' is not running."
-		Write-Host "Please run 'Setup_10_Playwright_Service.ps1' first to install and start the Playwright service container."
-		return $false
-	}
-
-	# Test Redis connectivity
+	# Test Redis connectivity (port from environment config)
+	$redisPort = [int]$config.environment.REDIS_PORT
 	Write-Host "Testing Redis connectivity..."
-	if (-not (Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Firecrawl Redis")) {
-		Write-Error "Cannot connect to Redis on port $global:redisPort."
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $redisPort -serviceName "Firecrawl Redis")) {
+		Write-Error "Cannot connect to Redis on port $redisPort."
 		Write-Host "Please ensure the Redis container is running properly using 'Setup_4a_Firecrawl_Redis.ps1'."
 		return $false
 	}
 
-	# Test Playwright service connectivity
+	# Test Playwright service connectivity (extract port from URL)
+	$playwrightUrl = $config.environment.PLAYWRIGHT_MICROSERVICE_URL
+	$playwrightPort = if ($playwrightUrl -match ":(\d+)/") { [int]$Matches[1] } else { 3000 }
 	Write-Host "Testing Playwright service connectivity..."
-	if (-not (Test-TCPPort -ComputerName "localhost" -Port $global:playwrightPort -serviceName "Playwright Service")) {
-		Write-Error "Cannot connect to Playwright service on port $global:playwrightPort."
-		Write-Host "Please ensure the Playwright service container is running properly using 'Setup_10_Playwright_Service.ps1'."
+	if (-not (Test-TCPPort -ComputerName "localhost" -Port $playwrightPort -serviceName "Playwright Service")) {
+		Write-Error "Cannot connect to Playwright service on port $playwrightPort."
+		Write-Host "Please ensure the Playwright service container is running properly using 'Setup_9_Playwright_Service.ps1'."
 		return $false
 	}
 
@@ -289,12 +302,15 @@ function Show-FirecrawlServicesSummary {
 	Write-Host "Related Services:" -ForegroundColor White
 
 	# Test Redis availability
-	$redisAvailable = Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Redis"
+	$redisPort = [int]$config.environment.REDIS_PORT
+	$redisAvailable = Test-TCPPort -ComputerName "localhost" -Port $redisPort -serviceName "Redis"
 	$redisIcon = if ($redisAvailable) { "✅" } else { "❌" }
 	Write-Host "$redisIcon Redis Cache        : $global:redisUrl" -ForegroundColor $(if ($redisAvailable) { "Green" } else { "Red" })
 
 	# Test Playwright availability
-	$playwrightAvailable = Test-TCPPort -ComputerName "localhost" -Port $global:playwrightPort -serviceName "Playwright"
+	$playwrightUrl = $config.environment.PLAYWRIGHT_MICROSERVICE_URL
+	$playwrightPort = if ($playwrightUrl -match ":(\d+)/") { [int]$Matches[1] } else { 3000 }
+	$playwrightAvailable = Test-TCPPort -ComputerName "localhost" -Port $playwrightPort -serviceName "Playwright"
 	$playwrightIcon = if ($playwrightAvailable) { "✅" } else { "❌" }
 	Write-Host "$playwrightIcon Playwright Service: $global:playwrightUrl" -ForegroundColor $(if ($playwrightAvailable) { "Green" } else { "Red" })
 
@@ -350,85 +366,73 @@ function Install-FirecrawlContainer {
 	#############################################
 	# Step 2: Pull the Firecrawl Docker Image (or Restore)
 	#############################################
-	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
+	$existingImage = & $global:enginePath images --filter "reference=$($config.imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Host "No backup restored. Pulling Firecrawl Docker image '$global:imageName'..."
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName)) {
+			Write-Host "No backup restored. Pulling Firecrawl Docker image '$($config.imageName)'..."
 			# Use shared pull function
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
-				Write-Error "Image pull failed for '$global:imageName'."
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $config.imageName -PullOptions $global:pullOptions)) {
+				Write-Error "Image pull failed for '$($config.imageName)'."
 				exit 1
 			}
 		}
 		else {
-			Write-Host "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$($config.imageName)'."
 		}
 	}
 	else {
-		Write-Host "Using restored backup image '$global:imageName'."
+		Write-Host "Using restored backup image '$($config.imageName)'."
 	}
 
 	#############################################
 	# Step 4: Remove Existing Firecrawl Container (if any)
 	#############################################
-	$existingFirecrawl = & $global:enginePath ps --all --filter "name=^$global:firecrawlName$" --format "{{.ID}}"
+	$existingFirecrawl = & $global:enginePath ps --all --filter "name=^$global:containerName$" --format "{{.ID}}"
 	if ($existingFirecrawl) {
-		Write-Host "Removing existing Firecrawl container '$global:firecrawlName'..."
-		& $global:enginePath rm --force $global:firecrawlName
+		Write-Host "Removing existing Firecrawl container '$global:containerName'..."
+		& $global:enginePath rm --force $global:containerName
 	}
 
 	#############################################
 	# Step 5: Run the Firecrawl Container with Overridden Redis Settings
 	#############################################
-	Write-Host "Starting Firecrawl container '$global:firecrawlName'..."
+	Write-Host "Starting Firecrawl container '$global:containerName'..."
 	# Prompt for OpenAI API Key if not set
-	$global:openaiApiKey = Get-EnvironmentVariableWithDefault -EnvVarName 'OPENAI_API_KEY' -DefaultValue $global:openaiApiKey -PromptText 'OpenAI API Key'
+	$openaiApiKey = Get-EnvironmentVariableWithDefault -EnvVarName 'OPENAI_API_KEY' -DefaultValue $config.environment.OPENAI_API_KEY -PromptText 'OpenAI API Key'
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
-		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $config.volumeName)) {
+		Write-Error "Failed to ensure volume '$($config.volumeName)' exists. Exiting..."
 		exit 1
 	}
-	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($config.volumeName)' - existing user data will be preserved."
 
 	# Define run options as an array
 	$runOptions = @(
 		"--detach", # Run container in background.
-		"--publish", "$($global:firecrawlPort):$($global:firecrawlPort)", # Map host port to container port.
-		"--restart", "always", # Always restart the container unless explicitly stopped.
-		"--network", $global:networkName, # Attach the container to the specified Docker network.
-		"--name", $global:firecrawlName, # Assign the container the name 'firecrawl'.
-		"--volume", "$($global:volumeName):$global:firecrawlDataPath", # Mount the named volume for persistent data.
-		"--env", "OPENAI_API_KEY=$($global:openaiApiKey)",
-		"--env", "REDIS_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)", # Point to the Redis container using network alias.
-		"--env", "REDIS_RATE_LIMIT_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
-		"--env", "REDIS_HOST=$global:redisNetworkAlias",
-		"--env", "REDIS_PORT=$global:redisPort",
-		"--env", "PLAYWRIGHT_MICROSERVICE_URL=http://playwright-service:3000/scrape", # Required for web scraping
-		"--env", "HOST=0.0.0.0", # Bind to all interfaces
-		"--env", "PORT=$global:firecrawlPort", # Set the port
-		"--env", "FLY_PROCESS_GROUP=app", # Set process group for API
-		"--env", "NODE_ENV=$global:nodeEnv", # Set Node environment (development/production)
-		"--env", "ENABLE_DOCS=$global:enableDocs", # Enable/disable documentation
-		"--env", "ENABLE_ADMIN=$global:enableAdmin", # Enable/disable admin dashboard
-		"--env", "ENABLE_UI=$global:enableUI", # Enable UI features
-		"--env", "ENABLE_SWAGGER=$global:enableSwagger", # Enable Swagger documentation
-		"--env", "ENABLE_BULL_BOARD=$global:enableBullBoard", # Enable Bull queue dashboard
-		"--env", "BULL_BOARD_ENABLED=true", # Alternative Bull board flag
-		"--env", "SWAGGER_ENABLED=true", # Alternative Swagger flag
-		"--env", "API_DOCS_ENABLED=true", # Alternative API docs flag
-		"--env", "ADMIN_ENABLED=true", # Alternative admin flag
-		"--env", "DEBUG=*", # Enable debug logging
-		"--env", "LOG_LEVEL=debug", # Set log level to debug
-		"--env", "SELF_HOSTED=true", # Indicate self-hosted deployment
-		"--env", "POSTHOG_API_KEY=" # Disable PostHog analytics.
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port.
+		"--restart", $config.restartPolicy, # Restart policy from configuration.
+		"--network", $config.networkName, # Attach the container to the specified Docker network.
+		"--name", $global:containerName, # Assign the container the specified name.
+		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data.
+		"--env", "OPENAI_API_KEY=$openaiApiKey"
 	)
 
-	Write-Host "Running Firecrawl in $global:firecrawlMode mode with command: $global:startCommand" -ForegroundColor Cyan
+	# Add all environment variables from config
+	foreach ($envVar in $config.environment.PSObject.Properties) {
+		$runOptions += "--env"
+		$runOptions += "$($envVar.Name)=$($envVar.Value)"
+	}
 
-	# Execute the command using splatting with the selected start command
-	& $global:enginePath run @runOptions $global:imageName $global:startCommand
+	Write-Host "Running Firecrawl container with Aspire configuration..." -ForegroundColor Cyan
+
+	# Execute the command using splatting with the configured command
+	if ($config.command -and $config.command.Count -gt 0) {
+		& $global:enginePath run @runOptions $config.imageName $config.command
+	} else {
+		& $global:enginePath run @runOptions $config.imageName
+	}
 	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to run Firecrawl container '$global:firecrawlName'."
+		Write-Error "Failed to run Firecrawl container '$global:containerName'."
 		exit 1
 	}
 
@@ -438,12 +442,12 @@ function Install-FirecrawlContainer {
 	Write-Host "Waiting 20 seconds for containers to fully start..."
 	Start-Sleep -Seconds 20
 
-	Write-Host "Testing Firecrawl API connectivity on port $global:firecrawlPort..."
-	Test-TCPPort -ComputerName "localhost" -Port $global:firecrawlPort -serviceName "Firecrawl API"
-	Test-HTTPPort -Uri "http://localhost:$global:firecrawlPort" -serviceName "Firecrawl API"
+	Write-Host "Testing Firecrawl API connectivity on port $($config.hostPort)..."
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Firecrawl API"
+	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Firecrawl API"
 
-	Write-Host "Testing Redis container connectivity on port $global:redisPort..."
-	Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Firecrawl Redis"
+	Write-Host "Testing Redis container connectivity on port $([int]$config.environment.REDIS_PORT)..."
+	Test-TCPPort -ComputerName "localhost" -Port ([int]$config.environment.REDIS_PORT) -serviceName "Firecrawl Redis"
 
 	#############################################
 	# Step 7: Test UI Availability and Show Summary
@@ -508,27 +512,28 @@ function Invoke-StartFirecrawlForUpdate {
 
 	Write-Host "Starting updated Firecrawl container '$ContainerName'..."
 
-	# Define run options (same as in Install-FirecrawlContainer)
-	# Note: Uses $global:networkName, assuming it's accessible or should be passed if not.
-	# For now, relying on the global scope as the original script block did.
+	# Define run options using configuration from manifest
 	$runOptions = @(
 		"--detach",
-		"--publish", "$($global:firecrawlPort):$($global:firecrawlPort)",
-		"--restart", "always",
-		"--network", $global:networkName, # Use global network name
+		"--publish", "$($config.hostPort):$($config.containerPort)",
+		"--restart", $config.restartPolicy,
+		"--network", $config.networkName,
 		"--name", $ContainerName,
-		"--volume", "$($VolumeName):$global:firecrawlDataPath",
-		"--env", "OPENAI_API_KEY=$($global:openaiApiKey)",
-		"--env", "REDIS_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
-		"--env", "REDIS_RATE_LIMIT_URL=redis://$($global:redisNetworkAlias):$($global:redisPort)",
-		"--env", "REDIS_HOST=$global:redisNetworkAlias",
-		"--env", "REDIS_PORT=$global:redisPort",
-		"--env", "PLAYWRIGHT_MICROSERVICE_URL=http://playwright-service:3000/scrape", # Required for web scraping
-		"--env", "POSTHOG_API_KEY="
+		"--volume", "$($VolumeName):$($config.dataPath)"
 	)
 
+	# Add all environment variables from config
+	foreach ($envVar in $config.environment.PSObject.Properties) {
+		$runOptions += "--env"
+		$runOptions += "$($envVar.Name)=$($envVar.Value)"
+	}
+
 	# Execute the command
-	& $EnginePath run @runOptions $ImageName
+	if ($config.command -and $config.command.Count -gt 0) {
+		& $EnginePath run @runOptions $ImageName $config.command
+	} else {
+		& $EnginePath run @runOptions $ImageName
+	}
 	if ($LASTEXITCODE -ne 0) {
 		throw "Failed to run updated Firecrawl container '$ContainerName'."
 	}
@@ -536,11 +541,11 @@ function Invoke-StartFirecrawlForUpdate {
 	# Wait and Test Connectivity (same as in Install-FirecrawlContainer)
 	Write-Host "Waiting 20 seconds for container to fully start..."
 	Start-Sleep -Seconds 20
-	Write-Host "Testing Firecrawl API connectivity on port $global:firecrawlPort..."
-	Test-TCPPort -ComputerName "localhost" -Port $global:firecrawlPort -serviceName "Firecrawl API"
-	Test-HTTPPort -Uri "http://localhost:$global:firecrawlPort" -serviceName "Firecrawl API"
-	Write-Host "Testing Redis container connectivity on port $global:redisPort..."
-	Test-TCPPort -ComputerName "localhost" -Port $global:redisPort -serviceName "Firecrawl Redis"
+	Write-Host "Testing Firecrawl API connectivity on port $($config.hostPort)..."
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Firecrawl API"
+	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Firecrawl API"
+	Write-Host "Testing Redis container connectivity on port $([int]$config.environment.REDIS_PORT)..."
+	Test-TCPPort -ComputerName "localhost" -Port ([int]$config.environment.REDIS_PORT) -serviceName "Firecrawl Redis"
 	Write-Host "Firecrawl container updated successfully."
 }
 
@@ -568,40 +573,38 @@ function Update-FirecrawlContainer {
 	param()
 
 	# Check ShouldProcess before proceeding
-	if (-not $PSCmdlet.ShouldProcess($global:firecrawlName, "Update Container")) {
+	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
 		return
 	}
 
 	Write-Host "Initiating update for Firecrawl..."
 	$backupMade = $false
 	# Check if container exists before prompting for backup
-	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:firecrawlName)" --format "{{.ID}}"
+	$existingContainer = & $global:enginePath ps -a --filter "name=$global:containerName" --format "{{.ID}}"
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			Write-Host "Saving '$($global:firecrawlName)' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName
-			Write-Host "Exporting '$($global:volumeName)' Volume..."
-			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			Write-Host "Saving '$global:containerName' Container Image..."
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName
+			Write-Host "Exporting '$($config.volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			$backupMade = $true
 		}
 	}
 	else {
-		Write-Warning "Container '$($global:firecrawlName)' not found. Skipping backup prompt."
+		Write-Warning "Container '$global:containerName' not found. Skipping backup prompt."
 	}
 
 	# Call simplified Update-Container (handles check, remove, pull)
 	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:firecrawlName -VolumeName $global:volumeName -ImageName $global:imageName) {
+	$updateResult = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
+	
+	if ($updateResult -eq $true) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the dedicated start function
 		try {
-			# Invoke-StartFirecrawlForUpdate expects these params, pass globals/literals
-			Invoke-StartFirecrawlForUpdate -EnginePath $global:enginePath `
-				-ContainerEngineType "docker" ` # Hardcoded as this script only supports Docker
-			-ContainerName $global:firecrawlName `
-				-VolumeName $global:volumeName `
-				-ImageName $global:imageName
+			# Invoke-StartFirecrawlForUpdate expects these params, pass configuration values
+			Invoke-StartFirecrawlForUpdate -EnginePath $global:enginePath -ContainerEngineType "docker" -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
 			# Success message is handled within Invoke-StartFirecrawlForUpdate
 		}
 		catch {
@@ -609,23 +612,27 @@ function Update-FirecrawlContainer {
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
-					Write-Host "Loading '$($global:firecrawlName)' Container Image..."
-					Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName
-					Write-Host "Importing '$($global:volumeName)' Volume..."
-					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+					Write-Host "Loading '$global:containerName' Container Image..."
+					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
+					Write-Host "Importing '$($config.volumeName)' Volume..."
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 				}
 			}
 		}
+	}
+	elseif ($updateResult -eq $false) {
+		Write-Host "No update available or update was canceled by user." -ForegroundColor Yellow
+		Write-Host "Container is already up to date." -ForegroundColor Green
 	}
 	else {
 		Write-Error "Update process failed during check, removal, or pull."
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
-				Write-Host "Loading '$($global:firecrawlName)' Container Image..."
-				Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName
-				Write-Host "Importing '$($global:volumeName)' Volume..."
-				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+				Write-Host "Loading '$global:containerName' Container Image..."
+				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
+				Write-Host "Importing '$($config.volumeName)' Volume..."
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			}
 		}
 	}
@@ -654,12 +661,12 @@ $menuItems = [ordered]@{
 $menuActions = @{
 	"1" = {
 		# Show status for Firecrawl itself
-		Show-ContainerStatus -ContainerName $global:firecrawlName `
+		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Firecrawl API" `
-			-TcpPort $global:firecrawlPort `
-			-HttpPort $global:firecrawlPort `
+			-TcpPort $config.hostPort `
+			-HttpPort $config.hostPort `
 			-DelaySeconds 0
 
 		# Show status for the associated Redis container
@@ -667,25 +674,25 @@ $menuActions = @{
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Firecrawl Redis" `
-			-TcpPort $global:redisPort `
+			-TcpPort ([int]$config.environment.REDIS_PORT) `
 			-DelaySeconds 3
 	}
 	"2" = { Install-FirecrawlContainer }
 	"3" = {
 		# Uninstall only the Firecrawl container (Redis remains for other uses)
-		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:firecrawlName -VolumeName $global:volumeName
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName
 		Write-Host "Note: Redis container '$global:redisContainerName' was not removed."
 		Write-Host "Use 'Setup_4a_Firecrawl_Redis.ps1' to manage the Redis container separately."
 	}
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:firecrawlName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName } # Call shared function directly
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName } # Call shared function directly
 	"6" = { Update-FirecrawlContainer } # Calls the dedicated update function
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName } # Call shared function directly
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
-		& $global:enginePath restart $global:firecrawlName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
+		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $config.imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
