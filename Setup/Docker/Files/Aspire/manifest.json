@@ -133,6 +133,40 @@
                     "memory": "1024m"
                 }
             }
+        },
+        "playwright-service": {
+            "type": "container.v0",
+            "properties": {
+                "image": "ghcr.io/mendableai/playwright-service:latest",
+                "bindings": [
+                    {
+                        "name": "http",
+                        "protocol": "tcp",
+                        "containerPort": 3010,
+                        "hostPort": 3010
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "playwright-service-data",
+                        "containerPath": "/app/data",
+                        "type": "named"
+                    }
+                ],
+                "networks": [
+                    {
+                        "name": "firecrawl-net",
+                        "alias": "playwright-service"
+                    }
+                ],
+                "environment": {
+                    "PORT": "3010"
+                },
+                "restart": "always",
+                "resources": {
+                    "memory": "512m"
+                }
+            }
         }
     }
 }
