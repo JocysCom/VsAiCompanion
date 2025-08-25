@@ -19,16 +19,9 @@ using namespace System.IO
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-$global:imageName = "redis:alpine"
 $global:containerName = "firecrawl-redis"
-$global:volumeName = "firecrawl-redis-data"
-$global:networkName = "firecrawl-net"
-$global:containerPort = 6379
-$global:redisNetworkAlias = "firecrawl-redis"
-$global:redisDataPath = "/data"
-$global:hostPort = $global:containerPort
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -49,28 +42,32 @@ else {
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
-# Load settings from native Aspire manifest if available (override image and ports only)
+# Load configuration from Aspire manifest
 $aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
-if (Test-Path $aspireManifestPath) {
-    try {
-        $manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
-        $res = $manifest.resources[$global:containerName]
-        if ($res) {
-            if ($res.properties.image) {
-                $global:imageName = $res.properties.image
-            }
-            $binding = $res.properties.bindings | Where-Object { $_.protocol -eq "tcp" } | Select-Object -First 1
-            if ($binding.containerPort) {
-                $global:containerPort = $binding.containerPort
-            }
-            if ($binding.hostPort) {
-                $global:hostPort = $binding.hostPort
-            }
-        }
-    } catch {
-        Write-Warning "Failed to parse Aspire manifest at $aspireManifestPath: $_"
-    }
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'firecrawl-redis'
+
+# Create consolidated configuration object
+$global:config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	networkName = $manifestConfig.properties.networks[0].name
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	networkAlias = $manifestConfig.properties.networks[0].alias
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	environment = $manifestConfig.properties.environment
 }
+
+Write-Host "Configuration loaded from Aspire manifest:"
+Write-Host "  Image: $($global:config.imageName)"
+Write-Host "  Container Port: $($global:config.containerPort)"
+Write-Host "  Host Port: $($global:config.hostPort)"
+Write-Host "  Volume: $($global:config.volumeName)"
+Write-Host "  Network: $($global:config.networkName)"
+Write-Host "  Network Alias: $($global:config.networkAlias)"
+
 
 #==============================================================================
 # Function: Install-FirecrawlRedisContainer
@@ -95,25 +92,25 @@ function Install-FirecrawlRedisContainer {
 	#############################################
 	# Step 1: Ensure Network Exists
 	#############################################
-	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "network" -ResourceName $global:networkName)) {
-		Write-Error "Failed to ensure network '$($global:networkName)' exists. Exiting..."
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "network" -ResourceName $global:config.networkName)) {
+		Write-Error "Failed to ensure network '$($global:config.networkName)' exists. Exiting..."
 		exit 1
 	}
 
 	#############################################
 	# Step 2: Pull Redis Image (or Restore)
 	#############################################
-	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
+	$existingImage = & $global:enginePath images --filter "reference=$($global:config.imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Host "No backup restored. Pulling Redis image '$global:imageName'..."
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
-				Write-Error "Image pull failed for '$global:imageName'."
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:config.imageName)) {
+			Write-Host "No backup restored. Pulling Redis image '$($global:config.imageName)'..."
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:config.imageName -PullOptions $global:pullOptions)) {
+				Write-Error "Image pull failed for '$($global:config.imageName)'."
 				exit 1
 			}
 		}
 		else {
-			Write-Host "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$($global:config.imageName)'."
 		}
 	}
 	else {
@@ -133,27 +130,35 @@ function Install-FirecrawlRedisContainer {
 	# Step 4: Ensure Volume Exists and Run Redis Container
 	#############################################
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
-		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:config.volumeName)) {
+		Write-Error "Failed to ensure volume '$($global:config.volumeName)' exists. Exiting..."
 		exit 1
 	}
-	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing Redis data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($global:config.volumeName)' - existing Redis data will be preserved."
 
-	Write-Host "Starting Redis container '$global:containerName' on network '$global:networkName'..."
+	Write-Host "Starting Redis container '$global:containerName' on network '$($global:config.networkName)'..."
 
 	# Define run options as an array
 	$runOptions = @(
 		"--detach", # Run container in background.
 		"--name", $global:containerName, # Assign a name to the container.
-		"--network", $global:networkName, # Connect container to the specified network.
-		"--network-alias", $global:redisNetworkAlias, # Assign a unique alias for use within the network.
-		"--publish", "$($global:hostPort):$($global:containerPort)", # Map host port to container port.
-		"--volume", "$($global:volumeName):$global:redisDataPath", # Mount the named volume for persistent Redis data.
-		"--restart", "always" # Always restart the container unless explicitly stopped.
+		"--network", $global:config.networkName, # Connect container to the specified network.
+		"--network-alias", $global:config.networkAlias, # Assign a unique alias for use within the network.
+		"--publish", "$($global:config.hostPort):$($global:config.containerPort)", # Map host port to container port.
+		"--volume", "$($global:config.volumeName):$($global:config.dataPath)", # Mount the named volume for persistent Redis data.
+		"--restart", $global:config.restartPolicy # Restart policy from manifest
 	)
 
+	# Add environment variables from manifest
+	if ($global:config.environment) {
+		foreach ($key in $global:config.environment.PSObject.Properties.Name) {
+			$runOptions += "--env"
+			$runOptions += "$key=$($global:config.environment.$key)"
+		}
+	}
+
 	# Execute the command using splatting
-	& $global:enginePath run @runOptions $global:imageName
+	& $global:enginePath run @runOptions $global:config.imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to start Redis container '$global:containerName'."
 		exit 1
@@ -165,10 +170,10 @@ function Install-FirecrawlRedisContainer {
 	Write-Host "Waiting 10 seconds for Redis container to initialize..."
 	Start-Sleep -Seconds 10
 
-	Write-Host "Testing Redis container connectivity on port $global:containerPort..."
-	if (Test-TCPPort -ComputerName "localhost" -Port $global:hostPort -serviceName "Firecrawl Redis") {
-		Write-Host "Redis is now running and accessible at localhost:$global:hostPort"
-		Write-Host "Network alias '$global:redisNetworkAlias' is available for other containers on the '$global:networkName' network."
+	Write-Host "Testing Redis container connectivity on port $($global:config.containerPort)..."
+	if (Test-TCPPort -ComputerName "localhost" -Port $global:config.hostPort -serviceName "Firecrawl Redis") {
+		Write-Host "Redis is now running and accessible at localhost:$($global:config.hostPort)"
+		Write-Host "Network alias '$($global:config.networkAlias)' is available for other containers on the '$($global:config.networkName)' network."
 	}
 	else {
 		Write-Error "Redis connectivity test failed. Please check the container logs."
@@ -203,6 +208,7 @@ function Update-FirecrawlRedisContainer {
 		return
 	}
 
+
 	Write-Host "Initiating update for Firecrawl Redis..."
 	$backupMade = $false
 
@@ -213,8 +219,8 @@ function Update-FirecrawlRedisContainer {
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
 			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-			Write-Host "Exporting '$($global:volumeName)' Volume..."
-			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			Write-Host "Exporting '$volumeName' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
 			$backupMade = $true
 		}
 	}
@@ -223,21 +229,21 @@ function Update-FirecrawlRedisContainer {
 	}
 
 	# Call simplified Update-Container (handles check, remove, pull)
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:imageName) {
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $global:config.imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container
 		try {
 			Install-FirecrawlRedisContainer
 		}
 		catch {
-			Write-Error "Failed to start updated Redis container: $_"
+			Write-Error "Failed to start updated Redis container: $($_.Exception.Message)"
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
 					Write-Host "Loading '$($global:containerName)' Container Image..."
 					Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-					Write-Host "Importing '$($global:volumeName)' Volume..."
-					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+					Write-Host "Importing '$($global:config.volumeName)' Volume..."
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
 				}
 			}
 		}
@@ -249,8 +255,8 @@ function Update-FirecrawlRedisContainer {
 			if ($restore -ne "N") {
 				Write-Host "Loading '$($global:containerName)' Container Image..."
 				Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-				Write-Host "Importing '$($global:volumeName)' Volume..."
-				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+				Write-Host "Importing '$($global:config.volumeName)' Volume..."
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
 			}
 		}
 	}
@@ -278,24 +284,30 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
-	    Show-ContainerStatus -ContainerName $global:containerName `
-	        -ContainerEngine $global:containerEngine `
-	        -EnginePath $global:enginePath `
-	        -DisplayName "Firecrawl Redis" `
-	        -TcpPort $global:hostPort `
-	        -DelaySeconds 3
+		Show-ContainerStatus -ContainerName $global:containerName `
+			-ContainerEngine $global:containerEngine `
+			-EnginePath $global:enginePath `
+			-DisplayName "Firecrawl Redis" `
+			-TcpPort $global:config.hostPort `
+			-DelaySeconds 3
 	}
 	"2" = { Install-FirecrawlRedisContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName }
+	"3" = {
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:config.volumeName
+	}
 	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
 	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
 	"6" = { Update-FirecrawlRedisContainer }
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"7" = {
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
+	}
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"9" = {
+		Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:config.imageName
+	}
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

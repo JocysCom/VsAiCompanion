@@ -12,7 +12,27 @@
                         "containerPort": 6379,
                         "hostPort": 6379
                     }
-                ]
+                ],
+                "volumes": [
+                    {
+                        "name": "firecrawl-redis-data",
+                        "containerPath": "/data",
+                        "type": "named"
+                    }
+                ],
+                "networks": [
+                    {
+                        "name": "firecrawl-net",
+                        "alias": "firecrawl-redis"
+                    }
+                ],
+                "environment": {
+                    "REDIS_ARGS": "--appendonly yes"
+                },
+                "restart": "always",
+                "resources": {
+                    "memory": "256m"
+                }
             }
         }
     }
