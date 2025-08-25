@@ -64,7 +64,7 @@ Write-Host "Configuration loaded from Aspire manifest:"
 foreach ($property in $config.PSObject.Properties) {
 	$name = $property.Name
 	$value = $property.Value
-	if ([string]::IsNullOrEmpty($value)) {
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
 		Write-Error "Configuration property '$name' is missing or empty in manifest."
 		exit 1
 	}
@@ -221,8 +221,8 @@ function Update-FirecrawlRedisContainer {
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
 			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
-			Write-Host "Exporting '$volumeName' Volume..."
-			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
+			Write-Host "Exporting '$($config.volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			$backupMade = $true
 		}
 	}
