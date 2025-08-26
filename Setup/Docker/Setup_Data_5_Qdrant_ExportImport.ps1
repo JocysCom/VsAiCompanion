@@ -160,7 +160,7 @@ function Get-QdrantCollectionInfo {
 		}
 	}
 	catch {
-		Write-Error "Failed to retrieve collection information: $_"
+		Write-Warning "Failed to retrieve collection information: $_"
 		return $null
 	}
 }
@@ -217,13 +217,44 @@ function Export-QdrantCollection {
 			vectors          = @()
 		}
 
-		# Get all points (vectors) from the collection
+		# Get all points (vectors) from the collection with pagination
 		Write-Host "Retrieving vectors from collection '$CollectionName'..."
-		$scrollResponse = Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections/$CollectionName/points/scroll" -Method Post -Body '{"limit": 1000, "with_payload": true, "with_vector": true}' -ContentType "application/json"
+		$allVectors = @()
+		$offset = $null
+		$batchSize = 1000
+		$totalRetrieved = 0
 
-		if ($scrollResponse.result -and $scrollResponse.result.points) {
-			$exportData.vectors = $scrollResponse.result.points
-			Write-Host "Retrieved $($exportData.vectors.Count) vectors." -ForegroundColor Green
+		do {
+			# Prepare scroll request body
+			$scrollBody = @{
+				limit        = $batchSize
+				with_payload = $true
+				with_vector  = $true
+			}
+			if ($offset) {
+				$scrollBody.offset = $offset
+			}
+
+			$scrollJson = $scrollBody | ConvertTo-Json -Compress
+			$scrollResponse = Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections/$CollectionName/points/scroll" -Method Post -Body $scrollJson -ContentType "application/json"
+
+			if ($scrollResponse.result -and $scrollResponse.result.points) {
+				$batchVectors = $scrollResponse.result.points
+				$allVectors += $batchVectors
+				$totalRetrieved += $batchVectors.Count
+				Write-Host "Retrieved $totalRetrieved vectors so far..." -ForegroundColor Yellow
+
+				# Update offset for next iteration
+				$offset = $scrollResponse.result.next_page_offset
+			}
+			else {
+				break
+			}
+		} while ($offset)
+
+		$exportData.vectors = $allVectors
+		if ($totalRetrieved -gt 0) {
+			Write-Host "Retrieved $totalRetrieved total vectors." -ForegroundColor Green
 		}
 		else {
 			Write-Host "No vectors found in collection '$CollectionName'." -ForegroundColor Yellow
@@ -234,7 +265,7 @@ function Export-QdrantCollection {
 		$exportFilePath = Join-Path -Path $global:collectionsBackupDir -ChildPath $exportFileName
 
 		Write-Host "Saving collection to '$exportFilePath'..."
-		$exportJson = $exportData | ConvertTo-Json -Depth 10
+		$exportJson = $exportData | ConvertTo-Json -Depth 5 -Compress
 		Set-Content -Path $exportFilePath -Value $exportJson -Encoding UTF8 -Force
 
 		Write-Host "Successfully exported collection '$CollectionName' to '$exportFilePath'." -ForegroundColor Green
@@ -329,7 +360,7 @@ function Import-QdrantCollection {
 		Write-Host "Creating collection '$collectionName'..."
 		$createBody = @{
 			vectors = $importData.collection_info.config.params.vectors
-		} | ConvertTo-Json -Depth 10
+		} | ConvertTo-Json -Depth 5 -Compress
 
 		Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections/$collectionName" -Method Put -Body $createBody -ContentType "application/json" | Out-Null
 
@@ -337,13 +368,27 @@ function Import-QdrantCollection {
 		if ($importData.vectors -and $importData.vectors.Count -gt 0) {
 			Write-Host "Importing $($importData.vectors.Count) vectors..."
 
-			# Prepare points for batch upsert
-			$upsertBody = @{
-				points = $importData.vectors
-			} | ConvertTo-Json -Depth 10
+			# Chunk the vectors to stay under payload size limits
+			$chunkSize = 500  # Conservative batch size to stay under 32MB
+			$totalVectors = $importData.vectors.Count
+			$importedCount = 0
 
-			Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections/$collectionName/points" -Method Put -Body $upsertBody -ContentType "application/json" | Out-Null
-			Write-Host "Successfully imported $($importData.vectors.Count) vectors." -ForegroundColor Green
+			for ($i = 0; $i -lt $totalVectors; $i += $chunkSize) {
+				$endIndex = [Math]::Min($i + $chunkSize - 1, $totalVectors - 1)
+				$chunk = $importData.vectors[$i..$endIndex]
+
+				Write-Host "Importing vectors $($i + 1) to $($endIndex + 1) of $totalVectors..." -ForegroundColor Yellow
+
+				# Prepare points for batch upsert
+				$upsertBody = @{
+					points = $chunk
+				} | ConvertTo-Json -Depth 5 -Compress
+
+				Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections/$collectionName/points" -Method Put -Body $upsertBody -ContentType "application/json" | Out-Null
+				$importedCount += $chunk.Count
+			}
+
+			Write-Host "Successfully imported $importedCount vectors." -ForegroundColor Green
 		}
 		else {
 			Write-Host "No vectors to import." -ForegroundColor Yellow
