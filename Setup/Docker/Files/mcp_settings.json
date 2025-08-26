@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "firecrawl-mcp-server-local": {
+      "args": [
+        "/c",
+        "npx -y firecrawl-mcp@1.12.0"
+      ],
+      "autoApprove": [],
+      "command": "cmd",
+      "disabled": false,
+      "env": {
+          "FIRECRAWL_API_URL": "http://localhost:3002",
+          "FIRECRAWL_API_KEY": "fc-dummy-key-for-local-testing"
+      },
+      "timeout": 60,
+      "type": "stdio"
+    },
+    "zep-documentation": {
+      "url": "https://docs-mcp.getzep.com/sse"
+    }
+  }
+}
