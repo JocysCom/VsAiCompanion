@@ -27,6 +27,11 @@ var sockets = new ConcurrentDictionary<string, WebSocket>();
 // Health probe
 app.MapGet("/api/health", () => Results.Json(new { ok = true }));
 
+// Debug endpoints
+app.MapGet("/api/chatbridge/pid", () => Results.Json(new { pid = Environment.ProcessId }));
+app.MapGet("/api/chatbridge/sessions", () => Results.Json(new { count = sockets.Count, sessions = sockets.Keys.ToArray() }));
+app.MapGet("/api/chatbridge/session/{id}", (string id) => Results.Json(new { exists = sockets.ContainsKey(id) }));
+
 // WS endpoint: /ws?sessionId=...
 app.Map("/ws", async ctx =>
 {
