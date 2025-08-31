@@ -225,7 +225,7 @@ function Update-CloudBeaverContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
 			Write-Host "Exporting '$($global:volumeNameConf)' Volume..."
 			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf
 			Write-Host "Exporting '$($global:volumeNameWorkspace)' Volume..."
@@ -286,8 +286,8 @@ $menuActions = @{
 	}
 	"2" = { Install-CloudBeaverContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeNameWorkspace } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
 	"6" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf }
 	"7" = {
 		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeNameConf

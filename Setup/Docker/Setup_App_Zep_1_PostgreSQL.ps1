@@ -493,7 +493,7 @@ function Update-PostgresContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$global:containerName' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
 			Write-Host "Exporting '$($global:volumeName)' Volume..."
 			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		}
@@ -552,8 +552,8 @@ $menuActions = @{
 	}
 	"2" = { Install-PostgresContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName }
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
 	"6" = { Update-PostgresContainer }
 	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
 	"8" = {

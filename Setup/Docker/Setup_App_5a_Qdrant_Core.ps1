@@ -330,8 +330,8 @@ $menuActions = @{
 	}
 	"2" = { Install-QdrantContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
 	"6" = { Update-QdrantContainer } # Calls the dedicated update function
 	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
 	"8" = {

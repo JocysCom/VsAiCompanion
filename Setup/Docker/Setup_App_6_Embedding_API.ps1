@@ -415,9 +415,9 @@ $menuActions = @{
 	}
 	"2" = { Install-EmbeddingContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:containerName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
 	"5" = {
-		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
+		Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName # Call shared function directly
 		Write-Warning "Container image restored from backup. A rebuild (option 2 or 8) might be needed if source code changed."
 	}
 	"6" = { Update-EmbeddingContainer }

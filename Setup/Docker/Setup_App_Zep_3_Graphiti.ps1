@@ -396,7 +396,7 @@ function Update-GraphitiContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$global:containerName' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
 			# Graphiti does not use a named volume for its own data, so no volume backup
 		}
 	}
@@ -453,8 +453,8 @@ $menuActions = @{
 	}
 	"2" = { Install-GraphitiContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $null }
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
 	"6" = { Update-GraphitiContainer }
 	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
 	"N" = { Test-Neo4jRequirement -ContainerName $global:neo4jContainerName -EnginePath $global:enginePath -BoltPort $global:neo4jBoltPort -HttpPort $global:neo4jHttpPort }

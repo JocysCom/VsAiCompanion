@@ -309,9 +309,9 @@ $menuActions = @{
 	}
 	"2" = { Install-QdrantMCPServerContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
 	"5" = {
-		Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName # Call shared function directly
+		Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName # Call shared function directly
 		Write-Warning "Container image restored from backup. You may need to manually restart the container with correct environment variables if they were changed since the backup (use option 2)."
 	}
 	"6" = { Update-QdrantMCPServerContainer }
