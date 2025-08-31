@@ -351,8 +351,8 @@ function Update-n8nContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			Write-Host "Saving '$containerName' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName
+			Write-Host "Saving '$global:containerName' Container Image..."
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
 			Write-Host "Exporting '$($global:volumeName)' Volume..."
 			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
 		}
@@ -451,8 +451,8 @@ $menuActions = @{
 	}
 	"2" = { Install-n8nContainer }
 	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
-	"5" = { Restore-ContainerImage -Engine $global:enginePath -ContainerName $global:containerName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
 	"6" = { Update-n8nContainer }
 	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
 	"8" = {
