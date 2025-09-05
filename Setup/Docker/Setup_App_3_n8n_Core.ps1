@@ -25,14 +25,9 @@ using namespace System.Diagnostics.CodeAnalysis
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "docker.io/n8nio/n8n:latest" # Use docker.io for both now
-#$global:imageName = "docker.io/n8nio/n8n:1.86.1" # Use docker.io for both now - Pinned to specific version
 $global:containerName = "n8n"
-$global:volumeName = "n8n_data"
-$global:containerPort = 5678
 
 # Rule of thumb: heap ≈ 75–80 % of the VM / host RAM, container limit ≈ 110 % of that.
 # Host RAM	--max-old-space-size  --memory / --memory-swap
@@ -40,8 +35,36 @@ $global:containerPort = 5678
 #   4 GB     3072 MB	             4 GB                     Most users report this is enough for 100k-row workflows n8n Community
 #   8 GB     6144 MB                 7 GB                     Lets you process ~500 k rows or large binary files n8n Community
 #  16 GB	12288 MB                14 GB                     Heavy AI chains, large spreadsheets.
-$global:n8nHeapMiB   = 12288
-$global:n8nMemLimitG = 14
+# Current configuration: 12288 MB heap, 14 GB container limit (configured in manifest.json)
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'n8n'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	environment = $manifestConfig.properties.environment
+	memoryLimit = $manifestConfig.properties.resources.memory
+	memorySwap = $manifestConfig.properties.resources.memorySwap
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -85,7 +108,7 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 #>
 function Get-n8nContainerConfig {
 	$envVars = @()
-	$imageName = $global:imageName # Default image name
+	$imageName = $config.imageName # Default image name from manifest
 
 	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
 	if ($containerInfo) {
@@ -94,10 +117,15 @@ function Get-n8nContainerConfig {
 		try {
 			$envList = @($containerInfo.Config.Env)
 			foreach ($env in $envList) {
-				# Preserve existing N8N_ or WEBHOOK_ vars, excluding the ones we always add
+				# Preserve existing N8N_ or WEBHOOK_ vars, excluding the ones we always add from manifest
 				if ($env -match "^(N8N_|WEBHOOK_)" `
 						-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ENABLED=" `
-						-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=") {
+						-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=" `
+						-and $env -notmatch "^N8N_RUNNERS_ENABLED=" `
+						-and $env -notmatch "^N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=" `
+						-and $env -notmatch "^N8N_TRUST_HOST_HEADERS=" `
+						-and $env -notmatch "^N8N_LOG_LEVEL=" `
+						-and $env -notmatch "^NODE_OPTIONS=") {
 					$envVars += $env
 				}
 			}
@@ -110,20 +138,10 @@ function Get-n8nContainerConfig {
 		Write-Host "Container '$global:containerName' not found. Using default settings for environment."
 	}
 
-	# Always ensure community packages and tool usage are enabled
-	$envVars += "N8N_COMMUNITY_PACKAGES_ENABLED=true"
-	$envVars += "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true"
-	$envVars += "N8N_RUNNERS_ENABLED=true"
-	$envVars += "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true"
-	$envVars += "N8N_TRUST_HOST_HEADERS=true"
-	$envVars += "N8N_LOG_LEVEL=debug"
-	$envVars += "NODE_OPTIONS=--max-old-space-size=$($global:n8nHeapMiB)"
-	#$envVars += "N8N_PUSH_BACKEND=websocket"
-	#$envVars += "N8N_PUSH_BACKEND=sse"
-	#$envVars += "N8N_PROXY_HOPS=1"
-	#$envVars += "N8N_EXPRESS_TRUST_PROXY=true"
-	#$envVars += "N8N_PROTOCOL=https"
-	#$envVars += "N8N_TRUST_PROXY=127.0.0.1/32,::1/128"
+	# Add environment variables from manifest configuration
+	foreach ($key in $config.environment.PSObject.Properties.Name) {
+		$envVars += "$key=$($config.environment.$key)"
+	}
 
 	# Prompt user for external domain configuration.
 	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
@@ -181,7 +199,7 @@ function Start-n8nContainer {
 	)
 
 	# Get the host's IP as seen by Podman/WSL2
-	$HostIpForContainer = (podman machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2").Trim()
+	$HostIpForContainer = (& $global:enginePath machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2").Trim()
 	if (-not [string]::IsNullOrWhiteSpace($HostIpForContainer)) {
 		Write-Host "Host IP for container: $HostIpForContainer"
 	} else {
@@ -194,14 +212,13 @@ function Start-n8nContainer {
 		#"--env", "NODE_TLS_REJECT_UNAUTHORIZED=0",
 		#"--dns", "1.1.1.1", "--dns", "8.8.8.8",
 		"--add-host", "host.local:$HostIpForContainer",
-		"--env", "GENERIC_TIMEZONE=Europe/London",            # n8n’s internal TZ
-		"--env", "TZ=Europe/London",                          # Linux tzdata TZ
-		"--memory",      "$($global:n8nMemLimitG)g",
-		"--memory-swap", "$($global:n8nMemLimitG)g",
+		"--memory",      $config.memoryLimit,
+		"--memory-swap", $config.memorySwap,
 		"--detach", # Run container in background.
-		"--publish", "5678:5678", # Map host port 5678 to container port 5678.
-		"--volume", "$($global:volumeName):/home/node/.n8n", # Mount the named volume for persistent data.
-		"--name", $global:containerName         # Assign a name to the container.
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port.
+		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data.
+		"--name", $global:containerName,         # Assign a name to the container.
+		"--restart", $config.restartPolicy
 		#"--cap-add", "NET_RAW",
 		#"--cap-add", "NET_ADMIN",
 	)
@@ -223,12 +240,12 @@ function Start-n8nContainer {
 			Start-Sleep -Seconds 30
 
 			# Test connectivity
-			$tcpTest = Test-TCPPort -ComputerName "localhost" -Port $global:containerPort -serviceName $global:containerName
-			$httpTest = Test-HTTPPort -Uri "http://localhost:5678" -serviceName $global:containerName
+			$tcpTest = Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName $global:containerName
+			$httpTest = Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName $global:containerName
 
 			if ($tcpTest -and $httpTest) {
-				Write-Host "n8n is now running and accessible at http://localhost:5678"
-				Write-Host "If accessing from another container, use 'http://host.docker.internal:5678' as the URL."
+				Write-Host "n8n is now running and accessible at http://localhost:$($config.hostPort)"
+				Write-Host "If accessing from another container, use 'http://host.docker.internal:$($config.hostPort)' as the URL."
 				return $true
 			}
 			else {
@@ -270,25 +287,25 @@ function Start-n8nContainer {
 #>
 function Install-n8nContainer {
 	# Ensure the volume exists
-	#if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $global:volumeName)) {
-	#	Write-Error "Failed to ensure volume '$global:volumeName' exists. Exiting..."
+	#if (-not (Confirm-ContainerVolume -Engine $global:enginePath -VolumeName $config.volumeName)) {
+	#	Write-Error "Failed to ensure volume '$($config.volumeName)' exists. Exiting..."
 	#	return
 	#}
-	Write-Host "IMPORTANT: Using volume '$global:volumeName' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($config.volumeName)' - existing user data will be preserved."
 
 	# Check if the n8n image is already available, restore from backup, or pull new.
-	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
+	$existingImage = & $global:enginePath images --filter "reference=$($config.imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Host "No backup restored. Pulling n8n image '$global:imageName'..."
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName)) {
+			Write-Host "No backup restored. Pulling n8n image '$($config.imageName)'..."
 			# Use shared pull function
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions $global:pullOptions)) {
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $config.imageName -PullOptions $global:pullOptions)) {
 				Write-Error "Image pull failed. Exiting..."
 				return
 			}
 		}
 		else {
-			Write-Host "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$($config.imageName)'."
 		}
 	}
 	else {
@@ -297,13 +314,13 @@ function Install-n8nContainer {
 
 	# Remove any existing container using the shared function
 	# Pass container name and volume name. It will prompt about volume removal.
-	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName # This function supports ShouldProcess
+	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName # This function supports ShouldProcess
 
 	# Get the configuration (which includes prompting for domain and setting defaults)
-	$config = Get-n8nContainerConfig
+	$containerConfig = Get-n8nContainerConfig
 
-	# Start the container using the global image name and the retrieved config
-	Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars # This function now supports ShouldProcess
+	# Start the container using the config image name and the retrieved config
+	Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars # This function now supports ShouldProcess
 }
 
 # Note: Uninstall-n8nContainer function removed. Shared function called directly from menu.
@@ -338,8 +355,8 @@ function Update-n8nContainer {
 	}
 
 	Write-Host "Initiating update for n8n..."
-	$config = Get-n8nContainerConfig # Get config before potential removal (includes domain prompt)
-	if (-not $config) {
+	$containerConfig = Get-n8nContainerConfig # Get config before potential removal (includes domain prompt)
+	if (-not $containerConfig) {
 		# Get-n8nContainerConfig handles the case where container doesn't exist,
 		# but we still need to check if it returned null unexpectedly.
 		Write-Error "Cannot update: Failed to get n8n configuration."
@@ -352,9 +369,9 @@ function Update-n8nContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$global:containerName' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
-			Write-Host "Exporting '$($global:volumeName)' Volume..."
-			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName
+			Write-Host "Exporting '$($config.volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 		}
 	}
 	else {
@@ -363,10 +380,10 @@ function Update-n8nContainer {
 
 	# Call simplified Update-Container (handles check, remove, pull)
 	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the config retrieved earlier
-		if (-not (Start-n8nContainer -Image $global:imageName -EnvVars $config.EnvVars)) {
+		if (-not (Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars)) {
 			Write-Error "Failed to start updated n8n container."
 		}
 		# Success message is handled within Start-n8nContainer if successful
@@ -442,24 +459,41 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
+		$hostPort = $config.hostPort
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName $global:containerName `
-			-TcpPort $global:containerPort `
-			-HttpPort $global:containerPort
+			-TcpPort $hostPort `
+			-HttpPort $hostPort
 	}
 	"2" = { Install-n8nContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
+	"3" = {
+		$volumeName = $config.volumeName
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $volumeName
+	}
+	"4" = {
+		$imageName = $config.imageName
+		Backup-ContainerImage -Engine $global:enginePath -ImageName $imageName
+	}
+	"5" = {
+		$imageName = $config.imageName
+		Test-AndRestoreBackup -Engine $global:enginePath -ImageName $imageName
+	}
 	"6" = { Update-n8nContainer }
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName }
+	"7" = {
+		$volumeName = $config.volumeName
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
+	}
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$volumeName = $config.volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"9" = {
+		$imageName = $config.imageName
+		Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $imageName
+	}
 	"R" = { & $global:enginePath restart $global:containerName }
 	"P" = { Reset-AdminPassword }
 	# Note: "0" action is handled internally by Invoke-MenuLoop

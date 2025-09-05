@@ -336,7 +336,7 @@ function Restore-ContainerVolume {
 		return $false
 	}
 
-	[string[]]$fileNames = (Get-ChildItem -Path $BackupFolder -Filter $backupPattern | Select-Object -ExpandProperty Name);
+	[string[]]$fileNames = (Get-ChildItem -Path $volumeBackupPath -Filter $backupPattern | Select-Object -ExpandProperty Name);
 	[string[]]$menuOptions = $fileNames.Clone();
 	$exit = "Exit menu"
 	$menuOptions += $exit;

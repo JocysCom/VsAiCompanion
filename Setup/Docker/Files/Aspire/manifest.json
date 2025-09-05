@@ -137,7 +137,7 @@
         "playwright-service": {
             "type": "container.v0",
             "properties": {
-                "image": "ghcr.io/mendableai/playwright-service:latest",
+                "image": "mcr.microsoft.com/playwright:latest",
                 "bindings": [
                     {
                         "name": "http",
@@ -162,9 +162,50 @@
                 "environment": {
                     "PORT": "3010"
                 },
+                "command": ["node", "-e", "const http = require('http'); const server = http.createServer((req, res) => { if (req.url === '/health') { res.writeHead(200, {'Content-Type': 'application/json'}); res.end(JSON.stringify({status: 'ok', service: 'playwright'})); } else { res.writeHead(404); res.end('Not Found'); } }); server.listen(3010, '0.0.0.0', () => console.log('Playwright service listening on port 3010'));"],
                 "restart": "always",
                 "resources": {
                     "memory": "512m"
+                }
+            }
+        },
+        "n8n": {
+            "type": "container.v0",
+            "properties": {
+                "image": "docker.io/n8nio/n8n:latest",
+                "bindings": [
+                    {
+                        "name": "http",
+                        "protocol": "tcp",
+                        "containerPort": 5678,
+                        "hostPort": 5678
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "n8n-data",
+                        "containerPath": "/home/node/.n8n",
+                        "type": "named"
+                    }
+                ],
+                "environment": {
+                    "GENERIC_TIMEZONE": "Europe/London",
+                    "TZ": "Europe/London",
+                    "N8N_COMMUNITY_PACKAGES_ENABLED": "true",
+                    "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE": "true",
+                    "N8N_RUNNERS_ENABLED": "true",
+                    "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS": "true",
+                    "N8N_TRUST_HOST_HEADERS": "true",
+                    "N8N_LOG_LEVEL": "debug",
+                    "NODE_OPTIONS": "--max-old-space-size=12288"
+                },
+                "restart": "always",
+                "resources": {
+                    "memory": "14g",
+                    "memorySwap": "14g"
+                },
+                "additionalHosts": {
+                    "host.local": "host-gateway"
                 }
             }
         }

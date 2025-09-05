@@ -58,6 +58,7 @@ $config = [PSCustomObject]@{
 	environment = $manifestConfig.properties.environment
 	hostPort = $manifestConfig.properties.bindings[0].hostPort
 	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	command = $manifestConfig.properties.command
 }
 
 Write-Host "Configuration loaded from Aspire manifest:"
@@ -157,8 +158,13 @@ function Install-PlaywrightServiceContainer {
 		$runOptions += "$($envVar.Name)=$($envVar.Value)"
 	}
 
-	# Execute the command using splatting
-	& $global:enginePath run @runOptions $config.imageName
+	# Execute the command using splatting with command from manifest
+	if ($config.command) {
+		& $global:enginePath run @runOptions $config.imageName @($config.command)
+	}
+	else {
+		& $global:enginePath run @runOptions $config.imageName
+	}
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to start Playwright service container '$global:containerName'."
 		exit 1
@@ -229,7 +235,7 @@ function Update-PlaywrightServiceContainer {
 
 	# Call simplified Update-Container (handles check, remove, pull)
 	$updateResult = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $config.imageName
-	
+
 	if ($updateResult -eq $true) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container
@@ -289,24 +295,41 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
+		$hostPort = $config.hostPort
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Playwright Service" `
-			-TcpPort $config.hostPort `
+			-TcpPort $hostPort `
 			-DelaySeconds 3
 	}
 	"2" = { Install-PlaywrightServiceContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName }
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName }
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName }
+	"3" = {
+		$volumeName = $config.volumeName
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $volumeName
+	}
+	"4" = {
+		$imageName = $config.imageName
+		Backup-ContainerImage -Engine $global:enginePath -ImageName $imageName
+	}
+	"5" = {
+		$imageName = $config.imageName
+		Test-AndRestoreBackup -Engine $global:enginePath -ImageName $imageName
+	}
 	"6" = { Update-PlaywrightServiceContainer }
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName }
+	"7" = {
+		$volumeName = $config.volumeName
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
+	}
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
+		$volumeName = $config.volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $config.imageName }
+	"9" = {
+		$imageName = $config.imageName
+		Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $imageName
+	}
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
