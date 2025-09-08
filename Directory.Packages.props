@@ -13,17 +13,17 @@
 	<ItemGroup>
 		<!-- Updating to new version can break extension compatibility with VS 2022. -->
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
 		<!-- OpenAI Packages -->
-		<PackageVersion Include="OpenAI" Version="2.2.0-beta.4" />
-		<PackageVersion Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />
+		<PackageVersion Include="OpenAI" Version="2.4.0" />
+		<PackageVersion Include="Azure.AI.OpenAI" Version="2.3.0-beta.2" />
 		<!-- Other Packages -->
 		<PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
 		<PackageVersion Include="QRCoder" Version="1.6.0" />
 		<PackageVersion Include="Microsoft.ML" Version="4.0.2" />
-		<PackageVersion Include="Azure.Identity" Version="1.14.0" />
+		<PackageVersion Include="Azure.Identity" Version="1.15.0" />
 		<PackageVersion Include="Microsoft.Graph" Version="5.81.0" />
-		<PackageVersion Include="Microsoft.Identity.Client" Version="4.72.1" />
+		<PackageVersion Include="Microsoft.Identity.Client" Version="4.73.1" />
 		<PackageVersion Include="Azure.ResourceManager" Version="1.13.1" />
 		<PackageVersion Include="bblanchon.PDFium.Linux" Version="139.0.7228" />
 		<PackageVersion Include="bblanchon.PDFium.macOS" Version="139.0.7228" />
@@ -57,8 +57,8 @@
 		<PackageVersion Include="Microsoft.Identity.Web" Version="3.9.3" />
 		<PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.9.3" />
 		<PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.12.0" />
-		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.24" />
-		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.24" />
+		<PackageVersion Include="Microsoft.OpenApi" Version="2.3.1" />
+		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.25" />
 		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.13.40008" />
 		<PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.13.40008" />
 		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="[17.9.37000,$(MaxVsVersion))" />

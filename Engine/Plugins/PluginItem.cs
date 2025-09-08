@@ -2,7 +2,7 @@
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -78,7 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				pp.Name = parameter.Name;
 				pp.IsOptional = parameter.Required != true; // Not required implies optional
 				pp.Description = parameter.Description;
-				pp.Type = parameter.Schema.Type;
+				pp.Type = parameter.Schema.Type?.ToString();
 				pp.Index = index++;
 				Params.Add(pp);
 			}

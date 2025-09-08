@@ -1,7 +1,5 @@
 ﻿using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core.Server;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -284,18 +282,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region OpenAPI
 
-		public static OpenApiDocument LoadOpenApiSpec(string openApiSpec)
+		public static Microsoft.OpenApi.OpenApiDocument LoadOpenApiSpec(string openApiSpec)
 		{
-			var openApiStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(openApiSpec));
-			var openApiDocument = new OpenApiStreamReader().Read(openApiStream, out var diagnostic);
-			if (diagnostic.Errors.Any())
-			{
-				throw new InvalidOperationException("Failed to parse OpenAPI specification.");
-			}
-			return openApiDocument;
+			var reader = new Microsoft.OpenApi.Readers.OpenApiStringReader();
+			//var readResult = reader.Read(openApiSpec, out var diagnostic);
+			//if (diagnostic.Errors.Count > 0)
+			//	throw new InvalidOperationException($"Failed to parse OpenAPI: {string.Join("; ", diagnostic.Errors.Select(e => e.Message))}");
+			//return readResult;
+			return null;
 		}
 
-		public static List<PluginItem> ExtractPluginItems(OpenApiDocument openApiDocument)
+		public static List<PluginItem> ExtractPluginItems(Microsoft.OpenApi.OpenApiDocument openApiDocument)
 		{
 			var list = new List<PluginItem>();
 			foreach (var path in openApiDocument.Paths)

@@ -139,18 +139,20 @@
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.Threading.Tasks.Extensions" />
     <!-- Included to Enforce the Version -->
-	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
-	<PackageReference Include="OpenAI" />
 	<PackageReference Include="Azure.AI.OpenAI" />
-	<PackageReference Include="System.Collections.Immutable" />
-	<PackageReference Include="MessagePack" />
-	<PackageReference Include="NJsonSchema" />
 	<PackageReference Include="Azure.ResourceManager" />
-	<PackageReference Include="MailKit" />
-	<PackageReference Include="Microsoft.Data.SqlClient" />
 	<PackageReference Include="Azure.Security.KeyVault.Secrets" />
+	<PackageReference Include="MailKit" />
+	<PackageReference Include="MessagePack" />
+	<PackageReference Include="Microsoft.Data.SqlClient" />
 	<PackageReference Include="Microsoft.Graph" />
+	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
 	<PackageReference Include="Microsoft.ML" />
+	<PackageReference Include="NJsonSchema" />
+	<PackageReference Include="OpenAI" />
+	<PackageReference Include="System.Collections.Immutable" />
+    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico">

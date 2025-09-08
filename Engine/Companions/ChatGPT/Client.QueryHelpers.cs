@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable OPENAI001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	/// <summary>
@@ -504,3 +505,4 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		#endregion
 	}
 }
+#pragma warning restore OPENAI001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
