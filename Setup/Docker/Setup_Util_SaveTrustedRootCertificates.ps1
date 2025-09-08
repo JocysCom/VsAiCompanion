@@ -5,6 +5,12 @@ $Port = 443
 # Save the corporate root certificates to this file and export each certificate to separate .crt files (trusted_root_certificates_{index}.crt)
 $OutputPemFile = '.\Files\trusted_root_certificates.pem'
 
+$TargetDir = Split-Path -Path $OutputPemFile -Parent
+if (-not (Test-Path -Path $TargetDir)) {
+	Write-Host "Creating directory: $TargetDir"
+	New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
+}
+
 # Use SslStream callback to ignore SSL errors per connection
 $PemCerts = @()
 $Index = 0

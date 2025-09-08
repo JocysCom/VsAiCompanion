@@ -8,6 +8,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if NETFRAMEWORK
+using System.Windows.Threading;
+#else
+using System.Windows.Threading;
+#endif
+
 namespace JocysCom.ClassLibrary
 {
 	public partial class Helper : IDisposable
@@ -282,6 +288,7 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Debounces the specified action, ensuring it's only invoked after a specified delay since the last call.
 		/// Subsequent calls within the delay period reset the timer.
+		/// This method automatically detects WPF UI thread requirements and marshals execution appropriately.
 		/// </summary>
 		/// <param name="action">The delegate to debounce.</param>
 		/// <param name="delay">The delay in milliseconds before the delegate is invoked. Defaults to 500 milliseconds if not specified.</param>
@@ -300,11 +307,79 @@ namespace JocysCom.ClassLibrary
 				currentCount = debounceData.Counter;
 			}
 			await Task.Delay(delayValue);
+
+			bool shouldExecute = false;
 			lock (debounceData.LockObject)
 			{
-				// This is the latest scheduled call; invoke the action
-				if (currentCount == debounceData.Counter)
-					action.DynamicInvoke(args);
+				// This is the latest scheduled call; mark for execution
+				shouldExecute = currentCount == debounceData.Counter;
+			}
+
+			if (shouldExecute)
+			{
+				// Smart UI thread marshaling - detect and marshal to UI thread if needed
+				await ExecuteWithUIThreadMarshaling(action, args);
+			}
+		}
+
+		/// <summary>
+		/// Executes the given delegate with automatic UI thread marshaling if WPF is available and needed.
+		/// </summary>
+		/// <param name="action">The delegate to execute.</param>
+		/// <param name="args">Arguments to pass to the delegate.</param>
+		/// <returns>A Task representing the execution.</returns>
+		private static async Task ExecuteWithUIThreadMarshaling(Delegate action, params object[] args)
+		{
+			// Check if WPF is available and we need UI thread marshaling
+			var dispatcher = GetWpfDispatcher();
+			if (dispatcher != null && !dispatcher.CheckAccess())
+			{
+				// We're not on the UI thread, marshal the call
+				await dispatcher.BeginInvoke(new Action(() =>
+				{
+					try
+					{
+						action.DynamicInvoke(args);
+					}
+					catch (Exception ex)
+					{
+						// Log the exception but don't let it propagate to avoid crashing the UI thread
+						System.Diagnostics.Debug.WriteLine($"Error in debounced UI action: {ex}");
+					}
+				}));
+				return;
+			}
+
+			// Execute normally (either no WPF, already on UI thread, or non-WPF environment)
+			action.DynamicInvoke(args);
+		}
+
+		/// <summary>
+		/// Attempts to get the WPF Dispatcher for the current application.
+		/// Returns null if WPF is not available or no dispatcher is found.
+		/// </summary>
+		/// <returns>The WPF Dispatcher or null if not available.</returns>
+		private static Dispatcher GetWpfDispatcher()
+		{
+			try
+			{
+				// Try to get dispatcher from current thread first
+				var currentDispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+				if (currentDispatcher != null)
+					return currentDispatcher;
+
+				// Try to get dispatcher from application
+				var app = System.Windows.Application.Current;
+				if (app != null)
+					return app.Dispatcher;
+
+				// Try to get any available dispatcher
+				return Dispatcher.CurrentDispatcher;
+			}
+			catch
+			{
+				// WPF might not be available or initialized
+				return null;
 			}
 		}
 

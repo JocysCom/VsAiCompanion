@@ -685,7 +685,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Settings
 				// Use external file.
 				zip = ZipStorer.Open(settingsFile, FileAccess.Read);
 			}
-			else if (Global.AppSettings.IsEnterprise)
+			else if (Global.AppSettings?.IsEnterprise == true)
 			{
 				// Use external URL or local file specified by the user.
 				var path = AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
