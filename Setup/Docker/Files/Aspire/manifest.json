@@ -35,6 +35,35 @@
                 }
             }
         },
+        "firecrawl-postgres": {
+            "type": "container.v0",
+            "properties": {
+                "image": "postgres:16-alpine",
+                "volumes": [
+                    {
+                        "name": "firecrawl-postgres-data",
+                        "containerPath": "/var/lib/postgresql/data",
+                        "type": "named"
+                    }
+                ],
+                "networks": [
+                    {
+                        "name": "firecrawl-net",
+                        "alias": "firecrawl-postgres"
+                    }
+                ],
+                "environment": {
+                    "POSTGRES_DB": "firecrawl",
+                    "POSTGRES_USER": "firecrawl",
+                    "POSTGRES_PASSWORD": "change-me",
+                    "PGDATA": "/var/lib/postgresql/data"
+                },
+                "restart": "always",
+                "resources": {
+                    "memory": "512m"
+                }
+            }
+        },
         "firecrawl-worker": {
             "type": "container.v0",
             "properties": {
@@ -54,21 +83,26 @@
                 ],
                 "environment": {
                     "NUM_WORKERS_PER_QUEUE": "8",
-                    "PORT": "3002",
-                    "HOST": "0.0.0.0",
                     "REDIS_URL": "redis://firecrawl-redis:6379",
                     "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
                     "REDIS_PORT": "6379",
                     "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/html",
+                    "DATABASE_URL": "postgres://firecrawl:change-me@firecrawl-postgres:5432/firecrawl",
+                    "PGHOST": "firecrawl-postgres",
+                    "PGPORT": "5432",
+                    "PGUSER": "firecrawl",
+                    "PGPASSWORD": "change-me",
+                    "PGDATABASE": "firecrawl",
+                    "PGSSLMODE": "disable",
+                    "NUQ_REDUCE_NOISE": "true",
+                    "NUQ_WORKER_PORT": "3009",
                     "USE_DB_AUTHENTICATION": "false",
-                    "SUPABASE_ANON_TOKEN": "",
-                    "SUPABASE_URL": "",
-                    "SUPABASE_SERVICE_TOKEN": "",
                     "OPENAI_API_KEY": "dummy"
-                },
-                "command": ["node", "dist/src/services/queue-worker.js"],
+                                },
+                "command": ["node", "dist/src/services/worker/nuq-worker.js"],
                 "restart": "always",
                 "dependencies": [
+                    "firecrawl-postgres",
                     "firecrawl-redis",
                     "playwright-service"
                 ],
@@ -110,7 +144,15 @@
                     "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
                     "REDIS_PORT": "6379",
                     "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/html",
-                    "USE_DB_AUTHENTICATION": "false",
+					"USE_DB_AUTHENTICATION": "false",
+                    "NUQ_DATABASE_URL": "postgres://firecrawl:change-me@firecrawl-postgres:5432/firecrawl",
+					"DATABASE_URL": "postgres://firecrawl:change-me@firecrawl-postgres:5432/firecrawl",
+					"PGHOST": "firecrawl-postgres",
+					"PGPORT": "5432",
+					"PGUSER": "firecrawl",
+					"PGPASSWORD": "change-me",
+					"PGDATABASE": "firecrawl",
+					"PGSSLMODE": "disable",
                     "SUPABASE_ANON_TOKEN": "",
                     "SUPABASE_URL": "",
                     "SUPABASE_SERVICE_TOKEN": "",
@@ -119,6 +161,7 @@
                 "restart": "always",
                 "command": ["node", "dist/src/index.js"],
                 "dependencies": [
+                    "firecrawl-postgres",
                     "firecrawl-redis",
                     "playwright-service"
                 ],

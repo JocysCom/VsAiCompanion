@@ -1,6 +1,6 @@
 ################################################################################
 # Description  : Script to set up and run a Firecrawl Worker container.
-#                Requires Redis and Playwright service containers to be running first.
+#                Requires PostgreSQL, Redis and Playwright service containers to be running first.
 #                This container runs background workers for processing jobs.
 # Usage        : Run as Administrator if using Docker.
 ################################################################################
@@ -109,6 +109,9 @@ function Test-FirecrawlWorkerDependencies {
 		if ($depContainer -ne $dependency) {
 			Write-Error "Dependency container '$dependency' is not running."
 			switch ($dependency) {
+				"firecrawl-postgres" {
+					Write-Host "Please run 'Setup_App_4a_Firecrawl_Postgres.ps1' first to install and start the PostgreSQL container."
+				}
 				"firecrawl-redis" {
 					Write-Host "Please run 'Setup_4a_Firecrawl_Redis.ps1' first to install and start the Redis container."
 				}

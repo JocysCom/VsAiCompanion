@@ -1,22 +1,28 @@
 {
   "mcpServers": {
-    "firecrawl-mcp-server-local": {
+    "firecrawl-local": {
+      "notes": [
+        "This is the local Firecrawl MCP server. Requires latest Node.js. Upgrade with `winget upgrade OpenJS.NodeJS.LTS` command."
+      ],
       "args": [
         "/c",
-        "npx -y firecrawl-mcp@1.12.0"
+        "npx -y firecrawl-mcp@2.0.2"
       ],
       "autoApprove": [],
       "command": "cmd",
       "disabled": false,
       "env": {
-          "FIRECRAWL_API_URL": "http://localhost:3002",
-          "FIRECRAWL_API_KEY": "fc-dummy-key-for-local-testing"
+        "FIRECRAWL_API_URL": "http://localhost:3002",
+        "FIRECRAWL_API_KEY": "fc-dummy-key-for-local-testing"
       },
       "timeout": 60,
-      "type": "stdio"
+      "type": "stdio",
+      "alwaysAllow": []
     },
     "zep-documentation": {
-      "url": "https://docs-mcp.getzep.com/sse"
+      "url": "https://docs-mcp.getzep.com/sse",
+      "disabled": false,
+      "alwaysAllow": []
     }
   }
 }
