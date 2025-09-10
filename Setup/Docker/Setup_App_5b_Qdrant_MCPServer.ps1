@@ -24,7 +24,7 @@ Set-ScriptLocation
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
 $global:imageName = "qdrant-mcp-server:latest" # Standardized variable name
 $global:containerName = "qdrant-mcp-server"
-$global:volumeName = $global:containerName # Default: same as container name (though likely unused by this app).
+$global:volumeName = "qdrant-mcp-server-data" # Default: same as container name (though likely unused by this app).
 $global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant"
 $global:repoUrl = "https://github.com/qdrant/mcp-server-qdrant.git"
 $global:qdrantUrl = "http://localhost:6333"

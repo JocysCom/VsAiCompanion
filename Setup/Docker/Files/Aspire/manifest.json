@@ -244,6 +244,34 @@
                     "host.local": "host-gateway"
                 }
             }
+        },
+        "qdrant": {
+            "type": "container.v0",
+            "properties": {
+                "image": "qdrant/qdrant",
+                "bindings": [
+                    {
+                        "name": "http",
+                        "protocol": "tcp",
+                        "containerPort": 6333,
+                        "hostPort": 6333
+                    },
+                    {
+                        "name": "grpc",
+                        "protocol": "tcp",
+                        "containerPort": 6334,
+                        "hostPort": 6334
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "qdrant-data",
+                        "containerPath": "/qdrant/storage",
+                        "type": "named"
+                    }
+                ],
+                "restart": "always"
+            }
         }
     }
 }

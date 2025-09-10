@@ -19,11 +19,37 @@ using namespace System.IO
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-$global:imageName = "qdrant/qdrant"
 $global:containerName = "qdrant"
-$global:volumeName = $global:containerName # Default: same as container name.
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'qdrant'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	grpcContainerPort = $manifestConfig.properties.bindings[1].containerPort
+	grpcHostPort = $manifestConfig.properties.bindings[1].hostPort
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -72,23 +98,23 @@ Write-Host "Engine executable: $global:enginePath"
 #>
 function Install-QdrantContainer {
 	# Check if image exists locally, restore from backup, or pull new
-	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}"
+	$existingImage = & $global:enginePath images --filter "reference=$($config.imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			Write-Host "No backup restored. Pulling Qdrant image '$global:imageName' using $global:containerEngine..."
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName)) {
+			Write-Host "No backup restored. Pulling Qdrant image '$($config.imageName)' using $global:containerEngine..."
 			# Use shared pull function
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName)) {
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $config.imageName)) {
 				# No specific pull options needed
 				Write-Error "$global:containerEngine pull failed for Qdrant. Please check your internet connection or the image name."
 				exit 1
 			}
 		}
 		else {
-			Write-Host "Using restored backup image '$global:imageName'."
+			Write-Host "Using restored backup image '$($config.imageName)'."
 		}
 	}
 	else {
-		Write-Host "Qdrant image '$global:imageName' already exists locally."
+		Write-Host "Qdrant image '$($config.imageName)' already exists locally."
 	}
 
 	# Remove Existing Container
@@ -103,11 +129,12 @@ function Install-QdrantContainer {
 	$runOptions = @(
 		"--detach", # Run container in background.
 		"--name", $global:containerName, # Assign the container a name.
-		"--publish", "6333:6333", # Map host HTTP port to container port 6333.
-		"--publish", "6334:6334", # Map host gRPC port to container port 6334.
-		"--volume", "$($global:volumeName):/qdrant/storage" # Mount the named volume for persistent data.
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host HTTP port to container port.
+		"--publish", "$($config.grpcHostPort):$($config.grpcContainerPort)", # Map host gRPC port to container port.
+		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data.
+		"--restart", $config.restartPolicy # Restart policy from manifest
 	)
-	& $global:enginePath run @runOptions $global:imageName
+	& $global:enginePath run @runOptions $config.imageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to start the Qdrant container."
 		exit 1
@@ -116,10 +143,10 @@ function Install-QdrantContainer {
 	# Wait and Test
 	Write-Host "Waiting 20 seconds for the Qdrant container to fully start..."
 	Start-Sleep -Seconds 20
-	Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
-	Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
-	Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
-	Write-Host "Qdrant is now running and accessible at http://localhost:6333"
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Qdrant HTTP"
+	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Qdrant HTTP"
+	Test-TCPPort -ComputerName "localhost" -Port $config.grpcHostPort -serviceName "Qdrant gRPC"
+	Write-Host "Qdrant is now running and accessible at http://localhost:$($config.hostPort)"
 }
 
 # Note: Uninstall-QdrantContainer, Backup-QdrantContainer, Restore-QdrantContainer functions removed. Shared functions called directly from menu.
@@ -174,9 +201,10 @@ function Invoke-StartQdrantForUpdate {
 	$runOptions = @(
 		"--detach",
 		"--name", $ContainerName,
-		"--publish", "6333:6333",
-		"--publish", "6334:6334",
-		"--volume", "$($VolumeName):/qdrant/storage"
+		"--publish", "$($config.hostPort):$($config.containerPort)",
+		"--publish", "$($config.grpcHostPort):$($config.grpcContainerPort)",
+		"--volume", "$($VolumeName):$($config.dataPath)",
+		"--restart", $config.restartPolicy
 	)
 
 	# Execute the command
@@ -188,9 +216,9 @@ function Invoke-StartQdrantForUpdate {
 	# Wait and Test Connectivity (same as in Install-QdrantContainer)
 	Write-Host "Waiting 20 seconds for the Qdrant container to fully start..."
 	Start-Sleep -Seconds 20
-	Test-TCPPort -ComputerName "localhost" -Port 6333 -serviceName "Qdrant HTTP"
-	Test-HTTPPort -Uri "http://localhost:6333" -serviceName "Qdrant HTTP"
-	Test-TCPPort -ComputerName "localhost" -Port 6334 -serviceName "Qdrant gRPC"
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Qdrant HTTP"
+	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Qdrant HTTP"
+	Test-TCPPort -ComputerName "localhost" -Port $config.grpcHostPort -serviceName "Qdrant gRPC"
 	Write-Host "Qdrant container updated successfully."
 }
 
@@ -229,10 +257,11 @@ function Update-QdrantContainer {
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
-			if (Backup-QdrantContainer) {
-				# Calls Backup-ContainerState
-				$backupMade = $true
-			}
+			Write-Host "Saving '$global:containerName' Container Image..."
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName
+			Write-Host "Exporting '$($config.volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
+			$backupMade = $true
 		}
 	}
 	else {
@@ -241,7 +270,7 @@ function Update-QdrantContainer {
 
 	# Call simplified Update-Container (handles check, remove, pull)
 	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the dedicated start function
 		try {
@@ -249,8 +278,8 @@ function Update-QdrantContainer {
 			Invoke-StartQdrantForUpdate -EnginePath $global:enginePath `
 				-ContainerEngineType $global:containerEngine `
 				-ContainerName $global:containerName `
-				-VolumeName $global:volumeName `
-				-ImageName $global:imageName
+				-VolumeName $config.volumeName `
+				-ImageName $config.imageName
 			# Success message is handled within Invoke-StartQdrantForUpdate
 		}
 		catch {
@@ -258,7 +287,9 @@ function Update-QdrantContainer {
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
-					Restore-QdrantContainer # Calls Restore-ContainerState
+					Write-Host "Restoring from backup..."
+					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 				}
 			}
 		}
@@ -268,7 +299,9 @@ function Update-QdrantContainer {
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
-				Restore-QdrantContainer # Calls Restore-ContainerState
+				Write-Host "Restoring from backup..."
+				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			}
 		}
 	}
@@ -324,21 +357,21 @@ $menuActions = @{
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Qdrant" `
-			-TcpPort 6333 `
-			-HttpPort 6333 `
-			-AdditionalInfo @{ "gRPC Port" = 6334 }
+			-TcpPort $config.hostPort `
+			-HttpPort $config.hostPort `
+			-AdditionalInfo @{ "gRPC Port" = $config.grpcHostPort }
 	}
 	"2" = { Install-QdrantContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
+	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName } # Call shared function directly
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName } # Call shared function directly
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName } # Call shared function directly
 	"6" = { Update-QdrantContainer } # Calls the dedicated update function
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName } # Call shared function directly
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName }
+	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $config.imageName }
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
