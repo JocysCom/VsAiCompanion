@@ -53,17 +53,21 @@
                     }
                 ],
                 "environment": {
-                    "OPENAI_API_KEY": "dummy",
+                    "NUM_WORKERS_PER_QUEUE": "8",
+                    "PORT": "3002",
+                    "HOST": "0.0.0.0",
                     "REDIS_URL": "redis://firecrawl-redis:6379",
                     "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
-                    "REDIS_HOST": "firecrawl-redis",
                     "REDIS_PORT": "6379",
-                    "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/scrape",
-                    "FLY_PROCESS_GROUP": "worker",
-                    "POSTHOG_API_KEY": ""
+                    "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/html",
+                    "USE_DB_AUTHENTICATION": "false",
+                    "SUPABASE_ANON_TOKEN": "",
+                    "SUPABASE_URL": "",
+                    "SUPABASE_SERVICE_TOKEN": "",
+                    "OPENAI_API_KEY": "dummy"
                 },
+                "command": ["node", "dist/src/services/queue-worker.js"],
                 "restart": "always",
-                "command": ["pnpm", "run", "workers"],
                 "dependencies": [
                     "firecrawl-redis",
                     "playwright-service"
@@ -99,32 +103,21 @@
                     }
                 ],
                 "environment": {
-                    "OPENAI_API_KEY": "dummy",
+                    "NUM_WORKERS_PER_QUEUE": "8",
+                    "PORT": "3002",
+                    "HOST": "0.0.0.0",
                     "REDIS_URL": "redis://firecrawl-redis:6379",
                     "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
-                    "REDIS_HOST": "firecrawl-redis",
                     "REDIS_PORT": "6379",
-                    "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/scrape",
-                    "HOST": "0.0.0.0",
-                    "PORT": "3002",
-                    "FLY_PROCESS_GROUP": "app",
-                    "NODE_ENV": "development",
-                    "ENABLE_DOCS": "true",
-                    "ENABLE_ADMIN": "true",
-                    "ENABLE_UI": "true",
-                    "ENABLE_SWAGGER": "true",
-                    "ENABLE_BULL_BOARD": "true",
-                    "BULL_BOARD_ENABLED": "true",
-                    "SWAGGER_ENABLED": "true",
-                    "API_DOCS_ENABLED": "true",
-                    "ADMIN_ENABLED": "true",
-                    "DEBUG": "*",
-                    "LOG_LEVEL": "debug",
-                    "SELF_HOSTED": "true",
-                    "POSTHOG_API_KEY": ""
+                    "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/html",
+                    "USE_DB_AUTHENTICATION": "false",
+                    "SUPABASE_ANON_TOKEN": "",
+                    "SUPABASE_URL": "",
+                    "SUPABASE_SERVICE_TOKEN": "",
+                    "OPENAI_API_KEY": "dummy"
                 },
                 "restart": "always",
-                "command": ["pnpm", "run", "start"],
+                "command": ["node", "dist/src/index.js"],
                 "dependencies": [
                     "firecrawl-redis",
                     "playwright-service"

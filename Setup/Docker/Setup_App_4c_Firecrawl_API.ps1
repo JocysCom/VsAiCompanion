@@ -75,7 +75,7 @@ $global:firecrawlApiUrl = "$global:firecrawlBaseUrl/v1"
 $global:firecrawlAdminUrl = "$global:firecrawlBaseUrl/admin/undefined/queues"
 $global:firecrawlHealthUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
 $global:firecrawlReadinessUrl = "$global:firecrawlBaseUrl/v0/health/readiness"
-$global:firecrawlServerHealthUrl = "$global:firecrawlBaseUrl/serverHealthCheck"
+$global:firecrawlServerHealthUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
 $global:redisUrl = "localhost:$($config.environment.REDIS_PORT)"
 $global:playwrightUrl = "http://localhost:3010"
 
@@ -192,9 +192,8 @@ function Test-FirecrawlUIAvailability {
 
 	$endpoints = @{
 		"Main Interface"  = $global:firecrawlBaseUrl
-		"Health Check"    = $global:firecrawlHealthUrl
+		"Liveness Check"  = $global:firecrawlHealthUrl
 		"Readiness Check" = $global:firecrawlReadinessUrl
-		"Server Health"   = $global:firecrawlServerHealthUrl
 		"Admin Dashboard" = $global:firecrawlAdminUrl
 	}
 
@@ -598,7 +597,7 @@ function Update-FirecrawlContainer {
 	# Call simplified Update-Container (handles check, remove, pull)
 	# Pass volume name for removal step
 	$updateResult = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
-	
+
 	if ($updateResult -eq $true) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the dedicated start function
