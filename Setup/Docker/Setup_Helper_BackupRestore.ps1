@@ -858,6 +858,12 @@ function Test-AndRestoreBackup {
 
 	$imageBackupPath = Join-Path $BackupFolder $global:dockerImagesFolder
 
+	# Ensure backup folder exists before trying to list its contents
+	if (-not (Test-Path $imageBackupPath)) {
+		New-Item -ItemType Directory -Force -Path $imageBackupPath | Out-Null
+		Write-Host "Created image backup folder: $imageBackupPath"
+	}
+
 	# Look for backup files matching the image pattern
 	$safeName = $ImageName -replace "[:/]", "_"
 	$backupPattern = "$safeName-image-*.tar"

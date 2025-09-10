@@ -294,7 +294,7 @@ function Update-FirecrawlWorkerContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName
 			Write-Host "Exporting '$($config.volumeName)' Volume..."
 			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			$backupMade = $true
@@ -317,7 +317,7 @@ function Update-FirecrawlWorkerContainer {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
 					Write-Host "Loading '$($global:containerName)' Container Image..."
-					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
+					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
 					Write-Host "Importing '$($config.volumeName)' Volume..."
 					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 				}
@@ -330,7 +330,7 @@ function Update-FirecrawlWorkerContainer {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
 				Write-Host "Loading '$($global:containerName)' Container Image..."
-				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
+				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
 				Write-Host "Importing '$($config.volumeName)' Volume..."
 				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			}
@@ -370,8 +370,8 @@ $menuActions = @{
 	"3" = {
 		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName
 	}
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName }
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName }
 	"6" = { Update-FirecrawlWorkerContainer }
 	"7" = {
 		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName

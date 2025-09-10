@@ -38,7 +38,7 @@
         "firecrawl-worker": {
             "type": "container.v0",
             "properties": {
-                "image": "ghcr.io/mendableai/firecrawl",
+                "image": "ghcr.io/firecrawl/firecrawl:latest",
                 "volumes": [
                     {
                         "name": "firecrawl-worker-data",
@@ -76,7 +76,7 @@
         "firecrawl-api": {
             "type": "container.v0",
             "properties": {
-                "image": "ghcr.io/mendableai/firecrawl",
+                "image": "ghcr.io/firecrawl/firecrawl:latest",
                 "bindings": [
                     {
                         "name": "http",
