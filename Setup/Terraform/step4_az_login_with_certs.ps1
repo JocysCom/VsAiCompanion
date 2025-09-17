@@ -4,14 +4,17 @@
 # Import shared functions
 . .\shared_terraform_functions.ps1
 
-# Set environment variables for certificate bundle
-$env:REQUESTS_CA_BUNDLE = "$($pwd.Path)\Files\trusted_root_certificates.pem"
-$env:CURL_CA_BUNDLE = "$($pwd.Path)\Files\trusted_root_certificates.pem"
+$certFile = "$($pwd.Path)\Files\trusted_root_certificates.pem"
+if (Test-Path $certFile) {
+	# Set environment variables for certificate bundle
+	$env:REQUESTS_CA_BUNDLE = $certFile
+	$env:CURL_CA_BUNDLE = $certFile
 
-Write-Host "Setting certificate bundle environment variables..." -ForegroundColor Green
-Write-Host "REQUESTS_CA_BUNDLE: $env:REQUESTS_CA_BUNDLE" -ForegroundColor Gray
-Write-Host "CURL_CA_BUNDLE: $env:CURL_CA_BUNDLE" -ForegroundColor Gray
-Write-Host ""
+	Write-Host "Setting certificate bundle environment variables..." -ForegroundColor Green
+	Write-Host "REQUESTS_CA_BUNDLE: $env:REQUESTS_CA_BUNDLE" -ForegroundColor Gray
+	Write-Host "CURL_CA_BUNDLE: $env:CURL_CA_BUNDLE" -ForegroundColor Gray
+	Write-Host ""
+}
 
 # Show current authentication context
 Show-AuthContext "BEFORE Login"

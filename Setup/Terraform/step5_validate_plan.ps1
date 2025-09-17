@@ -25,21 +25,15 @@ try {
 	$backendFile = "backend.$Environment.tfvars"
 	$varFile = "variables.$Environment.tfvars"
 
-	Write-Host "Checking Terraform initialization..." -ForegroundColor Yellow
+	Write-Host "Initializing Terraform (reconfigure) with backend config: $backendFile..." -ForegroundColor Yellow
+	terraform init -upgrade -reconfigure -backend-config="$backendFile"
 
-	if (-not (Test-Path ".terraform") -or -not (Test-Path ".terraform/providers")) {
-		Write-Host "Initializing Terraform with backend config: $backendFile..." -ForegroundColor Yellow
-		terraform init -backend-config="$backendFile"
-
-		if ($LASTEXITCODE -ne 0) {
-			Write-Host "❌ Terraform initialization failed" -ForegroundColor Red
-			Write-Host "Please check your authentication and backend configuration" -ForegroundColor Yellow
-			return
-		}
-		Write-Host "✅ Terraform initialized successfully" -ForegroundColor Green
-	} else {
-		Write-Host "✅ Terraform already initialized" -ForegroundColor Green
+	if ($LASTEXITCODE -ne 0) {
+		Write-Host "❌ Terraform initialization failed" -ForegroundColor Red
+		Write-Host "Please check your authentication and backend configuration" -ForegroundColor Yellow
+		return
 	}
+	Write-Host "✅ Terraform initialized successfully" -ForegroundColor Green
 
 	# Run terraform plan
 	Write-Host "Running: terraform plan -var-file=$varFile" -ForegroundColor Gray
