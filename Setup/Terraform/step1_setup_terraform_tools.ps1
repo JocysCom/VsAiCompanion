@@ -1,10 +1,12 @@
 ﻿# Terraform Tools Manager
 
-# --- PS7 Check ---
-if ($PSVersionTable.PSEdition -ne 'Core' -or $PSVersionTable.PSVersion -lt [Version]'7.0') {
-    Write-Warning "This script requires PowerShell 7+ (pwsh) to work properly."
+# --- Shell Check (Run under Windows PowerShell 5.1) ---
+if ($PSVersionTable.PSEdition -eq 'Core' -and $PSVersionTable.PSVersion -ge [Version]'7.0') {
+    Write-Warning "This script is intended to run under Windows PowerShell 5.1 (Desktop), not PowerShell 7."
 	Write-Warning "You're running PowerShell $($PSVersionTable.PSEdition) $($PSVersionTable.PSVersion)."
+	Write-Warning "Please run this script from 'Windows PowerShell' to install or upgrade PowerShell 7 and related modules."
 	pause
+	return
  }
 
 Write-Host "=== Terraform Tools Status ===" -ForegroundColor Cyan
@@ -99,7 +101,7 @@ function UninstallAzModules {
 	#	}
 	#}
 }
-	
+
 
 
 # Menu

@@ -129,4 +129,4 @@ Instead of manual installation, you can use the interactive setup script:
 .\step1_setup_terraform_tools.ps1
 ```
 
-This script provides an interactive menu to install/reinstall tools and check their status.
+Important: Run this script from Windows PowerShell 5.1 (Desktop) rather than PowerShell 7 (pwsh). It installs PowerShell 7 and required modules and is designed to be executed under Windows PowerShell to avoid self-upgrade conflicts. The script will warn and exit if launched from PowerShell 7.
