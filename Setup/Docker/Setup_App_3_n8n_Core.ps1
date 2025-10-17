@@ -246,6 +246,16 @@ function Start-n8nContainer {
 			if ($tcpTest -and $httpTest) {
 				Write-Host "n8n is now running and accessible at http://localhost:$($config.hostPort)"
 				Write-Host "If accessing from another container, use 'http://host.docker.internal:$($config.hostPort)' as the URL."
+
+				# Install additional packages automatically
+				Write-Host "Installing additional packages required for n8n workflows..."
+				$packageInstallResult = Install-n8nPackages
+				if ($packageInstallResult) {
+					Write-Host "Additional packages installed successfully."
+				} else {
+					Write-Warning "Package installation failed, but container is running. Packages can be installed manually if needed."
+				}
+
 				return $true
 			}
 			else {
@@ -432,6 +442,75 @@ function Reset-AdminPassword {
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Reset Admin Password and Restart Container")) {
 		& $global:enginePath exec -it $global:containerName $global:containerName user-management:reset
 		& $global:enginePath restart $global:containerName
+	}
+}
+
+#==============================================================================
+# Function: Install-n8nPackages
+#==============================================================================
+<#
+.SYNOPSIS
+	Installs additional Alpine Linux packages (ffmpeg, zip) in the running n8n container.
+.DESCRIPTION
+	Executes package installation commands inside the n8n container using the container engine.
+	Updates the Alpine package index and installs ffmpeg and zip packages using apk.
+	These packages are commonly needed for n8n workflows but are not included in the base image.
+	The installation is performed as root user within the container.
+.EXAMPLE
+	Install-n8nPackages
+.EXAMPLE
+	Install-n8nPackages -WhatIf
+.OUTPUTS
+	[bool] Returns $true if package installation succeeds, $false if installation fails or is skipped due to -WhatIf.
+.NOTES
+	Requires the n8n container to be running before execution.
+	Uses global variables $global:enginePath and $global:containerName.
+	Packages installed: ffmpeg (for media processing), zip (for archive operations).
+#>
+function Install-n8nPackages {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Install additional packages (ffmpeg, zip)")) {
+		Write-Host "Installing additional packages in n8n container..."
+
+		try {
+			# Update Alpine package index
+			Write-Host "Updating Alpine package index..."
+			& $global:enginePath machine ssh sudo $global:containerEngine exec --user root $global:containerName apk update
+			if ($LASTEXITCODE -ne 0) {
+				Write-Error "Failed to update Alpine package index."
+				return $false
+			}
+
+			# Install ffmpeg
+			Write-Host "Installing ffmpeg..."
+			& $global:enginePath machine ssh sudo $global:containerEngine exec --user root $global:containerName apk add --no-cache ffmpeg
+			if ($LASTEXITCODE -ne 0) {
+				Write-Error "Failed to install ffmpeg package."
+				return $false
+			}
+
+			# Install zip
+			Write-Host "Installing zip..."
+			& $global:enginePath machine ssh sudo $global:containerEngine exec --user root $global:containerName apk add --no-cache zip
+			if ($LASTEXITCODE -ne 0) {
+				Write-Error "Failed to install zip package."
+				return $false
+			}
+
+			Write-Host "Additional packages (ffmpeg, zip) installed successfully."
+			return $true
+		}
+		catch {
+			Write-Error "Error during package installation: $_"
+			return $false
+		}
+	}
+	else {
+		Write-Warning "Package installation skipped due to -WhatIf."
+		return $false
 	}
 }
 

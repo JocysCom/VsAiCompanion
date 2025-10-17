@@ -7,9 +7,11 @@ output "agent_client_id" {
 }
 
 output "agent_client_secret" {
-  value       = azuread_application_password.ai_agent.value
+  # If the application already existed, no new secret is created (count = 0).
+  # Use try() to avoid errors and return null when no secret was created in this run.
+  value       = try(azuread_application_password.ai_agent[0].value, null)
   sensitive   = true
-  description = "Use this in n8n Client Secret field"
+  description = "Use this in n8n Client Secret field (null if not created in this run)"
 }
 
 output "agent_object_id" {

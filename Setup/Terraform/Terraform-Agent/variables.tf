@@ -43,3 +43,10 @@ variable "storage_account_name" {
   type        = string
   default     = "<staicompdevwestus001>"
 }
+
+
+variable "existing_ai_agent_application_id" {
+  description = "Optional: Existing Azure AD Application (client) ID to reuse. If empty, Terraform will create a new application and service principal."
+  type        = string
+  default     = ""
+}
