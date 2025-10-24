@@ -2,6 +2,8 @@
 # Location: .ai/Update-AgentInstructions.ps1
 # Description: Updates AI agent instruction files from master copies in the .ai folder,
 #              processing only files matching '*instructions.md'.
+#              Supports both multiple-file agents (CLINE, ROO CODE) and 
+#              single-file agents (GitHub CoPilot, OpenAI Codex).
 
 # Strict mode
 Set-StrictMode -Version Latest
@@ -54,6 +56,76 @@ function Test-AndWriteFile {
     }
 }
 
+# Function to update agents that use multiple separate instruction files
+function Update-MultipleFileAgent {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$AgentName,
+        [Parameter(Mandatory = $true)]
+        [string]$TargetDirectory,
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileSystemInfo[]]$SourceFiles,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    Write-Host "`r`n--- Updating $AgentName Instructions ---"
+    $targetDir = Join-Path $RepoRoot $TargetDirectory
+    
+    foreach ($sourceFile in $SourceFiles) {
+        $targetFile = Join-Path $targetDir $sourceFile.Name
+        $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
+        Test-AndWriteFile -TargetPath $targetFile -NewContent $sourceContent -FileDescription "$AgentName instruction file ($($sourceFile.Name))"
+    }
+    Write-Host "$AgentName instruction update process complete."
+}
+
+# Function to update agents that use a single combined instruction file
+function Update-SingleFileAgent {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$AgentName,
+        [Parameter(Mandatory = $true)]
+        [string]$TargetFilePath,
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileSystemInfo[]]$SourceFiles,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    Write-Host "`r`n--- Updating $AgentName Instructions ---"
+    $targetFile = Join-Path $RepoRoot $TargetFilePath
+    
+    $allInstructionsContent = New-Object System.Text.StringBuilder
+    $firstFile = $true
+
+    foreach ($sourceFile in $SourceFiles) {
+        if (-not $firstFile) {
+            $allInstructionsContent.AppendLine("") # Add a blank line separator before the next section
+        }
+        
+        $allInstructionsContent.AppendLine("==== START OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
+        $allInstructionsContent.AppendLine("") # Blank line after START marker
+        
+        $allInstructionsContent.AppendLine("# Instructions from: $($sourceFile.Name)")
+        $allInstructionsContent.AppendLine("") # Blank line after header
+        
+        $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
+        $allInstructionsContent.AppendLine($sourceContent.Trim())
+        
+        $allInstructionsContent.AppendLine("") # Blank line before END marker
+        $allInstructionsContent.AppendLine("==== END OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
+        
+        $firstFile = $false # Set to false after processing the first file
+    }
+
+    # No need to remove leading newline with this new structure as each block is self-contained.
+    # The first block will start directly with "==== START..."
+    $finalContent = $allInstructionsContent.ToString()
+    Test-AndWriteFile -TargetPath $targetFile -NewContent $finalContent -FileDescription "$AgentName main instructions"
+    Write-Host "$AgentName instruction update process complete."
+}
+
 # --- Main Script ---
 try {
     Clear-Host
@@ -70,87 +142,56 @@ try {
     $sourceInstructionFiles | ForEach-Object { Write-Host "- $($_.Name)" }
 
     # User prompt for agent selection
-    Write-Host "=========================================================="
+    Write-Host "=============================================================="
     Write-Host "Select Agent Instruction Set to Update"
-    Write-Host "----------------------------------------------------------"
+    Write-Host "--------------------------------------------------------------"
     Write-Host "1. ALL            - Update instructions for all AI agents"
     Write-Host "2. CLINE          - Update instructions for CLINE"
     Write-Host "3. ROO CODE       - Update instructions for ROO CODE"
     Write-Host "4. GitHub CoPilot - Update instructions for GitHub CoPilot"
+    Write-Host "5. OpenAI Codex   - Update instructions for OpenAI Codex"
     Write-Host "0. Exit"
-    Write-Host "=========================================================="
-    $selection = Read-Host "Enter the number of your choice (0-4)"
+    Write-Host "=============================================================="
+    $selection = Read-Host "Enter the number of your choice (0-5)"
+    
+    # Initialize flags
     $updateCline = $false
     $updateCopilot = $false
     $updateRooCode = $false
+    $updateCodex = $false
+    
     switch ($selection) {
-        '1' { $updateCline = $true; $updateCopilot = $true; $updateRooCode = $true; Write-Host "Selected: ALL" }
+        '1' { 
+            $updateCline = $true
+            $updateCopilot = $true
+            $updateRooCode = $true
+            $updateCodex = $true
+            Write-Host "Selected: ALL" 
+        }
         '2' { $updateCline = $true; Write-Host "Selected: CLINE" }
         '3' { $updateRooCode = $true; Write-Host "Selected: ROO CODE" }
         '4' { $updateCopilot = $true; Write-Host "Selected: GitHub CoPilot" }
+        '5' { $updateCodex = $true; Write-Host "Selected: OpenAI Codex" }
         '0' { Write-Host "Operation cancelled by user."; exit 0 }
         default { throw "Invalid selection. Exiting." }
     }
 
-    # --- CLINE Update Logic ---
+    # --- Multiple-File Agent Updates ---
     if ($updateCline) {
-        Write-Host "`r`n--- Updating CLINE Instructions ---"
-        $clineRulesDir = Join-Path $repoRoot ".clinerules"
-        
-        foreach ($sourceFile in $sourceInstructionFiles) {
-            $clineTargetFile = Join-Path $clineRulesDir $sourceFile.Name
-            $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
-            Test-AndWriteFile -TargetPath $clineTargetFile -NewContent $sourceContent -FileDescription "CLINE instruction file ($($sourceFile.Name))"
-        }
-        Write-Host "CLINE instruction update process complete."
+        Update-MultipleFileAgent -AgentName "CLINE" -TargetDirectory ".clinerules" -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
     }
 
-    # --- GitHub CoPilot Update Logic ---
-    if ($updateCopilot) {
-        Write-Host "`r`n--- Updating GitHub CoPilot Instructions ---"
-        $githubDir = Join-Path $repoRoot ".github"
-        $copilotTargetInstructionsFile = Join-Path $githubDir "copilot-instructions.md"
-        
-        $allInstructionsContent = New-Object System.Text.StringBuilder
-        $firstFile = $true
-
-        foreach ($sourceFile in $sourceInstructionFiles) {
-            if (-not $firstFile) {
-                $allInstructionsContent.AppendLine("") # Add a blank line separator before the next section
-            }
-            
-            $allInstructionsContent.AppendLine("==== START OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
-            $allInstructionsContent.AppendLine("") # Blank line after START marker
-            
-            $allInstructionsContent.AppendLine("# Instructions from: $($sourceFile.Name)")
-            $allInstructionsContent.AppendLine("") # Blank line after header
-            
-            $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
-            $allInstructionsContent.AppendLine($sourceContent.Trim())
-            
-            $allInstructionsContent.AppendLine("") # Blank line before END marker
-            $allInstructionsContent.AppendLine("==== END OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
-            
-            $firstFile = $false # Set to false after processing the first file
-        }
-
-        # No need to remove leading newline with this new structure as each block is self-contained.
-        # The first block will start directly with "==== START..."
-        $finalCopilotContent = $allInstructionsContent.ToString()
-        Test-AndWriteFile -TargetPath $copilotTargetInstructionsFile -NewContent $finalCopilotContent -FileDescription "GitHub CoPilot main instructions"
-        Write-Host "GitHub CoPilot instruction update process complete."
-    }
-
-    # --- ROO CODE Update Logic ---
     if ($updateRooCode) {
-        Write-Host "`r`n--- Updating ROO CODE Instructions ---"
-        $rooRulesDir = Join-Path $repoRoot ".roo\rules"
-        foreach ($sourceFile in $sourceInstructionFiles) {
-            $rooTargetFile = Join-Path $rooRulesDir $sourceFile.Name
-            $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
-            Test-AndWriteFile -TargetPath $rooTargetFile -NewContent $sourceContent -FileDescription "ROO CODE instruction file ($($sourceFile.Name))"
-        }
-        Write-Host "ROO CODE instruction update process complete."
+        Update-MultipleFileAgent -AgentName "ROO CODE" -TargetDirectory ".roo\rules" -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
+    }
+
+    # --- Single-File Agent Updates ---
+    if ($updateCopilot) {
+        Update-SingleFileAgent -AgentName "GitHub CoPilot" -TargetFilePath ".github\copilot-instructions.md" -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
+    }
+
+    if ($updateCodex) {
+        Update-SingleFileAgent -AgentName "OpenAI Codex" -TargetFilePath "AGENTS.md" -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
     }
 
     Write-Host "`r`nAll selected operations completed successfully."

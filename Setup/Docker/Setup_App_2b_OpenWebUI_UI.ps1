@@ -25,7 +25,7 @@ Set-ScriptLocation
 #############################################
 $global:imageName = "ghcr.io/open-webui/open-webui:main"
 $global:containerName = "open-webui"
-$global:volumeName = $global:containerName # Default: same as container name.
+$global:volumeName = "open-webui-data" # Default: same as container name.
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine # Renamed variable for clarity

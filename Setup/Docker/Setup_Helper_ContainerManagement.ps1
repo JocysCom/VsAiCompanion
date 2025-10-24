@@ -297,24 +297,27 @@ function Test-ImageUpdateAvailable {
 		return $true
 	}
 
-	# Get local image digest
+	# Get local image digest and creation info
 	$localDigest = $null
+	$localCreated = ""
+	$localSize = ""
 	try {
 		if ($localImageInfo -is [array]) {
 			$localDigest = $localImageInfo[0].Id
+			$localCreated = $localImageInfo[0].Created
+			$localSize = $localImageInfo[0].Size
 		}
 		else {
 			$localDigest = $localImageInfo.Id
+			$localCreated = $localImageInfo.Created
+			$localSize = $localImageInfo.Size
 		}
 	}
 	catch {
-		Write-Warning "Could not determine local image digest: $_"
+		Write-Warning "Could not determine local image information: $_"
 		# If we can't determine local digest, assume update is needed
 		return $true
 	}
-
-	# Use Write-Host for status messages
-	Write-Host "Local image digest: $localDigest"
 
 	# Determine container engine type (docker or podman)
 	$engineType = "docker"
@@ -403,18 +406,92 @@ function Test-ImageUpdateAvailable {
 		return $true
 	}
 
-	# Use Write-Host for status messages
-	Write-Host "Remote image digest: $remoteDigest"
+	# Try to get remote image creation date for better version display
+	$remoteCreated = ""
+	try {
+		if ($engineType -eq "docker") {
+			# For docker, try to get manifest info
+			$manifestInfo = & $Engine manifest inspect $ImageName 2>$null | ConvertFrom-Json
+			if ($manifestInfo -and $manifestInfo.history) {
+				$latestHistory = $manifestInfo.history[0]
+				if ($latestHistory.created) {
+					$remoteCreated = $latestHistory.created
+				}
+			}
+		}
+		else {
+			# For podman, we already pulled the image, so inspect it temporarily
+			$tempImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
+			if ($tempImageInfo) {
+				$remoteCreated = if ($tempImageInfo -is [array]) { $tempImageInfo[0].Created } else { $tempImageInfo.Created }
+			}
+		}
+	}
+	catch {
+		Write-Warning "Could not get remote image creation info: $_"
+	}
+	# Display size if available
+	if ($localSize) {
+		$sizeMB = [math]::Round($localSize / 1MB, 2)
+		Write-Host "Current local image size:     $sizeMB MB"
+	}
+
+	# Display version comparison in a grouped format
+	Write-Host ""
+	Write-Host "Version Comparison:" -ForegroundColor Cyan
+	Write-Host "==================" -ForegroundColor Cyan
+
+	# Display local version info
+	if ($localCreated) {
+		try {
+			$localCreatedDate = [DateTime]::Parse($localCreated).ToString("yyyy-MM-dd HH:mm:ss")
+			Write-Host "Current local image created:  $localCreatedDate"
+		}
+		catch {
+			Write-Host "Current local image created:  [Unable to parse date]"
+		}
+	}
+	Write-Host "Current local image digest:   $localDigest"
+
+	# Display remote version info
+	if ($remoteCreated) {
+		try {
+			$remoteCreatedDate = [DateTime]::Parse($remoteCreated).ToString("yyyy-MM-dd HH:mm:ss")
+			Write-Host "Latest remote image created:  $remoteCreatedDate"
+		}
+		catch {
+			Write-Host "Latest remote image created:  [Unable to parse date]"
+		}
+	}
+	Write-Host "Latest remote image digest:   $remoteDigest"
+
+	Write-Host ""
 
 	# Compare digests
 	if ($localDigest -ne $remoteDigest) {
 		# Use Write-Host for status messages
-		Write-Host "Update available! Local and remote image digests differ."
+		Write-Host "Update available! Local and remote image digests differ." -ForegroundColor Green
+		Write-Host "Local digest : $localDigest" -ForegroundColor Yellow
+		Write-Host "Remote digest: $remoteDigest" -ForegroundColor Yellow
+
+		# Ask user if they want to proceed with update
+		$proceedWithUpdate = Read-Host "Do you want to proceed with the update? This will stop and remove the current container. (Y/N, default is Y)"
+		if ($proceedWithUpdate -eq "N") {
+			Write-Host "Update canceled by user." -ForegroundColor Yellow
+			return $false
+		}
 		return $true
 	}
 	else {
 		# Use Write-Host for status messages
-		Write-Host "No update available. You have the latest version."
+		Write-Host "No update available. You have the latest version." -ForegroundColor Green
+
+		# Ask user if they want to force update anyway
+		$forceUpdate = Read-Host "No update detected. Do you want to force update anyway? (Y/N, default is N)"
+		if ($forceUpdate -eq "Y") {
+			Write-Host "Forcing update as requested by user." -ForegroundColor Yellow
+			return $true
+		}
 		return $false
 	}
 }

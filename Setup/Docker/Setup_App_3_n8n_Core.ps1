@@ -90,25 +90,42 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 #==============================================================================
 <#
 .SYNOPSIS
-	Gets the current n8n container configuration, including environment variables, and prompts for external domain.
+	Gets the current n8n container configuration, including environment variables, and prompts for external domain, TLS, and DNS settings.
 .DESCRIPTION
 	Inspects the n8n container using the selected engine. Extracts the image name and relevant
 	environment variables (starting with N8N_ or WEBHOOK_). Ensures community packages and tool usage
 	are enabled by adding the respective environment variables if missing. Prompts the user via Read-Host
 	to enter an external domain and adds N8N_HOST and WEBHOOK_URL environment variables if provided.
+	Also prompts for TLS certificate acceptance and DNS server preferences, with settings persistence.
 .OUTPUTS
 	[PSCustomObject] Returns a custom object containing the extracted/updated configuration details
-					 (Image, EnvVars) or $null if the container is not found or inspection fails.
+					 (Image, EnvVars, AcceptSelfSigned, UseDNS) or $null if the container is not found or inspection fails.
 .EXAMPLE
 	$currentConfig = Get-n8nContainerConfig
 	if ($currentConfig) { Write-Host "Current Image: $($currentConfig.Image)" }
 .NOTES
 	Uses 'engine inspect'. Modifies the extracted environment variables list.
-	Requires user interaction via Read-Host for domain configuration.
+	Requires user interaction via Read-Host for domain, TLS, and DNS configuration.
+	Loads and saves settings using Load-ScriptSettings and Save-ScriptSettings functions.
 #>
 function Get-n8nContainerConfig {
 	$envVars = @()
 	$imageName = $config.imageName # Default image name from manifest
+
+	# Load existing settings
+	$existingSettings = Load-ScriptSettings
+
+	# Initialize default values
+	$defaultAcceptSelfSigned = $false
+	$defaultUseDNS = $false
+	$defaultExternalDomain = ""
+
+	# Use existing settings if available
+	if ($existingSettings) {
+		$defaultAcceptSelfSigned = if ($existingSettings.AcceptSelfSigned -ne $null) { $existingSettings.AcceptSelfSigned } else { $false }
+		$defaultUseDNS = if ($existingSettings.UseDNS -ne $null) { $existingSettings.UseDNS } else { $false }
+		$defaultExternalDomain = if ($existingSettings.ExternalDomain) { $existingSettings.ExternalDomain } else { "" }
+	}
 
 	$containerInfo = & $global:enginePath inspect $global:containerName 2>$null | ConvertFrom-Json
 	if ($containerInfo) {
@@ -143,8 +160,13 @@ function Get-n8nContainerConfig {
 		$envVars += "$key=$($config.environment.$key)"
 	}
 
-	# Prompt user for external domain configuration.
-	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip"
+	# Prompt user for external domain configuration
+	$defaultPrompt = if ($defaultExternalDomain) { " [current: $defaultExternalDomain]" } else { "" }
+	$externalDomain = Read-Host "Enter external domain for n8n container (e.g., n8n.example.com) or press Enter to skip$defaultPrompt"
+	if ([string]::IsNullOrWhiteSpace($externalDomain) -and $defaultExternalDomain) {
+		$externalDomain = $defaultExternalDomain
+	}
+
 	if (-not [string]::IsNullOrWhiteSpace($externalDomain)) {
 		$envVars += "N8N_PUBLIC_API_BASE_URL=https://$externalDomain/"
 		$envVars += "WEBHOOK_URL=https://$externalDomain/"
@@ -155,10 +177,38 @@ function Get-n8nContainerConfig {
 		#$envVars += "N8N_EDITOR_BASE_URL=https://$externalDomain"
 	}
 
+	# Prompt for self-signed certificate acceptance
+	$defaultSelfSignedText = if ($defaultAcceptSelfSigned) { "Y" } else { "N" }
+	$acceptSelfSignedInput = Read-Host "Accept self-signed certificates? (Y/N) [default: $defaultSelfSignedText]"
+	if ([string]::IsNullOrWhiteSpace($acceptSelfSignedInput)) {
+		$acceptSelfSigned = $defaultAcceptSelfSigned
+	} else {
+		$acceptSelfSigned = $acceptSelfSignedInput -eq "Y"
+	}
+
+	# Prompt for DNS server usage
+	$defaultDNSText = if ($defaultUseDNS) { "Y" } else { "N" }
+	$useDNSInput = Read-Host "Use Cloudflare (1.1.1.1) and Google (8.8.8.8) public DNS servers? (Y/N) [default: $defaultDNSText]"
+	if ([string]::IsNullOrWhiteSpace($useDNSInput)) {
+		$useDNS = $defaultUseDNS
+	} else {
+		$useDNS = $useDNSInput -eq "Y"
+	}
+
+	# Save settings for next time
+	$newSettings = [PSCustomObject]@{
+		AcceptSelfSigned = $acceptSelfSigned
+		UseDNS = $useDNS
+		ExternalDomain = $externalDomain
+	}
+	Save-ScriptSettings -Settings $newSettings
+
 	# Return a custom object
 	return [PSCustomObject]@{
-		Image   = $imageName
+		Image = $imageName
 		EnvVars = $envVars
+		AcceptSelfSigned = $acceptSelfSigned
+		UseDNS = $useDNS
 	}
 }
 
@@ -195,7 +245,13 @@ function Start-n8nContainer {
 		[string]$Image,
 
 		[Parameter(Mandatory = $false)]
-		[array]$EnvVars = @()
+		[array]$EnvVars = @(),
+
+		[Parameter(Mandatory = $false)]
+		[bool]$AcceptSelfSigned = $false,
+
+		[Parameter(Mandatory = $false)]
+		[bool]$UseDNS = $false
 	)
 
 	# Get the host's IP as seen by Podman/WSL2
@@ -208,9 +264,6 @@ function Start-n8nContainer {
 
 	# Build the run command
 	$runOptions = @(
-		# Workaround: Accept self-signed certificates.
-		#"--env", "NODE_TLS_REJECT_UNAUTHORIZED=0",
-		#"--dns", "1.1.1.1", "--dns", "8.8.8.8",
 		"--add-host", "host.local:$HostIpForContainer",
 		"--memory",      $config.memoryLimit,
 		"--memory-swap", $config.memorySwap,
@@ -222,6 +275,22 @@ function Start-n8nContainer {
 		#"--cap-add", "NET_RAW",
 		#"--cap-add", "NET_ADMIN",
 	)
+
+	# Add self-signed certificate acceptance if requested
+	if ($AcceptSelfSigned) {
+		Write-Host "Adding NODE_TLS_REJECT_UNAUTHORIZED=0 for self-signed certificate acceptance"
+		$runOptions += "--env"
+		$runOptions += "NODE_TLS_REJECT_UNAUTHORIZED=0"
+	}
+
+	# Add DNS servers if requested
+	if ($UseDNS) {
+		Write-Host "Adding Cloudflare (1.1.1.1) and Google (8.8.8.8) DNS servers"
+		$runOptions += "--dns"
+		$runOptions += "1.1.1.1"
+		$runOptions += "--dns"
+		$runOptions += "8.8.8.8"
+	}
 
 	# Add all environment variables
 	foreach ($env in $EnvVars) {
@@ -330,7 +399,7 @@ function Install-n8nContainer {
 	$containerConfig = Get-n8nContainerConfig
 
 	# Start the container using the config image name and the retrieved config
-	Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars # This function now supports ShouldProcess
+	Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars -AcceptSelfSigned $containerConfig.AcceptSelfSigned -UseDNS $containerConfig.UseDNS # This function now supports ShouldProcess
 }
 
 # Note: Uninstall-n8nContainer function removed. Shared function called directly from menu.
@@ -393,7 +462,7 @@ function Update-n8nContainer {
 	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container using the config retrieved earlier
-		if (-not (Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars)) {
+		if (-not (Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars -AcceptSelfSigned $containerConfig.AcceptSelfSigned -UseDNS $containerConfig.UseDNS)) {
 			Write-Error "Failed to start updated n8n container."
 		}
 		# Success message is handled within Start-n8nContainer if successful

@@ -514,3 +514,117 @@ function Invoke-MenuLoop {
 		Write-Warning "Invalid selection."
 	} while ($choice -ne $ExitChoice)
 }
+
+#==============================================================================
+# Function: Save-ScriptSettings
+#==============================================================================
+<#
+.SYNOPSIS
+	Saves script settings to a JSON file in the Backup directory.
+.DESCRIPTION
+	Creates a Backup directory if it doesn't exist and saves the provided settings
+	object to a JSON file named after the calling script. Uses simple PowerShell
+	serialization (ConvertTo-Json) for compatibility.
+.PARAMETER Settings
+	The settings object to save. Can be any object that can be serialized to JSON.
+.PARAMETER ScriptName
+	Optional script name to use for the filename. If not provided, uses the calling script's name.
+.EXAMPLE
+	$settings = @{ AcceptSelfSigned = $true; UseDNS = $true; ExternalDomain = "example.com" }
+	Save-ScriptSettings -Settings $settings
+.NOTES
+	Creates Backup/<script_name>.json file. Overwrites existing settings.
+#>
+function Save-ScriptSettings {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param(
+		[Parameter(Mandatory = $true)]
+		[object]$Settings,
+
+		[Parameter(Mandatory = $false)]
+		[string]$ScriptName = $null
+	)
+
+	# Get script name if not provided
+	if ([string]::IsNullOrWhiteSpace($ScriptName)) {
+		$ScriptName = [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.PSCommandPath)
+	}
+
+	# Ensure Backup directory exists
+	$backupDir = Join-Path $PSScriptRoot "Backup"
+	if (-not (Test-Path $backupDir)) {
+		if ($PSCmdlet.ShouldProcess($backupDir, "Create Backup Directory")) {
+			New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+			Write-Host "Created Backup directory: $backupDir"
+		}
+	}
+
+	# Create settings file path
+	$settingsPath = Join-Path $backupDir "$ScriptName.json"
+
+	if ($PSCmdlet.ShouldProcess($settingsPath, "Save Settings")) {
+		try {
+			$Settings | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsPath -Encoding UTF8
+			Write-Host "Settings saved to: $settingsPath"
+		}
+		catch {
+			Write-Error "Failed to save settings: $_"
+		}
+	}
+}
+
+#==============================================================================
+# Function: Load-ScriptSettings
+#==============================================================================
+<#
+.SYNOPSIS
+	Loads script settings from a JSON file in the Backup directory.
+.DESCRIPTION
+	Attempts to load settings from Backup/<script_name>.json using ConvertFrom-Json.
+	Returns the loaded object or $null if the file doesn't exist or cannot be loaded.
+.PARAMETER ScriptName
+	Optional script name to use for the filename. If not provided, uses the calling script's name.
+.OUTPUTS
+	[object] Returns the loaded settings object or $null if not found or invalid.
+.EXAMPLE
+	$settings = Load-ScriptSettings
+	if ($settings) {
+		$acceptSelfSigned = $settings.AcceptSelfSigned
+	}
+.NOTES
+	Reads from Backup/<script_name>.json file. Returns $null if file doesn't exist.
+#>
+function Load-ScriptSettings {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $false)]
+		[string]$ScriptName = $null
+	)
+
+	# Get script name if not provided
+	if ([string]::IsNullOrWhiteSpace($ScriptName)) {
+		$ScriptName = [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.PSCommandPath)
+	}
+
+	# Create settings file path
+	$backupDir = Join-Path $PSScriptRoot "Backup"
+	$settingsPath = Join-Path $backupDir "$ScriptName.json"
+
+	if (Test-Path $settingsPath) {
+		try {
+			$content = Get-Content -Path $settingsPath -Raw -Encoding UTF8
+			$settings = $content | ConvertFrom-Json
+			Write-Host "Settings loaded from: $settingsPath"
+			return $settings
+		}
+		catch {
+			Write-Warning "Failed to load settings from $settingsPath`: $_"
+			return $null
+		}
+	}
+	else {
+		Write-Host "No existing settings found at: $settingsPath"
+		return $null
+	}
+}
