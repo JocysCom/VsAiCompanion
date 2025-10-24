@@ -21,14 +21,40 @@ using namespace System.IO
 Set-ScriptLocation
 
 #############################################
-# Pick Container Engine and Set Global Variables
+# Global Configuration
 #############################################
-$global:imageName = "ghcr.io/open-webui/open-webui:main"
 $global:containerName = "open-webui"
-$global:volumeName = "open-webui-data" # Default: same as container name.
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'open-webui'
+
+# Create consolidated configuration object
+$global:config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	platform = $manifestConfig.properties.platform
+	environment = $manifestConfig.properties.environment
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $global:config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 # --- Engine Selection ---
-$global:containerEngine = Select-ContainerEngine # Renamed variable for clarity
+$global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
 	Write-Warning "No container engine selected. Exiting script."
@@ -95,7 +121,7 @@ function Get-OpenWebUIContainerConfig {
 	catch {
 		Write-Warning "Could not parse existing volume mounts: $_"
 		# Default volume mount if parsing fails
-		$volumeMounts = @("$($global:volumeName):/app/backend/data") # Use global var
+		$volumeMounts = @("$($global:config.volumeName):$($global:config.dataPath)")
 	}
 
 	# Extract port mappings
@@ -110,7 +136,7 @@ function Get-OpenWebUIContainerConfig {
 	catch {
 		Write-Warning "Could not parse existing port mappings: $_"
 		# Default port mapping if parsing fails
-		$ports = @("3000:8080")
+		$ports = @("$($global:config.hostPort):$($global:config.containerPort)")
 	}
 
 	# Return a custom object with the container information
@@ -133,7 +159,7 @@ function Get-OpenWebUIContainerConfig {
 	Runs a new container using the selected engine. Builds the 'run' command arguments based on
 	either a provided configuration object or default values (image, ports, volumes, name, restart policy).
 	Includes engine-specific arguments like '--add-host' for Docker.
-	After starting the container, waits 20 seconds and performs HTTP, TCP, and WebSocket connectivity tests.
+	After starting the container, waits 30 seconds and performs HTTP, TCP, and WebSocket connectivity tests.
 	Attempts to create a firewall rule for port 3000. Supports -WhatIf.
 .PARAMETER action
 	A string describing the action being performed (e.g., "Running container", "Starting updated container"), used in status messages. Mandatory.
@@ -170,7 +196,7 @@ function Start-OpenWebUIContainer {
 		$runOptions += $config.Platform
 	}
 	else {
-		$runOptions += "linux/amd64"
+		$runOptions += $global:config.platform
 	}
 
 	$runOptions += @("--detach")
@@ -184,7 +210,7 @@ function Start-OpenWebUIContainer {
 	}
 	else {
 		$runOptions += "--publish"
-		$runOptions += "3000:8080"
+		$runOptions += "$($global:config.hostPort):$($global:config.containerPort)"
 	}
 
 	# Add volume mounts
@@ -196,7 +222,7 @@ function Start-OpenWebUIContainer {
 	}
 	else {
 		$runOptions += "--volume"
-		$runOptions += "$($global:volumeName):/app/backend/data" # Use global var
+		$runOptions += "$($global:config.volumeName):$($global:config.dataPath)"
 	}
 
 	# Add environment variables if provided
@@ -227,7 +253,7 @@ function Start-OpenWebUIContainer {
 		$runOptions += $config.Image
 	}
 	else {
-		$runOptions += $global:imageName # Use global var
+		$runOptions += $global:config.imageName
 	}
 
 	# Command: run
@@ -239,9 +265,8 @@ function Start-OpenWebUIContainer {
 	#   --restart always: Always restart the container unless explicitly stopped.
 	#   --name: Assign a name to the container.
 	# Run the container with all options
-	if ($PSCmdlet.ShouldProcess($global:containerName, "Run Container with Image '$($config.Image -or $global:imageName)'")) {
-		# Use global vars
-		& $global:enginePath run @runOptions # Use global var
+	if ($PSCmdlet.ShouldProcess($global:containerName, "Run Container with Image '$($config.Image -or $global:config.imageName)'")) {
+		& $global:enginePath run @runOptions
 	}
 	else {
 		Write-Warning "Skipping container run due to -WhatIf."
@@ -253,21 +278,21 @@ function Start-OpenWebUIContainer {
 		return $false
 	}
 
-	Write-Host "Waiting 20 seconds for container startup..."
-	Start-Sleep -Seconds 20
+	Write-Host "Waiting 30 seconds for container startup..."
+	Start-Sleep -Seconds 30
 
 	# Test connectivity
-	Test-HTTPPort -Uri "http://localhost:3000" -serviceName "OpenWebUI"
-	Test-TCPPort -ComputerName "localhost" -Port 3000 -serviceName "OpenWebUI"
-	Test-WebSocketPort -Uri "ws://localhost:3000/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
+	Test-HTTPPort -Uri "http://localhost:$($global:config.hostPort)" -serviceName "OpenWebUI"
+	Test-TCPPort -ComputerName "localhost" -Port $global:config.hostPort -serviceName "OpenWebUI"
+	Test-WebSocketPort -Uri "ws://localhost:$($global:config.hostPort)/api/v1/chat/completions" -serviceName "OpenWebUI WebSockets"
 
 	# Create firewall rule if needed
-	if ($PSCmdlet.ShouldProcess("Port 3000", "Create Firewall Rule 'Allow WebSockets'")) {
+	if ($PSCmdlet.ShouldProcess("Port $($global:config.hostPort)", "Create Firewall Rule 'Allow WebSockets'")) {
 		try {
-			New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow -ErrorAction SilentlyContinue
+			New-NetFirewallRule -DisplayName "Allow WebSockets" -Direction Inbound -LocalPort $global:config.hostPort -Protocol TCP -Action Allow -ErrorAction SilentlyContinue
 		}
 		catch {
-			Write-Warning "Could not create firewall rule. You may need to manually allow port 3000."
+			Write-Warning "Could not create firewall rule. You may need to manually allow port $($global:config.hostPort)."
 		}
 	}
 	else {
@@ -299,33 +324,26 @@ function Start-OpenWebUIContainer {
 	Uses Write-Host for status messages.
 #>
 function Install-OpenWebUIContainer {
-	# Ensure the volume exists
-	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
-		# Use global vars
-		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..." # Use global var
-		return
-	}
-	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved." # Use global var
+	# Note: Volume will be created automatically by the container engine if it doesn't exist
+	Write-Host "IMPORTANT: Using volume '$($global:config.volumeName)' - existing user data will be preserved."
 
 	# Check if image exists locally, restore from backup, or pull new
-	$existingImage = & $global:enginePath images --filter "reference=$($global:imageName)" --format "{{.ID}}" # Use global vars
+	$existingImage = & $global:enginePath images --filter "reference=$($global:config.imageName)" --format "{{.ID}}"
 	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName)) {
-			# Use global vars
-			Write-Host "No backup restored. Pulling Open WebUI image '$($global:imageName)'..." # Use global var
+		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:config.imageName)) {
+			Write-Host "No backup restored. Pulling Open WebUI image '$($global:config.imageName)'..."
 			# Use shared pull function
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:imageName -PullOptions @("--platform", "linux/amd64"))) {
-				# Use global vars
+			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $global:config.imageName -PullOptions @("--platform", $global:config.platform))) {
 				Write-Error "Pull failed. Check internet connection or image URL."
 				return
 			}
 		}
 		else {
-			Write-Host "Using restored backup image '$($global:imageName)'." # Use global var
+			Write-Host "Using restored backup image '$($global:config.imageName)'."
 		}
 	}
 	else {
-		Write-Host "Using restored backup image '$($global:imageName)'." # Use global var
+		Write-Host "Using restored backup image '$($global:config.imageName)'."
 	}
 	# Remove any existing container.
 	$existingContainer = & $global:enginePath ps -a --filter "name=^$($global:containerName)$" --format "{{.ID}}" # Use global vars
@@ -334,9 +352,9 @@ function Install-OpenWebUIContainer {
 		# Remove container:
 		# rm         Remove one or more containers.
 		# --force    Force removal of a running container.
-		& $global:enginePath rm --force $global:containerName # Use global vars
+		& $global:enginePath rm --force $global:containerName
 	}
-	Start-OpenWebUIContainer -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:3000`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
+	Start-OpenWebUIContainer -action "Running container" -successMessage "Open WebUI is now running and accessible at http://localhost:$($global:config.hostPort)`nReminder: In Open WebUI settings, set the OpenAI API URL to 'http://host.docker.internal:9099' and API key to '0p3n-w3bu!' if integrating pipelines."
 }
 
 # Note: Uninstall-OpenWebUIContainer, Backup-OpenWebUIContainer, Restore-OpenWebUIContainer functions removed. Shared functions called directly from menu.
@@ -362,57 +380,52 @@ function Install-OpenWebUIContainer {
 	User interaction handled via Read-Host for backup confirmation.
 #>
 function Update-OpenWebUIContainer {
-	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control
+	[CmdletBinding(SupportsShouldProcess = $true)]
 	param()
 
 	# Check ShouldProcess before proceeding
 	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Update Container")) {
-		# Use global var
 		return
 	}
 
 	Write-Host "Initiating update for Open WebUI..."
 	$backupMade = $false
-	$config = Get-OpenWebUIContainerConfig # Get config before potential removal
-	if (-not $config) {
+	$containerConfig = Get-OpenWebUIContainerConfig # Get config before potential removal
+	if (-not $containerConfig) {
 		Write-Error "Cannot update: Open WebUI container not found or config could not be read."
-		return # Exit the function if config cannot be read
+		return
 	}
 
 	# Check if container actually exists before prompting for backup
-	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}" # Use global vars
+	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
 	if ($existingContainer) {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
-			Write-Host "Exporting '$($global:volumeName)' Volume..."
-			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:config.imageName
+			Write-Host "Exporting '$($global:config.volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
 			$backupMade = $true
 		}
 	}
 	else {
-		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt." # Use global var
+		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
-
 	# Call simplified Update-Container (handles check, remove, pull)
-	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName $global:imageName) {
-		# Use global vars
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:config.volumeName -ImageName $global:config.imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
-		# Start the new container using the original config (image name is implicitly latest from pull)
 		# Update the image name in the retrieved config before starting
-		$config.Image = $global:imageName # Use global var
-		if (-not (Start-OpenWebUIContainer -action "Starting updated container" -successMessage "Open WebUI container updated successfully!" -config $config)) {
+		$containerConfig.Image = $global:config.imageName
+		if (-not (Start-OpenWebUIContainer -action "Starting updated container" -successMessage "Open WebUI container updated successfully!" -config $containerConfig)) {
 			Write-Error "Failed to start updated Open WebUI container."
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
 					Write-Host "Loading '$($global:containerName)' Container Image..."
-					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
-					Write-Host "Importing '$($global:volumeName)' Volume..."
-					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:config.imageName
+					Write-Host "Importing '$($global:config.volumeName)' Volume..."
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
 				}
 			}
 		}
@@ -424,9 +437,9 @@ function Update-OpenWebUIContainer {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
 				Write-Host "Loading '$($global:containerName)' Container Image..."
-				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
-				Write-Host "Importing '$($global:volumeName)' Volume..."
-				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:config.imageName
+				Write-Host "Importing '$($global:config.volumeName)' Volume..."
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:config.volumeName
 			}
 		}
 	}
@@ -450,26 +463,43 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
-		Show-ContainerStatus -ContainerName $global:containerName ` # Use global var
-		-ContainerEngine $global:containerEngine `
-			-EnginePath $global:enginePath ` # Use global var
-		-DisplayName "Open WebUI" `
-			-TcpPort 3000 `
-			-HttpPort 3000 `
-			-WsPort 3000 `
+		$hostPort = $global:config.hostPort
+		Show-ContainerStatus -ContainerName $global:containerName `
+			-ContainerEngine $global:containerEngine `
+			-EnginePath $global:enginePath `
+			-DisplayName "Open WebUI" `
+			-TcpPort $hostPort `
+			-HttpPort $hostPort `
+			-WsPort $hostPort `
 			-WsPath "/api/v1/chat/completions"
 	}
 	"2" = { Install-OpenWebUIContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly, use global vars
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly, use global vars
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly, use global vars
-	"6" = { Update-OpenWebUIContainer } # Calls the dedicated update function
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"3" = {
+		$volumeName = $global:config.volumeName
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $volumeName
+	}
+	"4" = {
+		$imageName = $global:config.imageName
+		Backup-ContainerImage -Engine $global:enginePath -ImageName $imageName
+	}
+	"5" = {
+		$imageName = $global:config.imageName
+		Test-AndRestoreBackup -Engine $global:enginePath -ImageName $imageName
+	}
+	"6" = { Update-OpenWebUIContainer }
+	"7" = {
+		$volumeName = $global:config.volumeName
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
+	}
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$volumeName = $global:config.volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $global:imageName } # Use global vars
+	"9" = {
+		$imageName = $global:config.imageName
+		Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $imageName
+	}
 	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 

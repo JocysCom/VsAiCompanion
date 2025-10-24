@@ -272,6 +272,33 @@
                 ],
                 "restart": "always"
             }
+        },
+        "open-webui": {
+            "type": "container.v0",
+            "properties": {
+                "image": "ghcr.io/open-webui/open-webui:main",
+                "bindings": [
+                    {
+                        "name": "http",
+                        "protocol": "tcp",
+                        "containerPort": 8080,
+                        "hostPort": 3000
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "open-webui-data",
+                        "containerPath": "/app/backend/data",
+                        "type": "named"
+                    }
+                ],
+                "environment": {},
+                "restart": "always",
+                "platform": "linux/amd64",
+                "additionalHosts": {
+                    "host.docker.internal": "host-gateway"
+                }
+            }
         }
     }
 }
