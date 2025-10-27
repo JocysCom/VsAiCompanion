@@ -9,15 +9,15 @@ internal static class Program
 {
     // Entry: round-trip manifest.json, write manifest.roundtrip.json, compare byte-wise and structural equality
     // Usage:
-    //   dotnet run --project Files/Aspire/AspireBridgeTests/AspireBridgeTests.csproj
-    //   dotnet run --project Files/Aspire/AspireBridgeTests/AspireBridgeTests.csproj -- Files/Aspire/manifest.json
-    //   dotnet run --project Files/Aspire/AspireBridgeTests/AspireBridgeTests.csproj -- Files/Aspire/manifest.json local
+    //   dotnet run --project Files/Aspire/AspireTests/AspireTests.csproj
+    //   dotnet run --project Files/Aspire/AspireTests/AspireTests.csproj -- Files/Aspire/manifest.json
+    //   dotnet run --project Files/Aspire/AspireTests/AspireTests.csproj -- Files/Aspire/manifest.json local
     static int Main(string[] args)
     {
         try
         {
             // Resolve base manifest path relative to build output folder: Files/Aspire/manifest.json
-            var defaultManifestPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\manifest.json"));
+            var defaultManifestPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\manifest.json"));
             var manifestPath = defaultManifestPath;
 
             // Optional overrides: arg0 manifest path, arg1 profile overlay name (e.g., "local" / "prod")
@@ -59,7 +59,8 @@ internal static class Program
             var jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                WriteIndented = true
+                WriteIndented = false,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault
             };
 
             // Deserialize base manifest into lowercase model (simple, attribute-free)
@@ -85,10 +86,11 @@ internal static class Program
                 mergedModel = Merge(baseModel, overlayModel);
             }
 
-            // Serialize round-trip outputs
-            var roundtripBaseText = JsonSerializer.Serialize(baseModel, jsonOptions);
+            // Serialize round-trip outputs (compact), then pretty-print with 4-space indent
+            var serializedBase = JsonSerializer.Serialize(baseModel, jsonOptions);
+            var roundtripBaseText = FormatJsonWithIndent(serializedBase, 4);
             string roundtripMergedText = mergedModel != null
-                ? JsonSerializer.Serialize(mergedModel, jsonOptions)
+                ? FormatJsonWithIndent(JsonSerializer.Serialize(mergedModel, jsonOptions), 4)
                 : roundtripBaseText;
 
             // Write round-trip files alongside original for inspection
@@ -284,5 +286,80 @@ internal static class Program
                 // Undefined or other kinds: compare raw text
                 return a.GetRawText() == b.GetRawText();
         }
+    }
+    // Pretty-print JSON with custom indent size (native System.Text.Json uses fixed 2 spaces)
+    private static string FormatJsonWithIndent(string json, int indentSize)
+    {
+        using var doc = JsonDocument.Parse(json);
+        var sb = new StringBuilder(json.Length * 2);
+        using var writer = new StringWriter(sb);
+        WriteElement(doc.RootElement, writer, 0, new string(' ', indentSize));
+        return sb.ToString();
+    }
+
+    private static void WriteElement(JsonElement element, TextWriter writer, int level, string indentUnit)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.Object:
+                writer.Write("{");
+                bool firstProp = true;
+                foreach (var prop in element.EnumerateObject())
+                {
+                    if (!firstProp) writer.Write(",");
+                    writer.WriteLine();
+                    WriteIndent(writer, level + 1, indentUnit);
+                    writer.Write("\"");
+                    writer.Write(prop.Name);
+                    writer.Write("\": ");
+                    WriteElement(prop.Value, writer, level + 1, indentUnit);
+                    firstProp = false;
+                }
+                if (!firstProp)
+                {
+                    writer.WriteLine();
+                    WriteIndent(writer, level, indentUnit);
+                }
+                writer.Write("}");
+                break;
+
+            case JsonValueKind.Array:
+                writer.Write("[");
+                bool firstItem = true;
+                foreach (var item in element.EnumerateArray())
+                {
+                    if (!firstItem) writer.Write(",");
+                    writer.WriteLine();
+                    WriteIndent(writer, level + 1, indentUnit);
+                    WriteElement(item, writer, level + 1, indentUnit);
+                    firstItem = false;
+                }
+                if (!firstItem)
+                {
+                    writer.WriteLine();
+                    WriteIndent(writer, level, indentUnit);
+                }
+                writer.Write("]");
+                break;
+
+            case JsonValueKind.String:
+                writer.Write("\"");
+                writer.Write(element.GetString());
+                writer.Write("\"");
+                break;
+
+            case JsonValueKind.Number:
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+            case JsonValueKind.Null:
+            default:
+                writer.Write(element.GetRawText());
+                break;
+        }
+    }
+
+    private static void WriteIndent(TextWriter writer, int level, string unit)
+    {
+        for (int i = 0; i < level; i++) writer.Write(unit);
     }
 }

@@ -55,7 +55,7 @@ class Program
                 if (props == null) continue;
 
                 Console.WriteLine($"--- {name} ---");
-                Console.WriteLine($"type: {res.type}");
+                Console.WriteLine($"type: {res?.type}");
                 Console.WriteLine($"image: {props.image}");
 
                 if (props.bindings != null)

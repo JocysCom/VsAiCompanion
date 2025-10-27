@@ -98,17 +98,20 @@
                     "NUQ_WORKER_PORT": "3009",
                     "USE_DB_AUTHENTICATION": "false",
                     "OPENAI_API_KEY": "dummy"
-                                },
-                "command": ["node", "dist/src/services/worker/nuq-worker.js"],
+                },
                 "restart": "always",
+                "resources": {
+                    "memory": "512m"
+                },
                 "dependencies": [
                     "firecrawl-postgres",
                     "firecrawl-redis",
                     "playwright-service"
                 ],
-                "resources": {
-                    "memory": "512m"
-                }
+                "command": [
+                    "node",
+                    "dist/src/services/worker/nuq-worker.js"
+                ]
             }
         },
         "firecrawl-api": {
@@ -144,30 +147,33 @@
                     "REDIS_RATE_LIMIT_URL": "redis://firecrawl-redis:6379",
                     "REDIS_PORT": "6379",
                     "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3010/html",
-					"USE_DB_AUTHENTICATION": "false",
+                    "USE_DB_AUTHENTICATION": "false",
                     "NUQ_DATABASE_URL": "postgres://firecrawl:change-me@firecrawl-postgres:5432/firecrawl",
-					"DATABASE_URL": "postgres://firecrawl:change-me@firecrawl-postgres:5432/firecrawl",
-					"PGHOST": "firecrawl-postgres",
-					"PGPORT": "5432",
-					"PGUSER": "firecrawl",
-					"PGPASSWORD": "change-me",
-					"PGDATABASE": "firecrawl",
-					"PGSSLMODE": "disable",
+                    "DATABASE_URL": "postgres://firecrawl:change-me@firecrawl-postgres:5432/firecrawl",
+                    "PGHOST": "firecrawl-postgres",
+                    "PGPORT": "5432",
+                    "PGUSER": "firecrawl",
+                    "PGPASSWORD": "change-me",
+                    "PGDATABASE": "firecrawl",
+                    "PGSSLMODE": "disable",
                     "SUPABASE_ANON_TOKEN": "",
                     "SUPABASE_URL": "",
                     "SUPABASE_SERVICE_TOKEN": "",
                     "OPENAI_API_KEY": "dummy"
                 },
                 "restart": "always",
-                "command": ["node", "dist/src/index.js"],
+                "resources": {
+                    "memory": "1024m"
+                },
                 "dependencies": [
                     "firecrawl-postgres",
                     "firecrawl-redis",
                     "playwright-service"
                 ],
-                "resources": {
-                    "memory": "1024m"
-                }
+                "command": [
+                    "node",
+                    "dist/src/index.js"
+                ]
             }
         },
         "playwright-service": {
@@ -198,11 +204,15 @@
                 "environment": {
                     "PORT": "3010"
                 },
-                "command": ["node", "-e", "const http = require('http'); const server = http.createServer((req, res) => { if (req.url === '/health') { res.writeHead(200, {'Content-Type': 'application/json'}); res.end(JSON.stringify({status: 'ok', service: 'playwright'})); } else { res.writeHead(404); res.end('Not Found'); } }); server.listen(3010, '0.0.0.0', () => console.log('Playwright service listening on port 3010'));"],
                 "restart": "always",
                 "resources": {
                     "memory": "512m"
-                }
+                },
+                "command": [
+                    "node",
+                    "-e",
+                    "const http = require('http'); const server = http.createServer((req, res) => { if (req.url === '/health') { res.writeHead(200, {'Content-Type': 'application/json'}); res.end(JSON.stringify({status: 'ok', service: 'playwright'})); } else { res.writeHead(404); res.end('Not Found'); } }); server.listen(3010, '0.0.0.0', () => console.log('Playwright service listening on port 3010'));"
+                ]
             }
         },
         "n8n": {
@@ -320,10 +330,10 @@
                 ],
                 "environment": {},
                 "restart": "always",
-                "platform": "linux/amd64",
                 "additionalHosts": {
                     "host.docker.internal": "host-gateway"
-                }
+                },
+                "platform": "linux/amd64"
             }
         }
     }
