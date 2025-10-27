@@ -19,14 +19,40 @@ using namespace System.IO
 # Ensure the working directory is set.
 Set-ScriptLocation
 
-# Global variables used across functions.
-# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
+#############################################
+# Global Configuration
+#############################################
 $global:containerName = "pipelines"
-$global:volumeName = $global:containerName # Default: same as container name.
 $global:pipelinesFolder = ".\pipelines"
 $global:downloadFolder = ".\downloads"
-$global:enginePath = $null
-$global:containerEngine = $null
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'pipelines'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	environment = $manifestConfig.properties.environment
+	additionalHosts = $manifestConfig.properties.additionalHosts
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -64,19 +90,16 @@ if (-not $global:enginePath) {
 	Uses Write-Host for status messages.
 #>
 function Install-PipelinesContainer {
-	Write-Host "Installing Pipelines using pre-built image from ghcr.io/open-webui/pipelines:main"
+	Write-Host "Installing Pipelines using pre-built image from $($config.imageName)"
 
 	# Ensure the volume exists
-	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $global:volumeName)) {
-		Write-Error "Failed to ensure volume '$($global:volumeName)' exists. Exiting..."
+	if (-not (Confirm-ContainerResource -Engine $global:enginePath -ResourceType "volume" -ResourceName $config.volumeName)) {
+		Write-Error "Failed to ensure volume '$($config.volumeName)' exists. Exiting..."
 		return
 	}
-	Write-Host "IMPORTANT: Using volume '$($global:volumeName)' - existing user data will be preserved."
+	Write-Host "IMPORTANT: Using volume '$($config.volumeName)' - existing user data will be preserved."
 
-	# Set the custom image tag to the official pre-built image
-	$customPipelineImageTag = "ghcr.io/open-webui/pipelines:main"
-
-	# (Optional) Remove any existing container with the same name
+	# Remove any existing container with the same name
 	$existingContainer = & $global:enginePath ps -a --filter "name=$($global:containerName)" --format "{{.ID}}"
 	if ($existingContainer) {
 		Write-Host "Pipelines container already exists. Removing it..."
@@ -85,32 +108,32 @@ function Install-PipelinesContainer {
 
 	Write-Host "Running Pipelines container..."
 
-	# Conditionally set the --add-host parameter if using Docker
-	if ($global:containerEngine -eq "docker") {
-		$addHostParams = @('--add-host', 'host.docker.internal:host-gateway')
-	}
-	else {
-		# For Podman, skip the --add-host parameter (or add an alternative if required)
-		$addHostParams = @()
-	}
-
 	# Build the run arguments array
 	$runArgs = @(
-		'--detach', # run in background
-		'--publish', '9099:9099', # port mapping
-		'--volume', "$($global:volumeName):/app/pipelines", # volume mapping for persistent data
-		'--restart', 'always', # restart policy
-		'--name', $global:containerName, # container name
-		$customPipelineImageTag                          # pre-built image tag
-	) + $addHostParams # Add conditional params at the end
+		'--detach',
+		'--publish', "$($config.hostPort):$($config.containerPort)",
+		'--volume', "$($config.volumeName):$($config.dataPath)",
+		'--restart', $config.restartPolicy,
+		'--name', $global:containerName
+	)
 
-	# Command: run
-	#   --detach: Run container in background.
-	#   --publish: Map host port 9099 to container port 9099.
-	#   --add-host: (Docker only) Map host.docker.internal to host gateway IP.
-	#   --volume: Mount the named volume for persistent pipeline data.
-	#   --restart always: Always restart the container unless explicitly stopped.
-	#   --name: Assign a name to the container.
+	# Add additional hosts from manifest (conditionally for Docker)
+	if ($global:containerEngine -eq "docker" -and $config.additionalHosts) {
+		foreach ($hostEntry in $config.additionalHosts.PSObject.Properties) {
+			$runArgs += '--add-host'
+			$runArgs += "$($hostEntry.Name):$($hostEntry.Value)"
+		}
+	}
+
+	# Add environment variables from manifest
+	foreach ($key in $config.environment.PSObject.Properties.Name) {
+		$runArgs += "--env"
+		$runArgs += "$key=$($config.environment.$key)"
+	}
+
+	# Add the image name
+	$runArgs += $config.imageName
+
 	& $global:enginePath run @runArgs
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run the Pipelines container."
@@ -120,8 +143,8 @@ function Install-PipelinesContainer {
 
 	# Wait for the container to initialize, then test connectivity
 	Start-Sleep -Seconds 20
-	Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $global:containerName
-	Test-HTTPPort -Uri "http://localhost:9099" -serviceName $global:containerName
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName $global:containerName
+	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName $global:containerName
 }
 
 # Note: Backup-PipelinesContainer, Restore-PipelinesContainer, Uninstall-PipelinesContainer functions removed. Shared functions called directly from menu.
@@ -232,7 +255,7 @@ function Invoke-StartPipelinesForUpdate {
 		[string]$ContainerEngineType,
 		[string]$ContainerName,
 		[string]$VolumeName,
-		[string]$ImageName # The updated image name passed by Update-Container
+		[string]$ImageName
 	)
 
 	# Ensure the volume exists (important if it was removed manually)
@@ -240,29 +263,36 @@ function Invoke-StartPipelinesForUpdate {
 		throw "Failed to ensure volume '$VolumeName' exists during update."
 	}
 
-	# Conditionally set the --add-host parameter if using Docker
-	if ($ContainerEngineType -eq "docker") {
-		$addHostParams = @('--add-host', 'host.docker.internal:host-gateway')
-	}
-	else {
-		$addHostParams = @() # Podman doesn't need this
-	}
-
 	# Build the run arguments array
 	$runArgs = @(
-		'--detach', # run in background
-		'--publish', '9099:9099', # port mapping
-		'--volume', "$($VolumeName):/app/pipelines", # volume mapping
-		'--restart', 'always', # restart policy
-		'--name', $ContainerName, # container name
-		$ImageName                                       # Use the image name passed to the script block
-	) + $addHostParams
+		'--detach',
+		'--publish', "$($config.hostPort):$($config.containerPort)",
+		'--volume', "$($VolumeName):$($config.dataPath)",
+		'--restart', $config.restartPolicy,
+		'--name', $ContainerName
+	)
+
+	# Add additional hosts from manifest (conditionally for Docker)
+	if ($ContainerEngineType -eq "docker" -and $config.additionalHosts) {
+		foreach ($hostEntry in $config.additionalHosts.PSObject.Properties) {
+			$runArgs += '--add-host'
+			$runArgs += "$($hostEntry.Name):$($hostEntry.Value)"
+		}
+	}
+
+	# Add environment variables from manifest
+	foreach ($key in $config.environment.PSObject.Properties.Name) {
+		$runArgs += "--env"
+		$runArgs += "$key=$($config.environment.$key)"
+	}
+
+	# Add the image name
+	$runArgs += $ImageName
 
 	Write-Host "Running updated Pipelines container with image '$ImageName'..."
 	& $EnginePath run @runArgs
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to run the updated Pipelines container."
-		# Throw an error to signal failure to Update-Container
 		throw "Failed to run the updated Pipelines container."
 	}
 	Write-Host "Pipelines container started."
@@ -270,8 +300,8 @@ function Invoke-StartPipelinesForUpdate {
 	# Wait for the container to initialize, then test connectivity
 	Write-Host "Waiting for container startup..."
 	Start-Sleep -Seconds 20
-	Test-TCPPort -ComputerName "localhost" -Port 9099 -serviceName $ContainerName
-	Test-HTTPPort -Uri "http://localhost:9099" -serviceName $ContainerName
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName $ContainerName
+	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName $ContainerName
 }
 
 #==============================================================================
@@ -310,9 +340,9 @@ function Update-PipelinesContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
-			Write-Host "Exporting '$($global:volumeName)' Volume..."
-			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName
+			Write-Host "Exporting '$($config.volumeName)' Volume..."
+			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			$backupMade = $true
 		}
 	}
@@ -321,17 +351,14 @@ function Update-PipelinesContainer {
 	}
 
 	# Call simplified Update-Container (handles check, remove, pull)
-	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName -ImageName "ghcr.io/open-webui/pipelines:main") {
+	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName) {
 		Write-Host "Core update steps successful. Starting new container..."
-		# Start the new container using the dedicated start function
 		try {
-			# Invoke-StartPipelinesForUpdate expects these params, pass globals/literals
 			Invoke-StartPipelinesForUpdate -EnginePath $global:enginePath `
 				-ContainerEngineType $global:containerEngine `
 				-ContainerName $global:containerName `
-				-VolumeName $global:volumeName `
-				-ImageName "ghcr.io/open-webui/pipelines:main"
+				-VolumeName $config.volumeName `
+				-ImageName $config.imageName
 			Write-Host "Pipelines container updated successfully!"
 		}
 		catch {
@@ -340,9 +367,9 @@ function Update-PipelinesContainer {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
 					Write-Host "Loading '$($global:containerName)' Container Image..."
-					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
-					Write-Host "Importing '$($global:volumeName)' Volume..."
-					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
+					Write-Host "Importing '$($config.volumeName)' Volume..."
+					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 				}
 			}
 		}
@@ -353,9 +380,9 @@ function Update-PipelinesContainer {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
 				Write-Host "Loading '$($global:containerName)' Container Image..."
-				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
-				Write-Host "Importing '$($global:volumeName)' Volume..."
-				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
+				Write-Host "Importing '$($config.volumeName)' Volume..."
+				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			}
 		}
 	}
@@ -384,26 +411,42 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
+		$hostPort = $config.hostPort
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Pipelines" `
-			-TcpPort 9099 `
-			-HttpPort 9099
+			-TcpPort $hostPort `
+			-HttpPort $hostPort
 	}
 	"2" = { Install-PipelinesContainer }
-	"3" = { Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName } # Call shared function directly
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName } # Call shared function directly
-	"6" = { Update-PipelinesContainer } # Calls the dedicated update function
-	"7" = { $null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName } # Call shared function directly
+	"3" = {
+		$volumeName = $config.volumeName
+		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $volumeName
+	}
+	"4" = {
+		$imageName = $config.imageName
+		Backup-ContainerImage -Engine $global:enginePath -ImageName $imageName
+	}
+	"5" = {
+		$imageName = $config.imageName
+		Test-AndRestoreBackup -Engine $global:enginePath -ImageName $imageName
+	}
+	"6" = { Update-PipelinesContainer }
+	"7" = {
+		$volumeName = $config.volumeName
+		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
+	}
 	"8" = {
-		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $global:volumeName
+		$volumeName = $config.volumeName
+		$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $volumeName
 		& $global:enginePath restart $global:containerName
 	}
-	"9" = { Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName "ghcr.io/open-webui/pipelines:main" }
+	"9" = {
+		$imageName = $config.imageName
+		Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $imageName
+	}
 	"A" = { Add-PipelineToContainer }
-	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
 # Invoke the Menu Loop

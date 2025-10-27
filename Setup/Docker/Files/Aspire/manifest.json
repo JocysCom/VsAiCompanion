@@ -273,6 +273,32 @@
                 "restart": "always"
             }
         },
+        "pipelines": {
+            "type": "container.v0",
+            "properties": {
+                "image": "ghcr.io/open-webui/pipelines:main",
+                "bindings": [
+                    {
+                        "name": "http",
+                        "protocol": "tcp",
+                        "containerPort": 9099,
+                        "hostPort": 9099
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "pipelines",
+                        "containerPath": "/app/pipelines",
+                        "type": "named"
+                    }
+                ],
+                "environment": {},
+                "restart": "always",
+                "additionalHosts": {
+                    "host.docker.internal": "host-gateway"
+                }
+            }
+        },
         "open-webui": {
             "type": "container.v0",
             "properties": {
