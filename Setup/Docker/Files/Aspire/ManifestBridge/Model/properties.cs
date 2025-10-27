@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Aspire.ManifestBridge.Model
+namespace ManifestBridge.Model
 {
     public class @properties
     {

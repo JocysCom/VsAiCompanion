@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using Aspire.ManifestBridge;
+using ManifestBridge;
 
 class Program
 {

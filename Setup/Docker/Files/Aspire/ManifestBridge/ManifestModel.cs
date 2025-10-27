@@ -1,4 +1,4 @@
-namespace Aspire.ManifestBridge
+namespace ManifestBridge
 {
     public static class ManifestModel
     {

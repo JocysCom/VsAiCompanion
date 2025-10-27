@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFrameworks>net9.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Description>Aspire ManifestBridge: parses single-source manifest and applies optional profile overlays; exposes merge helpers and model for AppHost/tests.</Description>
         <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <PropertyGroup>
-        <AssemblyName>Aspire.ManifestBridge</AssemblyName>
-        <RootNamespace>Aspire.ManifestBridge</RootNamespace>
+        <AssemblyName>ManifestBridge</AssemblyName>
+        <RootNamespace>ManifestBridge</RootNamespace>
     </PropertyGroup>
 </Project>

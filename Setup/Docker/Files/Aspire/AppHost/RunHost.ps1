@@ -137,6 +137,64 @@ function Show-CheckboxMenu {
 }
 
 #==============================================================================
+# Function: Ensure-AppHostManifestLink
+#==============================================================================
+<#
+.SYNOPSIS
+    Ensure AppHost can resolve manifest.json at runtime without duplicating files.
+.DESCRIPTION
+    AppHost resolves "..\..\..\manifest.json" relative to its bin folder, which maps to Files/Aspire/AppHost/manifest.json.
+    To preserve single source of truth (Files/Aspire/manifest.json), this function creates a temporary NTFS hard link
+    (or symbolic link as fallback) at Files/Aspire/AppHost/manifest.json pointing to Files/Aspire/manifest.json.
+    The caller may remove the link after execution.
+.PARAMETER SourcePath
+    Path to the authoritative manifest file (defaults to $global:ManifestPath).
+.PARAMETER DestinationPath
+    Destination path where AppHost expects manifest.json (defaults to "$PSScriptRoot\manifest.json").
+.OUTPUTS
+    [bool] True if a new link was created, False if destination already existed.
+#>
+function Ensure-AppHostManifestLink {
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [Parameter(Mandatory=$false)]
+        [string]$SourcePath = $global:ManifestPath,
+        [Parameter(Mandatory=$false)]
+        [string]$DestinationPath = (Join-Path $PSScriptRoot "manifest.json")
+    )
+
+    if (-not (Test-Path -LiteralPath $SourcePath)) {
+        Write-Error "Source manifest not found: $SourcePath"
+        return $false
+    }
+
+    if (Test-Path -LiteralPath $DestinationPath) {
+        # Destination already exists; do not modify to avoid breaking expectations.
+        return $false
+    }
+
+    if ($PSCmdlet.ShouldProcess($DestinationPath, "Create link to manifest")) {
+        try {
+            # Prefer hard link to avoid permission issues with symlinks
+            New-Item -ItemType HardLink -Path $DestinationPath -Target $SourcePath -ErrorAction Stop | Out-Null
+            Write-Host "Created hard link: `"$DestinationPath`" -> `"$SourcePath`""
+            return $true
+        } catch {
+            try {
+                New-Item -ItemType SymbolicLink -Path $DestinationPath -Target $SourcePath -ErrorAction Stop | Out-Null
+                Write-Host "Created symbolic link: `"$DestinationPath`" -> `"$SourcePath`""
+                return $true
+            } catch {
+                Write-Error "Failed to create link for manifest: $($_.Exception.Message)"
+                return $false
+            }
+        }
+    }
+
+    return $false
+}
+
+#==============================================================================
 # Function: Invoke-AppHost
 #==============================================================================
 <#
@@ -182,15 +240,43 @@ function Invoke-AppHost {
 
     $env:ASPIRE_RESOURCES = $csv
 
+    # Create a temporary link where AppHost expects its manifest (no duplication)
+    $destManifestPath = Join-Path $PSScriptRoot "manifest.json"
+    $linkCreated = Ensure-AppHostManifestLink -SourcePath $global:ManifestPath -DestinationPath $destManifestPath
+
     $argsList = @()
     if ($Profile) { $argsList += $Profile } else { $argsList += "" }
     $argsList += $csv
 
-    $cmd = "dotnet run --project `"$($global:AppHostProject)`" -- $($argsList -join ' ')"
-    if ($PSCmdlet.ShouldProcess("AppHost", "Run with resources: $csv, profile: $Profile")) {
+    # Detect target framework from the project (supports TargetFramework or TargetFrameworks)
+    $tfm = $null
+    try {
+        $projXml = [xml](Get-Content -LiteralPath $global:AppHostProject -Raw)
+        $tfm = $projXml.Project.PropertyGroup.TargetFramework
+        if (-not $tfm -or [string]::IsNullOrWhiteSpace($tfm)) {
+            $tfm = $projXml.Project.PropertyGroup.TargetFrameworks
+        }
+        if ($tfm -and ($tfm -like "*;*")) {
+            $tfm = ($tfm -split ';')[0]
+        }
+    } catch {
+        # Fallback if parsing fails
+        $tfm = $null
+    }
+    if (-not $tfm -or [string]::IsNullOrWhiteSpace($tfm)) {
+        $tfm = "net8.0"
+    }
+
+    $cmd = "dotnet run --project `"$($global:AppHostProject)`" --framework $tfm -- $($argsList -join ' ')"
+    if ($PSCmdlet.ShouldProcess("AppHost", "Run with resources: $csv, profile: $Profile, framework: $tfm")) {
         Write-Host "Executing:"
         Write-Host "  $cmd"
-        & dotnet run --project $global:AppHostProject -- @argsList
+        & dotnet run --project $global:AppHostProject --framework $tfm -- @argsList
+    }
+
+    # Clean up temporary link to preserve single-source-of-truth
+    if ($linkCreated -and (Test-Path -LiteralPath $destManifestPath)) {
+        try { Remove-Item -LiteralPath $destManifestPath -Force } catch { }
     }
 }
 

@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
-using Aspire.ManifestBridge.Model;
+using ManifestBridge.Model;
 
-namespace Aspire.ManifestBridge
+namespace ManifestBridge
 {
     public static class ManifestLoader
     {
