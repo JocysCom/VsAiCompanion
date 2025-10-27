@@ -12,8 +12,10 @@ namespace ManifestBridge
         {
             if (string.IsNullOrWhiteSpace(manifestPath))
             {
-                // Default path: Files/Aspire/manifest.json (relative to AppHost bin folder)
-                manifestPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\manifest.json"));
+                // Default path: Files/Aspire/manifest.json (relative to AppHost bin folder: bin\<cfg>\<tfm>)
+                // From AppHost/bin/<cfg>/<tfm> go up four levels to reach Files/Aspire/manifest.json
+                // bin -> AppHost -> Aspire -> Files -> manifest.json
+                manifestPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\manifest.json"));
             }
 
             var basePath = manifestPath!;
