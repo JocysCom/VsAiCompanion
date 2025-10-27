@@ -14,6 +14,15 @@ using namespace System.Diagnostics.CodeAnalysis
 # Set Information Preference (commented out as Write-Host is used now)
 # $InformationPreference = 'Continue'
 
+param(
+    [Parameter(Mandatory=$false)]
+    [string]$ManifestPath,
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("local","prod")]
+    [string]$Profile
+)
+
 # Dot-source the necessary helper function files.
 . "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
 . "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
@@ -37,22 +46,93 @@ $global:containerName = "n8n"
 #  16 GB	12288 MB                14 GB                     Heavy AI chains, large spreadsheets.
 # Current configuration: 12288 MB heap, 14 GB container limit (configured in manifest.json)
 
-# Load configuration from Aspire manifest
-$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
-$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+# Load configuration from Aspire manifest with optional overlay merge (supports -ManifestPath and -Profile)
+if (-not $ManifestPath -or [string]::IsNullOrWhiteSpace($ManifestPath)) {
+    $ManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+}
+
+$baseManifestPath = $ManifestPath
+$overlayManifestPath = $null
+if ($Profile) {
+    $manifestDir = Split-Path -Parent $ManifestPath
+    $manifestFile = Split-Path -Leaf $ManifestPath
+    $manifestNameNoExt = [IO.Path]::GetFileNameWithoutExtension($manifestFile)
+    $manifestExt = [IO.Path]::GetExtension($manifestFile)
+    $candidate = Join-Path $manifestDir ("{0}.{1}{2}" -f $manifestNameNoExt, $Profile, $manifestExt)
+    if (Test-Path -LiteralPath $candidate) {
+        $overlayManifestPath = $candidate
+    } else {
+        Write-Warning "Profile manifest not found: $candidate. Using base manifest: $ManifestPath"
+    }
+}
+
+if (-not (Test-Path -LiteralPath $baseManifestPath)) {
+    throw "Manifest file not found: $baseManifestPath"
+}
+
+# Load base manifest
+$baseManifest = Get-Content -Raw $baseManifestPath | ConvertFrom-Json
+
+# Apply overlay differences for the 'n8n' resource if present
+if ($overlayManifestPath) {
+    $overlayManifest = Get-Content -Raw $overlayManifestPath | ConvertFrom-Json
+    $resourceName = 'n8n'
+    $baseRes = $baseManifest.resources.$resourceName
+    $overlayRes = $overlayManifest.resources.$resourceName
+    if ($null -eq $baseRes -and $overlayRes) {
+        $baseManifest.resources.$resourceName = $overlayRes
+    }
+    elseif ($overlayRes -and $overlayRes.properties) {
+        $bp = $baseRes.properties
+        $op = $overlayRes.properties
+
+        if ($op.image)       { $bp.image = $op.image }
+        if ($op.restart)     { $bp.restart = $op.restart }
+        if ($op.platform)    { $bp.platform = $op.platform }
+
+        if ($op.bindings)    { $bp.bindings = $op.bindings }
+        if ($op.volumes)     { $bp.volumes = $op.volumes }
+        if ($op.dependencies){ $bp.dependencies = $op.dependencies }
+        if ($op.networks)    { $bp.networks = $op.networks }
+        if ($op.command)     { $bp.command = $op.command }
+
+        if ($op.environment) {
+            if ($null -eq $bp.environment) { $bp.environment = [PSCustomObject]@{} }
+            foreach ($p in $op.environment.PSObject.Properties) {
+                $bp.environment | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
+            }
+        }
+        if ($op.additionalHosts) {
+            if ($null -eq $bp.additionalHosts) { $bp.additionalHosts = [PSCustomObject]@{} }
+            foreach ($p in $op.additionalHosts.PSObject.Properties) {
+                $bp.additionalHosts | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
+            }
+        }
+
+        if ($op.resources) {
+            if ($null -eq $bp.resources) { $bp.resources = $op.resources }
+            else {
+                if ($op.resources.memory)     { $bp.resources.memory = $op.resources.memory }
+                if ($op.resources.memorySwap) { $bp.resources.memorySwap = $op.resources.memorySwap }
+            }
+        }
+    }
+}
+
+$manifest = $baseManifest
 $manifestConfig = $manifest.resources.'n8n'
 
 # Create consolidated configuration object
 $config = [PSCustomObject]@{
-	imageName = $manifestConfig.properties.image
-	volumeName = $manifestConfig.properties.volumes[0].name
-	containerPort = $manifestConfig.properties.bindings[0].containerPort
-	hostPort = $manifestConfig.properties.bindings[0].hostPort
-	dataPath = $manifestConfig.properties.volumes[0].containerPath
-	restartPolicy = $manifestConfig.properties.restart
-	environment = $manifestConfig.properties.environment
-	memoryLimit = $manifestConfig.properties.resources.memory
-	memorySwap = $manifestConfig.properties.resources.memorySwap
+    imageName     = $manifestConfig.properties.image
+    volumeName    = $manifestConfig.properties.volumes[0].name
+    containerPort = $manifestConfig.properties.bindings[0].containerPort
+    hostPort      = $manifestConfig.properties.bindings[0].hostPort
+    dataPath      = $manifestConfig.properties.volumes[0].containerPath
+    restartPolicy = $manifestConfig.properties.restart
+    environment   = $manifestConfig.properties.environment
+    memoryLimit   = $manifestConfig.properties.resources.memory
+    memorySwap    = $manifestConfig.properties.resources.memorySwap
 }
 
 Write-Host "Configuration loaded from Aspire manifest:"
@@ -122,8 +202,8 @@ function Get-n8nContainerConfig {
 
 	# Use existing settings if available
 	if ($existingSettings) {
-		$defaultAcceptSelfSigned = if ($existingSettings.AcceptSelfSigned -ne $null) { $existingSettings.AcceptSelfSigned } else { $false }
-		$defaultUseDNS = if ($existingSettings.UseDNS -ne $null) { $existingSettings.UseDNS } else { $false }
+		$defaultAcceptSelfSigned = if ($null -ne $existingSettings.AcceptSelfSigned) { $existingSettings.AcceptSelfSigned } else { $false }
+		$defaultUseDNS = if ($null -ne $existingSettings.UseDNS) { $existingSettings.UseDNS } else { $false }
 		$defaultExternalDomain = if ($existingSettings.ExternalDomain) { $existingSettings.ExternalDomain } else { "" }
 	}
 
