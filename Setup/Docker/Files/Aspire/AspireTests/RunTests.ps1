@@ -1,1 +1,1 @@
-dotnet run --project "AspireTests.csproj" --framework net8.0 -- "..\manifest.json"
+dotnet test "AspireTests.csproj" --framework net8.0

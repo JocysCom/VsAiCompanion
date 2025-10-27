@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ManifestBridge\ManifestBridge.csproj" />
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Description>.NET Aspire AppHost: loads single-source manifest and prints normalized resource details for selected targets; supports profile overlays and resource filtering.</Description>
+        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ManifestBridge\ManifestBridge.csproj" />
+    </ItemGroup>
 </Project>
