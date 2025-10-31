@@ -37,7 +37,6 @@ All services are containerized and can be managed through the provided PowerShel
 
 ### Database Management
 
-- **TCP 8570** - `nocodb/nocodb:latest` - No-code database platform and Airtable alternative
 - **TCP 8978** - `dbeaver/cloudbeaver:latest` - Web-based database administration interface
 
 ## Tools Provided
@@ -74,10 +73,6 @@ All services are containerized and can be managed through the provided PowerShel
     Qdrant is a specialized vector database for managing high-dimensional data, which is essential for semantic search and machine learning applications. It stores and retrieves numeric representations of data (embeddings) quickly, enabling efficient similarity searches and recommendation engines. This tool helps solve challenges related to processing complex data comparisons with ease and reliability. Its containerized setup makes it accessible even for those new to machine learning infrastructure.
 - **Embedding API**  
     The Embedding API converts raw text into semantically meaningful numeric vectors (embeddings) through advanced natural language processing models. It simplifies complex tasks like document similarity, clustering, and recommendation by providing a reliable, scalable API endpoint. This tool lets you harness the power of deep learning models without needing to manage heavy compute resources locally. As a result, developers can efficiently integrate natural language understanding into their applications.
-
-- **NocoDB**  
-    NocoDB transforms any spreadsheet into a smart relational database accessible via a modern web interface. It makes data management intuitive and collaborative, enabling users without technical expertise to create applications, manage records, and generate reports effortlessly. With features similar to Airtable, NocoDB helps teams manage their data visually and efficiently, reducing the need for complex coding or database management skills.  
-    <img alt="NocoDB UI" src="Images/NocoDB.png" width="640" height="360">
 
 ## Folder Structure & Script Descriptions
 
@@ -117,7 +112,6 @@ These scripts handle the deployment and management of specific containerized app
 - **Setup_App_5a_Qdrant_Core.ps1**: Installs the Qdrant vector database container (supports Docker/Podman).
 - **Setup_App_5b_Qdrant_MCPServer.ps1**: Builds and runs the Qdrant MCP Server container from source (supports Docker/Podman).
 - **Setup_App_6_Embedding_API.ps1**: Builds and runs the custom Embedding API container from source (supports Docker/Podman).
-- **Setup_App_7_NocoDB_Core.ps1**: Installs the NocoDB container for no-code database management (supports Docker/Podman).
 - **Setup_App_8_CloudBeaver_Core.ps1**: Installs the CloudBeaver container for web-based database administration (supports Docker/Podman).
 - **Setup_App_9_Playwright_Service.ps1**: Installs the Playwright Service container for web rendering (supports Docker/Podman).
 - **Setup_App_Zep.ps1**: Installs the ZEP container for temporal knowledge graph-based memory layer for AI agents (supports Docker/Podman).

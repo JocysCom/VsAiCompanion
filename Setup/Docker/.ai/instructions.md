@@ -205,4 +205,7 @@ Using global variables instead of hardcoded values improves maintainability, mak
 
 ## Environment
 
-- Terminal sessions use PowerShell by default; therefore, invoke scripts directly (e.g., `.\Script.ps1 -WhatIf`) instead of wrapping them in an extra `powershell -ExecutionPolicy Bypass -File` call.
+Terminal sessions use PowerShell by default; always invoke scripts directly from the repository root. Do not prefix script execution with `pwsh`, `powershell`, or `powershell.exe`. Example:
+
+WRONG: pwsh -NoProfile -ExecutionPolicy Bypass -File .\.ai\Scripts\Start-Local.ps1 MONITOR
+VALID: .\.ai\Scripts\Start-Local.ps1 MONITOR

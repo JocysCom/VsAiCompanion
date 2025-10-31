@@ -3,6 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using ManifestBridge;
+using AppHost.Orchestrator;
+
+// https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/app-host-overview
 
 class Program
 {
@@ -44,6 +47,27 @@ class Program
 
             // If a filter is provided, use it; otherwise use default targets
             var targets = (resourceFilter?.Count > 0) ? resourceFilter : defaultTargets;
+
+            // Optional action arg/env: "deploy" to orchestrate selected resources instead of printing
+            string? actionArg = args.Length > 2 && !string.IsNullOrWhiteSpace(args[2])
+                ? args[2]
+                : Environment.GetEnvironmentVariable("ASPIRE_ACTION");
+            bool deploy = string.Equals(actionArg, "deploy", StringComparison.OrdinalIgnoreCase);
+
+            if (deploy)
+            {
+                // Currently implement deployment for n8n based on manifest
+                if (targets.Contains("n8n"))
+                {
+                    var code = AppHost.Orchestrator.N8nOrchestrator.Deploy(profile, null).GetAwaiter().GetResult();
+                    return code;
+                }
+                else
+                {
+                    Console.Error.WriteLine("Deploy action requested but no deployable target selected.");
+                    return 2;
+                }
+            }
 
             foreach (var kvp in root.resources)
             {

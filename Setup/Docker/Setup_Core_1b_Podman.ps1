@@ -187,6 +187,14 @@ function DisplayPodmanStatus {
 	}
 
 	# Check Podman Machine
+# Detect Podman machine configuration folder
+$machineConfigPath = Join-Path $env:USERPROFILE '.local\share\containers\podman\machine'
+if (Test-Path $machineConfigPath) {
+    Write-Host "Podman machine configuration: PRESENT (folder: $machineConfigPath)"
+}
+else {
+    Write-Host "Podman machine configuration: NOT FOUND"
+}
 	if ($cliAvailable) {
 		$machineAvailable = CheckPodmanMachineAvailable
 		if ($machineAvailable) {
@@ -244,7 +252,7 @@ function DisplayPodmanStatus {
 	and prompts for upgrade if different. If not installed or upgrade confirmed, it downloads the specified
 	Podman setup executable, runs the installer, refreshes environment variables, and verifies the installation.
 .PARAMETER PodmanVersion
-	The target version of Podman to install (e.g., "5.4.0"). Defaults to "5.4.0".
+	The target version of Podman to install (e.g., "5.6.2").
 .PARAMETER setupExeUrl
 	Optional. The direct URL to the Podman setup executable. If not provided, it's constructed based on the PodmanVersion.
 .PARAMETER downloadFolder
@@ -252,7 +260,7 @@ function DisplayPodmanStatus {
 .OUTPUTS
 	[bool] Returns $true if installation/upgrade is successful or skipped, $false on failure.
 .EXAMPLE
-	Install-PodmanCLI -PodmanVersion "5.1.0"
+	Install-PodmanCLI -PodmanVersion "5.6.2"
 .EXAMPLE
 	Install-PodmanCLI -setupExeUrl "http://example.com/podman-custom-setup.exe"
 .NOTES
@@ -262,7 +270,7 @@ function DisplayPodmanStatus {
 #>
 function Install-PodmanCLI {
 	param(
-		[string]$PodmanVersion = "5.4.0",
+		[string]$PodmanVersion = "5.6.2",
 		[string]$setupExeUrl = "",
 		[string]$downloadFolder = ".\downloads"
 	)
@@ -304,7 +312,7 @@ function Install-PodmanCLI {
 	}
 
 	# Download the installer
-	$exePath = Join-Path $downloadFolder "podman-5.4.0-setup.exe"
+	$exePath = Join-Path $downloadFolder "podman-$PodmanVersion-setup.exe"
 	Invoke-DownloadFile -url $setupExeUrl -destinationPath $exePath
 
 	# Launch the installer
