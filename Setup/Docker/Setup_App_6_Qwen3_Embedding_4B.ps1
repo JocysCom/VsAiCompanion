@@ -183,6 +183,7 @@ function Install-EmbeddingContainer {
 	Write-Host "  OpenAI-compatible: http://localhost:$global:Port/v1/embeddings" -ForegroundColor Cyan
 	Write-Host "`nExample curl command:" -ForegroundColor Yellow
 	Write-Host "  curl http://localhost:$global:Port/api/embed -d '{`"model`": `"qwen3-embedding:4b`", `"input`": `"Your text`"}'" -ForegroundColor Cyan
+	Write-Host "  curl http://localhost:$global:Port/v1/embeddings -d '{`"model`": `"qwen3-embedding:4b`", `"input`": `"Your text`"}'" -ForegroundColor Cyan
 
 	Update-AspireManifest
 }
