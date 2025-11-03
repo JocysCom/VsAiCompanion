@@ -120,8 +120,93 @@ Write-Host "  Volume: $global:volumeName"
 #############################################
 # Engine Selection
 #############################################
-$global:containerEngine = "podman"
+$global:containerEngine = Select-ContainerEngine
+# Exit if no engine was selected
+if (-not $global:containerEngine) {
+	Write-Warning "No container engine selected. Exiting script."
+	exit 1
+}
+# Set engine-specific options
+if ($global:containerEngine -eq "docker") {
+	Test-AdminPrivilege
+	$global:pullOptions = @()
+}
+else {
+	$global:pullOptions = @("--tls-verify=false")
+}
+# Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
+
+#############################################
+# GPU Configuration
+#############################################
+$global:useGpu = $true           # Set to $false to force CPU-only mode
+$global:gpuDeviceIds = "all"     # Use "all" or specific IDs like "0" or "0,1"
+
+#==============================================================================
+# Function: Test-GpuAvailability
+#==============================================================================
+<#
+.SYNOPSIS
+	Tests if GPU/CUDA is available for the container engine.
+.DESCRIPTION
+	Checks if NVIDIA GPU is available by attempting to run nvidia-smi
+	and verifying the container engine supports GPU devices.
+.OUTPUTS
+	[bool] Returns $true if GPU is available and usable, $false otherwise.
+.NOTES
+	For Docker: Requires nvidia-docker2 runtime
+	For Podman: Requires nvidia-container-toolkit
+#>
+function Test-GpuAvailability {
+	[CmdletBinding()]
+	param()
+
+	try {
+		Write-Host "Checking GPU availability..." -ForegroundColor Yellow
+
+		# Check if nvidia-smi is available on the host
+		$nvidiaSmi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
+		if (-not $nvidiaSmi) {
+			Write-Warning "nvidia-smi not found. GPU support not available."
+			return $false
+		}
+
+		# Test nvidia-smi execution
+		$result = nvidia-smi --query-gpu=name --format=csv,noheader 2>&1
+		if ($LASTEXITCODE -ne 0) {
+			Write-Warning "nvidia-smi failed to execute. GPU may not be properly configured."
+			return $false
+		}
+
+		Write-Host "  Detected GPU(s): $result" -ForegroundColor Green
+
+		# Check container engine GPU support
+		if ($global:enginePath -match "docker") {
+			Write-Host "  Testing Docker GPU access..." -ForegroundColor Yellow
+			$testResult = & $global:enginePath run --rm --gpus all nvidia/cuda:12.0.0-base-ubuntu22.04 nvidia-smi 2>&1
+			if ($LASTEXITCODE -eq 0) {
+				Write-Host "  ✅ Docker GPU support verified." -ForegroundColor Green
+				return $true
+			} else {
+				Write-Warning "Docker GPU test failed."
+				Write-Warning "Install nvidia-docker2: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
+				return $false
+			}
+		} elseif ($global:enginePath -match "podman") {
+			Write-Host "  ✅ Podman detected. GPU support via CDI." -ForegroundColor Green
+			Write-Host "     Container will attempt to use GPU if available." -ForegroundColor Cyan
+			Write-Host "     Check container logs after startup to verify GPU usage." -ForegroundColor Cyan
+			return $true
+		}
+
+		return $false
+	}
+	catch {
+		Write-Warning "Error checking GPU availability: $_"
+		return $false
+	}
+}
 
 #==============================================================================
 # Function: Install-EmbeddingContainer
@@ -144,6 +229,20 @@ function Install-EmbeddingContainer {
 
 	Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $global:volumeName
 
+	# Check GPU availability
+	$gpuAvailable = $false
+	if ($global:useGpu) {
+		$gpuAvailable = Test-GpuAvailability
+		if (-not $gpuAvailable) {
+			Write-Warning "GPU not available or not configured. Falling back to CPU mode."
+			Write-Warning "Installation will be slower. For GPU support, install:"
+			Write-Warning "  Docker: nvidia-docker2 (https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)"
+			Write-Warning "  Podman: nvidia-container-toolkit"
+		}
+	} else {
+		Write-Host "GPU support disabled by configuration. Using CPU mode." -ForegroundColor Yellow
+	}
+
 	Write-Host "Running Ollama container..." -ForegroundColor Yellow
 
 	$runArgs = @(
@@ -153,6 +252,21 @@ function Install-EmbeddingContainer {
 		"--volume", "$($global:volumeName):$global:dataPath",
 		"--restart", "always"
 	)
+
+	# Add GPU support if available
+	if ($gpuAvailable) {
+		if ($global:enginePath -match "docker") {
+			$runArgs += "--gpus"
+			$runArgs += $global:gpuDeviceIds
+			Write-Host "  🚀 Configuring Docker with GPU devices: $($global:gpuDeviceIds)" -ForegroundColor Green
+		} elseif ($global:enginePath -match "podman") {
+			$runArgs += "--device"
+			$runArgs += "nvidia.com/gpu=$($global:gpuDeviceIds)"
+			Write-Host "  🚀 Configuring Podman with GPU devices: $($global:gpuDeviceIds)" -ForegroundColor Green
+		}
+	} else {
+		Write-Host "  ⚠️ Running in CPU-only mode (slower performance)" -ForegroundColor Yellow
+	}
 
 	$runArgs += $global:imageName
 
@@ -181,6 +295,7 @@ function Install-EmbeddingContainer {
 	Write-Host "`nQwen3-Embedding-4B is ready!" -ForegroundColor Green
 	Write-Host "  Ollama API: http://localhost:$global:Port" -ForegroundColor Cyan
 	Write-Host "  OpenAI-compatible: http://localhost:$global:Port/v1/embeddings" -ForegroundColor Cyan
+	Write-Host "  Mode: $(if ($gpuAvailable) { '🚀 GPU-accelerated' } else { '💻 CPU-only' })" -ForegroundColor $(if ($gpuAvailable) { 'Green' } else { 'Yellow' })
 	Write-Host "`nExample curl command:" -ForegroundColor Yellow
 	Write-Host "  curl http://localhost:$global:Port/api/embed -d '{`"model`": `"qwen3-embedding:4b`", `"input`": `"Your text`"}'" -ForegroundColor Cyan
 	Write-Host "  curl http://localhost:$global:Port/v1/embeddings -d '{`"model`": `"qwen3-embedding:4b`", `"input`": `"Your text`"}'" -ForegroundColor Cyan
@@ -287,6 +402,17 @@ function Update-EmbeddingContainer {
 		Write-Warning "Failed to pull latest image."
 	}
 
+	# Check GPU availability
+	$gpuAvailable = $false
+	if ($global:useGpu) {
+		$gpuAvailable = Test-GpuAvailability
+		if (-not $gpuAvailable) {
+			Write-Warning "GPU not available or not configured. Falling back to CPU mode."
+		}
+	} else {
+		Write-Host "GPU support disabled by configuration. Using CPU mode." -ForegroundColor Yellow
+	}
+
 	# Stop and remove container (keep volume)
 	& $global:enginePath stop $global:containerName 2>$null
 	& $global:enginePath rm $global:containerName 2>$null
@@ -297,9 +423,25 @@ function Update-EmbeddingContainer {
 		"--name", $global:containerName,
 		"--publish", "$($global:Port):$global:containerPort",
 		"--volume", "$($global:volumeName):$global:dataPath",
-		"--restart", "always",
-		$global:imageName
+		"--restart", "always"
 	)
+
+	# Add GPU support if available
+	if ($gpuAvailable) {
+		if ($global:enginePath -match "docker") {
+			$runArgs += "--gpus"
+			$runArgs += $global:gpuDeviceIds
+			Write-Host "  🚀 Configuring Docker with GPU devices: $($global:gpuDeviceIds)" -ForegroundColor Green
+		} elseif ($global:enginePath -match "podman") {
+			$runArgs += "--device"
+			$runArgs += "nvidia.com/gpu=$($global:gpuDeviceIds)"
+			Write-Host "  🚀 Configuring Podman with GPU devices: $($global:gpuDeviceIds)" -ForegroundColor Green
+		}
+	} else {
+		Write-Host "  ⚠️ Running in CPU-only mode (slower performance)" -ForegroundColor Yellow
+	}
+
+	$runArgs += $global:imageName
 
 	& $global:enginePath run $runArgs
 	if ($LASTEXITCODE -ne 0) {
@@ -425,7 +567,7 @@ function Test-OpenAIAPI {
 # Main Menu Loop
 ################################################################################
 
-$menuTitle = "Qwen3-Embedding-4B Container Menu (Ollama/Podman)"
+$menuTitle = "Qwen3-Embedding-4B Container Menu (Ollama/$global:containerEngine)"
 $menuItems = [ordered]@{
 	"1" = "Show Info & Test Connection"
 	"2" = "Install container"

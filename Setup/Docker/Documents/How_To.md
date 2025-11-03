@@ -2,16 +2,30 @@
 
 ```text
 Windows 11                        ← real, bare-metal host
+│
+├── NVIDIA GPU Driver (installed on Windows)
+│   └── nvidia-smi.exe (C:\Windows\System32\)
+│
 └── WSL2 subsystem (type-2 hypervisor built into Windows)  ← virtualisation layer
-    ├── WSL2 distro “Ubuntu”          ← totally unrelated to Podman; your normal Linux userland
-    │   └── login shell: bash         ← normal apps you start under Ubuntu
     │
-    └── WSL2 distro “podman-machine-default” (Fedora CoreOS image)  ← **Podman Host VM**
-        └── login shell: bash         ← what you reach with `podman machine ssh`
-            └── podman (rootless) daemon  ← container engine running as that user
-                └── container “n8n”       ← Linux container, NOT a VM
-                    ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root n8n /bin/sh`
-                    └── node /usr/bin/n8n ← the real application
+    └── WSL2 distro "podman-machine-default" (Fedora CoreOS image)  ← **Podman Host VM**
+        │
+        ├── NVIDIA Container Toolkit ← INSTALLED HERE (Option 5)
+        │   ├── nvidia-ctk
+        │   └── CDI specifications: /etc/cdi/nvidia.yaml, /var/run/cdi/nvidia.yaml
+        │
+        ├── login shell: bash         ← what you reach with `podman machine ssh`
+        │
+        └── podman (rootless) daemon  ← container engine running as that user
+            │
+            ├── container "n8n"       ← Linux container, NOT a VM
+            │   ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root n8n /bin/sh`
+            │   └── node /usr/bin/n8n ← the real application
+            │
+            └── container "qwen3-embedding-4b" ← Linux container, NOT a VM
+                ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root qwen3-embedding-4b /bin/sh`
+                ├── ollama serve      ← the real application
+                └── GPU access via: --device nvidia.com/gpu=all
 ```
 
 ```powershell
