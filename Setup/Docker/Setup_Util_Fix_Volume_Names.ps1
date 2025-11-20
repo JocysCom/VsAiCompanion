@@ -77,28 +77,38 @@ function Get-ContainerVolumeInfo {
 
         Write-Verbose "Inspecting container: $containerName"
 
-        $volumeInfo = & $global:enginePath inspect $containerName --format "{{range .Mounts}}{{if eq .Type `"volume`"}}{{.Name}}|{{.Destination}};{{end}}{{end}}" 2>$null
+        $inspectJson = & $global:enginePath inspect $containerName 2>$null
+        if (-not $inspectJson) { continue }
 
-        if ($volumeInfo -and $volumeInfo -ne "") {
-            $volumes = $volumeInfo -split ";" | Where-Object { $_ -ne "" }
+        $configObjects = $inspectJson | ConvertFrom-Json
+        if (-not $configObjects) { continue }
 
-            foreach ($vol in $volumes) {
-                $parts = $vol -split "\|"
-                if ($parts.Count -eq 2) {
-                    $volumeName = $parts[0].Trim()
-                    $mountPath = $parts[1].Trim()
+        if ($configObjects -is [array]) {
+            if ($configObjects.Count -eq 0) { continue }
+            $config = $configObjects[0]
+        }
+        else {
+            $config = $configObjects
+        }
 
-                    $expectedVolumeName = "$containerName-data"
-                    $matchesPattern = $volumeName -eq $expectedVolumeName
+        if (-not $config.Mounts) { continue }
 
-                    $results += [PSCustomObject]@{
-                        ContainerName = $containerName
-                        VolumeName = $volumeName
-                        MountPath = $mountPath
-                        ExpectedName = $expectedVolumeName
-                        MatchesPattern = $matchesPattern
-                    }
-                }
+        foreach ($mount in $config.Mounts) {
+            if ($mount.Type -ne "volume") { continue }
+            if ([string]::IsNullOrWhiteSpace($mount.Name)) { continue }
+
+            $volumeName = $mount.Name.Trim()
+            $mountPath = $mount.Destination
+
+            $expectedVolumeName = "$containerName-data"
+            $matchesPattern = $volumeName -eq $expectedVolumeName
+
+            $results += [PSCustomObject]@{
+                ContainerName  = $containerName
+                VolumeName     = $volumeName
+                MountPath      = $mountPath
+                ExpectedName   = $expectedVolumeName
+                MatchesPattern = $matchesPattern
             }
         }
     }
