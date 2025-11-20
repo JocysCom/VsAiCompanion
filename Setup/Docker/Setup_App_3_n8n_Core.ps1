@@ -334,17 +334,25 @@ function Start-n8nContainer {
 		[bool]$UseDNS = $false
 	)
 
-	# Get the host's IP as seen by Podman/WSL2
-	$HostIpForContainer = (& $global:enginePath machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2").Trim()
-	if (-not [string]::IsNullOrWhiteSpace($HostIpForContainer)) {
-		Write-Host "Host IP for container: $HostIpForContainer"
-	} else {
-		Write-Error "Could not determine host IP for container."
+	# Determine host IP for container networking (optional)
+	$HostIpForContainer = $null
+	$addHost = $false
+	try {
+		$hostIpRaw = & $global:enginePath machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2"
+		if (-not [string]::IsNullOrWhiteSpace($hostIpRaw)) {
+			$HostIpForContainer = $hostIpRaw.Trim()
+			Write-Host "Host IP for container: $HostIpForContainer"
+			$addHost = $true
+		} else {
+			Write-Warning "Could not determine host IP for container. Skipping custom --add-host mapping."
+		}
+	}
+	catch {
+		Write-Warning "Failed to query host IP using '$global:enginePath machine ssh'. Skipping custom --add-host mapping."
 	}
 
 	# Build the run command
 	$runOptions = @(
-		"--add-host", "host.local:$HostIpForContainer",
 		"--memory",      $config.memoryLimit,
 		"--memory-swap", $config.memorySwap,
 		"--detach", # Run container in background.
@@ -355,6 +363,9 @@ function Start-n8nContainer {
 		#"--cap-add", "NET_RAW",
 		#"--cap-add", "NET_ADMIN",
 	)
+	if ($addHost) {
+		$runOptions = @("--add-host", "host.local:$HostIpForContainer") + $runOptions
+	}
 
 	# Add self-signed certificate acceptance if requested
 	if ($AcceptSelfSigned) {
