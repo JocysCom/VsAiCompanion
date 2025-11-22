@@ -20,17 +20,53 @@ using namespace System.Diagnostics.CodeAnalysis
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "neo4j:5.22.0"
 $global:containerName = "neo4j"
-$global:boltPort = 7687
-$global:httpPort = 7474
-$global:volumeName = "neo4j_data"
-$global:volumeMountPath = "/data"
-$global:networkName = "podman" # Reverted to "podman" as per user instruction
-$global:neo4jPassword = "zepzepzep" # From docker-compose.ce.yaml
+
+# Load configuration from Aspire manifest
+$ManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.zep.json"
+if (-not (Test-Path -LiteralPath $ManifestPath)) {
+    throw "Manifest file not found: $ManifestPath"
+}
+
+$manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'neo4j'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+    imageName     = $manifestConfig.properties.image
+    volumeName    = $manifestConfig.properties.volumes[0].name
+    httpContainerPort = ($manifestConfig.properties.bindings | Where-Object { $_.name -eq 'http' }).containerPort
+    httpHostPort      = ($manifestConfig.properties.bindings | Where-Object { $_.name -eq 'http' }).hostPort
+    boltContainerPort = ($manifestConfig.properties.bindings | Where-Object { $_.name -eq 'bolt' }).containerPort
+    boltHostPort      = ($manifestConfig.properties.bindings | Where-Object { $_.name -eq 'bolt' }).hostPort
+    dataPath      = $manifestConfig.properties.volumes[0].containerPath
+    restartPolicy = $manifestConfig.properties.restart
+    environment   = $manifestConfig.properties.environment
+    networkName   = $manifestConfig.properties.networks[0].name
+    networkAlias  = $manifestConfig.properties.networks[0].alias
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+    $name = $property.Name
+    $value = $property.Value
+    if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+        Write-Error "Configuration property '$name' is missing or empty in manifest."
+        exit 1
+    }
+    Write-Host "  $($name): $value"
+}
+
+# Set global variables for backward compatibility and helper functions
+$global:imageName = $config.imageName
+$global:volumeName = $config.volumeName
+$global:httpPort = $config.httpHostPort
+$global:boltPort = $config.boltHostPort
+$global:volumeMountPath = $config.dataPath
+$global:networkName = $config.networkName
+$global:neo4jPassword = $config.environment.NEO4J_AUTH.Split('/')[1]
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -161,11 +197,13 @@ function Start-Neo4jContainer {
 	$runOptions = @(
 		"--env", "TZ=Europe/London", # Removed --add-host "host.local:$HostIpForContainer"
 		"--detach", # Run container in background.
-		"--publish", "$($global:httpPort):7474", # Map host HTTP port to container HTTP port.
-		"--publish", "$($global:boltPort):7687", # Map host Bolt port to container Bolt port.
-		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data.
+		"--publish", "$($config.httpHostPort):$($config.httpContainerPort)", # Map host HTTP port to container HTTP port.
+		"--publish", "$($config.boltHostPort):$($config.boltContainerPort)", # Map host Bolt port to container Bolt port.
+		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data.
 		"--name", $global:containerName, # Assign a name to the container.
-		"--network", $global:networkName # Connect to the default network
+		"--network", $config.networkName, # Connect to the default network
+		      "--network-alias", $config.networkAlias,
+		      "--restart", $config.restartPolicy
 	)
 
 	# Add all environment variables

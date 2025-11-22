@@ -20,19 +20,53 @@ using namespace System.Diagnostics.CodeAnalysis
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "pgvector/pgvector:pg16"
 $global:containerName = "zep-db"
-$global:volumeName = "zep-db_data"
-$global:containerPort = 5433
-$global:volumeMountPath = "/var/lib/postgresql/data"
-$global:postgresUser = "postgres"
-$global:postgresPassword = "postgres"
-$global:postgresDb = "zep"
-$global:networkName = "podman"
-$global:networkAlias = "zep-db"
+
+# Load configuration from Aspire manifest
+$ManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.zep.json"
+if (-not (Test-Path -LiteralPath $ManifestPath)) {
+    throw "Manifest file not found: $ManifestPath"
+}
+
+$manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'zep-db'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+    imageName     = $manifestConfig.properties.image
+    volumeName    = $manifestConfig.properties.volumes[0].name
+    containerPort = $manifestConfig.properties.bindings[0].containerPort
+    hostPort      = $manifestConfig.properties.bindings[0].hostPort
+    dataPath      = $manifestConfig.properties.volumes[0].containerPath
+    restartPolicy = $manifestConfig.properties.restart
+    environment   = $manifestConfig.properties.environment
+    networkName   = $manifestConfig.properties.networks[0].name
+    networkAlias  = $manifestConfig.properties.networks[0].alias
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+    $name = $property.Name
+    $value = $property.Value
+    if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+        Write-Error "Configuration property '$name' is missing or empty in manifest."
+        exit 1
+    }
+    Write-Host "  $($name): $value"
+}
+
+# Set global variables for backward compatibility and helper functions
+$global:imageName = $config.imageName
+$global:volumeName = $config.volumeName
+$global:containerPort = $config.hostPort # Use host port for external access
+$global:volumeMountPath = $config.dataPath
+$global:postgresUser = $config.environment.POSTGRES_USER
+$global:postgresPassword = $config.environment.POSTGRES_PASSWORD
+$global:postgresDb = $config.environment.POSTGRES_DB
+$global:networkName = $config.networkName
+$global:networkAlias = $config.networkAlias
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -326,11 +360,12 @@ function Start-PostgresContainer {
 	# Build the run command
 	$runOptions = @(
 		"--detach", # Run container in background
-		"--publish", "$($global:containerPort):5432", # Map host port 5433 to container's default PostgreSQL port 5432
-		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port
+		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data
 		"--name", $global:containerName, # Assign a name to the container
-		"--network", $global:networkName, # Connect to the network
-		"--network-alias", $global:networkAlias # Set network alias for other containers to connect
+		"--network", $config.networkName, # Connect to the network
+		"--network-alias", $config.networkAlias, # Set network alias for other containers to connect
+		      "--restart", $config.restartPolicy
 	)
 
 	# Add all environment variables

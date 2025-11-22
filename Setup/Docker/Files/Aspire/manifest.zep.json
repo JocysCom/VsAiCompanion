@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "0.1",
+  "resources": {
+    "zep-db": {
+      "type": "container.v0",
+      "properties": {
+        "image": "pgvector/pgvector:pg16",
+        "bindings": [
+          {
+            "name": "tcp",
+            "protocol": "tcp",
+            "containerPort": 5432,
+            "hostPort": 5433
+          }
+        ],
+        "volumes": [
+          {
+            "name": "zep-db_data",
+            "containerPath": "/var/lib/postgresql/data",
+            "type": "named"
+          }
+        ],
+        "networks": [
+          {
+            "name": "podman",
+            "alias": "zep-db"
+          }
+        ],
+        "environment": {
+          "POSTGRES_USER": "postgres",
+          "POSTGRES_PASSWORD": "postgres",
+          "POSTGRES_DB": "zep"
+        },
+        "restart": "always"
+      }
+    },
+    "neo4j": {
+      "type": "container.v0",
+      "properties": {
+        "image": "neo4j:5.22.0",
+        "bindings": [
+          {
+            "name": "http",
+            "protocol": "tcp",
+            "containerPort": 7474,
+            "hostPort": 7474
+          },
+          {
+            "name": "bolt",
+            "protocol": "tcp",
+            "containerPort": 7687,
+            "hostPort": 7687
+          }
+        ],
+        "volumes": [
+          {
+            "name": "neo4j_data",
+            "containerPath": "/data",
+            "type": "named"
+          }
+        ],
+        "networks": [
+          {
+            "name": "podman",
+            "alias": "neo4j"
+          }
+        ],
+        "environment": {
+          "NEO4J_AUTH": "neo4j/zepzepzep"
+        },
+        "restart": "always"
+      }
+    },
+    "graphiti": {
+      "type": "container.v0",
+      "properties": {
+        "image": "zepai/graphiti:0.3",
+        "bindings": [
+          {
+            "name": "http",
+            "protocol": "tcp",
+            "containerPort": 8003,
+            "hostPort": 8003
+          }
+        ],
+        "networks": [
+          {
+            "name": "podman",
+            "alias": "graphiti"
+          }
+        ],
+        "environment": {
+          "MODEL_NAME": "gpt-4.1",
+          "NEO4J_URI": "bolt://neo4j:7687",
+          "NEO4J_USER": "neo4j",
+          "NEO4J_PASSWORD": "zepzepzep",
+          "PORT": "8003",
+          "OPENAI_API_KEY": "dummy_openai_api_key"
+        },
+        "restart": "always",
+        "dependencies": [
+          "neo4j"
+        ]
+      }
+    },
+    "zep": {
+      "type": "container.v0",
+      "properties": {
+        "image": "zepai/zep:latest",
+        "bindings": [
+          {
+            "name": "http",
+            "protocol": "tcp",
+            "containerPort": 8000,
+            "hostPort": 8004
+          }
+        ],
+        "volumes": [
+          {
+            "name": "zep_data",
+            "containerPath": "/app/data",
+            "type": "named"
+          }
+        ],
+        "networks": [
+          {
+            "name": "podman",
+            "alias": "zep"
+          }
+        ],
+        "environment": {
+          "ZEP_DEVELOPMENT": "false",
+          "ZEP_LOG_LEVEL": "debug",
+          "ZEP_OPENAI_API_KEY": "dummy_zep_openai_api_key",
+          "ZEP_AUTH_REQUIRED": "true",
+          "ZEP_AUTH_SECRET": "dummy_zep_api_secret",
+          "ZEP_CONFIG_FILE": "/app/zep.yaml"
+        },
+        "restart": "always",
+        "dependencies": [
+          "zep-db",
+          "neo4j",
+          "graphiti"
+        ]
+      }
+    }
+  }
+}

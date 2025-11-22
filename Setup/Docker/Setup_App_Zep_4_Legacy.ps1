@@ -25,36 +25,91 @@ using namespace System.Diagnostics.CodeAnalysis
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "zepai/zep:latest"
 $global:containerName = "zep"
-$global:volumeName = "zep_data"
-$global:containerPort = 8004
-$global:volumeMountPath = "/app/data"
-$global:zepOpenAiApiKey = "dummy_zep_openai_api_key"
-$global:zepApiSecret = "dummy_zep_api_secret"
-$global:networkName = "podman"
-$global:postgresContainerName = "zep-db"
-$global:postgresUser = "postgres"
-$global:postgresPassword = "postgres"
-$global:postgresDb = "zep"
-$global:postgresPort = 5433
-$global:postgresInternalPort = 5432
 
-# New global variables for Graphiti and Neo4j
-$global:graphitiImageName = "zepai/graphiti:0.3"
-$global:graphitiContainerName = "graphiti"
-$global:graphitiPort = 8003
+# Load configuration from Aspire manifest
+$ManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.zep.json"
+if (-not (Test-Path -LiteralPath $ManifestPath)) {
+    throw "Manifest file not found: $ManifestPath"
+}
 
-$global:neo4jImageName = "neo4j:5.22.0"
-$global:neo4jContainerName = "neo4j"
-$global:neo4jBoltPort = 7687
-$global:neo4jHttpPort = 7474
-$global:neo4jVolumeName = "neo4j_data"
-$global:neo4jPassword = "zepzepzep"
+$manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'zep'
+$postgresConfig = $manifest.resources.'zep-db'
+$neo4jConfig = $manifest.resources.'neo4j'
+$graphitiConfig = $manifest.resources.'graphiti'
 
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+    imageName     = $manifestConfig.properties.image
+    volumeName    = $manifestConfig.properties.volumes[0].name
+    containerPort = $manifestConfig.properties.bindings[0].containerPort
+    hostPort      = $manifestConfig.properties.bindings[0].hostPort
+    dataPath      = $manifestConfig.properties.volumes[0].containerPath
+    restartPolicy = $manifestConfig.properties.restart
+    environment   = $manifestConfig.properties.environment
+    networkName   = $manifestConfig.properties.networks[0].name
+    networkAlias  = $manifestConfig.properties.networks[0].alias
+    
+    # Dependencies
+    postgresContainerName = "zep-db"
+    postgresUser          = $postgresConfig.properties.environment.POSTGRES_USER
+    postgresPassword      = $postgresConfig.properties.environment.POSTGRES_PASSWORD
+    postgresDb            = $postgresConfig.properties.environment.POSTGRES_DB
+    postgresHostPort      = $postgresConfig.properties.bindings[0].hostPort
+    postgresInternalPort  = $postgresConfig.properties.bindings[0].containerPort
+
+    graphitiContainerName = "graphiti"
+    graphitiImageName     = $graphitiConfig.properties.image
+    graphitiHostPort      = $graphitiConfig.properties.bindings[0].hostPort
+
+    neo4jContainerName    = "neo4j"
+    neo4jImageName        = $neo4jConfig.properties.image
+    neo4jBoltHostPort     = ($neo4jConfig.properties.bindings | Where-Object { $_.name -eq 'bolt' }).hostPort
+    neo4jHttpHostPort     = ($neo4jConfig.properties.bindings | Where-Object { $_.name -eq 'http' }).hostPort
+    neo4jVolumeName       = $neo4jConfig.properties.volumes[0].name
+    neo4jPassword         = $neo4jConfig.properties.environment.NEO4J_AUTH.Split('/')[1]
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+    $name = $property.Name
+    $value = $property.Value
+    if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+        Write-Error "Configuration property '$name' is missing or empty in manifest."
+        exit 1
+    }
+    Write-Host "  $($name): $value"
+}
+
+# Set global variables for backward compatibility and helper functions
+$global:imageName = $config.imageName
+$global:volumeName = $config.volumeName
+$global:containerPort = $config.hostPort
+$global:volumeMountPath = $config.dataPath
+$global:zepOpenAiApiKey = $config.environment.ZEP_OPENAI_API_KEY
+$global:zepApiSecret = $config.environment.ZEP_AUTH_SECRET
+$global:networkName = $config.networkName
+
+$global:postgresContainerName = $config.postgresContainerName
+$global:postgresUser = $config.postgresUser
+$global:postgresPassword = $config.postgresPassword
+$global:postgresDb = $config.postgresDb
+$global:postgresPort = $config.postgresHostPort
+$global:postgresInternalPort = $config.postgresInternalPort
+
+$global:graphitiImageName = $config.graphitiImageName
+$global:graphitiContainerName = $config.graphitiContainerName
+$global:graphitiPort = $config.graphitiHostPort
+
+$global:neo4jImageName = $config.neo4jImageName
+$global:neo4jContainerName = $config.neo4jContainerName
+$global:neo4jBoltPort = $config.neo4jBoltPort
+$global:neo4jHttpPort = $config.neo4jHttpHostPort
+$global:neo4jVolumeName = $config.neo4jVolumeName
+$global:neo4jPassword = $config.neo4jPassword
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -336,54 +391,17 @@ function Get-ZepContainerConfig {
 		Write-Host "Container '$global:containerName' not found. Using default settings for environment."
 	}
 
-	# Set basic ZEP environment variables
-	$envVars += "ZEP_DEVELOPMENT=false"
-	$envVars += "ZEP_LOG_LEVEL=debug"
+	# Set basic ZEP environment variables from manifest
+	   foreach ($key in $config.environment.PSObject.Properties.Name) {
+	       # Skip ZEP_OPENAI_API_KEY and ZEP_AUTH_SECRET as they are handled separately or passed via EnvVars
+	       if ($key -ne "ZEP_OPENAI_API_KEY" -and $key -ne "ZEP_AUTH_SECRET") {
+	            $envVars += "$key=$($config.environment.$key)"
+	       }
+	   }
 
-	# Note: PostgreSQL configuration is handled via zep.yaml config file
-	# No need to set ZEP_STORE_TYPE, ZEP_DATABASE__URL, or ZEP_STORE_POSTGRES_DSN environment variables
-
-	# Use consistent ZEP API key from global variable (required by ZEP)
-	$apiKeyExists = $false
-	foreach ($env in $envVars) {
-		if ($env -match "^(ZEP_OPENAI_API_KEY)=") {
-			$apiKeyExists = $true
-			break
-		}
-	}
-	if (-not $apiKeyExists) {
-		$envVars += "ZEP_OPENAI_API_KEY=$global:zepOpenAiApiKey"
-	}
-
-	# Set ZEP authentication variables (required for Zep to start)
-	$authRequiredExists = $false
-	$authSecretExists = $false
-	foreach ($env in $envVars) {
-		if ($env -match "^ZEP_AUTH_REQUIRED=") {
-			$authRequiredExists = $true
-		}
-		if ($env -match "^ZEP_AUTH_SECRET=") {
-			$authSecretExists = $true
-		}
-	}
-	if (-not $authRequiredExists) {
-		$envVars += "ZEP_AUTH_REQUIRED=true"
-	}
-	if (-not $authSecretExists) {
-		$envVars += "ZEP_AUTH_SECRET=$global:zepApiSecret"
-	}
-
-	# Set ZEP_CONFIG_FILE to point to the mounted config file
-	$configFileExists = $false
-	foreach ($env in $envVars) {
-		if ($env -match "^ZEP_CONFIG_FILE=") {
-			$configFileExists = $true
-			break
-		}
-	}
-	if (-not $configFileExists) {
-		$envVars += "ZEP_CONFIG_FILE=/app/zep.yaml" # Changed from /app/config.yaml to /app/zep.yaml
-	}
+	   # Ensure API Key and Secret are present (either from manifest or user input/global)
+	   $envVars += "ZEP_OPENAI_API_KEY=$global:zepOpenAiApiKey"
+	   $envVars += "ZEP_AUTH_SECRET=$global:zepApiSecret"
 
 	# Return a custom object
 	return [PSCustomObject]@{
@@ -476,11 +494,13 @@ function Start-ZepContainer {
 	$runOptions = @(
 		"--env", "TZ=Europe/London",
 		"--detach", # Run container in background.
-		"--publish", "$($global:containerPort):8000", # Map host port 8000 to container port 8000.
-		"--volume", "$($global:volumeName):$($global:volumeMountPath)", # Mount the named volume for persistent data.
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port.
+		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data.
 		"--volume", "/root/zep.yaml:/app/zep.yaml", # Mount zep.yaml from VM path
 		"--name", $global:containerName, # Assign a name to the container.
-		"--network", $global:networkName # Connect to the same network as PostgreSQL, Graphiti, Neo4j
+		"--network", $config.networkName, # Connect to the same network as PostgreSQL, Graphiti, Neo4j
+		      "--network-alias", $config.networkAlias,
+		      "--restart", $config.restartPolicy
 	)
 
 	# Add all environment variables

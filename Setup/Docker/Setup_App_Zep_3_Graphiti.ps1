@@ -20,20 +20,58 @@ using namespace System.Diagnostics.CodeAnalysis
 Set-ScriptLocation
 
 #############################################
-# Global Variables
+# Global Configuration
 #############################################
-# Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "zepai/graphiti:0.3"
 $global:containerName = "graphiti"
-$global:containerPort = 8003
-$global:networkName = "podman" # Reverted to "podman" as per user instruction
+
+# Load configuration from Aspire manifest
+$ManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.zep.json"
+if (-not (Test-Path -LiteralPath $ManifestPath)) {
+    throw "Manifest file not found: $ManifestPath"
+}
+
+$manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'graphiti'
+$neo4jConfig = $manifest.resources.'neo4j'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+    imageName     = $manifestConfig.properties.image
+    containerPort = $manifestConfig.properties.bindings[0].containerPort
+    hostPort      = $manifestConfig.properties.bindings[0].hostPort
+    restartPolicy = $manifestConfig.properties.restart
+    environment   = $manifestConfig.properties.environment
+    networkName   = $manifestConfig.properties.networks[0].name
+    networkAlias  = $manifestConfig.properties.networks[0].alias
+    neo4jContainerName = "neo4j" # Hardcoded as it's a dependency key in manifest, but we need the actual container name which matches the resource key here
+    neo4jBoltPort = ($neo4jConfig.properties.bindings | Where-Object { $_.name -eq 'bolt' }).hostPort
+    neo4jHttpPort = ($neo4jConfig.properties.bindings | Where-Object { $_.name -eq 'http' }).hostPort
+    neo4jUser     = $manifestConfig.properties.environment.NEO4J_USER
+    neo4jPassword = $manifestConfig.properties.environment.NEO4J_PASSWORD
+}
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+    $name = $property.Name
+    $value = $property.Value
+    if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+        Write-Error "Configuration property '$name' is missing or empty in manifest."
+        exit 1
+    }
+    Write-Host "  $($name): $value"
+}
+
+# Set global variables for backward compatibility and helper functions
+$global:imageName = $config.imageName
+$global:containerPort = $config.hostPort
+$global:networkName = $config.networkName
 
 # New global variables for Neo4j dependency
-$global:neo4jContainerName = "neo4j"
-$global:neo4jBoltPort = 7687
-$global:neo4jHttpPort = 7474
-$global:neo4jUser = "neo4j"
-$global:neo4jPassword = "zepzepzep" # From docker-compose.ce.yaml
+$global:neo4jContainerName = $config.neo4jContainerName
+$global:neo4jBoltPort = $config.neo4jBoltPort
+$global:neo4jHttpPort = $config.neo4jHttpPort
+$global:neo4jUser = $config.neo4jUser
+$global:neo4jPassword = $config.neo4jPassword
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -164,12 +202,13 @@ function Get-GraphitiContainerConfig {
 		Write-Host "Container '$global:containerName' not found. Using default settings for environment."
 	}
 
-	# Set basic Graphiti environment variables from docker-compose.ce.yaml
-	$envVars += "MODEL_NAME=gpt-4.1"
-	$envVars += "NEO4J_URI=bolt://$($global:neo4jContainerName):$($global:neo4jBoltPort)"
-	$envVars += "NEO4J_USER=$($global:neo4jUser)"
-	$envVars += "NEO4J_PASSWORD=$($global:neo4jPassword)"
-	$envVars += "PORT=$($global:containerPort)"
+	# Set basic Graphiti environment variables from manifest
+	   foreach ($key in $config.environment.PSObject.Properties.Name) {
+	       # Skip OPENAI_API_KEY as it is handled separately or passed via EnvVars
+	       if ($key -ne "OPENAI_API_KEY") {
+	            $envVars += "$key=$($config.environment.$key)"
+	       }
+	   }
 
 	# Return a custom object
 	return [PSCustomObject]@{
@@ -234,9 +273,11 @@ function Start-GraphitiContainer {
 	$runOptions = @(
 		"--env", "TZ=Europe/London", # Removed --add-host "host.local:$HostIpForContainer"
 		"--detach", # Run container in background.
-		"--publish", "$($global:containerPort):$($global:containerPort)", # Map host port to container port.
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port.
 		"--name", $global:containerName, # Assign a name to the container.
-		"--network", $global:networkName # Connect to the same network as Neo4j
+		"--network", $config.networkName, # Connect to the same network as Neo4j
+		      "--network-alias", $config.networkAlias,
+		      "--restart", $config.restartPolicy
 	)
 
 	# Add Neo4j hostname mapping for direct IP resolution
