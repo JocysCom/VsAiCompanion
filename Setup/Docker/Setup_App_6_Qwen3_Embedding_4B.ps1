@@ -262,6 +262,7 @@ function Install-EmbeddingContainer {
 		} elseif ($global:enginePath -match "podman") {
 			$runArgs += "--device"
 			$runArgs += "nvidia.com/gpu=$($global:gpuDeviceIds)"
+			$runArgs += "--security-opt=label=disable"
 			Write-Host "  🚀 Configuring Podman with GPU devices: $($global:gpuDeviceIds)" -ForegroundColor Green
 		}
 	} else {
@@ -272,8 +273,18 @@ function Install-EmbeddingContainer {
 
 	& $global:enginePath run $runArgs
 	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to run Ollama container."
-		exit 1
+		if ($global:enginePath -match "podman") {
+			Write-Warning "Failed to run container. Attempting Podman CDI repair..."
+			if (Repair-PodmanCDI -EnginePath $global:enginePath) {
+				Write-Host "Retrying container start..." -ForegroundColor Green
+				& $global:enginePath run $runArgs
+			}
+		}
+
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Failed to run Ollama container."
+			exit 1
+		}
 	}
 
 	Write-Host "Waiting for Ollama to start..." -ForegroundColor Yellow
@@ -435,6 +446,7 @@ function Update-EmbeddingContainer {
 		} elseif ($global:enginePath -match "podman") {
 			$runArgs += "--device"
 			$runArgs += "nvidia.com/gpu=$($global:gpuDeviceIds)"
+			$runArgs += "--security-opt=label=disable"
 			Write-Host "  🚀 Configuring Podman with GPU devices: $($global:gpuDeviceIds)" -ForegroundColor Green
 		}
 	} else {
@@ -445,8 +457,18 @@ function Update-EmbeddingContainer {
 
 	& $global:enginePath run $runArgs
 	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Failed to run updated container."
-		exit 1
+		if ($global:enginePath -match "podman") {
+			Write-Warning "Failed to run container. Attempting Podman CDI repair..."
+			if (Repair-PodmanCDI -EnginePath $global:enginePath) {
+				Write-Host "Retrying container start..." -ForegroundColor Green
+				& $global:enginePath run $runArgs
+			}
+		}
+
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Failed to run updated container."
+			exit 1
+		}
 	}
 
 	Write-Host "Waiting for Ollama..." -ForegroundColor Yellow

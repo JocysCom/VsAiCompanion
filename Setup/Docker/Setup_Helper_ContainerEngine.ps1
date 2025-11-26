@@ -110,4 +110,57 @@ function Select-ContainerEngine {
 	# Scripts should now get the path separately if needed, or rely on global vars set by caller.
 	# Consider returning a hashtable in the future: @{ Name = $script:selectedEngine; Path = $script:enginePath }
 	return $script:selectedEngine
+
+#==============================================================================
+# Function: Repair-PodmanCDI
+#==============================================================================
+<#
+.SYNOPSIS
+	Repairs Podman CDI configuration by regenerating specs.
+.DESCRIPTION
+	Detects if running on Podman Machine (Windows) and regenerates CDI specs to fix conflicting device errors.
+.PARAMETER EnginePath
+	The path to the Podman executable. Mandatory.
+.OUTPUTS
+	[bool] Returns $true if repair was attempted and command succeeded, $false otherwise.
+#>
+function Repair-PodmanCDI {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$EnginePath
+	)
+	Write-Host "Attempting to repair Podman CDI configuration..." -ForegroundColor Yellow
+
+	# Check if we are using Podman Machine (Windows)
+	try {
+		$machineListStr = & $EnginePath machine list --format json 2>$null
+		if (-not [string]::IsNullOrWhiteSpace($machineListStr) -and $machineListStr.Trim().StartsWith("[")) {
+			$machineList = $machineListStr | ConvertFrom-Json
+		}
+	} catch {
+		Write-Warning "Failed to list podman machines: $_"
+	}
+
+	if ($machineList -and $machineList.Count -gt 0) {
+		$machineName = $machineList[0].Name
+		Write-Host "Detected Podman Machine: $machineName" -ForegroundColor Cyan
+
+		# Commands to clean and regenerate CDI
+		$fixCommand = "sudo rm -f /etc/cdi/*.yaml* /var/run/cdi/*.yaml* && sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml && sudo nvidia-ctk cdi generate --output=/var/run/cdi/nvidia.yaml"
+
+		Write-Host "Regenerating CDI specifications..." -ForegroundColor Yellow
+		& $EnginePath machine ssh $machineName $fixCommand
+
+		if ($LASTEXITCODE -eq 0) {
+			Write-Host "CDI repair command executed successfully." -ForegroundColor Green
+			return $true
+		} else {
+			Write-Warning "CDI repair command failed."
+			return $false
+		}
+	} else {
+		Write-Warning "Not using Podman Machine or unable to detect. Cannot auto-repair CDI."
+		return $false
+	}
+}
 }
