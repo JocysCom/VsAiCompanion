@@ -4,9 +4,7 @@
 if ($PSVersionTable.PSEdition -eq 'Core' -and $PSVersionTable.PSVersion -ge [Version]'7.0') {
     Write-Warning "This script is intended to run under Windows PowerShell 5.1 (Desktop), not PowerShell 7."
 	Write-Warning "You're running PowerShell $($PSVersionTable.PSEdition) $($PSVersionTable.PSVersion)."
-	Write-Warning "Please run this script from 'Windows PowerShell' to install or upgrade PowerShell 7 and related modules."
-	pause
-	return
+	Write-Warning "Proceeding with execution, but please be aware that updating PowerShell from within itself may require a restart."
  }
 
 Write-Host "=== Terraform Tools Status ===" -ForegroundColor Cyan
@@ -18,6 +16,39 @@ if (-not (Get-Module Microsoft.WinGet.Client -ListAvailable)) {
 }
 Import-Module Microsoft.WinGet.Client
 
+function Check-WingetUpdate {
+	param (
+		[Parameter(Mandatory = $true)]
+		[string]$Id,
+		[Parameter(Mandatory = $true)]
+		[string]$Name
+	)
+
+	# Get installed version using exact name match
+	$installed = Get-WinGetPackage -Id $Id -MatchOption 'Equals' -ErrorAction SilentlyContinue
+	$local = if ($installed) { $installed.InstalledVersion } else { "Not installed" }
+
+	# Get available version
+	$available = Find-WinGetPackage -Id $Id -MatchOption 'Equals' -ErrorAction SilentlyContinue
+	$remote = if ($available) { $available.Version } else { "Unknown" }
+
+	Write-Host "$($Name): Local=$local | Remote=$remote"
+
+	# Check for Update
+	if ($local -ne "Not installed" -and $remote -ne "Unknown" -and $local -ne $remote) {
+		Write-Host "A new version of $Name is available ($local -> $remote)." -ForegroundColor Yellow
+		$update = Read-Host "Do you want to update $Name now? (y/n)"
+		if ($update -eq 'y') {
+			winget install $Id
+			if ($Name -eq "PowerShell") {
+				Write-Warning "PowerShell has been updated. A restart of the PowerShell session is required."
+				return $true
+			}
+		}
+	}
+	return $false
+}
+
 # Define tools with exact names for WinGet
 $tools = @(
 	@{ Name = "PowerShell"; WinGetName = "PowerShell"; Id = "Microsoft.PowerShell" }
@@ -25,20 +56,11 @@ $tools = @(
 	@{ Name = "Terraform"; WinGetName = "HashiCorp Terraform"; Id = "Hashicorp.Terraform" }
 )
 
-# Display status
+# Display status and check for updates
 for ($i = 0; $i -lt $tools.Count; $i++) {
 	$tool = $tools[$i]
-
-	# Get installed version using exact name match
-	$installed = Get-WinGetPackage -Id $tool.Id -MatchOption 'Equals' -ErrorAction SilentlyContinue
-	$local = if ($installed) { $installed.InstalledVersion } else { "Not installed" }
-
-	# Get available version
-	$available = Find-WinGetPackage -Id $tool.Id -MatchOption 'Equals' -ErrorAction SilentlyContinue
-	$remote = if ($available) { $available.Version } else { "Unknown" }
-
-	Write-Host "$($i+1). $($tool.Name): Local=$local | Remote=$remote"
-
+	Write-Host "$($i+1). " -NoNewline
+	$null = Check-WingetUpdate -Id $tool.Id -Name $tool.Name
 }
 
 $modules = @(
