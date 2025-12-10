@@ -409,7 +409,7 @@ function Start-n8nContainer {
 
 				# Install additional packages automatically
 				Write-Host "Installing additional packages required for n8n workflows..."
-				$packageInstallResult = Install-n8nPackages
+				$packageInstallResult = Install-n8nPackage
 				if ($packageInstallResult) {
 					Write-Host "Additional packages installed successfully."
 				} else {
@@ -606,7 +606,7 @@ function Reset-AdminPassword {
 }
 
 #==============================================================================
-# Function: Install-n8nPackages
+# Function: Install-n8nPackage
 #==============================================================================
 <#
 .SYNOPSIS
@@ -617,9 +617,9 @@ function Reset-AdminPassword {
 	These packages are commonly needed for n8n workflows but are not included in the base image.
 	The installation is performed as root user within the container.
 .EXAMPLE
-	Install-n8nPackages
+	Install-n8nPackage
 .EXAMPLE
-	Install-n8nPackages -WhatIf
+	Install-n8nPackage -WhatIf
 .OUTPUTS
 	[bool] Returns $true if package installation succeeds, $false if installation fails or is skipped due to -WhatIf.
 .NOTES
@@ -627,7 +627,7 @@ function Reset-AdminPassword {
 	Uses global variables $global:enginePath and $global:containerName.
 	Packages installed: ffmpeg (for media processing), zip (for archive operations).
 #>
-function Install-n8nPackages {
+function Install-n8nPackage {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType([bool])]
 	param()

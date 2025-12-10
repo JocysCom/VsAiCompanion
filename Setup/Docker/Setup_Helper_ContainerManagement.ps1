@@ -299,16 +299,19 @@ function Test-ImageUpdateAvailable {
 
 	# Get local image digest and creation info
 	$localDigest = $null
+	$localRepoDigests = @()
 	$localCreated = ""
 	$localSize = ""
 	try {
 		if ($localImageInfo -is [array]) {
 			$localDigest = $localImageInfo[0].Id
+			$localRepoDigests = $localImageInfo[0].RepoDigests
 			$localCreated = $localImageInfo[0].Created
 			$localSize = $localImageInfo[0].Size
 		}
 		else {
 			$localDigest = $localImageInfo.Id
+			$localRepoDigests = $localImageInfo.RepoDigests
 			$localCreated = $localImageInfo.Created
 			$localSize = $localImageInfo.Size
 		}
@@ -329,6 +332,8 @@ function Test-ImageUpdateAvailable {
 	# Use Write-Host for status messages
 	Write-Host "Checking remote registry for latest version..."
 
+	$isManifestDigest = $false
+
 	# Different approach for Docker vs Podman
 	if ($engineType -eq "docker") {
 		# For Docker, we can use the manifest inspect command
@@ -336,6 +341,8 @@ function Test-ImageUpdateAvailable {
 			$remoteDigest = & $Engine manifest inspect $ImageName --verbose 2>$null | ConvertFrom-Json |
 			Select-Object -ExpandProperty Descriptor -ErrorAction SilentlyContinue |
 			Select-Object -ExpandProperty digest -ErrorAction SilentlyContinue
+
+			if ($remoteDigest) { $isManifestDigest = $true }
 		}
 		catch {
 			$remoteDigest = $null
@@ -346,12 +353,17 @@ function Test-ImageUpdateAvailable {
 			Write-Warning "Could not determine remote image digest. Using fallback method."
 			# Fallback method - pull image info
 			& $Engine pull $ImageName 2>&1 | Out-Null
-			$remoteImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
-			if ($remoteImageInfo -is [array]) {
-				$remoteDigest = $remoteImageInfo[0].Id
+			if ($LASTEXITCODE -eq 0) {
+				$remoteImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
+				if ($remoteImageInfo -is [array]) {
+					$remoteDigest = $remoteImageInfo[0].Id
+				}
+				else {
+					$remoteDigest = $remoteImageInfo.Id
+				}
 			}
 			else {
-				$remoteDigest = $remoteImageInfo.Id
+				Write-Warning "Fallback pull failed. Check network connection."
 			}
 		}
 	}
@@ -372,6 +384,8 @@ function Test-ImageUpdateAvailable {
 				$skopeoOutput = & skopeo inspect $skopeoUri --raw 2>$null
 				$skopeoJson = $skopeoOutput | ConvertFrom-Json
 				$remoteDigest = $skopeoJson.config.digest
+
+				if ($remoteDigest) { $isManifestDigest = $true }
 			}
 			catch {
 				$remoteDigest = $null
@@ -384,20 +398,25 @@ function Test-ImageUpdateAvailable {
 			# Use --quiet to avoid downloading the entire image if possible
 			& $Engine pull --quiet $ImageName 2>&1 | Out-Null
 
-			# Tag it temporarily to avoid affecting the current image
-			& $Engine tag $ImageName $tempTag 2>&1 | Out-Null
+			if ($LASTEXITCODE -eq 0) {
+				# Tag it temporarily to avoid affecting the current image
+				& $Engine tag $ImageName $tempTag 2>&1 | Out-Null
 
-			# Get the digest
-			$remoteImageInfo = & $Engine inspect $tempTag 2>$null | ConvertFrom-Json
-			if ($remoteImageInfo -is [array]) {
-				$remoteDigest = $remoteImageInfo[0].Id
+				# Get the digest
+				$remoteImageInfo = & $Engine inspect $tempTag 2>$null | ConvertFrom-Json
+				if ($remoteImageInfo -is [array]) {
+					$remoteDigest = $remoteImageInfo[0].Id
+				}
+				else {
+					$remoteDigest = $remoteImageInfo.Id
+				}
+
+				# Remove the temporary tag
+				& $Engine rmi $tempTag 2>&1 | Out-Null
 			}
 			else {
-				$remoteDigest = $remoteImageInfo.Id
+				Write-Warning "Fallback pull failed. Check network connection."
 			}
-
-			# Remove the temporary tag
-			& $Engine rmi $tempTag 2>&1 | Out-Null
 		}
 	}
 
@@ -468,11 +487,31 @@ function Test-ImageUpdateAvailable {
 	Write-Host ""
 
 	# Compare digests
-	if ($localDigest -ne $remoteDigest) {
+	$updateAvailable = $false
+	if ($isManifestDigest) {
+		# If remote is a manifest digest, check if it's in the local image's RepoDigests
+		if ($localRepoDigests -match $remoteDigest) {
+			$updateAvailable = $false
+		} else {
+			$updateAvailable = $true
+		}
+	} else {
+		# If remote is an image ID (from pull fallback), compare strictly
+		if ($localDigest -ne $remoteDigest) {
+			$updateAvailable = $true
+		}
+	}
+
+	if ($updateAvailable) {
 		# Use Write-Host for status messages
 		Write-Host "Update available! Local and remote image digests differ." -ForegroundColor Green
-		Write-Host "Local digest : $localDigest" -ForegroundColor Yellow
-		Write-Host "Remote digest: $remoteDigest" -ForegroundColor Yellow
+		if ($isManifestDigest) {
+			Write-Host "Local digest (ID)  : $localDigest" -ForegroundColor Yellow
+			Write-Host "Remote digest (Man): $remoteDigest" -ForegroundColor Yellow
+		} else {
+			Write-Host "Local digest : $localDigest" -ForegroundColor Yellow
+			Write-Host "Remote digest: $remoteDigest" -ForegroundColor Yellow
+		}
 
 		# Ask user if they want to proceed with update
 		$proceedWithUpdate = Read-Host "Do you want to proceed with the update? This will stop and remove the current container. (Y/N, default is Y)"
@@ -506,8 +545,8 @@ function Test-ImageUpdateAvailable {
 	This simplified function focuses on the non-interactive parts of an update:
 	1. Checks if the container exists.
 	2. Checks if a remote image update is available using Test-ImageUpdateAvailable (prompts to force if not).
-	3. Removes the existing container using Remove-ContainerAndVolume (which handles ShouldProcess and optional volume removal).
-	4. Pulls the latest version of the specified image using Invoke-PullImage (which handles ShouldProcess).
+	3. Pulls the latest version of the specified image using Invoke-PullImage (which handles ShouldProcess).
+	4. Removes the existing container using Remove-ContainerAndVolume (which handles ShouldProcess and optional volume removal).
 	It does NOT handle backup, restore, or starting the new container. These steps should be
 	orchestrated by the calling script (e.g., the menu action).
 .PARAMETER Engine
@@ -571,15 +610,7 @@ function Update-Container {
 	}
 	Write-Host "Update available or forced. Proceeding..."
 
-	# Step 3: Remove the existing container (Remove-ContainerAndVolume handles ShouldProcess and volume prompt)
-	Write-Host "Removing existing container '$ContainerName'..."
-	if (-not (Remove-ContainerAndVolume -Engine $Engine -ContainerName $ContainerName -VolumeName $VolumeName)) {
-		Write-Error "Failed to remove container '$ContainerName' or action skipped. Update aborted."
-		return $false
-	}
-	Write-Host "Existing container removed."
-
-	# Step 4: Pull the latest image (Invoke-PullImage handles ShouldProcess)
+	# Step 3: Pull the latest image (Invoke-PullImage handles ShouldProcess)
 	Write-Host "Pulling latest image '$ImageName'..."
 	if (-not (Invoke-PullImage -Engine $Engine -ImageName $ImageName -PullOptions @("--platform", $Platform))) {
 		Write-Error "Failed to pull the latest image or action skipped. Update aborted."
@@ -588,8 +619,16 @@ function Update-Container {
 	}
 	Write-Host "Image '$ImageName' pulled successfully."
 
-	# Indicate that the core update steps (check, remove, pull) were successful
-	Write-Host "Update pre-check, removal, and image pull completed successfully."
+	# Step 4: Remove the existing container (Remove-ContainerAndVolume handles ShouldProcess and volume prompt)
+	Write-Host "Removing existing container '$ContainerName'..."
+	if (-not (Remove-ContainerAndVolume -Engine $Engine -ContainerName $ContainerName -VolumeName $VolumeName)) {
+		Write-Error "Failed to remove container '$ContainerName' or action skipped. Update aborted."
+		return $false
+	}
+	Write-Host "Existing container removed."
+
+	# Indicate that the core update steps (check, pull, remove) were successful
+	Write-Host "Update pre-check, image pull, and container removal completed successfully."
 	return $true
 }
 

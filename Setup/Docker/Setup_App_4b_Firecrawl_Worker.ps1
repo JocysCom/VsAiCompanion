@@ -92,7 +92,7 @@ foreach ($property in $config.PSObject.Properties) {
 .NOTES
 	This function should be called before attempting to install Firecrawl Worker.
 #>
-function Test-FirecrawlWorkerDependencies {
+function Test-FirecrawlWorkerDependency {
 	Write-Host "Checking Firecrawl Worker dependencies..."
 
 	# Check if network exists
@@ -173,7 +173,7 @@ function Install-FirecrawlWorkerContainer {
 	#############################################
 	# Step 1: Check All Dependencies
 	#############################################
-	if (-not (Test-FirecrawlWorkerDependencies)) {
+	if (-not (Test-FirecrawlWorkerDependency)) {
 		Write-Error "Dependencies not met. Exiting..."
 		exit 1
 	}

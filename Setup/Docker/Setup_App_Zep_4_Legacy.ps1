@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to set up and run the ZEP container using Docker/Podman.
 #                Verifies volume presence, pulls the ZEP image if necessary,
 #                and runs the container with port and volume mappings.
@@ -52,7 +52,7 @@ $config = [PSCustomObject]@{
     environment   = $manifestConfig.properties.environment
     networkName   = $manifestConfig.properties.networks[0].name
     networkAlias  = $manifestConfig.properties.networks[0].alias
-    
+
     # Dependencies
     postgresContainerName = "zep-db"
     postgresUser          = $postgresConfig.properties.environment.POSTGRES_USER

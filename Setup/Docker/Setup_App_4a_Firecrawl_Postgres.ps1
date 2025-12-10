@@ -185,7 +185,7 @@ function Install-FirecrawlPostgresContainer {
 			Write-Host "." -NoNewline
 		}
 	}
-	
+
 	$connectionString = "postgresql://$($config.databaseUser):$($config.databasePassword)@$($config.networkAlias):$($config.containerPort)/$($config.databaseName)"
 
 	if (-not $isReady) {
