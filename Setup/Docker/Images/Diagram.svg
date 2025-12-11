@@ -1,9 +1,42 @@
-<svg width="800" height="450" xmlns="http://www.w3.org/2000/svg">
+<svg width="800" height="550" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="800" height="450" fill="#f8f9fa" rx="10" ry="10"/>
+  <rect width="800" height="550" fill="#f8f9fa" rx="10" ry="10"/>
   
   <!-- Main content group - centered within the SVG with proper spacing -->
-  <g transform="translate(-25, -10)">
+  <g transform="translate(-25, 90)">
+    <!-- AI Models Cloud (Top) -->
+    <path d="M50,-60 Q50,-70 60,-70 L720,-70 Q730,-70 730,-60 L730,-10 Q730,0 720,0 L60,0 Q50,0 50,-10 Z"
+          fill="#FFF8E1" stroke="#FFECB3" stroke-width="1.5"/>
+    <text x="390" y="-55" font-family="Arial" font-size="12" text-anchor="middle" font-style="italic">AI Model Ecosystem</text>
+
+    <!-- AI Model Nodes -->
+    <rect x="70" y="-40" width="100" height="30" rx="15" ry="15" fill="#FFE0B2" stroke="#FFB74D" stroke-width="2"/>
+    <text x="120" y="-22" font-family="Arial" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">Llama 3</text>
+    
+    <rect x="195" y="-40" width="100" height="30" rx="15" ry="15" fill="#FFE0B2" stroke="#FFB74D" stroke-width="2"/>
+    <text x="245" y="-22" font-family="Arial" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">GPT-4o</text>
+    
+    <rect x="330" y="-40" width="100" height="30" rx="15" ry="15" fill="#FFE0B2" stroke="#FFB74D" stroke-width="2"/>
+    <text x="380" y="-22" font-family="Arial" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">Claude 3.5</text>
+    
+    <rect x="465" y="-40" width="100" height="30" rx="15" ry="15" fill="#FFE0B2" stroke="#FFB74D" stroke-width="2"/>
+    <text x="515" y="-22" font-family="Arial" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">Gemini 1.5</text>
+    
+    <rect x="590" y="-40" width="100" height="30" rx="15" ry="15" fill="#FFE0B2" stroke="#FFB74D" stroke-width="2"/>
+    <text x="640" y="-22" font-family="Arial" font-size="12" text-anchor="middle" dominant-baseline="middle" font-weight="bold">Mistral</text>
+
+    <!-- Connection from AI Models to Container Environment -->
+    <path d="M120,-10 L120,15 Q120,25 130,25 L340,25 Q350,25 350,35 L350,40"
+          fill="none" stroke="#FFB74D" stroke-width="2" stroke-dasharray="5,3"/>
+    <path d="M245,-10 L245,15 Q245,25 255,25 L350,25"
+          fill="none" stroke="#FFB74D" stroke-width="2" stroke-dasharray="5,3"/>
+    <path d="M380,-10 L380,40"
+          fill="none" stroke="#FFB74D" stroke-width="2" stroke-dasharray="5,3"/>
+    <path d="M515,-10 L515,15 Q515,25 505,25 L380,25"
+          fill="none" stroke="#FFB74D" stroke-width="2" stroke-dasharray="5,3"/>
+    <path d="M640,-10 L640,15 Q640,25 630,25 L380,25 Q380,25 380,35 L380,40"
+          fill="none" stroke="#FFB74D" stroke-width="2" stroke-dasharray="5,3"/>
+
     <!-- Docker/Podman Container - as a wrapping block -->
     <rect x="50" y="40" width="600" height="300" rx="15" ry="15" fill="#E6F7F2" stroke="#85D3B2" stroke-width="3" stroke-dasharray="10,5"/>
     <text x="350" y="65" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">Docker/Podman Container Environment</text>
@@ -82,11 +115,11 @@
       <text x="0" y="10" font-family="Arial" font-size="10" text-anchor="middle" dominant-baseline="middle">Text to Vectors</text>
     </g>
     
-    <!-- NocoDB -->
-    <rect x="450" y="240" width="140" height="50" rx="10" ry="10" fill="#FFD1DC" stroke="#FF99AC" stroke-width="2"/>
+    <!-- Zep -->
+    <rect x="450" y="240" width="140" height="50" rx="10" ry="10" fill="#B5EAD7" stroke="#85D3B2" stroke-width="2"/>
     <g transform="translate(520, 265)">
-      <text x="0" y="-5" font-family="Arial" font-size="14" text-anchor="middle" dominant-baseline="middle" font-weight="bold">NocoDB</text>
-      <text x="0" y="10" font-family="Arial" font-size="10" text-anchor="middle" dominant-baseline="middle">Database Management</text>
+      <text x="0" y="-5" font-family="Arial" font-size="14" text-anchor="middle" dominant-baseline="middle" font-weight="bold">Zep</text>
+      <text x="0" y="10" font-family="Arial" font-size="10" text-anchor="middle" dominant-baseline="middle">Memory Layer</text>
     </g>
     
     <!-- Internet Cloud -->

@@ -20,20 +20,25 @@ All services are containerized and can be managed through the provided PowerShel
 - **TCP 9099** - `ghcr.io/open-webui/pipelines:main` - AI workflow orchestration and pipeline management
 - **TCP 3000** - `ghcr.io/open-webui/open-webui:main` - AI model management interface with chat capabilities
 - **TCP 5678** - `docker.io/n8nio/n8n:latest` - Visual workflow automation platform for integrating services
-- **TCP 8002** - `zepai/zep:latest` - Temporal knowledge graph-based memory layer for AI agents
+- **TCP 5433** - `pgvector/pgvector:pg16` - PostgreSQL database with pgvector for Zep memory
+- **TCP 7474, 7687** - `neo4j:5.22.0` - Neo4j graph database for Zep Graphiti
+- **TCP 8003** - `zepai/graphiti:0.3` - Graphiti Knowledge Graph API for Zep
+- **TCP 8004** - `zepai/zep:latest` - Zep Legacy temporal knowledge graph-based memory layer for AI agents
 
 ### Web Scraping and Data Processing
 
 - **TCP 6379** - `redis:alpine` - Redis cache server for Firecrawl data storage and queuing
-- **TCP 3002** - `ghcr.io/mendableai/firecrawl` - Web crawling API service for automated data extraction
-- **TCP 3010** - `ghcr.io/mendableai/playwright-service:latest` - Web rendering service for dynamic content scraping
-- **(Worker)** - `ghcr.io/mendableai/firecrawl` - Background worker for processing crawling jobs
+- **TCP 3002** - `ghcr.io/firecrawl/firecrawl` - Web crawling API service for automated data extraction
+- **TCP 3010** - `mcr.microsoft.com/playwright:latest` - Web rendering service for dynamic content scraping
+- **(Worker)** - `ghcr.io/firecrawl/firecrawl` - Background worker for processing crawling jobs
+- **(Internal)** - `postgres:16-alpine` - Dedicated PostgreSQL database for Firecrawl (internal network only)
 
 ### Vector Database and Embeddings
 
 - **TCP 6333** - `qdrant/qdrant` - Vector database HTTP API for semantic search and similarity matching
 - **TCP 6334** - `qdrant/qdrant` - Vector database gRPC interface for high-performance operations
-- **TCP 8000** - `embedding-api` (custom built) - Text embedding API using sentence transformers
+- **TCP 8000** - `qdrant-mcp-server` - Qdrant Model Context Protocol (MCP) Server
+- **TCP 8001** - `ollama/ollama:latest` - Qwen3 Embedding 4B model running via Ollama
 
 ### Database Management
 
@@ -71,8 +76,8 @@ All services are containerized and can be managed through the provided PowerShel
 
 - **Qdrant Vector Database**  
     Qdrant is a specialized vector database for managing high-dimensional data, which is essential for semantic search and machine learning applications. It stores and retrieves numeric representations of data (embeddings) quickly, enabling efficient similarity searches and recommendation engines. This tool helps solve challenges related to processing complex data comparisons with ease and reliability. Its containerized setup makes it accessible even for those new to machine learning infrastructure.
-- **Embedding API**  
-    The Embedding API converts raw text into semantically meaningful numeric vectors (embeddings) through advanced natural language processing models. It simplifies complex tasks like document similarity, clustering, and recommendation by providing a reliable, scalable API endpoint. This tool lets you harness the power of deep learning models without needing to manage heavy compute resources locally. As a result, developers can efficiently integrate natural language understanding into their applications.
+- **Embedding API (Ollama)**
+    The Embedding API uses Ollama to run the Qwen3-Embedding-4B model, converting raw text into semantically meaningful numeric vectors (embeddings). It simplifies complex tasks like document similarity, clustering, and recommendation by providing a reliable, scalable API endpoint. This tool lets you harness the power of deep learning models efficiently.
 
 ## Folder Structure & Script Descriptions
 
@@ -106,15 +111,19 @@ These scripts handle the deployment and management of specific containerized app
 - **Setup_App_2a_OpenWebUI_Pipelines.ps1**: Deploys the Pipelines container for AI workflow orchestration (supports Docker/Podman).
 - **Setup_App_2b_OpenWebUI_UI.ps1**: Installs the Open WebUI container for managing AI models and interfaces (supports Docker/Podman).
 - **Setup_App_3_n8n_Core.ps1**: Installs the n8n container for workflow automation (supports Docker/Podman).
+- **Setup_App_4a_Firecrawl_Postgres.ps1**: Installs the dedicated PostgreSQL container for Firecrawl.
 - **Setup_App_4a_Firecrawl_Redis.ps1**: Installs the dedicated Redis container for Firecrawl data storage and queuing (supports Docker/Podman).
-- **Setup_App_4b_Firecrawl_Worker.ps1**: Installs the Firecrawl Worker container for background processing (requires Redis and Playwright).
-- **Setup_App_4c_Firecrawl_API.ps1**: Installs the Firecrawl API container for web crawling (requires Redis and Playwright).
+- **Setup_App_4b_Firecrawl_Worker.ps1**: Installs the Firecrawl Worker container for background processing (requires Redis, Postgres, and Playwright).
+- **Setup_App_4c_Firecrawl_API.ps1**: Installs the Firecrawl API container for web crawling (requires Redis, Postgres, and Playwright).
 - **Setup_App_5a_Qdrant_Core.ps1**: Installs the Qdrant vector database container (supports Docker/Podman).
 - **Setup_App_5b_Qdrant_MCPServer.ps1**: Builds and runs the Qdrant MCP Server container from source (supports Docker/Podman).
-- **Setup_App_6_Embedding_API.ps1**: Builds and runs the custom Embedding API container from source (supports Docker/Podman).
+- **Setup_App_6_Qwen3_Embedding_4B.ps1**: Installs Ollama with the Qwen3-Embedding-4B model (supports Docker/Podman).
 - **Setup_App_8_CloudBeaver_Core.ps1**: Installs the CloudBeaver container for web-based database administration (supports Docker/Podman).
 - **Setup_App_9_Playwright_Service.ps1**: Installs the Playwright Service container for web rendering (supports Docker/Podman).
-- **Setup_App_Zep.ps1**: Installs the ZEP container for temporal knowledge graph-based memory layer for AI agents (supports Docker/Podman).
+- **Setup_App_Zep_1_PostgreSQL.ps1**: Installs PostgreSQL with pgvector for Zep.
+- **Setup_App_Zep_2_Neo4j.ps1**: Installs Neo4j for Zep Graphiti.
+- **Setup_App_Zep_3_Graphiti.ps1**: Installs the Graphiti service for Zep.
+- **Setup_App_Zep_4_Legacy.ps1**: Installs the Zep Legacy container (requires PostgreSQL, Neo4j, and Graphiti).
 
 ### Data Management (`Setup_Data_*.ps1`)
 
