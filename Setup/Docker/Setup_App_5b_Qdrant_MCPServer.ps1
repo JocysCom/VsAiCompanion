@@ -22,14 +22,42 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "qdrant-mcp-server:latest" # Standardized variable name
 $global:containerName = "qdrant-mcp-server"
-$global:volumeName = "qdrant-mcp-server-data" # Default: same as container name (though likely unused by this app).
 $global:srcDir = Join-Path $PSScriptRoot "downloads\mcp-server-qdrant"
 $global:repoUrl = "https://github.com/qdrant/mcp-server-qdrant.git"
-$global:qdrantUrl = "http://localhost:6333"
-$global:collectionName = "mcp-default-collection"
-$global:qdrantUrlPromptDefault = "http://host.containers.internal:6333"
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'qdrant-mcp-server'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	environment = $manifestConfig.properties.environment
+}
+
+$global:imageName = $config.imageName
+$global:volumeName = $config.volumeName
+$global:qdrantUrl = "http://localhost:6333" # Default for display/info
+$global:collectionName = $config.environment.COLLECTION_NAME
+$global:qdrantUrlPromptDefault = $config.environment.QDRANT_URL
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -188,8 +216,9 @@ function Install-QdrantMCPServerContainer {
 	$runOptions = @(
 		"--detach",
 		"--name", $global:containerName,
-		"--publish", "8000:8000", # Default port for the server
-		#"--volume", "$($global:volumeName):/app/data", # Adjust path if needed based on actual app structure
+		"--publish", "$($config.hostPort):$($config.containerPort)",
+		"--volume", "$($config.volumeName):$($config.dataPath)",
+		"--restart", $config.restartPolicy,
 		"--env", "QDRANT_URL=$qdrantUrlToUse",
 		"--env", "COLLECTION_NAME=$collectionNameToUse"
 	)
@@ -208,16 +237,16 @@ function Install-QdrantMCPServerContainer {
 	# Step 7: Wait and Test
 	Write-Host "Waiting 15 seconds for the container to start..."
 	Start-Sleep -Seconds 15
-	Test-TCPPort -ComputerName "localhost" -Port 8000 -serviceName "Qdrant MCP Server"
+	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Qdrant MCP Server"
 	# Add HTTP test if the server has a root endpoint or health check
-	# Test-HTTPPort -Uri "http://localhost:8000" -serviceName "Qdrant MCP Server"
+	# Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Qdrant MCP Server"
 	Write-Host "Qdrant MCP Server container started. Check logs for details."
 	Write-Host ""
 	Write-Host "--------------------------------------------------" -ForegroundColor Green
 	Write-Host " Cline Configuration Details:" -ForegroundColor Green
 	Write-Host "--------------------------------------------------" -ForegroundColor Green
 	Write-Host " Server Name: qdrant-mcp-server"
-	Write-Host " URL:         http://localhost:8000/sse"
+	Write-Host " URL:         http://localhost:$($config.hostPort)/sse"
 	Write-Host "--------------------------------------------------" -ForegroundColor Green
 	Write-Host "Add the above details to your Cline MCP settings." -ForegroundColor Green
 	Write-Host ""
@@ -299,8 +328,8 @@ $menuActions = @{
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Qdrant MCP Server" `
-			-TcpPort 8000 `
-			# -HttpPort 8000 # Add if server has a root/health endpoint
+			-TcpPort $config.hostPort `
+			# -HttpPort $config.hostPort # Add if server has a root/health endpoint
 			-AdditionalInfo @{
 			"Source Dir" = $global:srcDir;
 			"Qdrant URL" = $global:qdrantUrl;

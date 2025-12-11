@@ -42,22 +42,27 @@ else {
 # Get the engine path after setting specific options
 $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 
-# PostgreSQL configuration for Firecrawl
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'firecrawl-postgres'
+
+# Create consolidated configuration object
 $config = [PSCustomObject]@{
-	imageName = "postgres:16-alpine"
-	networkName = "firecrawl-net"
-	volumeName = "firecrawl-postgres-data"
-	containerPort = 5432
-	networkAlias = "firecrawl-postgres"
-	dataPath = "/var/lib/postgresql/data"
-	restartPolicy = "always"
-	databaseName = "firecrawl"
-	databaseUser = "firecrawl"
-	databasePassword = "change-me"
-	memoryLimit = "512m"
+	imageName = $manifestConfig.properties.image
+	networkName = $manifestConfig.properties.networks[0].name
+	volumeName = $manifestConfig.properties.volumes[0].name
+	containerPort = 5432 # Default internal port
+	networkAlias = $manifestConfig.properties.networks[0].alias
+	dataPath = $manifestConfig.properties.volumes[0].containerPath
+	restartPolicy = $manifestConfig.properties.restart
+	databaseName = $manifestConfig.properties.environment.POSTGRES_DB
+	databaseUser = $manifestConfig.properties.environment.POSTGRES_USER
+	databasePassword = $manifestConfig.properties.environment.POSTGRES_PASSWORD
+	memoryLimit = $manifestConfig.properties.resources.memory
 }
 
-Write-Host "PostgreSQL configuration for Firecrawl:"
+Write-Host "Configuration loaded from Aspire manifest:"
 foreach ($property in $config.PSObject.Properties) {
 	$name = $property.Name
 	$value = $property.Value

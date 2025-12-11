@@ -24,11 +24,39 @@ Set-ScriptLocation
 # Global Variables
 #############################################
 # Note: PSAvoidGlobalVars warnings are ignored here as these are used across menu actions.
-$global:imageName = "dbeaver/cloudbeaver:latest" # Community Edition Image
 $global:containerName = "cloudbeaver"
-$global:volumeNameConf = "cloudbeaver_conf"         # Volume for /opt/cloudbeaver/conf
-$global:volumeNameWorkspace = "cloudbeaver_workspace" # Volume for /opt/cloudbeaver/workspace
-$global:containerPort = 8978                     # Default CloudBeaver port
+
+# Load configuration from Aspire manifest
+$aspireManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$manifest = Get-Content -Raw $aspireManifestPath | ConvertFrom-Json
+$manifestConfig = $manifest.resources.'cloudbeaver'
+
+# Create consolidated configuration object
+$config = [PSCustomObject]@{
+	imageName = $manifestConfig.properties.image
+	volumeNameConf = $manifestConfig.properties.volumes[0].name
+	volumeNameWorkspace = $manifestConfig.properties.volumes[1].name
+	containerPort = $manifestConfig.properties.bindings[0].containerPort
+	hostPort = $manifestConfig.properties.bindings[0].hostPort
+	restartPolicy = $manifestConfig.properties.restart
+	environment = $manifestConfig.properties.environment
+}
+
+$global:imageName = $config.imageName
+$global:volumeNameConf = $config.volumeNameConf
+$global:volumeNameWorkspace = $config.volumeNameWorkspace
+$global:containerPort = $config.hostPort
+
+Write-Host "Configuration loaded from Aspire manifest:"
+foreach ($property in $config.PSObject.Properties) {
+	$name = $property.Name
+	$value = $property.Value
+	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
+		Write-Error "Configuration property '$name' is missing or empty in manifest."
+		exit 1
+	}
+	Write-Host "  $($name): $value"
+}
 
 # --- Engine Selection ---
 $global:containerEngine = Select-ContainerEngine
@@ -82,12 +110,13 @@ function Start-CloudBeaverContainer {
 
 	# Build the run command
 	$runOptions = @(
-		"--env", "TZ=Europe/London",                          # Linux tzdata TZ
+		"--env", "TZ=$($config.environment.TZ)",
 		"--detach", # Run container in background.
-		"--publish", "$($global:containerPort):$($global:containerPort)", # Map host port to container port.
-		"--volume", "$($global:volumeNameConf):/opt/cloudbeaver/conf", # Mount the conf volume.
-		"--volume", "$($global:volumeNameWorkspace):/opt/cloudbeaver/workspace", # Mount the workspace volume.
-		"--name", $global:containerName         # Assign a name to the container.
+		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port.
+		"--volume", "$($config.volumeNameConf):/opt/cloudbeaver/conf", # Mount the conf volume.
+		"--volume", "$($config.volumeNameWorkspace):/opt/cloudbeaver/workspace", # Mount the workspace volume.
+		"--name", $global:containerName,         # Assign a name to the container.
+		"--restart", $config.restartPolicy
 	)
 
 	# Run the container

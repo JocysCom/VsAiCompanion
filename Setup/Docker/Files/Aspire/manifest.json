@@ -360,6 +360,62 @@
         },
         "restart": "always"
       }
+    },
+    "qdrant-mcp-server": {
+      "type": "container.v0",
+      "properties": {
+        "image": "qdrant-mcp-server:latest",
+        "bindings": [
+          {
+            "name": "http",
+            "protocol": "tcp",
+            "containerPort": 8000,
+            "hostPort": 8000
+          }
+        ],
+        "volumes": [
+          {
+            "name": "qdrant-mcp-server-data",
+            "containerPath": "/app/data",
+            "type": "named"
+          }
+        ],
+        "environment": {
+          "QDRANT_URL": "http://host.containers.internal:6333",
+          "COLLECTION_NAME": "mcp-default-collection"
+        },
+        "restart": "always"
+      }
+    },
+    "cloudbeaver": {
+      "type": "container.v0",
+      "properties": {
+        "image": "dbeaver/cloudbeaver:latest",
+        "bindings": [
+          {
+            "name": "http",
+            "protocol": "tcp",
+            "containerPort": 8978,
+            "hostPort": 8978
+          }
+        ],
+        "volumes": [
+          {
+            "name": "cloudbeaver_conf",
+            "containerPath": "/opt/cloudbeaver/conf",
+            "type": "named"
+          },
+          {
+            "name": "cloudbeaver_workspace",
+            "containerPath": "/opt/cloudbeaver/workspace",
+            "type": "named"
+          }
+        ],
+        "environment": {
+          "TZ": "Europe/London"
+        },
+        "restart": "always"
+      }
     }
   }
 }
