@@ -26,6 +26,40 @@ This system is designed to reduce technical debt and accelerate AI adoption.
 
   <img alt="Podman Desktop" src="Images/Diagram.svg" width="640" height="360">
 
+### Local Installation Structure
+
+The following tree diagram illustrates how containers are installed and managed on a local Windows machine using WSL2 and Podman.
+
+```text
+Windows 11                        ← real, bare-metal host
+│
+├── NVIDIA GPU Driver (installed on Windows)
+│   └── nvidia-smi.exe (C:\Windows\System32\)
+│
+└── WSL2 subsystem (type-2 hypervisor built into Windows)  ← virtualisation layer
+    │
+    ├── WSL2 default distro (e.g. Ubuntu) ← Required for WSL2 initialization
+    │
+    └── WSL2 distro "podman-machine-default" (Fedora CoreOS image)  ← **Podman Host VM**
+        │
+        ├── NVIDIA Container Toolkit  ← Required for GPU acceleration
+        │   ├── nvidia-ctk
+        │   └── CDI specifications: /etc/cdi/nvidia.yaml, /var/run/cdi/nvidia.yaml
+        │
+        ├── login shell: bash         ← what you reach with `podman machine ssh`
+        │
+        └── podman (rootless) daemon  ← container engine running as that user
+            │
+            ├── container "n8n"       ← Linux container, NOT a VM
+            │   ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root n8n /bin/sh`
+            │   └── node /usr/bin/n8n ← the real application
+            │
+            └── container "qwen3-embedding-4b" ← Linux container, NOT a VM
+                ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root qwen3-embedding-4b /bin/sh`
+                ├── ollama serve      ← the real application
+                └── GPU access via: --device nvidia.com/gpu=all
+```
+
 ## Available Services
 
 All services are containerized and can be managed through the provided PowerShell scripts. Each service runs on a specific TCP port and uses a Docker image for deployment.
