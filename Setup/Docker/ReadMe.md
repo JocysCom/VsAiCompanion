@@ -24,7 +24,7 @@ This system is designed to reduce technical debt and accelerate AI adoption.
 
 ## Containerized AI Tools Architecture
 
-  <img alt="Podman Desktop" src="Images/Diagram.svg" width="640" height="360">
+  <img alt="Podman Desktop" src="Images/Diagram.svg">
 
 ## Available Services
 
@@ -158,4 +158,5 @@ These scripts handle application-specific data export, import, and backup operat
 These scripts provide utility functions or testing capabilities for specific applications.
 
 - **Setup_Util_6_Embedding_Test.ps1**: Tests the functionality of the deployed Embedding API.
+
 
