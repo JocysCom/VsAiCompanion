@@ -10,6 +10,7 @@ This solution uses containerization to simplify the installation, integration, a
   - **Self-hosted:** For control and flexibility.
   - **Cloud:** For unlimited scaling.
 - [x] **AI Agent Workspace:** Setup folder is designed as an AI Agent workspace. Open-source modules are frequently updated and often require customized setup processes. AI Agent helps to update setup scripts and configurations efficiently.
+- [x] **Aspire Configuration:** Uses Aspire configuration files to make the setup more compatible with more platforms.
 
 ## Containerized AI Tools Architecture
 
