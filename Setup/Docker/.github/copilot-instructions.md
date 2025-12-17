@@ -1,4 +1,4 @@
-﻿==== START OF INSTRUCTIONS FROM: instructions.md ====
+==== START OF INSTRUCTIONS FROM: instructions.md ====
 
 # Instructions from: instructions.md
 
@@ -207,11 +207,22 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 **Rationale:**
 Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
 
+==== END OF INSTRUCTIONS FROM: instructions.md ====
+
+==== START OF INSTRUCTIONS FROM: tools-instructions.md ====
+
+# Instructions from: tools-instructions.md
+
+## Tools
+
 ## Environment
 
-- Terminal sessions use PowerShell by default; therefore, invoke scripts directly (e.g., `.\Script.ps1 -WhatIf`) instead of wrapping them in an extra `powershell -ExecutionPolicy Bypass -File` call.
+Terminal sessions use PowerShell by default; always invoke scripts directly from the repository root. Do not prefix script execution with `pwsh`, `powershell`, or `powershell.exe`. Example:
 
-==== END OF INSTRUCTIONS FROM: instructions.md ====
+WRONG: pwsh -NoProfile -ExecutionPolicy Bypass -File .\.ai\Scripts\Start-Local.ps1 MONITOR
+VALID: .\.ai\Scripts\Start-Local.ps1 MONITOR
+
+==== END OF INSTRUCTIONS FROM: tools-instructions.md ====
 
 ==== START OF INSTRUCTIONS FROM: tools-web-search.instructions.md ====
 

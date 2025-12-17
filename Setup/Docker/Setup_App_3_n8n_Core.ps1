@@ -730,6 +730,15 @@ $menuActions = @{
 		& $global:enginePath restart $global:containerName
 	}
 	"9" = {
+		# Prefer a real version check for n8n (1.x semver), without changing the manifest tag.
+		# Requires the container to be running to query 'n8n --version'.
+		$hasContainer = & $global:enginePath ps --filter "name=^$($global:containerName)$" --format "{{.ID}}"
+		if (-not [string]::IsNullOrWhiteSpace($hasContainer)) {
+			$updateByVer = Test-n8nUpdateAvailableByVersion -Engine $global:enginePath -ContainerName $global:containerName -Major 1
+			if (-not $updateByVer) { return }
+		}
+
+		# Fallback / secondary: digest-based check against the configured image reference.
 		$imageName = $config.imageName
 		Test-ImageUpdateAvailable -Engine $global:enginePath -ImageName $imageName
 	}

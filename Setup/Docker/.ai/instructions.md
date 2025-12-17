@@ -202,10 +202,3 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 
 **Rationale:**
 Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
-
-## Environment
-
-Terminal sessions use PowerShell by default; always invoke scripts directly from the repository root. Do not prefix script execution with `pwsh`, `powershell`, or `powershell.exe`. Example:
-
-WRONG: pwsh -NoProfile -ExecutionPolicy Bypass -File .\.ai\Scripts\Start-Local.ps1 MONITOR
-VALID: .\.ai\Scripts\Start-Local.ps1 MONITOR

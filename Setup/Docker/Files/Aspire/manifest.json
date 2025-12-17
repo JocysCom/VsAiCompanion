@@ -242,8 +242,9 @@
           "N8N_RUNNERS_ENABLED": "true",
           "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS": "true",
           "N8N_TRUST_HOST_HEADERS": "true",
-          "N8N_LOG_LEVEL": "debug",
-          "NODE_OPTIONS": "--max-old-space-size=12288"
+          "N8N_LOG_LEVEL": "info",
+          "NODE_OPTIONS": "--max-old-space-size=12288",
+		  "NODES_EXCLUDE": "[]"
         },
         "restart": "always",
         "resources": {

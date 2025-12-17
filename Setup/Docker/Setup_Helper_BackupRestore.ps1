@@ -78,21 +78,26 @@ function ConvertTo-WSLPath {
 #==============================================================================
 <#
 .SYNOPSIS
-	Backs up a single container image to a tar file.
+	Backs up a single container image to a tar file (optionally gzip-compressed).
 .DESCRIPTION
 	Saves a specified container image using the provided container engine (docker or podman)
-	to a .tar file in the specified backup folder. The filename is derived from the image name,
-	replacing ':' and '/' with '_'. Creates the backup folder if it doesn't exist.
+	to a .tar file in the specified backup folder. Optionally writes a gzip-compressed
+	archive (.tar.gz) to reduce file size.
+
+	Compression uses WSL gzip if available (preferred on Windows). If WSL/gzip is not
+	available, it falls back to an uncompressed .tar.
 .PARAMETER Engine
 	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
 .PARAMETER ImageName
 	The full name and tag of the container image to back up (e.g., 'nginx:latest'). Mandatory.
 .PARAMETER BackupFolder
-	The directory where the backup .tar file will be saved. Defaults to '.\Backup'.
+	The directory where the backup archive will be saved. Defaults to '.\Backup'.
+.PARAMETER Compress
+	If set, attempts to create a .tar.gz via gzip. Falls back to .tar if gzip isn't available.
 .OUTPUTS
 	[bool] Returns $true on success, $false on failure.
 .EXAMPLE
-	Backup-ContainerImage -Engine "podman" -ImageName "docker.io/library/alpine:latest" -BackupFolder "C:\MyBackups"
+	Backup-ContainerImage -Engine "podman" -ImageName "docker.io/library/alpine:latest" -Compress
 .NOTES
 	Uses $LASTEXITCODE to check the success of the engine's save command.
 #>
@@ -102,35 +107,70 @@ function Backup-ContainerImage {
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
+
 		[Parameter(Mandatory = $true)]
-		[string]$ImageName, # Changed from ContainerName to ImageName
-		[string]$BackupFolder = $global:backupFolder
+		[string]$ImageName,
+
+		[string]$BackupFolder = $global:backupFolder,
+
+		[switch]$Compress
 	)
 
 	$imageBackupPath = Join-Path $BackupFolder $global:dockerImagesFolder
 	Write-Host "Saving image '$ImageName' to '$imageBackupPath'..."
 
-	# Ensure backup folder exists
 	if (-not (Test-Path $imageBackupPath)) {
 		New-Item -ItemType Directory -Force -Path $imageBackupPath | Out-Null
 		Write-Host "Created image backup folder: $imageBackupPath"
 	}
 
-	# Generate timestamped filename using .tar extension
 	$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
-	# Use a safe name for the file, replacing problematic characters
 	$safeImageName = $ImageName -replace "[:/]", "_"
+
+	# Prefer compressed archive if requested and possible
+	if ($Compress) {
+		$backupFileName = "$safeImageName-image-$timestamp.tar.gz"
+		$hostWinFilePath = Join-Path $imageBackupPath $backupFileName
+
+		$wsl = Get-Command wsl -ErrorAction SilentlyContinue
+		if ($wsl) {
+			try {
+				# Stream docker/podman save to gzip in WSL to avoid writing a huge uncompressed tar first.
+				# Use WSL path for the destination file.
+				$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
+
+				# Determine engine executable name for WSL side (docker/podman)
+				$engineExe = [IO.Path]::GetFileNameWithoutExtension($Engine)
+
+				$cmd = "$engineExe save '$ImageName' | gzip -c > '$hostWslFilePath'"
+				Write-Host "wsl.exe -e sh -lc `"$cmd`""
+				& wsl.exe -e sh -lc $cmd
+				$success = $LASTEXITCODE -eq 0
+
+				if ($success -and (Test-Path -LiteralPath $hostWinFilePath)) {
+					Write-Host "Successfully backed up image '$ImageName' to '$hostWinFilePath'." -ForegroundColor Green
+					return $true
+				}
+
+				Write-Warning "Compressed backup failed or file not created. Falling back to uncompressed tar."
+			}
+			catch {
+				Write-Warning "Compressed backup failed: $_. Falling back to uncompressed tar."
+			}
+		}
+		else {
+			Write-Warning "WSL not available. Falling back to uncompressed tar."
+		}
+	}
+
+	# Fallback: uncompressed .tar
 	$backupFileName = "$safeImageName-image-$timestamp.tar"
 	$hostWinFilePath = Join-Path $imageBackupPath $backupFileName
-
-	# podman save [options] IMAGE
-	# save      Save an image to a tar archive.
-	# --output string   Specify the output file for saving the image.
 	Write-Host "& $Engine save --output '$hostWinFilePath' '$ImageName'"
 	& $Engine save --output $hostWinFilePath $ImageName
 	$success = $LASTEXITCODE -eq 0
 	if ($success) {
-		Write-Host "Successfully backed up image '$ImageName'" -ForegroundColor Green
+		Write-Host "Successfully backed up image '$ImageName' to '$hostWinFilePath'." -ForegroundColor Green
 	}
 	else {
 		Write-Error "Failed to backup image '$ImageName'"
@@ -143,27 +183,25 @@ function Backup-ContainerImage {
 #==============================================================================
 <#
 .SYNOPSIS
-	Restores a container image from a backup .tar file.
+	Restores a container image from a backup .tar or .tar.gz file.
 .DESCRIPTION
-	Loads a container image from the specified .tar backup file using the provided container engine.
-	If the load is successful and the -RunContainer switch is provided, it attempts to parse the
-	loaded image name from the engine's output and then calls Start-RestoredContainer.
+	Loads a container image from the specified backup file using the provided container engine.
+
+	For .tar files, uses 'engine load --input'.
+	For .tar.gz files, attempts to stream-decompress via WSL gzip and pipe into 'engine load'
+	(to avoid a large intermediate file). If WSL isn't available, falls back to requiring a .tar.
 .PARAMETER Engine
 	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
 .PARAMETER BackupFile
-	The full path to the .tar file containing the image backup. Mandatory.
+	The full path to the .tar or .tar.gz file containing the image backup. Mandatory.
 .PARAMETER RunContainer
 	Switch parameter. If present, attempts to start a container from the restored image. Defaults to $false.
 .OUTPUTS
-	[bool] Returns $true if the image was loaded successfully, $false otherwise. Note: Success is based on loading,
-		   not necessarily on parsing the name or starting the container.
+	[bool] Returns $true if the image was loaded successfully, $false otherwise.
 .EXAMPLE
-	Restore-ContainerImage -Engine "podman" -BackupFile "C:\MyBackups\alpine_latest.tar"
-.EXAMPLE
-	Restore-ContainerImage -Engine "docker" -BackupFile "D:\DockerBackups\nginx_latest.tar" -RunContainer
+	Restore-ContainerImage -Engine "podman" -BackupFile "C:\MyBackups\alpine_latest.tar.gz"
 .NOTES
-	Relies on the output format of 'engine load --input ...' to parse the image name (e.g., "Loaded image: ...").
-	Uses $LASTEXITCODE to check the success of the engine's load command.
+	Relies on the output format of 'engine load' to parse the image name (e.g., "Loaded image: ...").
 #>
 function Restore-ContainerImage {
 	[CmdletBinding()]
@@ -184,41 +222,51 @@ function Restore-ContainerImage {
 		return $false
 	}
 
-	# No need to inspect container or get image name from it.
-	# The image name will be parsed from the 'load' command output.
+	$hostWinFilePath = $BackupFile
 
-	$hostWinFilePath = $BackupFile # BackupFile is already the full path
+	$output = $null
+	$loadOk = $false
 
-	$output = & $Engine load --input $hostWinFilePath
+	if ($hostWinFilePath.ToLower().EndsWith(".tar.gz")) {
+		$wsl = Get-Command wsl -ErrorAction SilentlyContinue
+		if (-not $wsl) {
+			Write-Error "Cannot restore from '.tar.gz' because WSL is not available. Provide an uncompressed '.tar' backup instead."
+			return $false
+		}
 
-	if ($LASTEXITCODE -eq 0) {
-		# Use Write-Host for status messages
+		$hostWslFilePath = ConvertTo-WSLPath -winPath $hostWinFilePath
+		$engineExe = [IO.Path]::GetFileNameWithoutExtension($Engine)
+
+		$cmd = "gzip -cd '$hostWslFilePath' | $engineExe load"
+		Write-Host "wsl.exe -e sh -lc `"$cmd`""
+		$output = & wsl.exe -e sh -lc $cmd
+		$loadOk = $LASTEXITCODE -eq 0
+	}
+	else {
+		$output = & $Engine load --input $hostWinFilePath
+		$loadOk = $LASTEXITCODE -eq 0
+	}
+
+	if ($loadOk) {
 		Write-Host "Successfully restored image from '$hostWinFilePath'."
 
-		# Attempt to parse the image name from the load output
-		# Expected output example: "Loaded image: docker.io/open-webui/pipelines:custom"
 		$imageName = $null
 		if ($output -match "Loaded image:\s*(\S+)") {
 			$imageName = $matches[1].Trim()
-			# Use Write-Host for status messages
 			Write-Host "Parsed image name: $imageName"
-
 			if ($RunContainer) {
 				Start-RestoredContainer -Engine $Engine -ImageName $imageName
 			}
-			return $true
 		}
 		else {
-			# Use Write-Host for status messages
 			Write-Host "Could not parse image name from the load output."
-			# Still return true as the image was loaded, just couldn't parse name
-			return $true
 		}
+
+		return $true
 	}
-	else {
-		Write-Error "Failed to restore image from '$hostWinFilePath'."
-		return $false
-	}
+
+	Write-Error "Failed to restore image from '$hostWinFilePath'."
+	return $false
 }
 
 #==============================================================================
@@ -799,7 +847,10 @@ function Invoke-ContainerImageRestore {
 		return $false
 	}
 
-	$tarFiles = Get-ChildItem -Path $imageBackupPath -Filter "*-image-*.tar" # Filter specifically for image backups
+	$tarFiles = @(
+		Get-ChildItem -Path $imageBackupPath -Filter "*-image-*.tar" -ErrorAction SilentlyContinue
+		Get-ChildItem -Path $imageBackupPath -Filter "*-image-*.tar.gz" -ErrorAction SilentlyContinue
+	)
 	if (-not $tarFiles) {
 		# Use Write-Host for status messages
 		Write-Host "No image backup tar files found in '$imageBackupPath'."
@@ -866,7 +917,7 @@ function Test-AndRestoreBackup {
 
 	# Look for backup files matching the image pattern
 	$safeName = $ImageName -replace "[:/]", "_"
-	$backupPattern = "$safeName-image-*.tar"
+	$backupPattern = "$safeName-image-*.tar*"
 	$backupFiles = Get-ChildItem -Path $imageBackupPath -Filter $backupPattern | Sort-Object LastWriteTime -Descending
 
 	if (-not $backupFiles) {
@@ -1108,10 +1159,10 @@ function Invoke-ContainerVolumeRestore {
 .SYNOPSIS
 	Retrieves a list of all available image backup files.
 .DESCRIPTION
-	Searches the image backup directory for files matching the pattern '*-image-*.tar'
+	Searches the image backup directory for files matching the patterns '*-image-*.tar' and '*-image-*.tar.gz'
 	and returns their names sorted by modification time (newest first).
 .OUTPUTS
-	[string[]] An array of backup file names (e.g., 'nginx_latest-image-20231026-1230.tar').
+	[string[]] An array of backup file names (e.g., 'nginx_latest-image-20231026-1230.tar.gz').
 .EXAMPLE
 	$backups = Get-AvailableImageBackups
 	$backups | ForEach-Object { Write-Host $_ }
@@ -1129,7 +1180,10 @@ function Get-AvailableImageBackups {
 		return @()
 	}
 
-	$backupFiles = Get-ChildItem -Path $imageBackupPath -Filter "*-image-*.tar" | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name
+	$backupFiles = @(
+		Get-ChildItem -Path $imageBackupPath -Filter "*-image-*.tar" -ErrorAction SilentlyContinue
+		Get-ChildItem -Path $imageBackupPath -Filter "*-image-*.tar.gz" -ErrorAction SilentlyContinue
+	) | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name
 	if ($backupFiles) {
 		Write-Host "Found $($backupFiles.Count) image backup files." -ForegroundColor Green
 		return $backupFiles

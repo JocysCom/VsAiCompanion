@@ -40,6 +40,10 @@ Windows 11                        ← real, bare-metal host
     │
     ├── WSL2 default distro (e.g. Ubuntu) ← Required for WSL2 initialization
     │
+    ├── Podman Desktop (optional UI on Windows)  ← GUI for Podman
+    │
+    ├── Podman CLI (Windows `podman.exe`)        ← CLI used by scripts/terminal
+    │
     └── WSL2 distro "podman-machine-default" (Fedora CoreOS image)  ← **Podman Host VM**
         │
         ├── NVIDIA Container Toolkit  ← Required for GPU acceleration
