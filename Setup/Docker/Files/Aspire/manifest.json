@@ -218,7 +218,7 @@
     "n8n": {
       "type": "container.v0",
       "properties": {
-        "image": "docker.io/n8nio/n8n:latest",
+        "image": "docker.io/n8nio/n8n:2.1.1",
         "bindings": [
           {
             "name": "http",
@@ -244,7 +244,7 @@
           "N8N_TRUST_HOST_HEADERS": "true",
           "N8N_LOG_LEVEL": "info",
           "NODE_OPTIONS": "--max-old-space-size=12288",
-		  "NODES_EXCLUDE": "[]"
+          "NODES_EXCLUDE": "[]"
         },
         "restart": "always",
         "resources": {

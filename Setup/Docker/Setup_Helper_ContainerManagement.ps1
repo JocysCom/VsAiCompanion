@@ -11,6 +11,257 @@
 $global:offlineImagesFolder = Join-Path $PSScriptRoot "downloads\images"
 
 #==============================================================================
+# Function: Get-AspireManifestPaths
+#==============================================================================
+<#
+.SYNOPSIS
+	Resolves Aspire base and overlay manifest paths.
+.DESCRIPTION
+	Determines the base manifest path and the optional overlay manifest path based on an optional profile name.
+	Overlay naming convention: manifest.<profile>.json (same directory as base).
+.PARAMETER ManifestPath
+	Base Aspire manifest.json path. If not supplied, defaults to 'Files\Aspire\manifest.json' under the repo.
+.PARAMETER Profile
+	Optional profile name (e.g., 'local', 'prod') used to resolve overlay manifest path.
+.OUTPUTS
+	[PSCustomObject] with BaseManifestPath and OverlayManifestPath.
+#>
+function Get-AspireManifestPaths {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $false)]
+		[string]$ManifestPath,
+
+		[Parameter(Mandatory = $false)]
+		[string]$Profile
+	)
+
+	$base = $ManifestPath
+	if ([string]::IsNullOrWhiteSpace($base)) {
+		$base = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+	}
+
+	$overlay = $null
+	if (-not [string]::IsNullOrWhiteSpace($Profile)) {
+		$dir = Split-Path -Parent $base
+		$file = Split-Path -Leaf $base
+		$nameNoExt = [IO.Path]::GetFileNameWithoutExtension($file)
+		$ext = [IO.Path]::GetExtension($file)
+		$candidate = Join-Path $dir ("{0}.{1}{2}" -f $nameNoExt, $Profile, $ext)
+		if (Test-Path -LiteralPath $candidate) {
+			$overlay = $candidate
+		}
+	}
+
+	return [PSCustomObject]@{
+		BaseManifestPath    = $base
+		OverlayManifestPath = $overlay
+	}
+}
+
+#==============================================================================
+# Function: Merge-AspireResourceOverlay
+#==============================================================================
+<#
+.SYNOPSIS
+	Merges an overlay resource into a base manifest for a single resource name.
+.DESCRIPTION
+	Implements a "base + overlay" merge for one resource:
+	- If base resource doesn't exist and overlay resource exists: adds it.
+	- If both exist: deep-merges properties (scalars override, lists replace, dictionaries merge keys).
+.PARAMETER BaseManifest
+	Base manifest object produced by ConvertFrom-Json.
+.PARAMETER OverlayManifest
+	Overlay manifest object produced by ConvertFrom-Json.
+.PARAMETER ResourceName
+	Resource name under .resources to merge (e.g., 'n8n').
+.OUTPUTS
+	[PSCustomObject] The updated BaseManifest object (same instance mutated).
+#>
+function Merge-AspireResourceOverlay {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[object]$BaseManifest,
+
+		[Parameter(Mandatory = $true)]
+		[object]$OverlayManifest,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ResourceName
+	)
+
+	if (-not $BaseManifest.resources) {
+		$BaseManifest | Add-Member -NotePropertyName "resources" -NotePropertyValue ([PSCustomObject]@{}) -Force
+	}
+
+	$baseRes = $BaseManifest.resources.$ResourceName
+	$overlayRes = $OverlayManifest.resources.$ResourceName
+
+	if ($null -eq $baseRes -and $overlayRes) {
+		$BaseManifest.resources.$ResourceName = $overlayRes
+		return $BaseManifest
+	}
+
+	if (-not ($overlayRes -and $overlayRes.properties)) {
+		return $BaseManifest
+	}
+
+	$bp = $baseRes.properties
+	$op = $overlayRes.properties
+
+	if ($op.image) { $bp.image = $op.image }
+	if ($op.restart) { $bp.restart = $op.restart }
+	if ($op.platform) { $bp.platform = $op.platform }
+
+	if ($op.bindings) { $bp.bindings = $op.bindings }
+	if ($op.volumes) { $bp.volumes = $op.volumes }
+	if ($op.dependencies) { $bp.dependencies = $op.dependencies }
+	if ($op.networks) { $bp.networks = $op.networks }
+	if ($op.command) { $bp.command = $op.command }
+
+	if ($op.environment) {
+		if ($null -eq $bp.environment) { $bp.environment = [PSCustomObject]@{} }
+		foreach ($p in $op.environment.PSObject.Properties) {
+			$bp.environment | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
+		}
+	}
+
+	if ($op.additionalHosts) {
+		if ($null -eq $bp.additionalHosts) { $bp.additionalHosts = [PSCustomObject]@{} }
+		foreach ($p in $op.additionalHosts.PSObject.Properties) {
+			$bp.additionalHosts | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
+		}
+	}
+
+	if ($op.resources) {
+		if ($null -eq $bp.resources) { $bp.resources = $op.resources }
+		else {
+			if ($op.resources.memory) { $bp.resources.memory = $op.resources.memory }
+			if ($op.resources.memorySwap) { $bp.resources.memorySwap = $op.resources.memorySwap }
+		}
+	}
+
+	return $BaseManifest
+}
+
+#==============================================================================
+# Function: Get-AspireManifestWithOptionalOverlay
+#==============================================================================
+<#
+.SYNOPSIS
+	Loads an Aspire manifest and optionally applies an overlay for a single resource.
+.DESCRIPTION
+	Loads the base manifest JSON from disk. If a profile overlay exists, merges the specified resource
+	from overlay into base and returns the merged manifest object.
+.PARAMETER BaseManifestPath
+	Path to base manifest.json.
+.PARAMETER OverlayManifestPath
+	Optional path to overlay manifest.<profile>.json.
+.PARAMETER ResourceName
+	Resource name to merge when overlay is present.
+.OUTPUTS
+	[PSCustomObject] The merged manifest object.
+#>
+function Get-AspireManifestWithOptionalOverlay {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$BaseManifestPath,
+
+		[Parameter(Mandatory = $false)]
+		[string]$OverlayManifestPath,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ResourceName
+	)
+
+	if (-not (Test-Path -LiteralPath $BaseManifestPath)) {
+		throw "Manifest file not found: $BaseManifestPath"
+	}
+
+	$baseManifest = Get-Content -Raw $BaseManifestPath | ConvertFrom-Json
+
+	if (-not [string]::IsNullOrWhiteSpace($OverlayManifestPath) -and (Test-Path -LiteralPath $OverlayManifestPath)) {
+		$overlayManifest = Get-Content -Raw $OverlayManifestPath | ConvertFrom-Json
+		$null = Merge-AspireResourceOverlay -BaseManifest $baseManifest -OverlayManifest $overlayManifest -ResourceName $ResourceName
+	}
+
+	return $baseManifest
+}
+
+#==============================================================================
+# Function: Update-AspireManifestResourceImage
+#==============================================================================
+<#
+.SYNOPSIS
+	Updates a resource image reference in Aspire manifest.json and optionally persists it.
+.DESCRIPTION
+	Updates .resources.<ResourceName>.properties.image with the provided Image value.
+	Useful when update flow chooses a pinned semver tag and the manifest should start the same image next time.
+.PARAMETER ManifestPath
+	Path to manifest.json to update.
+.PARAMETER ResourceName
+	Resource name under .resources (e.g., 'n8n').
+.PARAMETER Image
+	New image reference (e.g., 'docker.io/n8nio/n8n:1.123.7').
+.PARAMETER PassThru
+	If set, returns the updated manifest object.
+.OUTPUTS
+	If -PassThru: [PSCustomObject] updated manifest object; otherwise [void].
+#>
+function Update-AspireManifestResourceImage {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$ManifestPath,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ResourceName,
+
+		[Parameter(Mandatory = $true)]
+		[string]$Image,
+
+		[Parameter(Mandatory = $false)]
+		[switch]$PassThru
+	)
+
+	if (-not (Test-Path -LiteralPath $ManifestPath)) {
+		throw "Manifest file not found: $ManifestPath"
+	}
+
+	$root = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+
+	if (-not $root.resources) {
+		throw "Manifest '$ManifestPath' has no 'resources' section."
+	}
+
+	$res = $root.resources.$ResourceName
+	if (-not $res) {
+		throw "Resource '$ResourceName' not found in manifest '$ManifestPath'."
+	}
+
+	if (-not $res.properties) {
+		$res | Add-Member -NotePropertyName "properties" -NotePropertyValue ([PSCustomObject]@{}) -Force
+	}
+
+	$res.properties.image = $Image
+
+	if ($PSCmdlet.ShouldProcess($ManifestPath, "Update resource '$ResourceName' image to '$Image'")) {
+		$json = $root | ConvertTo-Json -Depth 50
+		Set-Content -LiteralPath $ManifestPath -Value $json -Encoding UTF8
+	}
+
+	if ($PassThru) {
+		return $root
+	}
+}
+
+#==============================================================================
 # Function: Confirm-ContainerResource
 #==============================================================================
 <#
@@ -128,9 +379,55 @@ function Invoke-PullImage {
 
 	# If OfflineImagesFolder is provided and contains matching tar(s), offer to load instead of pulling.
 	if (-not [string]::IsNullOrWhiteSpace($OfflineImagesFolder) -and (Test-Path -LiteralPath $OfflineImagesFolder)) {
+
+		# Split image into repo + tag
+		$repo = $ImageName
+		$tag = $null
+		if ($ImageName -match '^(?<r>.+):(?<t>[^:]+)$') {
+			$repo = $matches['r']
+			$tag = $matches['t']
+		}
+
+		# 1) Exact match tar (repo+tag) - current behavior
 		$safeImageName = $ImageName -replace "[:/]", "_"
 		$pattern = "$safeImageName-image-*.tar"
 		$tarFiles = @(Get-ChildItem -LiteralPath $OfflineImagesFolder -Filter $pattern -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+
+		# 2) If config points to ':latest' but downloaded tars are versioned (repo_<ver>-image-*.tar),
+		# try discovering versioned tars for the same repository.
+		$versionedChoices = @()
+		if ((-not $tarFiles -or $tarFiles.Count -eq 0) -and ($tag -eq "latest")) {
+			$safeRepo = $repo -replace "[:/]", "_"
+			$pattern2 = "$safeRepo`_*-image-*.tar"
+			$files2 = @(Get-ChildItem -LiteralPath $OfflineImagesFolder -Filter $pattern2 -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+
+			foreach ($f in $files2) {
+				$re = '^' + [regex]::Escape($safeRepo) + '_(?<t>.+?)-image-'
+				if ($f.Name -match $re) {
+					$t = [string]$matches['t']
+					$sv = ConvertTo-SemVer -Version $t
+					$versionedChoices += [PSCustomObject]@{
+						Tag     = $t
+						Version = $sv
+						File    = $f
+					}
+				}
+			}
+
+			if ($versionedChoices.Count -gt 0) {
+				$withVer = @($versionedChoices | Where-Object { $null -ne $_.Version })
+				$withoutVer = @($versionedChoices | Where-Object { $null -eq $_.Version })
+
+				$sortedWithVer = @(
+					$withVer | Sort-Object `
+						@{ Expression = { $_.Version.Major }; Descending = $true }, `
+						@{ Expression = { $_.Version.Minor }; Descending = $true }, `
+						@{ Expression = { $_.Version.Patch }; Descending = $true }
+				)
+				$sortedWithoutVer = @($withoutVer | Sort-Object @{ Expression = { $_.File.LastWriteTime }; Descending = $true })
+				$versionedChoices = @($sortedWithVer + $sortedWithoutVer)
+			}
+		}
 
 		if ($tarFiles -and $tarFiles.Count -gt 0) {
 			$latest = $tarFiles[0]
@@ -167,6 +464,72 @@ function Invoke-PullImage {
 			}
 
 			# Else fall through to normal pull (choice 2 or unknown)
+		}
+		elseif ($versionedChoices -and $versionedChoices.Count -gt 0) {
+			Write-Host ""
+			Write-Host "Versioned offline image tar(s) found for '$repo' while '$ImageName' is configured as ':latest':" -ForegroundColor Cyan
+			[int]$i = 1
+			foreach ($c in $versionedChoices) {
+				if ($null -ne $c.Version) {
+					Write-Host ("{0}. {1}  ({2})" -f $i, $c.Tag, $c.File.Name) -ForegroundColor Gray
+				}
+				else {
+					Write-Host ("{0}. {1}" -f $i, $c.File.Name) -ForegroundColor Gray
+				}
+				$i++
+			}
+			Write-Host "0. Pull from internet registry" -ForegroundColor Cyan
+			$pick = Read-Host "Select tar to load (default 1)"
+			if ([string]::IsNullOrWhiteSpace($pick)) { $pick = "1" }
+			if ($pick -eq "0") {
+				# fall through to pull
+			}
+			else {
+				[int]$idx = 0
+				if ([int]::TryParse($pick, [ref]$idx) -and $idx -ge 1 -and $idx -le $versionedChoices.Count) {
+					$sel = $versionedChoices[$idx - 1]
+					if ($PSCmdlet.ShouldProcess($sel.File.FullName, "Load image tar for '${repo}:$($sel.Tag)'")) {
+						Write-Host "Loading image from tar: $($sel.File.FullName)" -ForegroundColor Yellow
+						& $Engine load --input $sel.File.FullName
+						if ($LASTEXITCODE -eq 0) {
+
+							# If the config requested ':latest' but we loaded a versioned tar, ensure ':latest' points
+							# to the loaded image locally (so later 'run ...:latest' does not pull from internet).
+							if ($tag -eq "latest" -and -not [string]::IsNullOrWhiteSpace($sel.Tag)) {
+								try {
+									$loadedRef = "${repo}:$($sel.Tag)"
+									$loadedId = $null
+									[string[]]$lines = @(& $Engine images --format "{{.Repository}}:{{.Tag}} {{.ID}}" 2>$null)
+									foreach ($line in $lines) {
+										if ([string]::IsNullOrWhiteSpace($line)) { continue }
+										$parts = $line.Trim() -split '\s+', 2
+										if ($parts.Count -lt 2) { continue }
+										if ($parts[0].Trim() -eq $loadedRef) {
+											$loadedId = $parts[1].Trim()
+											break
+										}
+									}
+
+									if (-not [string]::IsNullOrWhiteSpace($loadedId)) {
+										& $Engine tag $loadedId "${repo}:latest" 2>$null | Out-Null
+									}
+								}
+								catch {
+									# Tagging is best-effort; if it fails, caller may still pull.
+								}
+							}
+
+							Write-Host "Image loaded successfully from versioned offline tar." -ForegroundColor Green
+							return $true
+						}
+						Write-Error "Failed to load image from offline tar."
+						return $false
+					}
+					Write-Warning "Image load skipped due to -WhatIf."
+					return $false
+				}
+				Write-Warning "Invalid selection. Falling back to pull."
+			}
 		}
 	}
 
@@ -518,6 +881,479 @@ function Get-ContainerAppVersion {
 }
 
 #==============================================================================
+# Function: Get-ImageLabelValue
+#==============================================================================
+<#
+.SYNOPSIS
+	Reads a label value from a local image (by reference or ID).
+.DESCRIPTION
+	Uses 'engine inspect' to read Config.Labels.<LabelKey> from an image reference or image ID.
+.PARAMETER Engine
+	Path to container engine executable (docker/podman).
+.PARAMETER ImageRefOrId
+	Local image reference (repo:tag) or image ID.
+.PARAMETER LabelKey
+	Label key to read (e.g., 'org.opencontainers.image.version').
+.OUTPUTS
+	[string] The label value or $null.
+#>
+function Get-ImageLabelValue {
+	[CmdletBinding()]
+	[OutputType([string])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ImageRefOrId,
+
+		[Parameter(Mandatory = $true)]
+		[string]$LabelKey
+	)
+
+	try {
+		$img = & $Engine inspect $ImageRefOrId 2>$null | ConvertFrom-Json
+		if (-not $img) { return $null }
+		$one = if ($img -is [array]) { $img[0] } else { $img }
+
+		$labels = $one.Config.Labels
+		if (-not $labels) { return $null }
+		if ($labels.PSObject.Properties.Name -notcontains $LabelKey) { return $null }
+
+		$v = [string]$labels.$LabelKey
+		if ([string]::IsNullOrWhiteSpace($v)) { return $null }
+		return $v.Trim()
+	}
+	catch {
+		return $null
+	}
+}
+
+#==============================================================================
+# Function: Get-LocalOfflineTarVersions
+#==============================================================================
+<#
+.SYNOPSIS
+	Discovers offline image tar versions for a repository in the offline images folder.
+.DESCRIPTION
+	Searches for tar files named like '<safeRepo>_<tag>-image-*.tar' and extracts <tag>.
+	Returns a unique list of discovered tags and the latest semver tag (if any).
+.PARAMETER OfflineImagesFolder
+	Folder path containing offline image tar files.
+.PARAMETER Repository
+	Repository name without tag (e.g., 'docker.io/n8nio/n8n').
+.OUTPUTS
+	[PSCustomObject] with Tags ([string[]]) and LatestSemVerTag ([string]) or $null if none found.
+#>
+function Get-LocalOfflineTarVersions {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$OfflineImagesFolder,
+
+		[Parameter(Mandatory = $true)]
+		[string]$Repository
+	)
+
+	if ([string]::IsNullOrWhiteSpace($OfflineImagesFolder) -or -not (Test-Path -LiteralPath $OfflineImagesFolder)) {
+		return $null
+	}
+
+	$safeRepo = $Repository -replace "[:/]", "_"
+	$pattern = "$safeRepo`_*-image-*.tar"
+	$files = @(Get-ChildItem -LiteralPath $OfflineImagesFolder -Filter $pattern -ErrorAction SilentlyContinue)
+	if (-not $files -or $files.Count -eq 0) { return $null }
+
+	$tags = New-Object System.Collections.Generic.List[string]
+	foreach ($f in $files) {
+		$re = '^' + [regex]::Escape($safeRepo) + '_(?<t>.+?)-image-'
+		if ($f.Name -match $re) {
+			$t = [string]$matches['t']
+			if (-not [string]::IsNullOrWhiteSpace($t)) { $tags.Add($t.Trim()) }
+		}
+	}
+
+	$uniq = @($tags | Sort-Object -Unique)
+	if (-not $uniq -or $uniq.Count -eq 0) { return $null }
+
+	$sem = @()
+	foreach ($t in $uniq) {
+		$sv = ConvertTo-SemVer -Version $t
+		if ($null -ne $sv) {
+			$sem += [PSCustomObject]@{ Tag = $t; Ver = $sv }
+		}
+	}
+	$latest = $null
+	if ($sem.Count -gt 0) {
+		$sorted = @(
+			$sem | Sort-Object `
+				@{ Expression = { $_.Ver.Major }; Descending = $true }, `
+				@{ Expression = { $_.Ver.Minor }; Descending = $true }, `
+				@{ Expression = { $_.Ver.Patch }; Descending = $true }
+		)
+		$latest = $sorted[0].Tag
+	}
+
+	return [PSCustomObject]@{
+		Tags           = $uniq
+		LatestSemVerTag = $latest
+	}
+}
+
+#==============================================================================
+# Function: Get-DockerHubRepoFromImageRef
+#==============================================================================
+<#
+.SYNOPSIS
+	Parses a docker.io image reference and returns Docker Hub namespace/repository.
+.DESCRIPTION
+	Supports image references like:
+	- docker.io/<namespace>/<repo>
+	- <namespace>/<repo>
+	Does not support library images like 'docker.io/library/redis' specially; it will return namespace 'library'.
+.PARAMETER Repository
+	Image repository without tag.
+.OUTPUTS
+	[PSCustomObject] with Namespace and Repository, or $null if not parseable.
+#>
+function Get-DockerHubRepoFromImageRef {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Repository
+	)
+
+	$repo = $Repository.Trim()
+	if ($repo -match '^docker\.io/(?<ns>[^/]+)/(?<r>[^/]+)$') {
+		return [PSCustomObject]@{ Namespace = [string]$matches['ns']; Repository = [string]$matches['r'] }
+	}
+	if ($repo -match '^(?<ns>[^/]+)/(?<r>[^/]+)$') {
+		return [PSCustomObject]@{ Namespace = [string]$matches['ns']; Repository = [string]$matches['r'] }
+	}
+	return $null
+}
+
+#==============================================================================
+# Function: Get-RemoteSemVerOptions
+#==============================================================================
+<#
+.SYNOPSIS
+	Gets latest semver tags for current and next major lines from Docker Hub for a repository.
+.DESCRIPTION
+	Determines current major from local image label org.opencontainers.image.version when available,
+	otherwise infers from highest semver tag on Docker Hub.
+.PARAMETER Engine
+	Container engine executable path.
+.PARAMETER Repository
+	Image repository without tag.
+.PARAMETER CurrentTag
+	Current tag from the image reference (used to decide whether to do semver flow; typically 'latest').
+.OUTPUTS
+	[PSCustomObject] with CurrentMajor, CurrentMajorLatestTag, NextMajorLatestTag, RepoName, Namespace, Repository or $null.
+#>
+function Get-RemoteSemVerOptions {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine,
+
+		[Parameter(Mandatory = $true)]
+		[string]$Repository,
+
+		[Parameter(Mandatory = $false)]
+		[string]$CurrentTag
+	)
+
+	if ($CurrentTag -ne "latest") { return $null }
+
+	$hub = Get-DockerHubRepoFromImageRef -Repository $Repository
+	if (-not $hub) { return $null }
+
+	$hubTags = Get-DockerHubTags -Namespace $hub.Namespace -Repository $hub.Repository
+	if (-not $hubTags -or $hubTags.Count -eq 0) { return $null }
+
+	$curMajor = $null
+
+	$labelVer = Get-ImageLabelValue -Engine $Engine -ImageRefOrId "${Repository}:latest" -LabelKey "org.opencontainers.image.version"
+	if (-not [string]::IsNullOrWhiteSpace($labelVer)) {
+		$sv = ConvertTo-SemVer -Version $labelVer
+		if ($null -ne $sv) { $curMajor = [int]$sv.Major }
+	}
+
+	if ($null -eq $curMajor) {
+		$semTags = @()
+		foreach ($t in $hubTags) {
+			$sv = ConvertTo-SemVer -Version $t
+			if ($null -ne $sv) { $semTags += [PSCustomObject]@{ Tag = $t; Ver = $sv } }
+		}
+		if ($semTags.Count -gt 0) {
+			$sorted = @(
+				$semTags | Sort-Object `
+					@{ Expression = { $_.Ver.Major }; Descending = $true }, `
+					@{ Expression = { $_.Ver.Minor }; Descending = $true }, `
+					@{ Expression = { $_.Ver.Patch }; Descending = $true }
+			)
+			$curMajor = [int]$sorted[0].Ver.Major
+		}
+	}
+
+	if ($null -eq $curMajor) { return $null }
+
+	$remoteCur = Get-LatestSemVerTag -Tags $hubTags -Major $curMajor
+	$remoteNext = Get-LatestSemVerTag -Tags $hubTags -Major ($curMajor + 1)
+
+	if ([string]::IsNullOrWhiteSpace($remoteCur) -and [string]::IsNullOrWhiteSpace($remoteNext)) { return $null }
+
+	return [PSCustomObject]@{
+		CurrentMajor          = $curMajor
+		CurrentMajorLatestTag = $remoteCur
+		NextMajorLatestTag    = $remoteNext
+		RepoName              = $hub.Repository
+		Namespace             = $hub.Namespace
+		Repository            = $hub.Repository
+	}
+}
+
+#==============================================================================
+# Function: Show-ImageDownloadOptions
+#==============================================================================
+<#
+.SYNOPSIS
+	Shows remote semver download options for ':latest' images (update vs upgrade).
+.DESCRIPTION
+	Uses Get-RemoteSemVerOptions and returns a concrete target image ref to download, or $null.
+.PARAMETER Engine
+	Container engine executable path.
+.PARAMETER ImageName
+	Image reference (repo:tag).
+.OUTPUTS
+	[PSCustomObject] with TargetImage, Source ('internet') or $null.
+#>
+function Show-ImageDownloadOptions {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ImageName
+	)
+
+	if ($ImageName -notmatch '^(?<repo>.+):(?<tag>[^:]+)$') { return $null }
+	$repo = [string]$matches['repo']
+	$tag = [string]$matches['tag']
+
+	# When downloading, "update" should usually mean: latest semver in the most recent "supported major".
+	# The label on ':latest' may point to a newer major already (e.g., n8n 2.x), which would hide 1.x updates.
+	# So for downloads we infer the current major from available remote tags and then optionally offer previous major.
+	$hub = Get-DockerHubRepoFromImageRef -Repository $repo
+	if (-not $hub) { return $null }
+
+	$hubTags = Get-DockerHubTags -Namespace $hub.Namespace -Repository $hub.Repository
+	if (-not $hubTags -or $hubTags.Count -eq 0) { return $null }
+
+	# Build semver tag list
+	$semTags = @()
+	foreach ($t in $hubTags) {
+		$sv = ConvertTo-SemVer -Version $t
+		if ($null -ne $sv) { $semTags += [PSCustomObject]@{ Tag = $t; Ver = $sv } }
+	}
+	if (-not $semTags -or $semTags.Count -eq 0) { return $null }
+
+	$sorted = @(
+		$semTags | Sort-Object `
+			@{ Expression = { $_.Ver.Major }; Descending = $true }, `
+			@{ Expression = { $_.Ver.Minor }; Descending = $true }, `
+			@{ Expression = { $_.Ver.Patch }; Descending = $true }
+	)
+
+	$topMajor = [int]$sorted[0].Ver.Major
+	$prevMajor = $topMajor - 1
+
+	$topTag = Get-LatestSemVerTag -Tags $hubTags -Major $topMajor
+	$prevTag = $null
+	if ($prevMajor -ge 1) { $prevTag = Get-LatestSemVerTag -Tags $hubTags -Major $prevMajor }
+
+	$options = @()
+	$map = @{}
+
+	# Prefer showing the "update" line (previous major) first when available, then "upgrade" (top major).
+	if ($prevTag) {
+		$options += "Download from: Remote (internet) $prevMajor.x latest: $prevTag"
+		$map[$options.Count] = "$repo`:$prevTag"
+	}
+	if ($topTag) {
+		$options += "Download from: Remote (internet) $topMajor.x latest: $topTag"
+		$map[$options.Count] = "$repo`:$topTag"
+	}
+
+	if (-not $options -or $options.Count -eq 0) { return $null }
+
+	$pick = Invoke-OptionsMenu -Title "Download Options" -Options $options -ExitChoice "Exit menu"
+	if (-not $pick -or $pick -eq "Exit menu") { return $null }
+
+	# Resolve selected option index (Invoke-OptionsMenu returns the option string)
+	[int]$idx = 0
+	for ($i = 0; $i -lt $options.Count; $i++) {
+		if ($options[$i] -eq $pick) { $idx = $i + 1; break }
+	}
+	if ($idx -lt 1 -or -not $map.ContainsKey($idx)) { return $null }
+
+	return [PSCustomObject]@{
+		TargetImage = [string]$map[$idx]
+		Source      = "internet"
+	}
+}
+
+#==============================================================================
+# Function: Show-ImageUpdateOptions
+#==============================================================================
+<#
+.SYNOPSIS
+	Shows current/local/remote versions and lets the user choose reinstall/update/upgrade and source.
+.DESCRIPTION
+	- Current: reads running container app version via Get-ContainerAppVersion.
+	- Local offline: reads versions from tar file names in OfflineImagesFolder.
+	- Remote: reads latest tags from Docker Hub for a major line.
+.PARAMETER Engine
+	Path to container engine executable (docker/podman).
+.PARAMETER ContainerName
+	Running container name.
+.PARAMETER Repository
+	Repository without tag (e.g., 'docker.io/n8nio/n8n').
+.PARAMETER OfflineImagesFolder
+	Offline image tar folder.
+.PARAMETER CurrentMajor
+	Major line to consider for "update" (e.g., 1).
+.PARAMETER VersionCommand
+	Command to run in container to get app version (e.g., @('n8n','--version')).
+.OUTPUTS
+	[PSCustomObject] with TargetImage ([string]) and Source ([string] 'offline'|'internet') or $null if cancelled.
+#>
+function Show-ImageUpdateOptions {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Engine,
+
+		[Parameter(Mandatory = $true)]
+		[string]$ContainerName,
+
+		[Parameter(Mandatory = $true)]
+		[string]$Repository,
+
+		[Parameter(Mandatory = $false)]
+		[string]$OfflineImagesFolder = $global:offlineImagesFolder,
+
+		[Parameter(Mandatory = $true)]
+		[int]$CurrentMajor,
+
+		[Parameter(Mandatory = $true)]
+		[string[]]$VersionCommand
+	)
+
+	Write-Host ""
+	Write-Host "Image Update Options:" -ForegroundColor Cyan
+	Write-Host "=====================" -ForegroundColor Cyan
+
+	$currentVerRaw = Get-ContainerAppVersion -Engine $Engine -ContainerName $ContainerName -Command $VersionCommand
+	$currentVerRaw = if ($currentVerRaw) { $currentVerRaw.Trim() } else { $null }
+
+	$offline = Get-LocalOfflineTarVersions -OfflineImagesFolder $OfflineImagesFolder -Repository $Repository
+	$offlineLatest = if ($offline) { $offline.LatestSemVerTag } else { $null }
+
+	$hub = Get-DockerHubRepoFromImageRef -Repository $Repository
+	$tags = if ($hub) { Get-DockerHubTags -Namespace $hub.Namespace -Repository $hub.Repository } else { $null }
+	$remoteCurrentMajor = if ($tags) { Get-LatestSemVerTag -Tags $tags -Major $CurrentMajor } else { $null }
+	$remoteNextMajor = if ($tags) { Get-LatestSemVerTag -Tags $tags -Major ($CurrentMajor + 1) } else { $null }
+
+	if ($currentVerRaw) {
+		Write-Host "Current (running) version: $currentVerRaw" -ForegroundColor Gray
+	} else {
+		Write-Host "Current (running) version: [unknown - container may be stopped]" -ForegroundColor Yellow
+	}
+
+	if ($offlineLatest) {
+		Write-Host "Local (offline) latest:    $offlineLatest" -ForegroundColor Gray
+	} else {
+		Write-Host "Local (offline) latest:    [none found in '$OfflineImagesFolder']" -ForegroundColor DarkGray
+	}
+
+	if ($remoteCurrentMajor) {
+		Write-Host "Remote (internet) $CurrentMajor.x latest: $remoteCurrentMajor" -ForegroundColor Gray
+	} else {
+		Write-Host "Remote (internet) $CurrentMajor.x latest: [unavailable]" -ForegroundColor DarkGray
+	}
+
+	if ($remoteNextMajor) {
+		Write-Host "Remote (internet) $($CurrentMajor + 1).x latest: $remoteNextMajor" -ForegroundColor Gray
+	} else {
+		Write-Host "Remote (internet) $($CurrentMajor + 1).x latest: [unavailable]" -ForegroundColor DarkGray
+	}
+
+	Write-Host ""
+	Write-Host "Choose update type:" -ForegroundColor White
+
+	$choices = @()
+
+	# 1) Local (offline) latest
+	if ($offlineLatest) {
+		$choices += [PSCustomObject]@{ Key = "1"; Label = "Install from: Local (offline) latest:    $offlineLatest"; Tag = $offlineLatest; Source = "offline" }
+	}
+
+	# 2) Remote (internet) current major latest
+	if ($remoteCurrentMajor) {
+		$k = [string]($choices.Count + 1)
+		$choices += [PSCustomObject]@{ Key = $k; Label = "Install from: Remote (internet) $CurrentMajor.x latest: $remoteCurrentMajor"; Tag = $remoteCurrentMajor; Source = "internet" }
+	}
+
+	# 3) Remote (internet) next major latest
+	if ($remoteNextMajor) {
+		$k = [string]($choices.Count + 1)
+		$choices += [PSCustomObject]@{ Key = $k; Label = "Install from: Remote (internet) $($CurrentMajor + 1).x latest: $remoteNextMajor"; Tag = $remoteNextMajor; Source = "internet" }
+	}
+
+	if (-not $choices -or $choices.Count -eq 0) {
+		Write-Warning "No install options are available (offline folder empty and remote tags unavailable)."
+		return $null
+	}
+
+	foreach ($c in $choices) {
+		Write-Host ("{0}. {1}" -f $c.Key, $c.Label) -ForegroundColor Cyan
+	}
+	Write-Host "0. Cancel" -ForegroundColor Cyan
+
+	$pick = Read-Host "Enter your choice"
+	if ([string]::IsNullOrWhiteSpace($pick)) { $pick = $choices[0].Key }
+	if ($pick -eq "0") { return $null }
+
+	$sel = $choices | Where-Object { $_.Key -eq $pick } | Select-Object -First 1
+	if (-not $sel) { Write-Warning "Invalid selection."; return $null }
+
+	$targetTag = [string]$sel.Tag
+	$targetImage = "$Repository`:$targetTag"
+
+	# If user picked offline, verify the tar exists for that tag.
+	if ($sel.Source -eq "offline") {
+		if (-not ($offline -and $offline.Tags -and $offline.Tags -contains $targetTag)) {
+			Write-Warning "Offline selection was chosen but the required tar for '$targetTag' was not found."
+			return $null
+		}
+	}
+
+	return [PSCustomObject]@{
+		TargetImage = $targetImage
+		Source      = [string]$sel.Source
+		TargetTag   = $targetTag
+	}
+}
+
+#==============================================================================
 # Function: Test-n8nUpdateAvailableByVersion
 #==============================================================================
 <#
@@ -630,8 +1466,54 @@ function Test-ImageUpdateAvailable {
 
 	Write-Host "Checking for updates to $ImageName..."
 
-	# First, check if we have the image locally
-	$localImageInfo = & $Engine inspect $ImageName 2>$null | ConvertFrom-Json
+	# First, check if we have the image locally.
+	# IMPORTANT: Do not use 'engine inspect <imageName>' as the only presence check.
+	# For Docker, fully-qualified references like 'docker.io/n8nio/n8n:latest' may not resolve via inspect
+	# unless that exact name is tagged locally, even when the image exists.
+	$localImageId = $null
+
+	# Attempt 1 (Docker-compatible): filter by reference
+	try {
+		$localImageId = (& $Engine images --filter "reference=$ImageName" --format "{{.ID}}" 2>$null | Select-Object -First 1)
+		if (-not [string]::IsNullOrWhiteSpace($localImageId)) {
+			$localImageId = $localImageId.Trim()
+		}
+		else {
+			$localImageId = $null
+		}
+	}
+	catch {
+		$localImageId = $null
+	}
+
+	# Attempt 2 (Engine-agnostic): scan image list for exact repo:tag match
+	if ($null -eq $localImageId) {
+		try {
+			[string[]]$lines = @(& $Engine images --format "{{.Repository}}:{{.Tag}} {{.ID}}" 2>$null)
+			foreach ($line in $lines) {
+				if ([string]::IsNullOrWhiteSpace($line)) { continue }
+				$parts = $line.Trim() -split '\s+', 2
+				if ($parts.Count -lt 2) { continue }
+				$ref = $parts[0].Trim()
+				$id = $parts[1].Trim()
+				if ($ref -eq $ImageName -and -not [string]::IsNullOrWhiteSpace($id)) {
+					$localImageId = $id
+					break
+				}
+			}
+		}
+		catch {
+			$localImageId = $null
+		}
+	}
+
+	if ($null -eq $localImageId) {
+		Write-Host "Image '$ImageName' not found locally. Update is available."
+		return $true
+	}
+
+	# Inspect by ID to get consistent details.
+	$localImageInfo = & $Engine inspect $localImageId 2>$null | ConvertFrom-Json
 	if (-not $localImageInfo) {
 		Write-Host "Image '$ImageName' not found locally. Update is available."
 		return $true
@@ -862,11 +1744,8 @@ function Test-ImageUpdateAvailable {
 			Write-Host "Remote digest: $remoteDigest" -ForegroundColor Yellow
 		}
 
-		$proceedWithUpdate = Read-Host "Do you want to proceed with the update? This will stop and remove the current container. (Y/N, default is Y)"
-		if ($proceedWithUpdate -eq "N") {
-			Write-Host "Update canceled by user." -ForegroundColor Yellow
-			return $false
-		}
+		# NOTE: Do not ask to proceed here.
+		# The caller (Update-Container) prompts and also offers "image source" selection via Invoke-PullImage.
 		return $true
 	}
 
@@ -920,7 +1799,7 @@ function Test-ImageUpdateAvailable {
 #>
 function Update-Container {
 	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control if needed, though sub-functions handle it
-	[OutputType([bool])]
+	[OutputType([object])]
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Engine,
@@ -949,22 +1828,39 @@ function Update-Container {
 		return $false # Can't update something that doesn't exist
 	}
 
-	# Step 2: Check if an update is available (includes force prompt)
-	$updateAvailable = Test-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName
-	if (-not $updateAvailable) {
-		# Test-ImageUpdateAvailable handles the force prompt. If it returns false, user chose not to force.
-		Write-Host "Update canceled by user or no update available/forced."
-		return $false
-	}
-	Write-Host "Update available or forced. Proceeding..."
+	# Step 2: Determine current/local/remote versions and let the user choose target and source.
+	# Special-case n8n: use semantic version compare (1.x update vs 2.x upgrade) and allow reinstall.
+	$repo = $ImageName
+	if ($ImageName -match '^(?<r>.+):(?<t>[^:]+)$') { $repo = $matches['r'] }
 
-	# Step 3: Acquire the latest image (offline tar load OR registry pull)
-	Write-Host "Acquiring image '$ImageName'..."
-	if (-not (Invoke-PullImage -Engine $Engine -ImageName $ImageName -PullOptions @("--platform", $Platform) -OfflineImagesFolder $OfflineImagesFolder)) {
-		Write-Error "Failed to acquire the latest image or action skipped. Update aborted."
+	$selection = $null
+	if ($repo -like "*n8nio/n8n*") {
+		$selection = Show-ImageUpdateOptions -Engine $Engine -ContainerName $ContainerName -Repository $repo -OfflineImagesFolder $OfflineImagesFolder -CurrentMajor 1 -VersionCommand @("n8n", "--version")
+	}
+	if (-not $selection) {
+		# Fallback to old digest-based behavior for non-n8n images or if user cancelled.
+		$updateAvailable = Test-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName
+		if (-not $updateAvailable) {
+			Write-Host "Update canceled by user or no update available/forced."
+			return $false
+		}
+		$selection = [PSCustomObject]@{ TargetImage = $ImageName; Source = "auto" }
+	}
+
+	$targetImage = $selection.TargetImage
+	Write-Host "Selected target image: $targetImage" -ForegroundColor Gray
+
+	# Step 3: Acquire the selected image.
+	# If the user chose internet, skip offline prompt by passing empty OfflineImagesFolder.
+	Write-Host "Acquiring image '$targetImage'..."
+	$offlineFolderForAcquire = $OfflineImagesFolder
+	if ($selection.Source -eq "internet") { $offlineFolderForAcquire = "" }
+
+	if (-not (Invoke-PullImage -Engine $Engine -ImageName $targetImage -PullOptions @("--platform", $Platform) -OfflineImagesFolder $offlineFolderForAcquire)) {
+		Write-Error "Failed to acquire the selected image or action skipped. Update aborted."
 		return $false
 	}
-	Write-Host "Image '$ImageName' acquired successfully."
+	Write-Host "Image '$targetImage' acquired successfully."
 
 	# Step 4: Remove the existing container (Remove-ContainerAndVolume handles ShouldProcess and volume prompt)
 	Write-Host "Removing existing container '$ContainerName'..."
@@ -976,7 +1872,7 @@ function Update-Container {
 
 	# Indicate that the core update steps (check, acquire, remove) were successful
 	Write-Host "Update pre-check, image acquire, and container removal completed successfully."
-	return $true
+	return $targetImage
 }
 
 #==============================================================================

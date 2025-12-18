@@ -341,6 +341,88 @@ function Get-DownloadedImageTar {
 }
 
 #==============================================================================
+# Function: Get-DownloadedImageTarVersions
+#==============================================================================
+<#
+.SYNOPSIS
+	Finds downloaded image tar files for all tags of a given repository and extracts tag/version from filenames.
+.DESCRIPTION
+	Supports scenarios where the configured manifest uses ':latest' but downloaded tars are versioned,
+	e.g. 'docker.io_n8nio_n8n_1.123.6-image-YYYYMMDD-HHmm.tar'.
+
+	It searches downloads\images for:
+		<safe-repo>_<tag>-image-*.tar
+
+	Where <safe-repo> is the repository without the ':tag' part, with ':' and '/' replaced by '_'.
+.PARAMETER ImageName
+	Image reference (repo:tag). If tag is ':latest', this function helps discover versioned tars.
+.OUTPUTS
+	[PSCustomObject[]] Each item has: Tag, Version (PSCustomObject semver or $null), File (FileInfo).
+#>
+function Get-DownloadedImageTarVersions {
+	[CmdletBinding()]
+	[OutputType([object[]])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$ImageName
+	)
+
+	if (-not (Test-Path -LiteralPath $global:offlineImagesFolder)) {
+		return @()
+	}
+
+	# Split to repo + tag
+	$repo = $ImageName
+	$tag = $null
+	if ($ImageName -match '^(?<r>.+):(?<t>[^:]+)$') {
+		$repo = $matches['r']
+		$tag = $matches['t']
+	}
+
+	$safeRepo = $repo -replace "[:/]", "_"
+	$pattern = "$safeRepo`_*-image-*.tar"
+	[System.IO.FileInfo[]]$files = @(Get-ChildItem -LiteralPath $global:offlineImagesFolder -Filter $pattern -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+
+	if (-not $files -or $files.Count -eq 0) {
+		return @()
+	}
+
+	$items = @()
+	foreach ($f in $files) {
+		# Expect: <safeRepo>_<tag>-image-...
+		$re = '^' + [regex]::Escape($safeRepo) + '_(?<tag>.+?)-image-'
+		if ($f.Name -match $re) {
+			$fileTag = [string]$matches['tag']
+			$sv = ConvertTo-SemVer -Version $fileTag
+			$items += [PSCustomObject]@{
+				Tag     = $fileTag
+				Version = $sv
+				File    = $f
+			}
+		}
+	}
+
+	if (-not $items -or $items.Count -eq 0) {
+		return @()
+	}
+
+	# Sort by parsed semver (desc) when available; otherwise by LastWriteTime desc
+	$withVer = @($items | Where-Object { $null -ne $_.Version })
+	$withoutVer = @($items | Where-Object { $null -eq $_.Version })
+
+	$sortedWithVer = @(
+		$withVer | Sort-Object `
+			@{ Expression = { $_.Version.Major }; Descending = $true }, `
+			@{ Expression = { $_.Version.Minor }; Descending = $true }, `
+			@{ Expression = { $_.Version.Patch }; Descending = $true }
+	)
+
+	$sortedWithoutVer = @($withoutVer | Sort-Object @{ Expression = { $_.File.LastWriteTime }; Descending = $true })
+
+	return @($sortedWithVer + $sortedWithoutVer)
+}
+
+#==============================================================================
 # Function: Save-DownloadedImageTar
 #==============================================================================
 <#
@@ -425,12 +507,25 @@ function Show-ManifestImageStatus {
 	}
 
 	$tarFiles = Get-DownloadedImageTar -ImageName $ImageName
-	if (-not $tarFiles -or $tarFiles.Count -eq 0) {
-		Write-Host "Downloaded tar: (none) in '$global:offlineImagesFolder'" -ForegroundColor Yellow
-	}
-	else {
+	if ($tarFiles -and $tarFiles.Count -gt 0) {
 		$latest = $tarFiles[0]
 		Write-Host "Downloaded tar (latest): $($latest.Name)  [$([DateTime]$latest.LastWriteTime)]" -ForegroundColor Green
+		return
+	}
+
+	# If no exact tar match exists (common when manifest uses ':latest'), show versioned tars for the repo.
+	$tarVersions = Get-DownloadedImageTarVersions -ImageName $ImageName
+	if (-not $tarVersions -or $tarVersions.Count -eq 0) {
+		Write-Host "Downloaded tar: (none) in '$global:offlineImagesFolder'" -ForegroundColor Yellow
+		return
+	}
+
+	$top = $tarVersions[0]
+	if ($null -ne $top.Version) {
+		Write-Host "Downloaded tar (latest versioned): $($top.Tag)  ($($top.File.Name))" -ForegroundColor Green
+	}
+	else {
+		Write-Host "Downloaded tar (latest by time): $($top.File.Name)  [$([DateTime]$top.File.LastWriteTime)]" -ForegroundColor Green
 	}
 }
 
@@ -463,13 +558,72 @@ function Select-ManifestImageAndManageDownload {
 	Show-ManifestImageStatus -ImageName $selection
 
 	Write-Host ""
+
+	$downloadChoice = Show-ImageDownloadOptions -Engine $script:enginePath -ImageName $selection
+	if ($downloadChoice -and -not [string]::IsNullOrWhiteSpace($downloadChoice.TargetImage)) {
+		Save-DownloadedImageTar -ImageName ([string]$downloadChoice.TargetImage) -Confirm:$false
+		Show-ManifestImageStatus -ImageName $selection
+		return
+	}
+
+	Write-Host ""
 	Write-Host "Actions:" -ForegroundColor White
-	Write-Host "1. Download image tar now (pull if needed, then save to downloads\\images)" -ForegroundColor Cyan
+	Write-Host "1. Load a downloaded tar (choose version when manifest uses ':latest')" -ForegroundColor Cyan
 	Write-Host "0. Back" -ForegroundColor Cyan
 	$action = Read-Host "Enter your choice"
+	if ([string]::IsNullOrWhiteSpace($action)) { $action = "1" }
+
+	if ($action -ne "1") { return }
+
 	if ($action -eq "1") {
-		Save-DownloadedImageTar -ImageName $selection -Confirm:$false
+		$tarFiles = Get-DownloadedImageTar -ImageName $selection
+		if ($tarFiles -and $tarFiles.Count -gt 0) {
+			$latest = $tarFiles[0]
+			Write-Host "Loading image from tar: $($latest.FullName)" -ForegroundColor Yellow
+			& $script:enginePath load --input $latest.FullName
+			Show-ManifestImageStatus -ImageName $selection
+			return
+		}
+
+		$tarVersions = Get-DownloadedImageTarVersions -ImageName $selection
+		if (-not $tarVersions -or $tarVersions.Count -eq 0) {
+			Write-Host "No downloaded tars found for this repository in '$global:offlineImagesFolder'." -ForegroundColor Yellow
+			return
+		}
+
+		$options = @()
+		foreach ($tv in $tarVersions) {
+			if ($null -ne $tv.Version) {
+				$options += ("{0}  ({1})" -f $tv.Tag, $tv.File.Name)
+			}
+			else {
+				$options += ("{0}" -f $tv.File.Name)
+			}
+		}
+
+		$pick = Invoke-OptionsMenu -Title "Select downloaded tar to load" -Options $options -ExitChoice "Exit menu"
+		if (-not $pick -or $pick -eq "Exit menu") { return }
+
+		$selected = $null
+		foreach ($tv in $tarVersions) {
+			if ($null -ne $tv.Version) {
+				$label = ("{0}  ({1})" -f $tv.Tag, $tv.File.Name)
+				if ($label -eq $pick) { $selected = $tv; break }
+			}
+			else {
+				if ($tv.File.Name -eq $pick) { $selected = $tv; break }
+			}
+		}
+
+		if ($null -eq $selected) {
+			Write-Error "Failed to resolve selected tar."
+			return
+		}
+
+		Write-Host "Loading image from tar: $($selected.File.FullName)" -ForegroundColor Yellow
+		& $script:enginePath load --input $selected.File.FullName
 		Show-ManifestImageStatus -ImageName $selection
+		return
 	}
 }
 

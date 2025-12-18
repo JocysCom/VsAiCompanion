@@ -47,79 +47,20 @@ $global:containerName = "n8n"
 # Current configuration: 12288 MB heap, 14 GB container limit (configured in manifest.json)
 
 # Load configuration from Aspire manifest with optional overlay merge (supports -ManifestPath and -Profile)
-if (-not $ManifestPath -or [string]::IsNullOrWhiteSpace($ManifestPath)) {
-    $ManifestPath = Join-Path $PSScriptRoot "Files\Aspire\manifest.json"
+$paths = Get-AspireManifestPaths -ManifestPath $ManifestPath -Profile $Profile
+$baseManifestPath = $paths.BaseManifestPath
+$overlayManifestPath = $paths.OverlayManifestPath
+
+if ($Profile -and -not [string]::IsNullOrWhiteSpace($Profile) -and [string]::IsNullOrWhiteSpace($overlayManifestPath)) {
+	$manifestDir = Split-Path -Parent $baseManifestPath
+	$manifestFile = Split-Path -Leaf $baseManifestPath
+	$manifestNameNoExt = [IO.Path]::GetFileNameWithoutExtension($manifestFile)
+	$manifestExt = [IO.Path]::GetExtension($manifestFile)
+	$candidate = Join-Path $manifestDir ("{0}.{1}{2}" -f $manifestNameNoExt, $Profile, $manifestExt)
+	Write-Warning "Profile manifest not found: $candidate. Using base manifest: $baseManifestPath"
 }
 
-$baseManifestPath = $ManifestPath
-$overlayManifestPath = $null
-if ($Profile) {
-    $manifestDir = Split-Path -Parent $ManifestPath
-    $manifestFile = Split-Path -Leaf $ManifestPath
-    $manifestNameNoExt = [IO.Path]::GetFileNameWithoutExtension($manifestFile)
-    $manifestExt = [IO.Path]::GetExtension($manifestFile)
-    $candidate = Join-Path $manifestDir ("{0}.{1}{2}" -f $manifestNameNoExt, $Profile, $manifestExt)
-    if (Test-Path -LiteralPath $candidate) {
-        $overlayManifestPath = $candidate
-    } else {
-        Write-Warning "Profile manifest not found: $candidate. Using base manifest: $ManifestPath"
-    }
-}
-
-if (-not (Test-Path -LiteralPath $baseManifestPath)) {
-    throw "Manifest file not found: $baseManifestPath"
-}
-
-# Load base manifest
-$baseManifest = Get-Content -Raw $baseManifestPath | ConvertFrom-Json
-
-# Apply overlay differences for the 'n8n' resource if present
-if ($overlayManifestPath) {
-    $overlayManifest = Get-Content -Raw $overlayManifestPath | ConvertFrom-Json
-    $resourceName = 'n8n'
-    $baseRes = $baseManifest.resources.$resourceName
-    $overlayRes = $overlayManifest.resources.$resourceName
-    if ($null -eq $baseRes -and $overlayRes) {
-        $baseManifest.resources.$resourceName = $overlayRes
-    }
-    elseif ($overlayRes -and $overlayRes.properties) {
-        $bp = $baseRes.properties
-        $op = $overlayRes.properties
-
-        if ($op.image)       { $bp.image = $op.image }
-        if ($op.restart)     { $bp.restart = $op.restart }
-        if ($op.platform)    { $bp.platform = $op.platform }
-
-        if ($op.bindings)    { $bp.bindings = $op.bindings }
-        if ($op.volumes)     { $bp.volumes = $op.volumes }
-        if ($op.dependencies){ $bp.dependencies = $op.dependencies }
-        if ($op.networks)    { $bp.networks = $op.networks }
-        if ($op.command)     { $bp.command = $op.command }
-
-        if ($op.environment) {
-            if ($null -eq $bp.environment) { $bp.environment = [PSCustomObject]@{} }
-            foreach ($p in $op.environment.PSObject.Properties) {
-                $bp.environment | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
-            }
-        }
-        if ($op.additionalHosts) {
-            if ($null -eq $bp.additionalHosts) { $bp.additionalHosts = [PSCustomObject]@{} }
-            foreach ($p in $op.additionalHosts.PSObject.Properties) {
-                $bp.additionalHosts | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
-            }
-        }
-
-        if ($op.resources) {
-            if ($null -eq $bp.resources) { $bp.resources = $op.resources }
-            else {
-                if ($op.resources.memory)     { $bp.resources.memory = $op.resources.memory }
-                if ($op.resources.memorySwap) { $bp.resources.memorySwap = $op.resources.memorySwap }
-            }
-        }
-    }
-}
-
-$manifest = $baseManifest
+$manifest = Get-AspireManifestWithOptionalOverlay -BaseManifestPath $baseManifestPath -OverlayManifestPath $overlayManifestPath -ResourceName "n8n"
 $manifestConfig = $manifest.resources.'n8n'
 
 # Create consolidated configuration object
@@ -548,19 +489,25 @@ function Update-n8nContainer {
 		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
-	# Call simplified Update-Container (handles check, remove, pull)
+	# Call Update-Container (now returns the selected target image reference on success)
 	# Pass volume name for removal step
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName) {
+	$targetImage = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
+	if (-not [string]::IsNullOrWhiteSpace([string]$targetImage)) {
+
+		Update-AspireManifestResourceImage -ManifestPath $baseManifestPath -ResourceName "n8n" -Image ([string]$targetImage)
+
+		$manifest = Get-AspireManifestWithOptionalOverlay -BaseManifestPath $baseManifestPath -OverlayManifestPath $overlayManifestPath -ResourceName "n8n"
+		$manifestConfig = $manifest.resources.'n8n'
+
+		$config.imageName = $manifestConfig.properties.image
+
 		Write-Host "Core update steps successful. Starting new container..."
-		# Start the new container using the config retrieved earlier
-		if (-not (Start-n8nContainer -Image $config.imageName -EnvVars $containerConfig.EnvVars -AcceptSelfSigned $containerConfig.AcceptSelfSigned -UseDNS $containerConfig.UseDNS)) {
+		if (-not (Start-n8nContainer -Image ([string]$targetImage) -EnvVars $containerConfig.EnvVars -AcceptSelfSigned $containerConfig.AcceptSelfSigned -UseDNS $containerConfig.UseDNS)) {
 			Write-Error "Failed to start updated n8n container."
 		}
-		# Success message is handled within Start-n8nContainer if successful
 	}
 	else {
-		# Update-Container already wrote a message explaining why it returned false (e.g., no update available).
-		# No need to write an error here.
+		# Update-Container already wrote a message explaining why it returned false (e.g., cancelled).
 	}
 }
 
