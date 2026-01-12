@@ -278,7 +278,7 @@ function Update-AspireManifestResourceImage {
 	The name of the container resource to check or create. Mandatory.
 .OUTPUTS
 	[bool] Returns $true if the resource exists or was successfully created.
-		   Returns $false if creation failed or was skipped due to -WhatIf.
+	       Returns $false if creation failed or was skipped due to -WhatIf.
 .EXAMPLE
 	Confirm-ContainerResource -Engine "podman" -ResourceType "network" -ResourceName "my-app-network"
 .EXAMPLE
@@ -301,13 +301,9 @@ function Confirm-ContainerResource {
 		[string]$ResourceName
 	)
 
-	# Check if resource exists
 	$listArgs = @($ResourceType, "ls", "--filter", "name=^$ResourceName$", "--format", "{{.Name}}")
 	$existingResource = & $Engine @listArgs
 
-	# Note: Network ls returns the name if found, Volume ls returns the name if found.
-	# If not found, network ls returns empty string, volume ls returns empty string.
-	# So, check if the returned name matches the requested name.
 	if ($existingResource -ne $ResourceName) {
 		if ($PSCmdlet.ShouldProcess($ResourceName, "Create $ResourceType")) {
 			Write-Host "Creating container $ResourceType '$ResourceName'..."
@@ -316,22 +312,16 @@ function Confirm-ContainerResource {
 				Write-Host "$ResourceType '$ResourceName' created successfully."
 				return $true
 			}
-			else {
-				Write-Error "Failed to create $ResourceType '$ResourceName'."
-				return $false
-			}
+			Write-Error "Failed to create $ResourceType '$ResourceName'."
+			return $false
 		}
-		else {
-			Write-Warning "$ResourceType creation skipped due to -WhatIf."
-			return $false # Indicate resource doesn't exist if creation skipped
-		}
+		Write-Warning "$ResourceType creation skipped due to -WhatIf."
+		return $false
 	}
-	else {
-		Write-Host "$ResourceType '$ResourceName' already exists. Skipping creation."
-		return $true
-	}
-}
 
+	Write-Host "$ResourceType '$ResourceName' already exists. Skipping creation."
+	return $true
+}
 
 #==============================================================================
 # Function: Invoke-PullImage
@@ -352,7 +342,7 @@ function Confirm-ContainerResource {
 	(e.g., @("--platform", "linux/arm64")). Defaults to an empty array.
 .OUTPUTS
 	[bool] Returns $true if the image pull command executes successfully (exit code 0).
-		   Returns $false if the pull fails or is skipped due to -WhatIf.
+	       Returns $false if the pull fails or is skipped due to -WhatIf.
 .EXAMPLE
 	Invoke-PullImage -Engine "podman" -ImageName "alpine:latest"
 .EXAMPLE
@@ -377,10 +367,7 @@ function Invoke-PullImage {
 		[string]$OfflineImagesFolder = $global:offlineImagesFolder
 	)
 
-	# If OfflineImagesFolder is provided and contains matching tar(s), offer to load instead of pulling.
 	if (-not [string]::IsNullOrWhiteSpace($OfflineImagesFolder) -and (Test-Path -LiteralPath $OfflineImagesFolder)) {
-
-		# Split image into repo + tag
 		$repo = $ImageName
 		$tag = $null
 		if ($ImageName -match '^(?<r>.+):(?<t>[^:]+)$') {
@@ -388,13 +375,10 @@ function Invoke-PullImage {
 			$tag = $matches['t']
 		}
 
-		# 1) Exact match tar (repo+tag) - current behavior
 		$safeImageName = $ImageName -replace "[:/]", "_"
 		$pattern = "$safeImageName-image-*.tar"
 		$tarFiles = @(Get-ChildItem -LiteralPath $OfflineImagesFolder -Filter $pattern -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
 
-		# 2) If config points to ':latest' but downloaded tars are versioned (repo_<ver>-image-*.tar),
-		# try discovering versioned tars for the same repository.
 		$versionedChoices = @()
 		if ((-not $tarFiles -or $tarFiles.Count -eq 0) -and ($tag -eq "latest")) {
 			$safeRepo = $repo -replace "[:/]", "_"
@@ -406,11 +390,7 @@ function Invoke-PullImage {
 				if ($f.Name -match $re) {
 					$t = [string]$matches['t']
 					$sv = ConvertTo-SemVer -Version $t
-					$versionedChoices += [PSCustomObject]@{
-						Tag     = $t
-						Version = $sv
-						File    = $f
-					}
+					$versionedChoices += [PSCustomObject]@{ Tag = $t; Version = $sv; File = $f }
 				}
 			}
 
@@ -462,8 +442,6 @@ function Invoke-PullImage {
 				Write-Warning "Image load skipped due to -WhatIf."
 				return $false
 			}
-
-			# Else fall through to normal pull (choice 2 or unknown)
 		}
 		elseif ($versionedChoices -and $versionedChoices.Count -gt 0) {
 			Write-Host ""
@@ -481,10 +459,7 @@ function Invoke-PullImage {
 			Write-Host "0. Pull from internet registry" -ForegroundColor Cyan
 			$pick = Read-Host "Select tar to load (default 1)"
 			if ([string]::IsNullOrWhiteSpace($pick)) { $pick = "1" }
-			if ($pick -eq "0") {
-				# fall through to pull
-			}
-			else {
+			if ($pick -ne "0") {
 				[int]$idx = 0
 				if ([int]::TryParse($pick, [ref]$idx) -and $idx -ge 1 -and $idx -le $versionedChoices.Count) {
 					$sel = $versionedChoices[$idx - 1]
@@ -492,9 +467,6 @@ function Invoke-PullImage {
 						Write-Host "Loading image from tar: $($sel.File.FullName)" -ForegroundColor Yellow
 						& $Engine load --input $sel.File.FullName
 						if ($LASTEXITCODE -eq 0) {
-
-							# If the config requested ':latest' but we loaded a versioned tar, ensure ':latest' points
-							# to the loaded image locally (so later 'run ...:latest' does not pull from internet).
 							if ($tag -eq "latest" -and -not [string]::IsNullOrWhiteSpace($sel.Tag)) {
 								try {
 									$loadedRef = "${repo}:$($sel.Tag)"
@@ -509,16 +481,14 @@ function Invoke-PullImage {
 											break
 										}
 									}
-
 									if (-not [string]::IsNullOrWhiteSpace($loadedId)) {
 										& $Engine tag $loadedId "${repo}:latest" 2>$null | Out-Null
 									}
 								}
 								catch {
-									# Tagging is best-effort; if it fails, caller may still pull.
+									Write-Warning "Failed to retag loaded image to '${repo}:latest'."
 								}
 							}
-
 							Write-Host "Image loaded successfully from versioned offline tar." -ForegroundColor Green
 							return $true
 						}
@@ -545,20 +515,19 @@ function Invoke-PullImage {
 
 		Write-Warning "Image pull failed (registry may be unreachable)."
 		if (-not [string]::IsNullOrWhiteSpace($OfflineImagesFolder) -and (Test-Path -LiteralPath $OfflineImagesFolder)) {
-			$safeImageName = $ImageName -replace "[:/]", "_"
-			$pattern = "$safeImageName-image-*.tar"
-			$tarFiles = @(Get-ChildItem -LiteralPath $OfflineImagesFolder -Filter $pattern -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
-
-			if ($tarFiles -and $tarFiles.Count -gt 0) {
-				$latest = $tarFiles[0]
+			$safeImageName2 = $ImageName -replace "[:/]", "_"
+			$pattern3 = "$safeImageName2-image-*.tar"
+			$tarFiles2 = @(Get-ChildItem -LiteralPath $OfflineImagesFolder -Filter $pattern3 -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+			if ($tarFiles2 -and $tarFiles2.Count -gt 0) {
+				$latest2 = $tarFiles2[0]
 				Write-Host ""
 				Write-Host "An offline tar is available and can be used instead of pulling:" -ForegroundColor Cyan
-				Write-Host "  $($latest.FullName)" -ForegroundColor Gray
+				Write-Host "  $($latest2.FullName)" -ForegroundColor Gray
 				$useOfflineAfterPullFail = Read-Host "Load offline tar now? (Y/N, default is Y)"
 				if ($useOfflineAfterPullFail -ne "N") {
-					if ($PSCmdlet.ShouldProcess($latest.FullName, "Load image tar for '$ImageName'")) {
-						Write-Host "Loading image from tar: $($latest.FullName)" -ForegroundColor Yellow
-						& $Engine load --input $latest.FullName
+					if ($PSCmdlet.ShouldProcess($latest2.FullName, "Load image tar for '$ImageName'")) {
+						Write-Host "Loading image from tar: $($latest2.FullName)" -ForegroundColor Yellow
+						& $Engine load --input $latest2.FullName
 						if ($LASTEXITCODE -eq 0) {
 							Write-Host "Image loaded successfully from offline tar." -ForegroundColor Green
 							return $true
@@ -577,9 +546,8 @@ function Invoke-PullImage {
 	}
 
 	Write-Warning "Image pull skipped due to -WhatIf."
-	return $false # Indicate failure if skipped
+	return $false
 }
-
 
 #==============================================================================
 # Function: Remove-ContainerAndVolume
@@ -600,7 +568,7 @@ function Invoke-PullImage {
 	The name of the associated data volume to check and potentially remove. Mandatory.
 .OUTPUTS
 	[bool] Returns $true if the container is successfully removed (or didn't exist initially).
-		   Returns $false if the container removal fails. Volume removal status does not affect the return value.
+	       Returns $false if the container removal fails. Volume removal status does not affect the return value.
 .EXAMPLE
 	Remove-ContainerAndVolume -Engine "podman" -ContainerName "old-app" -VolumeName "old-app-data"
 .NOTES
@@ -617,79 +585,65 @@ function Remove-ContainerAndVolume {
 		[Parameter(Mandatory = $true)]
 		[string]$ContainerName,
 
-		[Parameter(Mandatory = $false)] # Made optional
+		[Parameter(Mandatory = $false)]
 		[string]$VolumeName
 	)
 
-	# Check if container exists
 	$existingContainer = & $Engine ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
 	if (-not $existingContainer) {
-		# Use Write-Host for status messages
 		Write-Host "Container '$ContainerName' not found. Nothing to remove."
-		return $true # Indicate success as there's nothing to do
+		return $true
 	}
 
 	if ($PSCmdlet.ShouldProcess($ContainerName, "Stop Container")) {
-		# Use Write-Host for status messages
 		Write-Host "Stopping container '$ContainerName'..."
 		& $Engine stop $ContainerName 2>$null | Out-Null
 	}
 
 	if ($PSCmdlet.ShouldProcess($ContainerName, "Remove Container")) {
-		# Use Write-Host for status messages
 		Write-Host "Removing container '$ContainerName'..."
 		& $Engine rm --force $ContainerName
 		if ($LASTEXITCODE -ne 0) {
 			Write-Error "Failed to remove container '$ContainerName'."
 			return $false
 		}
-		# Use Write-Host for status messages
 		Write-Host "Container '$ContainerName' removed successfully."
 	}
 
-	# Only proceed with volume check/removal if a VolumeName was provided
 	if (-not [string]::IsNullOrWhiteSpace($VolumeName)) {
-		# Check if volume exists
 		$existingVolume = & $Engine volume ls --filter "name=^$VolumeName$" --format "{{.Name}}"
-		if ($existingVolume -eq $VolumeName) { # Ensure exact match
-			# Use Write-Host for status messages
+		if ($existingVolume -eq $VolumeName) {
 			Write-Host "Data volume '$VolumeName' exists."
 			$removeVolume = Read-Host "Do you want to remove the data volume '$VolumeName' as well? (Y/N, default N)"
 			if ($removeVolume -eq 'Y') {
 				if ($PSCmdlet.ShouldProcess($VolumeName, "Remove Volume")) {
-					# Use Write-Host for status messages
 					Write-Host "Removing volume '$VolumeName'..."
 					& $Engine volume rm $VolumeName
 					if ($LASTEXITCODE -eq 0) {
-						# Use Write-Host for status messages
 						Write-Host "Volume '$VolumeName' removed successfully."
 					}
 					else {
 						Write-Error "Failed to remove volume '$VolumeName'."
-						# Continue even if volume removal fails, as container was removed
 					}
-				} else {
+				}
+				else {
 					Write-Warning "Volume removal skipped due to -WhatIf."
 				}
 			}
 			else {
-				# Use Write-Host for status messages
 				Write-Host "Volume '$VolumeName' was not removed."
 			}
 		}
 		else {
-			# Use Write-Host for status messages
 			Write-Host "Volume '$VolumeName' not found."
 		}
-	} else {
-		# Use Write-Host for status messages
+	}
+	else {
 		Write-Host "No volume name provided, skipping volume removal check."
 	}
 
-
 	return $true
 }
-
 
 #==============================================================================
 # Function: ConvertTo-SemVer
@@ -712,13 +666,8 @@ function ConvertTo-SemVer {
 
 	$v = $Version.Trim()
 	if ($v -match '^(?<maj>\d+)\.(?<min>\d+)\.(?<pat>\d+)$') {
-		return [PSCustomObject]@{
-			Major = [int]$matches['maj']
-			Minor = [int]$matches['min']
-			Patch = [int]$matches['pat']
-		}
+		return [PSCustomObject]@{ Major = [int]$matches['maj']; Minor = [int]$matches['min']; Patch = [int]$matches['pat'] }
 	}
-
 	return $null
 }
 
@@ -767,7 +716,7 @@ function Compare-SemVer {
 #>
 function Get-DockerHubTags {
 	[CmdletBinding()]
-	[OutputType([string[]])]
+	[OutputType([object[]])]
 	param(
 		[Parameter(Mandatory = $true)]
 		[string]$Namespace,
@@ -814,6 +763,15 @@ function Get-DockerHubTags {
 	Finds the latest semantic version tag for a given major version from a list of tag strings.
 .DESCRIPTION
 	Filters tags matching '<major>.<minor>.<patch>' and returns the highest semver.
+.PARAMETER Tags
+	All tag names from a registry (e.g. Docker Hub).
+.PARAMETER Major
+	Major version line to filter on.
+.PARAMETER IncludePreRelease
+	If specified, also considers tags like '<major>.<minor>.<patch>-suffix' (e.g. 2.3.2-beta.1).
+	If not specified, only considers stable tags with exactly three numeric components.
+.OUTPUTS
+	[string] Latest matching tag or $null.
 #>
 function Get-LatestSemVerTag {
 	[CmdletBinding()]
@@ -823,7 +781,10 @@ function Get-LatestSemVerTag {
 		[string[]]$Tags,
 
 		[Parameter(Mandatory = $true)]
-		[int]$Major
+		[int]$Major,
+
+		[Parameter(Mandatory = $false)]
+		[switch]$IncludePreRelease
 	)
 
 	$best = $null
@@ -831,9 +792,17 @@ function Get-LatestSemVerTag {
 
 	foreach ($tag in $Tags) {
 		if ([string]::IsNullOrWhiteSpace($tag)) { continue }
-		if ($tag -notmatch "^$Major\.\d+\.\d+$") { continue }
 
-		$sv = ConvertTo-SemVer -Version $tag
+		if ($IncludePreRelease) {
+			if ($tag -notmatch "^$Major\.(?<min>\d+)\.(?<pat>\d+)(-.+)?$") { continue }
+			$numeric = "{0}.{1}.{2}" -f $Major, $matches['min'], $matches['pat']
+		}
+		else {
+			if ($tag -notmatch "^$Major\.\d+\.\d+$") { continue }
+			$numeric = $tag
+		}
+
+		$sv = ConvertTo-SemVer -Version $numeric
 		if ($null -eq $sv) { continue }
 
 		if ($null -eq $bestSem -or (Compare-SemVer -A $sv -B $bestSem) -gt 0) {
@@ -984,6 +953,7 @@ function Get-LocalOfflineTarVersions {
 			$sem += [PSCustomObject]@{ Tag = $t; Ver = $sv }
 		}
 	}
+
 	$latest = $null
 	if ($sem.Count -gt 0) {
 		$sorted = @(
@@ -995,10 +965,7 @@ function Get-LocalOfflineTarVersions {
 		$latest = $sorted[0].Tag
 	}
 
-	return [PSCustomObject]@{
-		Tags           = $uniq
-		LatestSemVerTag = $latest
-	}
+	return [PSCustomObject]@{ Tags = $uniq; LatestSemVerTag = $latest }
 }
 
 #==============================================================================
@@ -1122,15 +1089,25 @@ function Get-RemoteSemVerOptions {
 #==============================================================================
 <#
 .SYNOPSIS
-	Shows remote semver download options for ':latest' images (update vs upgrade).
+	Shows remote download options for pinned semver images.
 .DESCRIPTION
-	Uses Get-RemoteSemVerOptions and returns a concrete target image ref to download, or $null.
+	Given an image reference (repo:tag) where tag is a pinned semantic version,
+	this function queries Docker Hub tags and offers a menu grouped by major version.
+
+	Behavior:
+	- Considers only plain semver tags (e.g. '2.2.6') and ignores platform-suffix tags (e.g. '2.2.6-amd64').
+	- For each major version, shows the N most-recent semver tags by Docker Hub `last_updated` (default N=5).
+	- Annotates each semver with channel tags (e.g. latest, stable, beta, next, nightly) whose `last_updated`
+	  is within a time window of the semver tag (default window=10 minutes).
+
+	Example label:
+		Download from: Remote (internet) 2.x: 2.2.6 {latest,stable}
 .PARAMETER Engine
-	Container engine executable path.
+	Container engine executable path (unused; kept for call compatibility).
 .PARAMETER ImageName
 	Image reference (repo:tag).
 .OUTPUTS
-	[PSCustomObject] with TargetImage, Source ('internet') or $null.
+	[PSCustomObject] with TargetImage and Source ('internet') or $null.
 #>
 function Show-ImageDownloadOptions {
 	[CmdletBinding()]
@@ -1143,70 +1120,143 @@ function Show-ImageDownloadOptions {
 		[string]$ImageName
 	)
 
+	$null = $Engine
 	if ($ImageName -notmatch '^(?<repo>.+):(?<tag>[^:]+)$') { return $null }
 	$repo = [string]$matches['repo']
 	$tag = [string]$matches['tag']
 
-	# When downloading, "update" should usually mean: latest semver in the most recent "supported major".
-	# The label on ':latest' may point to a newer major already (e.g., n8n 2.x), which would hide 1.x updates.
-	# So for downloads we infer the current major from available remote tags and then optionally offer previous major.
+	$curSem = ConvertTo-SemVer -Version $tag
+	if ($null -eq $curSem) { return $null }
+
 	$hub = Get-DockerHubRepoFromImageRef -Repository $repo
 	if (-not $hub) { return $null }
 
-	$hubTags = Get-DockerHubTags -Namespace $hub.Namespace -Repository $hub.Repository
-	if (-not $hubTags -or $hubTags.Count -eq 0) { return $null }
+	[int]$topN = 5
+	[int]$windowMinutes = 10
 
-	# Build semver tag list
-	$semTags = @()
-	foreach ($t in $hubTags) {
-		$sv = ConvertTo-SemVer -Version $t
-		if ($null -ne $sv) { $semTags += [PSCustomObject]@{ Tag = $t; Ver = $sv } }
+	$url = "https://hub.docker.com/v2/repositories/$($hub.Namespace)/$($hub.Repository)/tags?page_size=100"
+	$tagInfo = @{}
+	$tagDigest = @{}
+	[int]$page = 0
+	while (-not [string]::IsNullOrWhiteSpace($url) -and $page -lt 20) {
+		$page++
+		try {
+			$r = Invoke-RestMethod -Method Get -Uri $url -Headers @{ "Accept" = "application/json" }
+		}
+		catch {
+			break
+		}
+		foreach ($t in @($r.results)) {
+			if ($t -and $t.name) {
+				$nm = [string]$t.name
+				$tagInfo[$nm] = [string]$t.last_updated
+				if ($t.digest) { $tagDigest[$nm] = [string]$t.digest }
+			}
+		}
+		$url = [string]$r.next
 	}
-	if (-not $semTags -or $semTags.Count -eq 0) { return $null }
+	if ($tagInfo.Count -eq 0) { return $null }
 
-	$sorted = @(
-		$semTags | Sort-Object `
-			@{ Expression = { $_.Ver.Major }; Descending = $true }, `
-			@{ Expression = { $_.Ver.Minor }; Descending = $true }, `
-			@{ Expression = { $_.Ver.Patch }; Descending = $true }
+	$allTags = @($tagInfo.Keys)
+
+	function ConvertTo-UtcOrNull {
+		param([string]$Iso)
+		if ([string]::IsNullOrWhiteSpace($Iso)) { return $null }
+		try { return [DateTime]::Parse($Iso).ToUniversalTime() } catch { return $null }
+	}
+
+	$semverEntries = @()
+	foreach ($t in $allTags) {
+		if ($t -notmatch '^(?<maj>\d+)\.(?<min>\d+)\.(?<pat>\d+)$') { continue }
+		$dt = ConvertTo-UtcOrNull -Iso ([string]$tagInfo[$t])
+		if ($null -eq $dt) { continue }
+		$dg = $null
+		if ($tagDigest.ContainsKey($t)) { $dg = [string]$tagDigest[$t] }
+		$semverEntries += [PSCustomObject]@{ Tag = [string]$t; Major = [int]$matches['maj']; LastUpdated = $dt; Digest = $dg }
+	}
+	if (-not $semverEntries -or $semverEntries.Count -eq 0) { return $null }
+
+	$channelEntries = @()
+	foreach ($t in $allTags) {
+		if ($t -match '^\d+\.\d+\.\d+$') { continue }
+		if ($t -match '^\d+\.\d+\.\d+-(amd64|arm64|armv7|armv6|ppc64le|s390x|i386)$') { continue }
+		$dt = ConvertTo-UtcOrNull -Iso ([string]$tagInfo[$t])
+		if ($null -eq $dt) { continue }
+		$channelEntries += [PSCustomObject]@{ Tag = [string]$t; LastUpdated = $dt }
+	}
+
+	# Show three major lines: previous/current/next (derived from selected semver tag)
+	$majors = @()
+	[int]$curMajor = [int]$curSem.Major
+	if (($curMajor - 1) -ge 0) { $majors += ($curMajor - 1) }
+	$majors += $curMajor
+	$majors += ($curMajor + 1)
+
+	$choices = @()
+	foreach ($m in ($majors | Sort-Object -Unique)) {
+		$forMajor = @(
+			$semverEntries |
+				Where-Object { $_.Major -eq $m } |
+				Sort-Object LastUpdated -Descending |
+				Select-Object -First $topN
+		)
+
+		$seenDigests = @{}
+		foreach ($sv in $forMajor) {
+			$svDigest = $sv.Digest
+			if (-not [string]::IsNullOrWhiteSpace($svDigest)) {
+				if ($seenDigests.ContainsKey($svDigest)) { continue }
+				$seenDigests[$svDigest] = $true
+			}
+
+			$tagsNear = @()
+			foreach ($ce in $channelEntries) {
+				$deltaMin = [Math]::Abs(($ce.LastUpdated - $sv.LastUpdated).TotalMinutes)
+				if ($deltaMin -le $windowMinutes) { $tagsNear += $ce.Tag }
+			}
+
+			$digestTags = @()
+			if (-not [string]::IsNullOrWhiteSpace($svDigest)) {
+				foreach ($k in $tagDigest.Keys) {
+					if ([string]$tagDigest[$k] -eq $svDigest) { $digestTags += [string]$k }
+				}
+			}
+
+			$allHintTags = @($tagsNear + $digestTags)
+			$allHintTags = @($allHintTags | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
+			$allHintTags = @($allHintTags | Where-Object { $_ -ne $sv.Tag })
+
+			$tagLabel = "{}"
+			if ($allHintTags.Count -gt 0) { $tagLabel = "{" + ($allHintTags -join ',') + "}" }
+
+			$dgShort = ""
+			if (-not [string]::IsNullOrWhiteSpace($svDigest)) {
+				$dgShort = $svDigest
+				if ($dgShort.StartsWith("sha256:")) { $dgShort = $dgShort.Substring(7) }
+				if ($dgShort.Length -gt 12) { $dgShort = $dgShort.Substring(0, 12) }
+				$dgShort = " [$dgShort]"
+			}
+
+			$choices += [PSCustomObject]@{ Major = $m; Tag = $sv.Tag; When = $sv.LastUpdated; Digest = $svDigest; Label = "Download from: Remote (internet) $m.x: $($sv.Tag)$dgShort $tagLabel" }
+		}
+	}
+
+	if (-not $choices -or $choices.Count -eq 0) { return $null }
+
+	$choices = @(
+		$choices | Sort-Object `
+			@{ Expression = { $_.Major }; Descending = $true }, `
+			@{ Expression = { $_.When }; Descending = $true }
 	)
 
-	$topMajor = [int]$sorted[0].Ver.Major
-	$prevMajor = $topMajor - 1
-
-	$topTag = Get-LatestSemVerTag -Tags $hubTags -Major $topMajor
-	$prevTag = $null
-	if ($prevMajor -ge 1) { $prevTag = Get-LatestSemVerTag -Tags $hubTags -Major $prevMajor }
-
-	$options = @()
-	$map = @{}
-
-	# Prefer showing the "update" line (previous major) first when available, then "upgrade" (top major).
-	if ($prevTag) {
-		$options += "Download from: Remote (internet) $prevMajor.x latest: $prevTag"
-		$map[$options.Count] = "$repo`:$prevTag"
-	}
-	if ($topTag) {
-		$options += "Download from: Remote (internet) $topMajor.x latest: $topTag"
-		$map[$options.Count] = "$repo`:$topTag"
-	}
-
-	if (-not $options -or $options.Count -eq 0) { return $null }
-
+	$options = @($choices | ForEach-Object { $_.Label })
 	$pick = Invoke-OptionsMenu -Title "Download Options" -Options $options -ExitChoice "Exit menu"
 	if (-not $pick -or $pick -eq "Exit menu") { return $null }
 
-	# Resolve selected option index (Invoke-OptionsMenu returns the option string)
-	[int]$idx = 0
-	for ($i = 0; $i -lt $options.Count; $i++) {
-		if ($options[$i] -eq $pick) { $idx = $i + 1; break }
-	}
-	if ($idx -lt 1 -or -not $map.ContainsKey($idx)) { return $null }
+	$sel = $choices | Where-Object { $_.Label -eq $pick } | Select-Object -First 1
+	if (-not $sel) { return $null }
 
-	return [PSCustomObject]@{
-		TargetImage = [string]$map[$idx]
-		Source      = "internet"
-	}
+	return [PSCustomObject]@{ TargetImage = "$repo`:$($sel.Tag)"; Source = "internet" }
 }
 
 #==============================================================================
@@ -1274,25 +1324,29 @@ function Show-ImageUpdateOptions {
 
 	if ($currentVerRaw) {
 		Write-Host "Current (running) version: $currentVerRaw" -ForegroundColor Gray
-	} else {
+	}
+	else {
 		Write-Host "Current (running) version: [unknown - container may be stopped]" -ForegroundColor Yellow
 	}
 
 	if ($offlineLatest) {
 		Write-Host "Local (offline) latest:    $offlineLatest" -ForegroundColor Gray
-	} else {
+	}
+	else {
 		Write-Host "Local (offline) latest:    [none found in '$OfflineImagesFolder']" -ForegroundColor DarkGray
 	}
 
 	if ($remoteCurrentMajor) {
 		Write-Host "Remote (internet) $CurrentMajor.x latest: $remoteCurrentMajor" -ForegroundColor Gray
-	} else {
+	}
+	else {
 		Write-Host "Remote (internet) $CurrentMajor.x latest: [unavailable]" -ForegroundColor DarkGray
 	}
 
 	if ($remoteNextMajor) {
 		Write-Host "Remote (internet) $($CurrentMajor + 1).x latest: $remoteNextMajor" -ForegroundColor Gray
-	} else {
+	}
+	else {
 		Write-Host "Remote (internet) $($CurrentMajor + 1).x latest: [unavailable]" -ForegroundColor DarkGray
 	}
 
@@ -1300,19 +1354,13 @@ function Show-ImageUpdateOptions {
 	Write-Host "Choose update type:" -ForegroundColor White
 
 	$choices = @()
-
-	# 1) Local (offline) latest
 	if ($offlineLatest) {
 		$choices += [PSCustomObject]@{ Key = "1"; Label = "Install from: Local (offline) latest:    $offlineLatest"; Tag = $offlineLatest; Source = "offline" }
 	}
-
-	# 2) Remote (internet) current major latest
 	if ($remoteCurrentMajor) {
 		$k = [string]($choices.Count + 1)
 		$choices += [PSCustomObject]@{ Key = $k; Label = "Install from: Remote (internet) $CurrentMajor.x latest: $remoteCurrentMajor"; Tag = $remoteCurrentMajor; Source = "internet" }
 	}
-
-	# 3) Remote (internet) next major latest
 	if ($remoteNextMajor) {
 		$k = [string]($choices.Count + 1)
 		$choices += [PSCustomObject]@{ Key = $k; Label = "Install from: Remote (internet) $($CurrentMajor + 1).x latest: $remoteNextMajor"; Tag = $remoteNextMajor; Source = "internet" }
@@ -1338,7 +1386,6 @@ function Show-ImageUpdateOptions {
 	$targetTag = [string]$sel.Tag
 	$targetImage = "$Repository`:$targetTag"
 
-	# If user picked offline, verify the tar exists for that tag.
 	if ($sel.Source -eq "offline") {
 		if (-not ($offline -and $offline.Tags -and $offline.Tags -contains $targetTag)) {
 			Write-Warning "Offline selection was chosen but the required tar for '$targetTag' was not found."
@@ -1346,11 +1393,7 @@ function Show-ImageUpdateOptions {
 		}
 	}
 
-	return [PSCustomObject]@{
-		TargetImage = $targetImage
-		Source      = [string]$sel.Source
-		TargetTag   = $targetTag
-	}
+	return [PSCustomObject]@{ TargetImage = $targetImage; Source = [string]$sel.Source; TargetTag = $targetTag }
 }
 
 #==============================================================================
@@ -1445,8 +1488,8 @@ function Test-n8nUpdateAvailableByVersion {
 	The full name and tag of the container image to check (e.g., 'ghcr.io/open-webui/open-webui:main'). Mandatory.
 .OUTPUTS
 	[bool] Returns $true if an update is detected (digests differ), the image is not found locally,
-		   or the user chooses to force an update when the remote state is unknown.
-		   Returns $false if the local and remote digests match, or the user chooses to skip when remote state is unknown.
+	       or the user chooses to force an update when the remote state is unknown.
+	       Returns $false if the local and remote digests match, or the user chooses to skip when remote state is unknown.
 .EXAMPLE
 	if (Test-ImageUpdateAvailable -Engine "podman" -ImageName "docker.io/library/alpine:latest") { Invoke-PullImage ... }
 .NOTES
@@ -1466,13 +1509,7 @@ function Test-ImageUpdateAvailable {
 
 	Write-Host "Checking for updates to $ImageName..."
 
-	# First, check if we have the image locally.
-	# IMPORTANT: Do not use 'engine inspect <imageName>' as the only presence check.
-	# For Docker, fully-qualified references like 'docker.io/n8nio/n8n:latest' may not resolve via inspect
-	# unless that exact name is tagged locally, even when the image exists.
 	$localImageId = $null
-
-	# Attempt 1 (Docker-compatible): filter by reference
 	try {
 		$localImageId = (& $Engine images --filter "reference=$ImageName" --format "{{.ID}}" 2>$null | Select-Object -First 1)
 		if (-not [string]::IsNullOrWhiteSpace($localImageId)) {
@@ -1486,7 +1523,6 @@ function Test-ImageUpdateAvailable {
 		$localImageId = $null
 	}
 
-	# Attempt 2 (Engine-agnostic): scan image list for exact repo:tag match
 	if ($null -eq $localImageId) {
 		try {
 			[string[]]$lines = @(& $Engine images --format "{{.Repository}}:{{.Tag}} {{.ID}}" 2>$null)
@@ -1512,14 +1548,12 @@ function Test-ImageUpdateAvailable {
 		return $true
 	}
 
-	# Inspect by ID to get consistent details.
 	$localImageInfo = & $Engine inspect $localImageId 2>$null | ConvertFrom-Json
 	if (-not $localImageInfo) {
 		Write-Host "Image '$ImageName' not found locally. Update is available."
 		return $true
 	}
 
-	# Get local image digest and creation info
 	$localDigest = $null
 	$localRepoDigests = @()
 	$localRepoTags = @()
@@ -1540,7 +1574,6 @@ function Test-ImageUpdateAvailable {
 		return $true
 	}
 
-	# Determine container engine type (docker or podman)
 	$engineType = "docker"
 	if ((Get-Item $Engine).Name -like "*podman*") {
 		$engineType = "podman"
@@ -1638,7 +1671,6 @@ function Test-ImageUpdateAvailable {
 		return $false
 	}
 
-	# Try to get remote image creation date for better version display
 	$remoteCreated = ""
 	try {
 		if ($engineType -eq "docker") {
@@ -1667,9 +1699,9 @@ function Test-ImageUpdateAvailable {
 	}
 
 	if ($localRepoTags) {
-		$tags = @($localRepoTags) -join ", "
-		if (-not [string]::IsNullOrWhiteSpace($tags)) {
-			Write-Host "Current local image tags:     $tags"
+		$tags2 = @($localRepoTags) -join ", "
+		if (-not [string]::IsNullOrWhiteSpace($tags2)) {
+			Write-Host "Current local image tags:     $tags2"
 		}
 	}
 
@@ -1720,17 +1752,10 @@ function Test-ImageUpdateAvailable {
 
 	$updateAvailable = $false
 	if ($isManifestDigest) {
-		if ($localRepoDigests -match $remoteDigest) {
-			$updateAvailable = $false
-		}
-		else {
-			$updateAvailable = $true
-		}
+		if ($localRepoDigests -match $remoteDigest) { $updateAvailable = $false } else { $updateAvailable = $true }
 	}
 	else {
-		if ($localDigest -ne $remoteDigest) {
-			$updateAvailable = $true
-		}
+		if ($localDigest -ne $remoteDigest) { $updateAvailable = $true }
 	}
 
 	if ($updateAvailable) {
@@ -1743,9 +1768,6 @@ function Test-ImageUpdateAvailable {
 			Write-Host "Local digest : $localDigest" -ForegroundColor Yellow
 			Write-Host "Remote digest: $remoteDigest" -ForegroundColor Yellow
 		}
-
-		# NOTE: Do not ask to proceed here.
-		# The caller (Update-Container) prompts and also offers "image source" selection via Invoke-PullImage.
 		return $true
 	}
 
@@ -1772,33 +1794,23 @@ function Test-ImageUpdateAvailable {
 	3. Pulls the latest version of the specified image using Invoke-PullImage (which handles ShouldProcess).
 	4. Removes the existing container using Remove-ContainerAndVolume (which handles ShouldProcess and optional volume removal).
 	It does NOT handle backup, restore, or starting the new container. These steps should be
-	orchestrated by the calling script (e.g., the menu action).
+	orchestrated by the calling script.
 .PARAMETER Engine
 	Path to the container engine executable (e.g., 'docker' or 'podman'). Mandatory.
 .PARAMETER ContainerName
 	The name of the container to update. Mandatory.
 .PARAMETER VolumeName
-	The name of the volume associated with the container (used for removal step). Optional. If provided, Remove-ContainerAndVolume will check/prompt for its removal.
+	The name of the volume associated with the container (used for removal step). Optional.
 .PARAMETER ImageName
 	The full name and tag of the container image to update to (e.g., 'nginx:latest'). Mandatory.
 .PARAMETER Platform
 	The target platform for the image pull (e.g., 'linux/amd64'). Defaults to 'linux/amd64'.
 .OUTPUTS
 	[bool] Returns $true if the update check, removal, and pull steps complete successfully (or are skipped via -WhatIf).
-		   Returns $false if any critical step fails or the update is canceled by the user during prompts.
-.EXAMPLE
-	# Called from a menu action:
-	# if (Update-Container -Engine $eng -ContainerName $cn -VolumeName $vn -ImageName $img) {
-	#     Start-SpecificContainer ...
-	# }
-.NOTES
-	Relies on Test-ImageUpdateAvailable, Remove-ContainerAndVolume, Invoke-PullImage.
-	User interaction for forcing update is handled within Test-ImageUpdateAvailable.
-	User interaction for volume removal is handled within Remove-ContainerAndVolume.
-	Backup/restore and starting the new container must be handled by the caller.
+	       Returns $false if any critical step fails or the update is canceled by the user during prompts.
 #>
 function Update-Container {
-	[CmdletBinding(SupportsShouldProcess = $true)] # Keep ShouldProcess for overall control if needed, though sub-functions handle it
+	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType([object])]
 	param(
 		[Parameter(Mandatory = $true)]
@@ -1807,13 +1819,13 @@ function Update-Container {
 		[Parameter(Mandatory = $true)]
 		[string]$ContainerName,
 
-		[Parameter(Mandatory = $false)] # Made optional here too, as it's passed down
-		[string]$VolumeName, # Needed for Remove-ContainerAndVolume
+		[Parameter(Mandatory = $false)]
+		[string]$VolumeName,
 
 		[Parameter(Mandatory = $true)]
 		[string]$ImageName,
 
-		[string]$Platform = "linux/amd64", # Keep platform for pull
+		[string]$Platform = "linux/amd64",
 
 		[Parameter(Mandatory = $false)]
 		[string]$OfflineImagesFolder = $global:offlineImagesFolder
@@ -1821,15 +1833,12 @@ function Update-Container {
 
 	Write-Host "Initiating update pre-check for container '$ContainerName'..."
 
-	# Step 1: Check if container exists
-	& $Engine inspect $ContainerName 2>$null | Out-Null # Check existence without storing info
+	& $Engine inspect $ContainerName 2>$null | Out-Null
 	if ($LASTEXITCODE -ne 0) {
 		Write-Host "Container '$ContainerName' not found. Nothing to update."
-		return $false # Can't update something that doesn't exist
+		return $false
 	}
 
-	# Step 2: Determine current/local/remote versions and let the user choose target and source.
-	# Special-case n8n: use semantic version compare (1.x update vs 2.x upgrade) and allow reinstall.
 	$repo = $ImageName
 	if ($ImageName -match '^(?<r>.+):(?<t>[^:]+)$') { $repo = $matches['r'] }
 
@@ -1838,7 +1847,6 @@ function Update-Container {
 		$selection = Show-ImageUpdateOptions -Engine $Engine -ContainerName $ContainerName -Repository $repo -OfflineImagesFolder $OfflineImagesFolder -CurrentMajor 1 -VersionCommand @("n8n", "--version")
 	}
 	if (-not $selection) {
-		# Fallback to old digest-based behavior for non-n8n images or if user cancelled.
 		$updateAvailable = Test-ImageUpdateAvailable -Engine $Engine -ImageName $ImageName
 		if (-not $updateAvailable) {
 			Write-Host "Update canceled by user or no update available/forced."
@@ -1850,8 +1858,6 @@ function Update-Container {
 	$targetImage = $selection.TargetImage
 	Write-Host "Selected target image: $targetImage" -ForegroundColor Gray
 
-	# Step 3: Acquire the selected image.
-	# If the user chose internet, skip offline prompt by passing empty OfflineImagesFolder.
 	Write-Host "Acquiring image '$targetImage'..."
 	$offlineFolderForAcquire = $OfflineImagesFolder
 	if ($selection.Source -eq "internet") { $offlineFolderForAcquire = "" }
@@ -1862,7 +1868,6 @@ function Update-Container {
 	}
 	Write-Host "Image '$targetImage' acquired successfully."
 
-	# Step 4: Remove the existing container (Remove-ContainerAndVolume handles ShouldProcess and volume prompt)
 	Write-Host "Removing existing container '$ContainerName'..."
 	if (-not (Remove-ContainerAndVolume -Engine $Engine -ContainerName $ContainerName -VolumeName $VolumeName)) {
 		Write-Error "Failed to remove container '$ContainerName' or action skipped. Update aborted."
@@ -1870,7 +1875,6 @@ function Update-Container {
 	}
 	Write-Host "Existing container removed."
 
-	# Indicate that the core update steps (check, acquire, remove) were successful
 	Write-Host "Update pre-check, image acquire, and container removal completed successfully."
 	return $targetImage
 }
@@ -1884,11 +1888,7 @@ function Update-Container {
 .DESCRIPTION
 	Shows basic information like container name, engine, and any additional configuration provided.
 	Checks the container's running status using 'engine ps'.
-	If the container is running, performs optional network connectivity tests:
-	- TCP port check using Test-TCPPort.
-	- HTTP endpoint check using Test-HTTPPort.
-	- WebSocket endpoint check using Test-WebSocketPort (requires Setup_0_Network.ps1).
-	Pauses for a specified number of seconds after displaying the information.
+	If the container is running, performs optional network connectivity tests.
 .PARAMETER ContainerName
 	The name of the container to check. Mandatory.
 .PARAMETER ContainerEngine
@@ -1898,29 +1898,21 @@ function Update-Container {
 .PARAMETER DisplayName
 	An optional friendly name for the container to display in the output. Defaults to ContainerName.
 .PARAMETER ContainerUrl
-	An optional base URL (e.g., 'http://localhost:8080') used for constructing HTTP/WS test URIs if specific ports aren't provided.
+	An optional base URL used for constructing HTTP/WS test URIs.
 .PARAMETER TcpPort
 	Optional. The TCP port number on localhost to test connectivity to.
 .PARAMETER HttpPort
-	Optional. The HTTP port number on localhost to test connectivity to. If ContainerUrl is not set, defaults to http://localhost:<HttpPort>.
+	Optional. The HTTP port number on localhost to test connectivity to.
 .PARAMETER HttpPath
 	Optional. The path component for the HTTP test URI. Defaults to '/'.
 .PARAMETER WsPort
-	Optional. The WebSocket port number on localhost to test connectivity to. If ContainerUrl is not set, defaults to ws://localhost:<WsPort>.
+	Optional. The WebSocket port number on localhost to test connectivity to.
 .PARAMETER WsPath
 	Optional. The path component for the WebSocket test URI.
 .PARAMETER DelaySeconds
 	Optional. The number of seconds to pause after displaying the status. Defaults to 3.
 .PARAMETER AdditionalInfo
-	Optional. A hashtable containing extra key-value pairs to display under 'Additional Configuration'.
-.EXAMPLE
-	Show-ContainerStatus -ContainerName "webserver" -ContainerEngine "docker" -EnginePath "docker" -HttpPort 80 -TcpPort 80
-.EXAMPLE
-	$info = @{ "Volume" = "data:/var/www"; "Network" = "web-net" }
-	Show-ContainerStatus -ContainerName "app-db" -ContainerEngine "podman" -EnginePath "podman" -DisplayName "Application Database" -TcpPort 5432 -AdditionalInfo $info -DelaySeconds 5
-.NOTES
-	Relies on Test-TCPPort, Test-HTTPPort (from Setup_0_Network.ps1).
-	Relies on Test-WebSocketPort (from Setup_0_Network.ps1). Checks for its existence before calling.
+	Optional. A hashtable containing extra key-value pairs to display.
 #>
 function Show-ContainerStatus {
 	[CmdletBinding()]
@@ -1968,7 +1960,6 @@ function Show-ContainerStatus {
 	Write-Host "Container Name : $ContainerName"
 	Write-Host "Engine         : $ContainerEngine ($EnginePath)"
 
-	# Display additional info if provided
 	if ($AdditionalInfo) {
 		Write-Host "-------------------------------------------"
 		Write-Host "Additional Configuration:"
@@ -1978,7 +1969,6 @@ function Show-ContainerStatus {
 		Write-Host "-------------------------------------------"
 	}
 
-	# Check container status
 	Write-Host "Checking container status..."
 	$containerInfo = & $EnginePath ps -a --filter "name=^$ContainerName$" --format "{{.Status}}"
 	$containerId = & $EnginePath ps -a --filter "name=^$ContainerName$" --format "{{.ID}}"
@@ -1988,21 +1978,16 @@ function Show-ContainerStatus {
 	}
 	else {
 		Write-Host "Container Status : $containerInfo"
-
-		# Perform network tests only if container is running
 		if ($containerInfo -like "Up*") {
-			# TCP Test
 			if ($TcpPort -gt 0) {
 				Test-TCPPort -ComputerName "localhost" -Port $TcpPort -ServiceName $DisplayName
 			}
 
-			# HTTP Test
 			if ($HttpPort -gt 0) {
-				$httpUri = $ContainerUrl # Use provided URL if available
+				$httpUri = $ContainerUrl
 				if ([string]::IsNullOrWhiteSpace($httpUri)) {
-					$httpUri = "http://localhost:$HttpPort" # Construct default URL
+					$httpUri = "http://localhost:$HttpPort"
 				}
-				# Ensure path starts with /
 				if (-not $HttpPath.StartsWith('/')) {
 					$HttpPath = "/$HttpPath"
 				}
@@ -2010,18 +1995,15 @@ function Show-ContainerStatus {
 				Test-HTTPPort -Uri $httpUri -ServiceName $DisplayName
 			}
 
-			# WebSocket Test
 			if ($WsPort -gt 0) {
-				$wsUri = $ContainerUrl # Use provided URL if available
+				$wsUri = $ContainerUrl
 				if ([string]::IsNullOrWhiteSpace($wsUri)) {
-					$wsUri = "ws://localhost:$WsPort" # Construct default URL
+					$wsUri = "ws://localhost:$WsPort"
 				}
-				# Ensure path starts with / if provided
 				if (-not [string]::IsNullOrWhiteSpace($WsPath) -and -not $WsPath.StartsWith('/')) {
 					$WsPath = "/$WsPath"
 				}
 				$wsUri += $WsPath
-				# Check if Test-WebSocketPort function exists before calling
 				if (Get-Command Test-WebSocketPort -ErrorAction SilentlyContinue) {
 					Test-WebSocketPort -Uri $wsUri -ServiceName $DisplayName
 				}
@@ -2037,7 +2019,6 @@ function Show-ContainerStatus {
 
 	Write-Host "==========================================="
 
-	# Pause
 	if ($DelaySeconds -gt 0) {
 		Write-Host "Pausing for $DelaySeconds seconds..."
 		Start-Sleep -Seconds $DelaySeconds

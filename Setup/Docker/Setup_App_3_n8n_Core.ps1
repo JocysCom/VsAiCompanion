@@ -553,70 +553,139 @@ function Reset-AdminPassword {
 }
 
 #==============================================================================
+# Function: Install-n8nApkToolsIfMissing
+#==============================================================================
+<#
+.SYNOPSIS
+	Bootstraps apk-tools inside hardened Alpine containers that ship without the apk binary.
+.DESCRIPTION
+	Some images are Alpine-based but intentionally exclude the apk executable. This function downloads
+	a static apk client (apk.static) inside the container and uses it to install apk-tools.
+
+	This modifies the running container filesystem. The change is lost when the container is removed.
+.PARAMETER AlpineMajorMinor
+	Alpine major.minor version used for repository URL (e.g., "3.22").
+.PARAMETER ApkStaticVersion
+	Version of apk.static to download from Alpine GitLab packages.
+.PARAMETER ApkStaticArch
+	Architecture segment for apk.static download (e.g., "x86_64").
+.OUTPUTS
+	[bool] $true if apk is available (already or successfully bootstrapped), otherwise $false.
+#>
+function Install-n8nApkToolsIfMissing {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $false)]
+		[string]$AlpineMajorMinor = "3.22",
+
+		[Parameter(Mandatory = $false)]
+		[string]$ApkStaticVersion = "v2.14.4",
+
+		[Parameter(Mandatory = $false)]
+		[string]$ApkStaticArch = "x86_64"
+	)
+
+	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Bootstrap apk-tools using apk.static")) {
+		return $false
+	}
+
+	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'command -v apk >/dev/null 2>&1'"
+	if ($LASTEXITCODE -eq 0) {
+		return $true
+	}
+
+	Write-Host "apk not found. Bootstrapping apk-tools using apk.static..."
+
+	$apkUrl = "https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/$ApkStaticVersion/$ApkStaticArch/apk.static"
+	$repoUrl = "http://dl-cdn.alpinelinux.org/alpine/v$AlpineMajorMinor/main"
+
+	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'wget $apkUrl'"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to download apk.static."
+		return $false
+	}
+
+	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'chmod +x apk.static'"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to chmod apk.static."
+		return $false
+	}
+
+	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c './apk.static -X $repoUrl -U --allow-untrusted --initdb add apk-tools'"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to bootstrap apk-tools in container."
+		return $false
+	}
+
+	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'command -v apk >/dev/null 2>&1'"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to bootstrap apk-tools in container."
+		return $false
+	}
+	
+	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'apk update'"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to update Alpine package index."
+		return $false
+	}
+
+	Write-Host "apk-tools bootstrapped successfully."
+	return $true
+}
+
+#==============================================================================
 # Function: Install-n8nPackage
 #==============================================================================
 <#
 .SYNOPSIS
-	Installs additional Alpine Linux packages (ffmpeg, zip) in the running n8n container.
+	Installs additional OS packages required by common n8n workflows.
 .DESCRIPTION
-	Executes package installation commands inside the n8n container using the container engine.
-	Updates the Alpine package index and installs ffmpeg and zip packages using apk.
-	These packages are commonly needed for n8n workflows but are not included in the base image.
-	The installation is performed as root user within the container.
+	Executes package installation commands inside the running n8n container.
+
+	Supports Debian-based images (apt-get) and Alpine-based images (apk). For hardened Alpine images
+	missing apk, attempts to bootstrap apk-tools via apk.static and then install packages.
+
+	This modifies the running container filesystem. The change is lost when the container is removed.
 .EXAMPLE
 	Install-n8nPackage
 .EXAMPLE
 	Install-n8nPackage -WhatIf
 .OUTPUTS
-	[bool] Returns $true if package installation succeeds, $false if installation fails or is skipped due to -WhatIf.
+	[bool] Returns $true if packages were installed; $false if skipped or failed.
 .NOTES
 	Requires the n8n container to be running before execution.
-	Uses global variables $global:enginePath and $global:containerName.
-	Packages installed: ffmpeg (for media processing), zip (for archive operations).
+	Uses global variables $global:enginePath, $global:containerEngine and $global:containerName.
 #>
 function Install-n8nPackage {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType([bool])]
 	param()
 
-	if ($PSCmdlet.ShouldProcess($global:containerName, "Install additional packages (ffmpeg, zip)")) {
-		Write-Host "Installing additional packages in n8n container..."
+	if (-not $PSCmdlet.ShouldProcess($global:containerName, "Install additional packages (ffmpeg, zip)")) {
+		Write-Warning "Package installation skipped due to -WhatIf."
+		return $false
+	}
 
-		try {
-			# Update Alpine package index
-			Write-Host "Updating Alpine package index..."
-			& $global:enginePath machine ssh sudo $global:containerEngine exec --user root $global:containerName apk update
-			if ($LASTEXITCODE -ne 0) {
-				Write-Error "Failed to update Alpine package index."
-				return $false
-			}
+	Write-Host "Installing additional packages in n8n container..."
 
-			# Install ffmpeg
-			Write-Host "Installing ffmpeg..."
-			& $global:enginePath machine ssh sudo $global:containerEngine exec --user root $global:containerName apk add --no-cache ffmpeg
-			if ($LASTEXITCODE -ne 0) {
-				Write-Error "Failed to install ffmpeg package."
-				return $false
-			}
-
-			# Install zip
-			Write-Host "Installing zip..."
-			& $global:enginePath machine ssh sudo $global:containerEngine exec --user root $global:containerName apk add --no-cache zip
-			if ($LASTEXITCODE -ne 0) {
-				Write-Error "Failed to install zip package."
-				return $false
-			}
-
-			Write-Host "Additional packages (ffmpeg, zip) installed successfully."
-			return $true
-		}
-		catch {
-			Write-Error "Error during package installation: $_"
+	try {
+		if (-not (Install-n8nApkToolsIfMissing)) {
 			return $false
 		}
+
+		Write-Host "Installing ffmpeg and zip..."
+		& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'apk add --no-cache ffmpeg zip'"
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Failed to install packages using apk."
+			return $false
+		}
+
+		Write-Host "Additional packages (ffmpeg, zip) installed successfully."
+		return $true
 	}
-	else {
-		Write-Warning "Package installation skipped due to -WhatIf."
+	catch {
+		Write-Error "Error during package installation: $_"
 		return $false
 	}
 }

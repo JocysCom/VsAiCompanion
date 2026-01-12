@@ -1,9 +1,9 @@
-# Cline Rules for this Directory
+﻿# AI Rules for this Directory
 
 ## Meta-Rule: Keep Rules Concise
 
 **Description:**
-When adding or modifying rules in this `.clinerules` file, prioritize clarity and conciseness. Ensure rules are actionable and directly address project standards or potential pitfalls without unnecessary verbosity.
+When adding or modifying rules in `instructions.md` file, prioritize clarity and conciseness. Ensure rules are actionable and directly address project standards or potential pitfalls without unnecessary verbosity.
 
 **Rationale:**
 A concise ruleset is easier to read, understand, and follow, maximizing its effectiveness.
@@ -24,8 +24,8 @@ To maintain code quality and catch potential issues early, all PowerShell script
 
 1. Ensure the `PSScriptAnalyzer` module is installed:
    `Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -Confirm:$false`
-2. After modifying a `.ps1` file, run the analyzer on it:
-   `Invoke-ScriptAnalyzer -Path .\path\to\your\script.ps1`
+2. After modifying a `.ps1` file, run the analyzer on it with some rules excluded (allows to focus on critical issues):
+   `Invoke-ScriptAnalyzer -Path .\path\to\your\script.ps1 -ExcludeRule PSAvoidGlobalVars, PSReviewUnusedParameter, PSAvoidUsingWriteHost, PSUseSingularNouns`
 3. Review the output for any warnings or errors.
 4. Address the identified issues before committing the changes. See the "Suppressing Acceptable Warnings" rule below for specific cases.
 
@@ -39,19 +39,7 @@ While `PSScriptAnalyzer` is valuable, certain warnings might be acceptable or ex
 
 **Acceptable Suppressions:**
 
-- **`PSAvoidGlobalVars`**: This warning often appears in the main menu scripts (`Setup_*.ps1` excluding `Setup_0_*.ps1`) because global variables (`$global:enginePath`, `$global:containerName`, etc.) are intentionally used to share state between different menu actions invoked via `Invoke-MenuLoop`. Suppressing this rule during validation of these specific scripts is acceptable.
-- **`PSReviewUnusedParameter`**: This warning can occur in script blocks passed to generic functions like `Update-Container`. The generic function might define a standard parameter signature for the script block (e.g., including `$ContainerEngineType`, `$ContainerName`), but a specific implementation of that script block might not use all provided parameters (e.g., if it relies on global variables instead). If the parameter is part of the required signature for the generic function, suppressing this warning for that specific parameter within the script block is acceptable. _Initially, attempts were made using `[SuppressMessageAttribute]`, but this did not work reliably within script blocks. Exclusion via command-line is preferred._
 - **`PSShouldProcess`**: This warning can occur in wrapper functions (like `Update-NocoDBContainer`) that are decorated with `[CmdletBinding(SupportsShouldProcess=$true)]` but delegate the actual work (and the `ShouldProcess` call) to another function (like `Update-Container`). If the wrapper function itself doesn't perform actions requiring confirmation but correctly passes `-WhatIf`/`-Confirm` down via splatting or parameter binding to the inner function that _does_ call `ShouldProcess`, suppressing this warning _on the wrapper function_ is acceptable. Ensure the inner function correctly implements `ShouldProcess`. _Correction: Added a top-level `ShouldProcess` check to wrapper functions like `Update-n8nContainer` to resolve this instead of suppressing._
-
-**Procedure for Suppression (During Validation):**
-When validating a script where these specific warnings are expected and acceptable, use the `-ExcludeRule` parameter with `Invoke-ScriptAnalyzer`.
-
-**Example:**
-To validate `Setup_3_n8n.ps1` while ignoring expected global variable usage and unused parameters in the update script block:
-`Invoke-ScriptAnalyzer -Path .\Setup_3_n8n.ps1 -ExcludeRule PSAvoidGlobalVars, PSReviewUnusedParameter, PSAvoidUsingWriteHost`
-
-**Rationale:**
-Suppressing these specific, understood warnings allows focusing on other potentially critical issues identified by the analyzer without being cluttered by expected noise inherent in the chosen design pattern (menu loop with shared state, generic function callbacks). Always ensure the suppression is justified and documented if necessary.
 
 ## Rule: Avoid Adding Temporary/Explanatory Comments to Code
 
@@ -202,3 +190,4 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 
 **Rationale:**
 Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
+

@@ -127,15 +127,16 @@ function Show-DownloadedImage {
 
 	$images = Get-DownloadedImage -EnginePath $script:enginePath
 	Write-Host ""
+	Write-Host "Source : Local engine image store" -ForegroundColor DarkGray
 	Write-Host "Engine : $script:containerEngine ($script:enginePath)" -ForegroundColor Cyan
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 
 	if (-not $images -or $images.Count -eq 0) {
-		Write-Host "No downloaded images found." -ForegroundColor Yellow
+		Write-Host "No images found in local engine image store." -ForegroundColor Yellow
 		return
 	}
 
-	Write-Host "Downloaded Images:" -ForegroundColor White
+	Write-Host "Images:" -ForegroundColor White
 	[int]$i = 1
 	foreach ($img in $images) {
 		Write-Host ("{0}. {1}" -f $i, $img) -ForegroundColor Gray
@@ -373,10 +374,8 @@ function Get-DownloadedImageTarVersions {
 
 	# Split to repo + tag
 	$repo = $ImageName
-	$tag = $null
 	if ($ImageName -match '^(?<r>.+):(?<t>[^:]+)$') {
 		$repo = $matches['r']
-		$tag = $matches['t']
 	}
 
 	$safeRepo = $repo -replace "[:/]", "_"
@@ -498,6 +497,7 @@ function Show-ManifestImageStatus {
 	Write-Host "Image: $ImageName" -ForegroundColor White
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 
+	Write-Host "Source: Local engine image store" -ForegroundColor DarkGray
 	$localId = Get-LocalImageId -EnginePath $script:enginePath -ImageName $ImageName
 	if ($null -eq $localId) {
 		Write-Host "Local image: (none)" -ForegroundColor Yellow
@@ -506,6 +506,7 @@ function Show-ManifestImageStatus {
 		Write-Host "Local image: $localId" -ForegroundColor Cyan
 	}
 
+	Write-Host "Source: Offline tar folder '$global:offlineImagesFolder'" -ForegroundColor DarkGray
 	$tarFiles = Get-DownloadedImageTar -ImageName $ImageName
 	if ($tarFiles -and $tarFiles.Count -gt 0) {
 		$latest = $tarFiles[0]
@@ -516,7 +517,7 @@ function Show-ManifestImageStatus {
 	# If no exact tar match exists (common when manifest uses ':latest'), show versioned tars for the repo.
 	$tarVersions = Get-DownloadedImageTarVersions -ImageName $ImageName
 	if (-not $tarVersions -or $tarVersions.Count -eq 0) {
-		Write-Host "Downloaded tar: (none) in '$global:offlineImagesFolder'" -ForegroundColor Yellow
+		Write-Host "Downloaded tar: (none)" -ForegroundColor Yellow
 		return
 	}
 
@@ -549,6 +550,15 @@ function Select-ManifestImageAndManageDownload {
 		Write-Host "No images found in manifest files." -ForegroundColor Yellow
 		return
 	}
+
+	Write-Host ""
+	Write-Host "Source: Aspire manifests" -ForegroundColor DarkGray
+	foreach ($p in $script:manifestPaths) {
+		if (Test-Path -LiteralPath $p) {
+			Write-Host "  $p" -ForegroundColor DarkGray
+		}
+	}
+	Write-Host ""
 
 	$selection = Invoke-OptionsMenu -Title "Select Image from Manifests" -Options $images -ExitChoice "Exit menu"
 	if (-not $selection -or $selection -eq "Exit menu") {
