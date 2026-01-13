@@ -34,49 +34,76 @@
 	Uses System.Net.Sockets.TcpClient for the connection attempt.
 #>
 function Test-TCPPort {
+	[CmdletBinding()]
+	[OutputType([bool])]
 	param(
 		[Parameter(Mandatory = $true)]
 		[string] $ComputerName,
+
 		[Parameter(Mandatory = $true)]
 		[int] $Port,
+
 		[Parameter(Mandatory = $true)]
 		[string] $serviceName,
-		[int] $TimeoutMilliseconds = 5000
+
+		[Parameter(Mandatory = $false)]
+		[int] $Timeout = 60
 	)
 
-	try {
-		# Try to resolve both IPv4 and IPv6 addresses but prioritize IPv4
-		$ipAddresses = [System.Net.Dns]::GetHostAddresses($ComputerName)
-		$ip = $ipAddresses | Where-Object { $_.AddressFamily -eq 'InterNetwork' } | Select-Object -First 1
+	if ($Timeout -lt 1) {
+		$Timeout = 1
+	}
 
-		# Fallback to IPv6 if no IPv4 is available
-		if (-not $ip) {
-			$ip = $ipAddresses | Select-Object -First 1
-			if (-not $ip) {
-				throw "No IP address could be found for $ComputerName."
+	$deadline = [DateTime]::UtcNow.AddSeconds($Timeout)
+	$didPrintDot = $false
+
+	$ip = $null
+	while ([DateTime]::UtcNow -lt $deadline) {
+		try {
+			if ($null -eq $ip) {
+				# Try to resolve both IPv4 and IPv6 addresses but prioritize IPv4
+				$ipAddresses = [System.Net.Dns]::GetHostAddresses($ComputerName)
+				$ip = $ipAddresses | Where-Object { $_.AddressFamily -eq 'InterNetwork' } | Select-Object -First 1
+
+				# Fallback to IPv6 if no IPv4 is available
+				if (-not $ip) {
+					$ip = $ipAddresses | Select-Object -First 1
+					if (-not $ip) {
+						throw "No IP address could be found for $ComputerName."
+					}
+				}
+
+				Write-Host -NoNewline "$serviceName TCP test on port $Port at $ComputerName (IP: $ip)..."
 			}
-			Write-Host "Using IPv6 address for connection test: $ip"
+
+			$client = New-Object System.Net.Sockets.TcpClient
+			try {
+				# Each attempt gets ~1s to connect; loop controls overall timeout.
+				$async = $client.BeginConnect($ip.ToString(), $Port, $null, $null)
+				$connected = $async.AsyncWaitHandle.WaitOne(1000, $false)
+				if ($connected -and $client.Connected) {
+					$client.Close()
+					if ($didPrintDot) { Write-Host "" }
+					Write-Host "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
+					return $true
+				}
+			}
+			finally {
+				$client.Close()
+			}
+		}
+		catch {
+			Write-Verbose "TCP test attempt failed: $($_.Exception.Message)"
 		}
 
-		$client = New-Object System.Net.Sockets.TcpClient
-		$async = $client.BeginConnect($ip.ToString(), $Port, $null, $null)
-		$connected = $async.AsyncWaitHandle.WaitOne($TimeoutMilliseconds, $false)
+		Write-Host -NoNewline "."
+		$didPrintDot = $true
+		Start-Sleep -Seconds 1
+	}
 
-		if ($connected -and $client.Connected) {
-			Write-Host "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
-			$client.Close()
-			return $true
-		}
-		else {
-			Write-Error "$serviceName TCP test failed on port $Port at $ComputerName (IP: $ip)."
-			$client.Close()
-			return $false
-		}
-	}
-	catch {
-		Write-Error "$serviceName TCP test encountered an error: $_"
-		return $false
-	}
+	if ($didPrintDot) { Write-Host "" }
+	Write-Error "$serviceName TCP test failed on port $Port at $ComputerName after $Timeout seconds."
+	return $false
 }
 
 #==============================================================================
@@ -100,28 +127,80 @@ function Test-TCPPort {
 	Uses Invoke-WebRequest with -UseBasicParsing and a 15-second timeout.
 #>
 function Test-HTTPPort {
+	[CmdletBinding()]
+	[OutputType([bool])]
 	param(
 		[Parameter(Mandatory = $true)]
 		[string] $Uri,
+
 		[Parameter(Mandatory = $true)]
-		[string] $serviceName
+		[string] $serviceName,
+
+		[Parameter(Mandatory = $false)]
+		[int] $Timeout = 60
 	)
-	try {
-		$response = Invoke-WebRequest -Uri $Uri -UseBasicParsing -TimeoutSec 15
-		if ($response.StatusCode -eq 200) {
-			# Use Write-Host for status messages
-			Write-Host "$serviceName HTTP test succeeded at $Uri."
-			return $true
-		}
-		else {
-			Write-Error "$serviceName HTTP test failed at $Uri. Status code: $($response.StatusCode)."
-			return $false
-		}
+
+	if ($Timeout -lt 1) {
+		$Timeout = 1
 	}
-	catch {
-		Write-Error "$serviceName HTTP test failed at $Uri. Error details: $_"
-		return $false
+
+	Write-Host -NoNewline "$serviceName HTTP test at $Uri..."
+	$deadline = [DateTime]::UtcNow.AddSeconds($Timeout)
+	$didPrintDot = $false
+
+	while ([DateTime]::UtcNow -lt $deadline) {
+		try {
+			# Some endpoints (or older PowerShell / TLS setups) behave better with HttpWebRequest.
+			$request = [System.Net.HttpWebRequest]::Create($Uri)
+			$request.Method = "GET"
+			$request.Timeout = 1000
+			$request.ReadWriteTimeout = 1000
+			$request.AllowAutoRedirect = $true
+
+			$response = $null
+			try {
+				$response = [System.Net.HttpWebResponse]$request.GetResponse()
+				$statusCode = [int]$response.StatusCode
+			}
+			finally {
+				if ($null -ne $response) {
+					$response.Close()
+				}
+			}
+
+			if ($statusCode -ge 200 -and $statusCode -lt 400) {
+				if ($didPrintDot) { Write-Host "" }
+				Write-Host "$serviceName HTTP test succeeded at $Uri. Status code: $statusCode."
+				return $true
+			}
+		}
+		catch {
+			# Treat HTTP protocol errors (e.g. 401/403/404) as "service is up".
+			$webEx = $_.Exception
+			if ($webEx -is [System.Net.WebException] -and $null -ne $webEx.Response) {
+				try {
+					$statusCode = [int]([System.Net.HttpWebResponse]$webEx.Response).StatusCode
+					if ($statusCode -ge 100 -and $statusCode -lt 600) {
+						if ($didPrintDot) { Write-Host "" }
+						Write-Host "$serviceName HTTP test succeeded at $Uri. Status code: $statusCode."
+						return $true
+					}
+				}
+				finally {
+					try { $webEx.Response.Close() } catch { Write-Verbose "HTTP test response close failed: $($_.Exception.Message)" }
+				}
+			}
+			Write-Verbose "HTTP test attempt failed: $($_.Exception.Message)"
+		}
+
+		Write-Host -NoNewline "."
+		$didPrintDot = $true
+		Start-Sleep -Seconds 1
 	}
+
+	if ($didPrintDot) { Write-Host "" }
+	Write-Error "$serviceName HTTP test failed at $Uri after $Timeout seconds."
+	return $false
 }
 
 

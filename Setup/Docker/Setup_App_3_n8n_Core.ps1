@@ -338,9 +338,8 @@ function Start-n8nContainer {
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."
-			Start-Sleep -Seconds 30
 
-			# Test connectivity
+			# Test connectivity (returns as soon as port is reachable)
 			$tcpTest = Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName $global:containerName
 			$httpTest = Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName $global:containerName
 
@@ -623,7 +622,7 @@ function Install-n8nApkToolsIfMissing {
 		Write-Error "Failed to bootstrap apk-tools in container."
 		return $false
 	}
-	
+
 	& $global:enginePath machine ssh "sudo $global:containerEngine exec --user root $global:containerName sh -c 'apk update'"
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to update Alpine package index."

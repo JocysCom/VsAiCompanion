@@ -218,7 +218,7 @@
     "n8n": {
       "type": "container.v0",
       "properties": {
-        "image": "docker.io/n8nio/n8n:2.2.6",
+        "image": "docker.io/n8nio/n8n:2.3.2",
         "bindings": [
           {
             "name": "http",
