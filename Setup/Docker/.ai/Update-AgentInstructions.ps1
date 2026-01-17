@@ -13,14 +13,24 @@ param(
     [string]$Mode
 )
 
-# Fallback argument handling: if Mode not set, use first bare argument
-if (-not $Mode -and $args.Count -gt 0) {
-    $Mode = $args[0]
+# Combine remaining args so Windows PowerShell (-File) invocations like:
+#   Update-AgentInstructions.ps1 GitHub CoPilot
+# work the same as:
+#   Update-AgentInstructions.ps1 "GitHub CoPilot"
+if ($args.Count -gt 0) {
+    $ModeFromArgs = ($args -join ' ')
+    if (-not $Mode -or $Mode -eq '') {
+        $Mode = $ModeFromArgs
+    }
 }
+
 
 # Strict mode
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+# Ensure property-missing issues are surfaced consistently (no implicit $null).
+# In PowerShell, pipeline output may be scalar for a single item (not an array), so prefer @(...).Length over .Count.
 
 
 # Function to check if instruction files exist in a directory
@@ -32,8 +42,8 @@ function Test-HasInstructionFiles {
     )
     
     if (Test-Path $Path -PathType Container) {
-        $files = Get-ChildItem $Path -Filter $Filter -File -ErrorAction SilentlyContinue
-        return ($null -ne $files -and $files.Count -gt 0)
+        $files = @(Get-ChildItem $Path -Filter $Filter -File -ErrorAction SilentlyContinue)
+        return ($files.Length -gt 0)
     }
     return $false
 }
@@ -44,55 +54,165 @@ function Invoke-Pause {
     Start-Sleep -Seconds 2
 }
 
-# Function to compare content and write file if different
-function Test-AndWriteFile {
+function Ensure-Directory {
     param(
         [Parameter(Mandatory = $true)]
-        [string]$TargetPath,
-        [Parameter(Mandatory = $true)]
-        [string]$NewContent,
-        [string]$FileDescription = "File" # Optional description for messages
+        [string]$Path
     )
 
-    try {
-        $TargetDir = Split-Path -Path $TargetPath -Parent
-        if (-not (Test-Path -Path $TargetDir)) {
-            Write-Host "Creating directory: $TargetDir"
-            New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
-        }
+    if (-not (Test-Path -Path $Path -PathType Container)) {
+        New-Item -ItemType Directory -Force -Path $Path | Out-Null
+    }
+}
 
-        # Ensure the new content ends with a newline, typical for markdown files
-        $ContentToWrite = $NewContent.TrimEnd() + "`r`n"
+function Copy-FileIfDifferent {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourcePath,
+        [Parameter(Mandatory = $true)]
+        [string]$TargetPath
+    )
 
-        if (Test-Path -Path $TargetPath) {
-            $existingContent = Get-Content -Path $TargetPath -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
-            
-            # Direct comparison as requested by user
-            if ($existingContent -eq $ContentToWrite) {
-                $relative = $TargetPath.Substring($repoRoot.Length + 1)
-                $prefix = if ($FileDescription) { "$($FileDescription): " } else { "" }
-                Write-Host "${prefix}Up-to-date: $relative"
-                return $false
-            }
-            else {
-                Set-Content -Path $TargetPath -Value $ContentToWrite -Encoding UTF8 -Force
-                $relative = $TargetPath.Substring($repoRoot.Length + 1)
-                $prefix = if ($FileDescription) { "$($FileDescription): " } else { "" }
-                Write-Host "${prefix}Updated: $relative"
-                return $true
-            }
+    $targetDir = Split-Path -Path $TargetPath -Parent
+    Ensure-Directory -Path $targetDir
+
+    if (-not (Test-Path -Path $TargetPath -PathType Leaf)) {
+        Copy-Item -LiteralPath $SourcePath -Destination $TargetPath -Force
+        $relative = $TargetPath.Substring($repoRoot.Length + 1)
+        Write-Host "Created: $relative"
+        return
+    }
+
+    $srcBytes = [System.IO.File]::ReadAllBytes($SourcePath)
+    $dstBytes = [System.IO.File]::ReadAllBytes($TargetPath)
+
+    if ($srcBytes.Length -eq $dstBytes.Length) {
+        $same = $true
+        for ($i = 0; $i -lt $srcBytes.Length; $i++) {
+            if ($srcBytes[$i] -ne $dstBytes[$i]) { $same = $false; break }
         }
-        else {
-            Set-Content -Path $TargetPath -Value $ContentToWrite -Encoding UTF8 -Force
+        if ($same) {
             $relative = $TargetPath.Substring($repoRoot.Length + 1)
-            $prefix = if ($FileDescription) { "$($FileDescription): " } else { "" }
-            Write-Host "${prefix}Created: $relative"
-            return $true
+            Write-Host "Up-to-date: $relative"
+            return
         }
     }
-    catch {
-        Write-Error "Error processing file '$TargetPath': $($_.Exception.Message)"
-        throw # Re-throw to be caught by main try-catch
+
+    Copy-Item -LiteralPath $SourcePath -Destination $TargetPath -Force
+    $relative = $TargetPath.Substring($repoRoot.Length + 1)
+    Write-Host "Updated: $relative"
+}
+
+function Get-TextAuto {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    # .NET StreamReader detects BOM for UTF-8/UTF-16/UTF-32 automatically.
+    $sr = New-Object System.IO.StreamReader($Path, $true)
+    try {
+        return $sr.ReadToEnd()
+    }
+    finally {
+        $sr.Dispose()
+    }
+}
+
+function Write-Utf8NoBom {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+        [Parameter(Mandatory = $true)]
+        [string]$Content
+    )
+
+    $dir = Split-Path -Path $Path -Parent
+    Ensure-Directory -Path $dir
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($Path, $Content, $utf8NoBom)
+}
+
+function Test-IsUtf8Bom {
+    param(
+        [Parameter(Mandatory = $true)]
+        [byte[]]$Bytes
+    )
+
+    return ($Bytes.Length -ge 3 -and $Bytes[0] -eq 0xEF -and $Bytes[1] -eq 0xBB -and $Bytes[2] -eq 0xBF)
+}
+
+
+function Get-FileSizeBytes {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    return (Get-Item -LiteralPath $Path -ErrorAction Stop).Length
+}
+
+function Assert-InstructionSync {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDirectory,
+        [Parameter(Mandatory = $true)]
+        [string]$TargetDirectory,
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileSystemInfo[]]$SourceFiles
+    )
+
+    $srcDir = Join-Path $repoRoot $SourceDirectory
+    $dstDir = Join-Path $repoRoot $TargetDirectory
+
+    foreach ($sourceFile in $SourceFiles) {
+        $srcPath = Join-Path $srcDir $sourceFile.Name
+        $dstPath = Join-Path $dstDir $sourceFile.Name
+
+        if (-not (Test-Path $dstPath -PathType Leaf)) {
+            throw "Binary comparison failed. Destination file missing: $dstPath"
+        }
+
+        $srcBytes = [System.IO.File]::ReadAllBytes($srcPath)
+        $dstBytes = [System.IO.File]::ReadAllBytes($dstPath)
+
+
+        # After optional BOM normalization, binaries must match.
+        if ($srcBytes.Length -ne $dstBytes.Length) {
+            throw "Binary comparison failed. Source and target size mismatch in binary: Source: $srcPath Target: $dstPath"
+        }
+
+        for ($i = 0; $i -lt $srcBytes.Length; $i++) {
+            if ($srcBytes[$i] -ne $dstBytes[$i]) {
+                throw "Binary comparison failed. Source and target content mismatch in binary: Source: $srcPath Target: $dstPath"
+            }
+        }
+    }
+}
+
+# NOTE: Removed encoding-artifact scanner. It caused parse failures when this script file itself
+# was opened/saved with a different encoding (e.g., ANSI), corrupting non-ASCII literals.
+# The correct prevention is byte-for-byte copying for multi-file agents and UTF-8 output for merged files.
+
+function Assert-SingleFileHasNoMidFileBom {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$TargetFilePath
+    )
+
+    $targetPath = Join-Path $repoRoot $TargetFilePath
+    if (-not (Test-Path $targetPath -PathType Leaf)) {
+        throw "Expected single-file agent target to exist: $targetPath"
+    }
+
+    $targetBytes = [System.IO.File]::ReadAllBytes($targetPath)
+
+    # No BOM mid-file.
+    for ($i = 3; $i -le ($targetBytes.Length - 3); $i++) {
+        if ($targetBytes[$i] -eq 0xEF -and $targetBytes[$i + 1] -eq 0xBB -and $targetBytes[$i + 2] -eq 0xBF) {
+            throw "UTF-8 BOM sequence found mid-file in: $targetPath at byte index $i"
+        }
     }
 }
 
@@ -111,16 +231,13 @@ function Update-MultipleFileAgent {
 
     Write-Host "`r`n--- Updating $AgentName Instructions ---"
     $targetDir = Join-Path $RepoRoot $TargetDirectory
-    
+
     foreach ($sourceFile in $SourceFiles) {
         $targetFile = Join-Path $targetDir $sourceFile.Name
-        $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
-        if ([string]::IsNullOrWhiteSpace($sourceContent)) {
-            Write-Warning "Skipping empty file: $($sourceFile.Name)"
-            continue
-        }
-        [void](Test-AndWriteFile -TargetPath $targetFile -NewContent $sourceContent -FileDescription "")
+        Copy-FileIfDifferent -SourcePath $sourceFile.FullName -TargetPath $targetFile
     }
+
+    Assert-InstructionSync -SourceDirectory ".ai" -TargetDirectory $TargetDirectory -SourceFiles $SourceFiles
 }
 
 # Function to update agents that use a single combined instruction file
@@ -138,12 +255,14 @@ function Update-SingleFileAgent {
 
     Write-Host "`r`n--- Updating $AgentName Instructions ---"
     $targetFile = Join-Path $RepoRoot $TargetFilePath
-    
+    $relativeTarget = $targetFile.Substring($repoRoot.Length + 1)
+
     $allInstructionsContent = New-Object System.Text.StringBuilder
     $firstFile = $true
 
     foreach ($sourceFile in $SourceFiles) {
-        $sourceContent = Get-Content $sourceFile.FullName -Raw -Encoding UTF8
+        $sourceContent = Get-TextAuto -Path $sourceFile.FullName
+
         if ([string]::IsNullOrWhiteSpace($sourceContent)) {
             Write-Warning "Skipping empty file: $($sourceFile.Name)"
             continue
@@ -152,35 +271,42 @@ function Update-SingleFileAgent {
         if (-not $firstFile) {
             [void]$allInstructionsContent.AppendLine("") # Add a blank line separator before the next section
         }
-        
+
         [void]$allInstructionsContent.AppendLine("==== START OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
         [void]$allInstructionsContent.AppendLine("") # Blank line after START marker
-        
+
         [void]$allInstructionsContent.AppendLine("# Instructions from: $($sourceFile.Name)")
         [void]$allInstructionsContent.AppendLine("") # Blank line after header
-        
+
         [void]$allInstructionsContent.AppendLine($sourceContent.Trim())
-        
+
         [void]$allInstructionsContent.AppendLine("") # Blank line before END marker
         [void]$allInstructionsContent.AppendLine("==== END OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
-        
+
         $firstFile = $false # Set to false after processing the first file
     }
 
-    # No need to remove leading newline with this new structure as each block is self-contained.
-    # The first block will start directly with "==== START..."
     $finalContent = $allInstructionsContent.ToString()
-    [void](Test-AndWriteFile -TargetPath $targetFile -NewContent $finalContent -FileDescription "")
+
+    $existing = if (Test-Path -Path $targetFile -PathType Leaf) { Get-TextAuto -Path $targetFile } else { $null }
+    if ($null -ne $existing -and $existing -eq $finalContent) {
+        Write-Host "Up-to-date: $relativeTarget"
+        return
+    }
+
+    Write-Utf8NoBom -Path $targetFile -Content $finalContent
+    Write-Host "Updated: $relativeTarget"
 }
 
 # --- Main Script ---
 Clear-Host
 $scriptDir = $PSScriptRoot # Directory where the script itself is located (.ai)
-$repoRoot = Join-Path -Path $scriptDir -ChildPath ".." | Resolve-Path # Absolute path to the repository root
+$repoRoot = (Join-Path -Path $scriptDir -ChildPath ".." | Resolve-Path).Path # Absolute path to the repository root
 
 # Discover source files matching *instructions.md in the .ai folder
-[System.IO.FileSystemInfo[]]$sourceInstructionFiles = Get-ChildItem -Path $scriptDir -Filter "*instructions.md" -File
-if ($null -eq $sourceInstructionFiles -or $sourceInstructionFiles.Count -eq 0) {
+[System.IO.FileSystemInfo[]]$sourceInstructionFiles = Get-ChildItem -Path $scriptDir -Filter "*instructions.md" -File | Sort-Object Name
+
+if ($null -eq $sourceInstructionFiles -or $sourceInstructionFiles.Length -eq 0) {
     Write-Warning "No '*instructions.md' files found in '$scriptDir'. Nothing to process."
     exit 0
 }
@@ -285,7 +411,45 @@ if ($updateRooCode) {
 
 # --- Single-File Agent Updates ---
 if ($updateCopilot) {
-    Update-SingleFileAgent -AgentName "GitHub CoPilot" -TargetFilePath ".github\copilot-instructions.md" -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
+    $copilotTarget = ".github\copilot-instructions.md"
+    $githubInstructionsDir = Join-Path $repoRoot ".github\instructions"
+
+    if (Test-Path $githubInstructionsDir -PathType Container) {
+        # Folder-based mode:
+        # - instructions.md -> .github/copilot-instructions.md
+        # - other *.instructions.md -> .github/instructions/
+        Write-Host "`r`n--- Updating GitHub CoPilot Instructions (folder-based) ---"
+
+        $mainName = "instructions.md"
+        $mainSource = $sourceInstructionFiles | Where-Object { $_.Name -ieq $mainName } | Select-Object -First 1
+        if ($null -eq $mainSource) {
+            throw "Expected source '$mainName' under .ai but none found."
+        }
+
+        Copy-FileIfDifferent -SourcePath $mainSource.FullName -TargetPath (Join-Path $repoRoot $copilotTarget)
+
+        foreach ($sf in $sourceInstructionFiles) {
+            if ($sf.Name -ieq $mainName) {
+                continue
+            }
+
+            $destination = Join-Path $githubInstructionsDir $sf.Name
+            Copy-FileIfDifferent -SourcePath $sf.FullName -TargetPath $destination
+        }
+
+        # NOTE:
+        # Copy-FileIfDifferent already performs an exact byte-level comparison, so we do not need a
+        # separate Assert-InstructionSync here.
+        #
+        # Also, in Windows PowerShell, filtering a single item can return a scalar (not an array),
+        # which can make '.Length' unreliable under StrictMode.
+    }
+    else {
+        # Merge mode:
+        # - all *instructions.md are merged into .github/copilot-instructions.md
+        Update-SingleFileAgent -AgentName "GitHub CoPilot" -TargetFilePath $copilotTarget -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
+    }
+
 }
 
 if ($updateCodex) {
@@ -294,4 +458,9 @@ if ($updateCodex) {
 
 Write-Host "`r`nAll selected operations completed successfully."
 
-Invoke-Pause
+# Only pause when launched by double-click (Explorer). In CI / terminal usage, do not pause.
+# $Host.Name is typically 'ConsoleHost' when run from a terminal (PowerShell, VS Code, etc.).
+# When double-clicked in Explorer, it is commonly 'Default Host'.
+if ($Host.Name -and $Host.Name -notlike '*ConsoleHost*') {
+    Invoke-Pause
+}

@@ -1,4 +1,4 @@
-﻿==== START OF INSTRUCTIONS FROM: instructions.md ====
+==== START OF INSTRUCTIONS FROM: instructions.md ====
 
 # Instructions from: instructions.md
 
@@ -197,9 +197,9 @@ Using global variables instead of hardcoded values improves maintainability, mak
 
 ==== END OF INSTRUCTIONS FROM: instructions.md ====
 
-==== START OF INSTRUCTIONS FROM: tools-instructions.md ====
+==== START OF INSTRUCTIONS FROM: tool.instructions.md ====
 
-# Instructions from: tools-instructions.md
+# Instructions from: tool.instructions.md
 
 ## Tools
 
@@ -210,11 +210,11 @@ Terminal sessions use PowerShell by default; always invoke scripts directly from
 WRONG: powershell -NoProfile -ExecutionPolicy Bypass -File .\.ai\Scripts\Start-Local.ps1 MONITOR
 VALID: .\.ai\Scripts\Start-Local.ps1 MONITOR
 
-==== END OF INSTRUCTIONS FROM: tools-instructions.md ====
+==== END OF INSTRUCTIONS FROM: tool.instructions.md ====
 
-==== START OF INSTRUCTIONS FROM: tools-web-search.instructions.md ====
+==== START OF INSTRUCTIONS FROM: tool-web-search.instructions.md ====
 
-# Instructions from: tools-web-search.instructions.md
+# Instructions from: tool-web-search.instructions.md
 
 ## System-message addendum: Web Search
 
@@ -247,5 +247,4 @@ If the user explicitly instructs **not to search**, do not call the tool.
 - Integrate verified facts into your reply, placing citations immediately after the statements they support.  
 - If the search fails to resolve uncertainty, state the uncertainty rather than guessing.
 
-==== END OF INSTRUCTIONS FROM: tools-web-search.instructions.md ====
-
+==== END OF INSTRUCTIONS FROM: tool-web-search.instructions.md ====

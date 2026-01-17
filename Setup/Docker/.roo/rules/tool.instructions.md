@@ -1,4 +1,4 @@
-﻿## Tools
+## Tools
 
 ## Environment
 
@@ -6,4 +6,3 @@ Terminal sessions use PowerShell by default; always invoke scripts directly from
 
 WRONG: powershell -NoProfile -ExecutionPolicy Bypass -File .\.ai\Scripts\Start-Local.ps1 MONITOR
 VALID: .\.ai\Scripts\Start-Local.ps1 MONITOR
-

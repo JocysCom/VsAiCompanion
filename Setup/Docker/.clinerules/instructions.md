@@ -1,4 +1,4 @@
-﻿# AI Rules for this Directory
+# AI Rules for this Directory
 
 ## Meta-Rule: Keep Rules Concise
 
@@ -190,4 +190,3 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 
 **Rationale:**
 Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
-
