@@ -96,4 +96,3 @@ Use the following guidelines:
 ## Output
 
 Wrap any and all code—including regular code snippets, inline code segments, outputs, pseudocode, or any text that represents code—in Markdown code blocks with a language identifier (e.g., ```typescript, ```powershell).
-
