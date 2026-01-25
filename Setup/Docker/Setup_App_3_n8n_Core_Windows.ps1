@@ -445,6 +445,24 @@ do {
 	switch ($choice) {
 		"1" {
 			$settings = Get-n8nSetting
+
+			Write-Host ""
+			Write-Host "Default n8n ports:" -ForegroundColor White
+			Write-Host "  HTTP : $($global:defaultPort)" -ForegroundColor Cyan
+			if ($settings.Port -ne $global:defaultPort) {
+				Write-Host "Saved n8n HTTP port: $($settings.Port)" -ForegroundColor DarkGray
+			}
+			Write-Host ""
+			Write-Host "If you are already running a container instance on the default port, choose a different port for Windows." -ForegroundColor DarkGray
+			Write-Host "Example (Windows): 5679" -ForegroundColor DarkGray
+
+			Write-Host ""
+			Write-Host "n8n installation / data locations:" -ForegroundColor White
+			Write-Host "  App data root : $global:installRoot" -ForegroundColor Cyan
+			Write-Host "  User data     : $global:userDataRoot" -ForegroundColor Cyan
+			Write-Host "  Settings file : $global:settingsPath" -ForegroundColor Cyan
+			Write-Host ""
+
 			$port = Read-ValidatedPort -Prompt "Enter n8n HTTP port" -DefaultPort $settings.Port
 			Set-n8nSetting -Port $port
 			Install-n8nIfMissing
