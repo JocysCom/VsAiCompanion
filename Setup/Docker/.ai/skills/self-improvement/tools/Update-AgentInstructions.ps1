@@ -1,12 +1,14 @@
 # Script: Update-AgentInstructions.ps1
-# Location: .ai/Update-AgentInstructions.ps1
-# Description: Updates AI agent instruction files from master copies in the .ai folder,
-#              processing only files matching '*instructions.md'.
-#              Supports both multiple-file agents (CLINE, ROO CODE) and
-#              single-file agents (GitHub CoPilot, OpenAI Codex).
-# Options for Mode: ALL (update all), AUTO (default; update only agents with instruction files),
-#                  or specific agent names: CLINE, ROO CODE, GitHub CoPilot, OpenAI Codex.
-#              Adds 'AUTO' mode (default) to update only agents with instructions present.
+# Location: .ai/skills/self-improvement/tools/Update-AgentInstructions.ps1
+# Description:
+#   Synchronises AI agent instruction files and skills from master sources under `.ai/`.
+#   - Instructions: copies `*.instructions.md` from `.ai/` into agent-specific outputs.
+#   - Skills: mirrors `.ai/skills/*` into agent skill folders (e.g. `.roo/skills/*`).
+#
+# Options for Mode:
+#   ALL  - update all known agent outputs
+#   AUTO - update only agents that exist in this repository (default usage)
+#   Or a specific agent name: CLINE, ROO CODE, GitHub CoPilot, OpenAI Codex
 
 param(
     [Parameter(Position = 0)]
@@ -24,35 +26,9 @@ if ($args.Count -gt 0) {
     }
 }
 
-
 # Strict mode
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
-
-# Ensure property-missing issues are surfaced consistently (no implicit $null).
-# In PowerShell, pipeline output may be scalar for a single item (not an array), so prefer @(...).Length over .Count.
-
-
-# Function to check if instruction files exist in a directory
-function Test-HasInstructionFiles {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Path,
-        [string]$Filter = '*instructions.md'
-    )
-    
-    if (Test-Path $Path -PathType Container) {
-        $files = @(Get-ChildItem $Path -Filter $Filter -File -ErrorAction SilentlyContinue)
-        return ($files.Length -gt 0)
-    }
-    return $false
-}
-
-# Function to pause at the end (unless -NoWait is specified)
-function Invoke-Pause {
-    Write-Host "Pausing for 2 seconds..."
-    Start-Sleep -Seconds 2
-}
 
 function Ensure-Directory {
     param(
@@ -63,6 +39,28 @@ function Ensure-Directory {
     if (-not (Test-Path -Path $Path -PathType Container)) {
         New-Item -ItemType Directory -Force -Path $Path | Out-Null
     }
+}
+
+# Function to check if instruction files exist in a directory
+function Test-HasInstructionFiles {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+        [string]$Filter = '*instructions.md'
+    )
+
+    if (Test-Path $Path -PathType Container) {
+        $files = @(Get-ChildItem $Path -Filter $Filter -File -ErrorAction SilentlyContinue)
+        return ($files.Length -gt 0)
+    }
+
+    return $false
+}
+
+# Function to pause at the end (unless -NoWait is specified)
+function Invoke-Pause {
+    Write-Host "Pausing for 2 seconds..."
+    Start-Sleep -Seconds 2
 }
 
 function Copy-FileIfDifferent {
@@ -91,6 +89,7 @@ function Copy-FileIfDifferent {
         for ($i = 0; $i -lt $srcBytes.Length; $i++) {
             if ($srcBytes[$i] -ne $dstBytes[$i]) { $same = $false; break }
         }
+
         if ($same) {
             $relative = $TargetPath.Substring($repoRoot.Length + 1)
             Write-Host "Up-to-date: $relative"
@@ -134,25 +133,6 @@ function Write-Utf8NoBom {
     [System.IO.File]::WriteAllText($Path, $Content, $utf8NoBom)
 }
 
-function Test-IsUtf8Bom {
-    param(
-        [Parameter(Mandatory = $true)]
-        [byte[]]$Bytes
-    )
-
-    return ($Bytes.Length -ge 3 -and $Bytes[0] -eq 0xEF -and $Bytes[1] -eq 0xBB -and $Bytes[2] -eq 0xBF)
-}
-
-
-function Get-FileSizeBytes {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Path
-    )
-
-    return (Get-Item -LiteralPath $Path -ErrorAction Stop).Length
-}
-
 function Assert-InstructionSync {
     param(
         [Parameter(Mandatory = $true)]
@@ -177,8 +157,6 @@ function Assert-InstructionSync {
         $srcBytes = [System.IO.File]::ReadAllBytes($srcPath)
         $dstBytes = [System.IO.File]::ReadAllBytes($dstPath)
 
-
-        # After optional BOM normalization, binaries must match.
         if ($srcBytes.Length -ne $dstBytes.Length) {
             throw "Binary comparison failed. Source and target size mismatch in binary: Source: $srcPath Target: $dstPath"
         }
@@ -187,31 +165,6 @@ function Assert-InstructionSync {
             if ($srcBytes[$i] -ne $dstBytes[$i]) {
                 throw "Binary comparison failed. Source and target content mismatch in binary: Source: $srcPath Target: $dstPath"
             }
-        }
-    }
-}
-
-# NOTE: Removed encoding-artifact scanner. It caused parse failures when this script file itself
-# was opened/saved with a different encoding (e.g., ANSI), corrupting non-ASCII literals.
-# The correct prevention is byte-for-byte copying for multi-file agents and UTF-8 output for merged files.
-
-function Assert-SingleFileHasNoMidFileBom {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$TargetFilePath
-    )
-
-    $targetPath = Join-Path $repoRoot $TargetFilePath
-    if (-not (Test-Path $targetPath -PathType Leaf)) {
-        throw "Expected single-file agent target to exist: $targetPath"
-    }
-
-    $targetBytes = [System.IO.File]::ReadAllBytes($targetPath)
-
-    # No BOM mid-file.
-    for ($i = 3; $i -le ($targetBytes.Length - 3); $i++) {
-        if ($targetBytes[$i] -eq 0xEF -and $targetBytes[$i + 1] -eq 0xBB -and $targetBytes[$i + 2] -eq 0xBF) {
-            throw "UTF-8 BOM sequence found mid-file in: $targetPath at byte index $i"
         }
     }
 }
@@ -269,21 +222,21 @@ function Update-SingleFileAgent {
         }
 
         if (-not $firstFile) {
-            [void]$allInstructionsContent.AppendLine("") # Add a blank line separator before the next section
+            [void]$allInstructionsContent.AppendLine("")
         }
 
         [void]$allInstructionsContent.AppendLine("==== START OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
-        [void]$allInstructionsContent.AppendLine("") # Blank line after START marker
+        [void]$allInstructionsContent.AppendLine("")
 
         [void]$allInstructionsContent.AppendLine("# Instructions from: $($sourceFile.Name)")
-        [void]$allInstructionsContent.AppendLine("") # Blank line after header
+        [void]$allInstructionsContent.AppendLine("")
 
         [void]$allInstructionsContent.AppendLine($sourceContent.Trim())
 
-        [void]$allInstructionsContent.AppendLine("") # Blank line before END marker
+        [void]$allInstructionsContent.AppendLine("")
         [void]$allInstructionsContent.AppendLine("==== END OF INSTRUCTIONS FROM: $($sourceFile.Name) ====")
 
-        $firstFile = $false # Set to false after processing the first file
+        $firstFile = $false
     }
 
     $finalContent = $allInstructionsContent.ToString()
@@ -298,19 +251,89 @@ function Update-SingleFileAgent {
     Write-Host "Updated: $relativeTarget"
 }
 
+function Sync-SkillsToRoo {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    $srcSkillsRoot = Join-Path $RepoRoot ".ai\skills"
+    if (-not (Test-Path $srcSkillsRoot -PathType Container)) {
+        Write-Host "No skills folder found at: $srcSkillsRoot"
+        return
+    }
+
+    $rooSkillsRoot = Join-Path $RepoRoot ".roo\skills"
+    Ensure-Directory -Path $rooSkillsRoot
+
+    $skillDirs = @(Get-ChildItem -Path $srcSkillsRoot -Directory | Sort-Object Name)
+    foreach ($sd in $skillDirs) {
+        $src = $sd.FullName
+        $dst = Join-Path $rooSkillsRoot $sd.Name
+
+        Write-Host "`r`n--- Syncing skill '$($sd.Name)' to Roo ---"
+
+        # Mirror directory (copy new/updated files only). Do not delete extra files in destination.
+        $srcFiles = @(Get-ChildItem -Path $src -Recurse -File)
+        foreach ($sf in $srcFiles) {
+            $rel = $sf.FullName.Substring($src.Length).TrimStart('\\')
+            $targetFile = Join-Path $dst $rel
+            Copy-FileIfDifferent -SourcePath $sf.FullName -TargetPath $targetFile
+        }
+    }
+}
+
+function Sync-SkillsToGitHub {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    $srcSkillsRoot = Join-Path $RepoRoot ".ai\skills"
+    if (-not (Test-Path $srcSkillsRoot -PathType Container)) {
+        Write-Host "No skills folder found at: $srcSkillsRoot"
+        return
+    }
+
+    $githubSkillsRoot = Join-Path $RepoRoot ".github\skills"
+    Ensure-Directory -Path $githubSkillsRoot
+
+    $skillDirs = @(Get-ChildItem -Path $srcSkillsRoot -Directory | Sort-Object Name)
+    foreach ($sd in $skillDirs) {
+        $src = $sd.FullName
+        $dst = Join-Path $githubSkillsRoot $sd.Name
+
+        Write-Host "`r`n--- Syncing skill '$($sd.Name)' to GitHub ---"
+
+        # Mirror directory (copy new/updated files only). Do not delete extra files in destination.
+        $srcFiles = @(Get-ChildItem -Path $src -Recurse -File)
+        foreach ($sf in $srcFiles) {
+            $rel = $sf.FullName.Substring($src.Length).TrimStart('\\')
+            $targetFile = Join-Path $dst $rel
+            Copy-FileIfDifferent -SourcePath $sf.FullName -TargetPath $targetFile
+        }
+    }
+}
+
 # --- Main Script ---
 Clear-Host
-$scriptDir = $PSScriptRoot # Directory where the script itself is located (.ai)
-$repoRoot = (Join-Path -Path $scriptDir -ChildPath ".." | Resolve-Path).Path # Absolute path to the repository root
+
+# We are located under `.ai/skills/<skill>/tools`. Find repo root by going up 4 levels.
+$scriptDir = $PSScriptRoot
+$repoRoot = (Join-Path -Path $scriptDir -ChildPath "..\..\..\.." | Resolve-Path).Path
+
+# `.ai` folder path
+$aiDir = Join-Path $repoRoot ".ai"
 
 # Discover source files matching *instructions.md in the .ai folder
-[System.IO.FileSystemInfo[]]$sourceInstructionFiles = Get-ChildItem -Path $scriptDir -Filter "*instructions.md" -File | Sort-Object Name
+[System.IO.FileSystemInfo[]]$sourceInstructionFiles = Get-ChildItem -Path $aiDir -Filter "*instructions.md" -File | Sort-Object Name
 
 if ($null -eq $sourceInstructionFiles -or $sourceInstructionFiles.Length -eq 0) {
-    Write-Warning "No '*instructions.md' files found in '$scriptDir'. Nothing to process."
+    Write-Warning "No '*instructions.md' files found in '$aiDir'. Nothing to process."
     exit 0
 }
-Write-Host "Found the following source instruction files in '$scriptDir':"
+
+Write-Host "Found the following source instruction files in '$aiDir':"
 $sourceInstructionFiles | ForEach-Object { Write-Host "- $($_.Name)" }
 
 # Mode parameter handling: if 'ALL' or 'AUTO', skip interactive prompt
@@ -349,12 +372,13 @@ else {
     $hasRooCode = Test-HasInstructionFiles -Path (Join-Path $repoRoot '.roo\rules')
     $hasCopilot = Test-Path (Join-Path $repoRoot '.github\copilot-instructions.md') -PathType Leaf
     $hasCodex = Test-Path (Join-Path $repoRoot 'AGENTS.md') -PathType Leaf
-    
+
     Write-Host "`r`nDetected AI agents with instruction files:"
     if ($hasCline) { Write-Host "- CLINE" }
     if ($hasRooCode) { Write-Host "- ROO CODE" }
     if ($hasCopilot) { Write-Host "- GitHub CoPilot" }
     if ($hasCodex) { Write-Host "- OpenAI Codex" }
+
     Write-Host ""
     Write-Host "=============================================================="
     Write-Host "Select Agent Instruction Set to Update"
@@ -368,16 +392,15 @@ else {
     Write-Host "0. Exit"
     Write-Host "=============================================================="
     $selection = Read-Host "Enter the number of your choice (0-6)"
-    
+
     # Initialize flags
     $updateCline = $false
     $updateCopilot = $false
     $updateRooCode = $false
     $updateCodex = $false
-    
+
     switch ($selection) {
         '1' {
-            # AUTO mode - same logic as above
             $updateCline = Test-HasInstructionFiles -Path (Join-Path $repoRoot '.clinerules')
             $updateRooCode = Test-HasInstructionFiles -Path (Join-Path $repoRoot '.roo\rules')
             $updateCopilot = Test-Path (Join-Path $repoRoot '.github\copilot-instructions.md') -PathType Leaf
@@ -415,9 +438,6 @@ if ($updateCopilot) {
     $githubInstructionsDir = Join-Path $repoRoot ".github\instructions"
 
     if (Test-Path $githubInstructionsDir -PathType Container) {
-        # Folder-based mode:
-        # - instructions.md -> .github/copilot-instructions.md
-        # - other *.instructions.md -> .github/instructions/
         Write-Host "`r`n--- Updating GitHub CoPilot Instructions (folder-based) ---"
 
         $mainName = "instructions.md"
@@ -436,31 +456,29 @@ if ($updateCopilot) {
             $destination = Join-Path $githubInstructionsDir $sf.Name
             Copy-FileIfDifferent -SourcePath $sf.FullName -TargetPath $destination
         }
-
-        # NOTE:
-        # Copy-FileIfDifferent already performs an exact byte-level comparison, so we do not need a
-        # separate Assert-InstructionSync here.
-        #
-        # Also, in Windows PowerShell, filtering a single item can return a scalar (not an array),
-        # which can make '.Length' unreliable under StrictMode.
     }
     else {
-        # Merge mode:
-        # - all *instructions.md are merged into .github/copilot-instructions.md
         Update-SingleFileAgent -AgentName "GitHub CoPilot" -TargetFilePath $copilotTarget -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
     }
-
 }
 
 if ($updateCodex) {
     Update-SingleFileAgent -AgentName "OpenAI Codex" -TargetFilePath "AGENTS.md" -SourceFiles $sourceInstructionFiles -RepoRoot $repoRoot
 }
 
+# --- Skills mirroring ---
+if ($updateRooCode -or $Mode -eq 'ALL' -or $Mode -eq 'AUTO') {
+    Sync-SkillsToRoo -RepoRoot $repoRoot
+}
+
+# GitHub Copilot: mirror skills to `.github/skills` (Copilot tries to load from there).
+if ($updateCopilot -or $Mode -eq 'ALL' -or $Mode -eq 'AUTO') {
+    Sync-SkillsToGitHub -RepoRoot $repoRoot
+}
+
 Write-Host "`r`nAll selected operations completed successfully."
 
 # Only pause when launched by double-click (Explorer). In CI / terminal usage, do not pause.
-# $Host.Name is typically 'ConsoleHost' when run from a terminal (PowerShell, VS Code, etc.).
-# When double-clicked in Explorer, it is commonly 'Default Host'.
 if ($Host.Name -and $Host.Name -notlike '*ConsoleHost*') {
     Invoke-Pause
 }

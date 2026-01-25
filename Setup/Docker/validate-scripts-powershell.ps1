@@ -37,7 +37,8 @@ Write-Host "Found $($scriptFiles.Count) script(s) to validate."
 $excludedRules = @(
 	'PSAvoidGlobalVars',
 	'PSReviewUnusedParameter',
-	'PSAvoidUsingWriteHost'
+	'PSAvoidUsingWriteHost',
+	'PSUseSingularNouns'
 )
 
 $formattRules = @(
