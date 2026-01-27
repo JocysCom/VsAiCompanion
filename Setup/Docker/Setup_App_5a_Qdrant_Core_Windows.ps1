@@ -43,6 +43,12 @@ $global:qdrantWebUiVersionFile = Join-Path $global:installRoot ".qdrant-web-ui-v
 
 $global:dashboardPath = "/dashboard"
 
+$global:qdrantServiceTaskName = "VsAiCompanion-Qdrant"
+$global:qdrantServiceWrapperPath = Join-Path $global:installRoot "service-wrapper.ps1"
+$global:qdrantServiceLogPath = Join-Path $global:installRoot "service.log"
+$global:qdrantServicePidPath = Join-Path $global:installRoot "service.pid"
+$global:qdrantServicePidPath = Join-Path $global:installRoot "service.pid"
+
 #==============================================================================
 # Function: New-Directory
 #==============================================================================
@@ -566,24 +572,20 @@ function Install-QdrantIfMissing {
 }
 
 #==============================================================================
-# Function: Start-Qdrant
+# Function: Install-Qdrant
 #==============================================================================
 <#
 .SYNOPSIS
-	Starts Qdrant on Windows.
+	Installs Qdrant prerequisites and persists configuration.
 .DESCRIPTION
-	Prompts for HTTP/gRPC ports, saves settings, sets environment variables and launches Qdrant
-	in the foreground.
+	Prompts for HTTP and gRPC ports (saved under ProgramData), ensures required folders exist,
+	and downloads Qdrant + Web UI if missing.
 .OUTPUTS
 	[void]
 #>
-function Start-Qdrant {
-	[CmdletBinding(SupportsShouldProcess = $true)]
+function Install-Qdrant {
+	[CmdletBinding()]
 	param()
-
-	if (-not $PSCmdlet.ShouldProcess("Qdrant", "Install/Start")) {
-		return
-	}
 
 	Install-QdrantIfMissing
 	Install-QdrantWebUiIfMissing
@@ -608,20 +610,40 @@ function Start-Qdrant {
 	}
 
 	Set-QdrantSetting -HttpPort $httpPort -GrpcPort $grpcPort
-
 	New-Directory -Path $global:storageRoot
+}
+
+#==============================================================================
+# Function: Start-QdrantConsole
+#==============================================================================
+<#
+.SYNOPSIS
+	Starts Qdrant in the current console (foreground).
+.DESCRIPTION
+	Loads saved settings, sets environment variables and launches Qdrant in the foreground.
+.OUTPUTS
+	[void]
+#>
+function Start-QdrantConsole {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$settings = Get-QdrantSetting
+	$httpPort = [int]$settings.HttpPort
+	$grpcPort = [int]$settings.GrpcPort
+
+	if (-not $PSCmdlet.ShouldProcess("Qdrant", "Start Console")) {
+		return
+	}
+
+	if (-not (Test-Path -LiteralPath $global:qdrantExePath)) {
+		Write-Warning "Qdrant is not installed. Run 'Install' first."
+		return
+	}
 
 	$env:QDRANT__SERVICE__HTTP_PORT = $httpPort.ToString()
 	$env:QDRANT__SERVICE__GRPC_PORT = $grpcPort.ToString()
 	$env:QDRANT__STORAGE__STORAGE_PATH = $global:storageRoot
-
-	Write-Host ""
-	Write-Host "Qdrant installation / data locations:" -ForegroundColor White
-	Write-Host "  Install root : $global:installRoot" -ForegroundColor Cyan
-	Write-Host "  Binary       : $global:qdrantExePath" -ForegroundColor Cyan
-	Write-Host "  Web UI       : $global:staticRoot" -ForegroundColor Cyan
-	Write-Host "  Storage      : $global:storageRoot" -ForegroundColor Cyan
-	Write-Host "  Settings     : $global:settingsPath" -ForegroundColor Cyan
 
 	Write-Host ""
 	Write-Host "Starting Qdrant in the foreground (Ctrl+C to stop)..." -ForegroundColor Yellow
@@ -635,6 +657,232 @@ function Start-Qdrant {
 	}
 	finally {
 		Pop-Location
+	}
+}
+
+#==============================================================================
+# Function: Write-QdrantServiceWrapper
+#==============================================================================
+<#
+.SYNOPSIS
+	Writes the Scheduled Task wrapper script for Qdrant.
+.DESCRIPTION
+	Creates a PowerShell script under ProgramData which sets environment variables from saved settings
+	and starts Qdrant with stdout/stderr appended to a log file.
+.OUTPUTS
+	[void]
+#>
+function Write-QdrantServiceWrapper {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	New-Directory -Path $global:installRoot
+
+	$settings = Get-QdrantSetting
+	$httpPort = [int]$settings.HttpPort
+	$grpcPort = [int]$settings.GrpcPort
+
+	$wrapper = @"
+`$ErrorActionPreference = 'Stop'
+
+`$installRoot = '$($global:installRoot)'
+`$exePath = '$($global:qdrantExePath)'
+`$storageRoot = '$($global:storageRoot)'
+`$logPath = '$($global:qdrantServiceLogPath)'
+`$pidPath = '$($global:qdrantServicePidPath)'
+
+`$env:QDRANT__SERVICE__HTTP_PORT = '$httpPort'
+`$env:QDRANT__SERVICE__GRPC_PORT = '$grpcPort'
+`$env:QDRANT__STORAGE__STORAGE_PATH = `"`$storageRoot`"
+
+New-Item -ItemType Directory -Path `"`$installRoot`" -Force | Out-Null
+New-Item -ItemType Directory -Path `"`$storageRoot`" -Force | Out-Null
+
+`"[`$(Get-Date -Format o)] Starting Qdrant...`" | Out-File -FilePath `"`$logPath`" -Append -Encoding UTF8
+
+if (Test-Path -LiteralPath `"`$pidPath`" ) {
+	try {
+		`$oldPid = [int](Get-Content -LiteralPath `"`$pidPath`" -ErrorAction SilentlyContinue | Select-Object -First 1)
+		if (`$oldPid -gt 0) {
+			`$pOld = Get-Process -Id `$oldPid -ErrorAction SilentlyContinue
+			if (`$pOld) {
+				`"[`$(Get-Date -Format o)] Existing PID found (`$oldPid). Stopping it...`" | Out-File -FilePath `"`$logPath`" -Append -Encoding UTF8
+				Stop-Process -Id `$oldPid -Force -ErrorAction SilentlyContinue
+			}
+		}
+	}
+	catch { }
+}
+
+Push-Location -LiteralPath `"`$installRoot`"
+try {
+	`$stdoutPath = `"`$logPath`"
+	`$stderrPath = `"`$logPath`" + ".err"
+	`$p = Start-Process -FilePath `"`$exePath`" -WindowStyle Hidden -RedirectStandardOutput `"`$stdoutPath`" -RedirectStandardError `"`$stderrPath`" -PassThru
+	Set-Content -LiteralPath `"`$pidPath`" -Value `$p.Id -Encoding UTF8
+	`"[`$(Get-Date -Format o)] Qdrant started. PID=`$(`$p.Id)`" | Out-File -FilePath `"`$logPath`" -Append -Encoding UTF8
+}
+finally {
+	Pop-Location
+}
+"@
+
+	if ($PSCmdlet.ShouldProcess($global:qdrantServiceWrapperPath, "Write Qdrant service wrapper script")) {
+		Set-Content -LiteralPath $global:qdrantServiceWrapperPath -Value $wrapper -Encoding UTF8
+	}
+}
+
+#==============================================================================
+# Function: Install-QdrantService
+#==============================================================================
+<#
+.SYNOPSIS
+	Installs a Scheduled Task as a per-user "service" for Qdrant.
+.DESCRIPTION
+	Creates/updates a Scheduled Task that runs a wrapper PowerShell script as the current user.
+	Optionally enables auto-start at user logon.
+.PARAMETER AutoStart
+	If set, registers the task with an AtLogOn trigger; otherwise registers without trigger.
+.OUTPUTS
+	[void]
+#>
+function Install-QdrantService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param(
+		[Parameter(Mandatory = $false)]
+		[switch]$AutoStart
+	)
+
+	Install-Qdrant
+	Write-QdrantServiceWrapper
+
+	if (-not (Test-Path -LiteralPath $global:qdrantServiceWrapperPath)) {
+		throw "Wrapper script was not created: $($global:qdrantServiceWrapperPath)"
+	}
+
+	$taskName = $global:qdrantServiceTaskName
+	$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$($global:qdrantServiceWrapperPath)`""
+	$principal = New-ScheduledTaskPrincipal -UserId "$env:UserName" -LogonType Interactive -RunLevel Limited
+	$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew
+
+	$trigger = $null
+	if ($AutoStart) {
+		$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:UserName
+	}
+
+	$task = if ($trigger) { New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings } else { New-ScheduledTask -Action $action -Principal $principal -Settings $settings }
+
+	if ($PSCmdlet.ShouldProcess($taskName, "Register Scheduled Task")) {
+		Register-ScheduledTask -TaskName $taskName -InputObject $task -Force | Out-Null
+	}
+}
+
+#==============================================================================
+# Function: Uninstall-QdrantService
+#==============================================================================
+<#
+.SYNOPSIS
+	Uninstalls the Scheduled Task "service" for Qdrant.
+.DESCRIPTION
+	Stops and unregisters the task, and optionally removes the wrapper script.
+.OUTPUTS
+	[void]
+#>
+function Uninstall-QdrantService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$taskName = $global:qdrantServiceTaskName
+
+	try { Stop-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue | Out-Null } catch { Write-Verbose "Failed to stop scheduled task '$taskName' (may not exist or already stopped)." }
+
+	if ($PSCmdlet.ShouldProcess($taskName, "Unregister Scheduled Task")) {
+		Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+	}
+
+	if (Test-Path -LiteralPath $global:qdrantServiceWrapperPath) {
+		if ($PSCmdlet.ShouldProcess($global:qdrantServiceWrapperPath, "Remove wrapper script")) {
+			Remove-Item -LiteralPath $global:qdrantServiceWrapperPath -Force -ErrorAction SilentlyContinue
+		}
+	}
+}
+
+#==============================================================================
+# Function: Start-QdrantService
+#==============================================================================
+<#
+.SYNOPSIS
+	Starts the Qdrant Scheduled Task "service".
+.DESCRIPTION
+	Starts the scheduled task by name.
+.OUTPUTS
+	[void]
+#>
+function Start-QdrantService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$taskName = $global:qdrantServiceTaskName
+	if ($PSCmdlet.ShouldProcess($taskName, "Start Scheduled Task")) {
+		Start-ScheduledTask -TaskName $taskName
+	}
+}
+
+#==============================================================================
+# Function: Stop-QdrantService
+#==============================================================================
+<#
+.SYNOPSIS
+	Stops the Qdrant Scheduled Task "service".
+.DESCRIPTION
+	Stops the scheduled task by name.
+.OUTPUTS
+	[void]
+#>
+function Stop-QdrantService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$taskName = $global:qdrantServiceTaskName
+	if ($PSCmdlet.ShouldProcess($taskName, "Stop Scheduled Task")) {
+		Stop-ScheduledTask -TaskName $taskName
+	}
+
+	$killed = $false
+
+	if (Test-Path -LiteralPath $global:qdrantServicePidPath) {
+		try {
+			$pidRaw = Get-Content -LiteralPath $global:qdrantServicePidPath -ErrorAction SilentlyContinue | Select-Object -First 1
+			[int]$procId = 0
+			if ([int]::TryParse([string]$pidRaw, [ref]$procId) -and $procId -gt 0) {
+				$proc = Get-Process -Id $procId -ErrorAction SilentlyContinue
+				if ($proc -and $proc.Path -and $proc.Path -like "*qdrant.exe") {
+					if ($PSCmdlet.ShouldProcess("PID $procId", "Stop Qdrant process")) {
+						Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue
+						$killed = $true
+					}
+				}
+				elseif ($proc) {
+					Write-Warning "PID file points to '$($proc.ProcessName)' (PID $procId), not qdrant. Ignoring PID file."
+				}
+			}
+		}
+		catch {
+			Write-Verbose "Failed to stop Qdrant process by PID."
+		}
+	}
+
+	if (-not $killed) {
+		$procs = @(Get-Process qdrant -ErrorAction SilentlyContinue)
+		if ($procs.Count -gt 0) {
+			foreach ($p in $procs) {
+				if ($p.Path -and $p.Path -like "*\\ProgramData\\Qdrant\\qdrant.exe") {
+					if ($PSCmdlet.ShouldProcess("PID $($p.Id)", "Stop Qdrant process")) {
+						Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -705,7 +953,7 @@ function Uninstall-Qdrant {
 .SYNOPSIS
 	Shows the Qdrant Windows menu.
 .DESCRIPTION
-	Prints a small menu for installing/starting and uninstalling.
+	Provides options for install, start (console), start service, stop service, and uninstall.
 .OUTPUTS
 	[void]
 #>
@@ -713,11 +961,43 @@ function Show-QdrantMenu {
 	[CmdletBinding()]
 	param()
 
+	$taskName = $global:qdrantServiceTaskName
+	$state = "Not Installed"
+	$lastResult = ""
+	try {
+		$t = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+		if ($t) {
+			$info = Get-ScheduledTaskInfo -TaskName $taskName -ErrorAction SilentlyContinue
+			if ($info) {
+				if ($info.State) { $state = [string]$info.State } else { $state = "Installed" }
+				if ($null -ne $info.LastTaskResult) { $lastResult = [string]$info.LastTaskResult }
+			}
+			else {
+				$state = "Installed"
+			}
+		}
+	}
+	catch {
+		$state = "Unknown"
+	}
+
 	Write-Host "===========================================" -ForegroundColor Yellow
 	Write-Host "Qdrant (Windows)" -ForegroundColor White
 	Write-Host "===========================================" -ForegroundColor Yellow
-	Write-Host "1. Install / Start" -ForegroundColor Cyan
-	Write-Host "2. Uninstall" -ForegroundColor Cyan
+	Write-Host "Service Task: $taskName" -ForegroundColor DarkGray
+	Write-Host "Service State: $state" -ForegroundColor DarkGray
+	if (-not [string]::IsNullOrWhiteSpace($lastResult)) {
+		Write-Host "Last Task Result: $lastResult" -ForegroundColor DarkGray
+	}
+	Write-Host "-------------------------------------------" -ForegroundColor Yellow
+	Write-Host "1. Install App" -ForegroundColor Cyan
+	Write-Host "2. Start Console" -ForegroundColor Cyan
+	Write-Host "3. Install Service (current user)" -ForegroundColor Cyan
+	Write-Host "4. Install Service (current user, autostart)" -ForegroundColor Cyan
+	Write-Host "5. Start Service" -ForegroundColor Cyan
+	Write-Host "6. Stop Service" -ForegroundColor Cyan
+	Write-Host "7. Uninstall Service" -ForegroundColor Cyan
+	Write-Host "8. Uninstall App" -ForegroundColor Cyan
 	Write-Host "0. Exit" -ForegroundColor Cyan
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -735,15 +1015,36 @@ $choice = ""
 do {
 	Show-QdrantMenu
 	$choice = Read-Host "Enter your choice"
-	if ([string]::IsNullOrWhiteSpace($choice)) { $choice = "1" }
+	if ([string]::IsNullOrWhiteSpace($choice)) { continue }
 
 	switch ($choice) {
 		"1" {
-			Start-Qdrant
+			Install-Qdrant
 		}
 		"2" {
+			Start-QdrantConsole
+		}
+		"3" {
+			Install-QdrantService
+		}
+		"4" {
+			Install-QdrantService -AutoStart
+		}
+		"5" {
+			if (-not (Test-Path -LiteralPath $global:settingsPath)) {
+				Write-Warning "Qdrant service requires saved ports. Run 'Install App' first."
+				break
+			}
+			Start-QdrantService
+		}
+		"6" {
+			Stop-QdrantService
+		}
+		"7" {
+			Uninstall-QdrantService
+		}
+		"8" {
 			Uninstall-Qdrant
-			Read-Host "`nPress Enter to continue"
 		}
 		"0" { return }
 		default {

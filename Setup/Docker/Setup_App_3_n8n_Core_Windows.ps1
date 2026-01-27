@@ -42,6 +42,12 @@ $global:baseEnvVars = @{
 	NODES_EXCLUDE                           = "[]"
 }
 
+$global:n8nServiceTaskName = "VsAiCompanion-n8n"
+$global:n8nServiceWrapperPath = Join-Path $global:installRoot "service-wrapper.ps1"
+$global:n8nServiceLogPath = Join-Path $global:installRoot "service.log"
+$global:n8nServicePidPath = Join-Path $global:installRoot "service.pid"
+$global:n8nServicePidPath = Join-Path $global:installRoot "service.pid"
+
 #==============================================================================
 # Function: Assert-CommandAvailable
 #==============================================================================
@@ -406,13 +412,293 @@ function Uninstall-n8n {
 }
 
 #==============================================================================
+# Function: Install-n8n
+#==============================================================================
+<#
+.SYNOPSIS
+	Installs n8n prerequisites and persists configuration.
+.DESCRIPTION
+	Prompts for the n8n HTTP port (saved under ProgramData), ensures required folders exist,
+	and installs n8n via npm if it is missing.
+.OUTPUTS
+	[void]
+#>
+function Install-n8n {
+	[CmdletBinding()]
+	param()
+
+	$settings = Get-n8nSetting
+
+	Write-Host ""
+	Write-Host "Default n8n ports:" -ForegroundColor White
+	Write-Host "  HTTP : $($global:defaultPort)" -ForegroundColor Cyan
+	if ($settings.Port -ne $global:defaultPort) {
+		Write-Host "Saved n8n HTTP port: $($settings.Port)" -ForegroundColor DarkGray
+	}
+	Write-Host ""
+	Write-Host "If you are already running a container instance on the default port, choose a different port for Windows." -ForegroundColor DarkGray
+	Write-Host "Example (Windows): 5679" -ForegroundColor DarkGray
+
+	Write-Host ""
+	Write-Host "n8n installation / data locations:" -ForegroundColor White
+	Write-Host "  App data root : $global:installRoot" -ForegroundColor Cyan
+	Write-Host "  User data     : $global:userDataRoot" -ForegroundColor Cyan
+	Write-Host "  Settings file : $global:settingsPath" -ForegroundColor Cyan
+	Write-Host ""
+
+	$port = Read-ValidatedPort -Prompt "Enter n8n HTTP port" -DefaultPort $settings.Port
+	Set-n8nSetting -Port $port
+	Install-n8nIfMissing
+}
+
+#==============================================================================
+# Function: Start-n8nConsole
+#==============================================================================
+<#
+.SYNOPSIS
+	Starts n8n in the current console (foreground).
+.DESCRIPTION
+	Loads saved settings and starts n8n in the foreground with the configured environment.
+.OUTPUTS
+	[void]
+#>
+function Start-n8nConsole {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$settings = Get-n8nSetting
+	Start-n8nWithEnv -Port $settings.Port
+}
+
+#==============================================================================
+# Function: Write-n8nServiceWrapper
+#==============================================================================
+<#
+.SYNOPSIS
+	Writes the Scheduled Task wrapper script for n8n.
+.DESCRIPTION
+	Creates a PowerShell script under ProgramData which sets environment variables from saved settings
+	and starts n8n with stdout/stderr appended to a log file.
+.OUTPUTS
+	[void]
+#>
+function Write-n8nServiceWrapper {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	New-Directory -Path $global:installRoot
+	New-Directory -Path $global:userDataRoot
+
+	$settings = Get-n8nSetting
+	$port = [int]$settings.Port
+
+	$envLines = @()
+	foreach ($k in ($global:baseEnvVars.Keys | Sort-Object)) {
+		$val = [string]$global:baseEnvVars[$k]
+		$valEsc = $val.Replace("'", "''")
+		$envLines += "`$env:$k = '$valEsc'"
+	}
+	$envLines += "`$env:N8N_PORT = '$port'"
+	$envLines += "`$env:N8N_USER_FOLDER = `"$($global:userDataRoot)`""
+
+	$wrapper = @"
+`$ErrorActionPreference = 'Stop'
+
+`$installRoot = '$($global:installRoot)'
+`$userDataRoot = '$($global:userDataRoot)'
+`$logPath = '$($global:n8nServiceLogPath)'
+`$pidPath = '$($global:n8nServicePidPath)'
+
+New-Item -ItemType Directory -Path `"`$installRoot`" -Force | Out-Null
+New-Item -ItemType Directory -Path `"`$userDataRoot`" -Force | Out-Null
+
+$($envLines -join "`r`n")
+
+`"[`$(Get-Date -Format o)] Starting n8n...`" | Out-File -FilePath `"`$logPath`" -Append -Encoding UTF8
+
+if (Test-Path -LiteralPath `"`$pidPath`" ) {
+	try {
+		`$oldPid = [int](Get-Content -LiteralPath `"`$pidPath`" -ErrorAction SilentlyContinue | Select-Object -First 1)
+		if (`$oldPid -gt 0) {
+			`$pOld = Get-Process -Id `$oldPid -ErrorAction SilentlyContinue
+			if (`$pOld) {
+				`"[`$(Get-Date -Format o)] Existing PID found (`$oldPid). Stopping it...`" | Out-File -FilePath `"`$logPath`" -Append -Encoding UTF8
+				Stop-Process -Id `$oldPid -Force -ErrorAction SilentlyContinue
+			}
+		}
+	}
+	catch { }
+}
+
+`$stdoutPath = `"`$logPath`"
+`$stderrPath = `"`$logPath`" + ".err"
+`$p = Start-Process -FilePath "n8n" -WindowStyle Hidden -RedirectStandardOutput `"`$stdoutPath`" -RedirectStandardError `"`$stderrPath`" -PassThru
+Set-Content -LiteralPath `"`$pidPath`" -Value `$p.Id -Encoding UTF8
+`"[`$(Get-Date -Format o)] n8n started. PID=`$(`$p.Id)`" | Out-File -FilePath `"`$logPath`" -Append -Encoding UTF8
+"@
+
+	if ($PSCmdlet.ShouldProcess($global:n8nServiceWrapperPath, "Write n8n service wrapper script")) {
+		Set-Content -LiteralPath $global:n8nServiceWrapperPath -Value $wrapper -Encoding UTF8
+	}
+}
+
+#==============================================================================
+# Function: Install-n8nService
+#==============================================================================
+<#
+.SYNOPSIS
+	Installs a Scheduled Task as a per-user "service" for n8n.
+.DESCRIPTION
+	Creates/updates a Scheduled Task that runs a wrapper PowerShell script as the current user.
+	Optionally enables auto-start at user logon.
+.PARAMETER AutoStart
+	If set, registers the task with an AtLogOn trigger; otherwise registers without trigger.
+.OUTPUTS
+	[void]
+#>
+function Install-n8nService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param(
+		[Parameter(Mandatory = $false)]
+		[switch]$AutoStart
+	)
+
+	Install-n8n
+	Write-n8nServiceWrapper
+
+	if (-not (Test-Path -LiteralPath $global:n8nServiceWrapperPath)) {
+		throw "Wrapper script was not created: $($global:n8nServiceWrapperPath)"
+	}
+
+	$taskName = $global:n8nServiceTaskName
+	$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$($global:n8nServiceWrapperPath)`""
+	$principal = New-ScheduledTaskPrincipal -UserId "$env:UserName" -LogonType Interactive -RunLevel Limited
+	$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew
+
+	$trigger = $null
+	if ($AutoStart) {
+		$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:UserName
+	}
+
+	$task = if ($trigger) { New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings } else { New-ScheduledTask -Action $action -Principal $principal -Settings $settings }
+
+	if ($PSCmdlet.ShouldProcess($taskName, "Register Scheduled Task")) {
+		Register-ScheduledTask -TaskName $taskName -InputObject $task -Force | Out-Null
+	}
+}
+
+#==============================================================================
+# Function: Uninstall-n8nService
+#==============================================================================
+<#
+.SYNOPSIS
+	Uninstalls the Scheduled Task "service" for n8n.
+.DESCRIPTION
+	Stops and unregisters the task, and optionally removes the wrapper script.
+.OUTPUTS
+	[void]
+#>
+function Uninstall-n8nService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$taskName = $global:n8nServiceTaskName
+
+	try { Stop-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue | Out-Null } catch { Write-Verbose "Failed to stop scheduled task '$taskName' (may not exist or already stopped)." }
+
+	if ($PSCmdlet.ShouldProcess($taskName, "Unregister Scheduled Task")) {
+		Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+	}
+
+	if (Test-Path -LiteralPath $global:n8nServiceWrapperPath) {
+		if ($PSCmdlet.ShouldProcess($global:n8nServiceWrapperPath, "Remove wrapper script")) {
+			Remove-Item -LiteralPath $global:n8nServiceWrapperPath -Force -ErrorAction SilentlyContinue
+		}
+	}
+}
+
+#==============================================================================
+# Function: Start-n8nService
+#==============================================================================
+<#
+.SYNOPSIS
+	Starts the n8n Scheduled Task "service".
+.DESCRIPTION
+	Starts the scheduled task by name.
+.OUTPUTS
+	[void]
+#>
+function Start-n8nService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$taskName = $global:n8nServiceTaskName
+	if ($PSCmdlet.ShouldProcess($taskName, "Start Scheduled Task")) {
+		Start-ScheduledTask -TaskName $taskName
+	}
+}
+
+#==============================================================================
+# Function: Stop-n8nService
+#==============================================================================
+<#
+.SYNOPSIS
+	Stops the n8n Scheduled Task "service".
+.DESCRIPTION
+	Stops the scheduled task by name.
+.OUTPUTS
+	[void]
+#>
+function Stop-n8nService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param()
+
+	$taskName = $global:n8nServiceTaskName
+	if ($PSCmdlet.ShouldProcess($taskName, "Stop Scheduled Task")) {
+		Stop-ScheduledTask -TaskName $taskName
+	}
+
+	$killed = $false
+
+	if (Test-Path -LiteralPath $global:n8nServicePidPath) {
+		try {
+			$pidRaw = Get-Content -LiteralPath $global:n8nServicePidPath -ErrorAction SilentlyContinue | Select-Object -First 1
+			[int]$procId = 0
+			if ([int]::TryParse([string]$pidRaw, [ref]$procId) -and $procId -gt 0) {
+				$proc = Get-Process -Id $procId -ErrorAction SilentlyContinue
+				if ($proc -and $proc.ProcessName -in @('n8n','node','nodejs')) {
+					if ($PSCmdlet.ShouldProcess("PID $procId", "Stop n8n process")) {
+						Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue
+						$killed = $true
+					}
+				}
+				elseif ($proc) {
+					Write-Warning "PID file points to '$($proc.ProcessName)' (PID $procId). Ignoring PID file."
+				}
+			}
+		}
+		catch {
+			Write-Verbose "Failed to stop n8n process by PID."
+		}
+	}
+
+	if (-not $killed) {
+		foreach ($p in @(Get-Process n8n,node,nodejs -ErrorAction SilentlyContinue)) {
+			if ($PSCmdlet.ShouldProcess("PID $($p.Id)", "Stop candidate n8n process")) {
+				Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+			}
+		}
+	}
+}
+
+#==============================================================================
 # Function: Show-n8nMenu
 #==============================================================================
 <#
 .SYNOPSIS
 	Shows the n8n Windows menu.
 .DESCRIPTION
-	Prints a small menu for installing/starting and uninstalling.
+	Provides options for install, start (console), start service, stop service, and uninstall.
 .OUTPUTS
 	[void]
 #>
@@ -420,11 +706,43 @@ function Show-n8nMenu {
 	[CmdletBinding()]
 	param()
 
+	$taskName = $global:n8nServiceTaskName
+	$state = "Not Installed"
+	$lastResult = ""
+	try {
+		$t = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+		if ($t) {
+			$info = Get-ScheduledTaskInfo -TaskName $taskName -ErrorAction SilentlyContinue
+			if ($info) {
+				if ($info.State) { $state = [string]$info.State } else { $state = "Installed" }
+				if ($null -ne $info.LastTaskResult) { $lastResult = [string]$info.LastTaskResult }
+			}
+			else {
+				$state = "Installed"
+			}
+		}
+	}
+	catch {
+		$state = "Unknown"
+	}
+
 	Write-Host "===========================================" -ForegroundColor Yellow
 	Write-Host "n8n (Windows)" -ForegroundColor White
 	Write-Host "===========================================" -ForegroundColor Yellow
-	Write-Host "1. Install / Start" -ForegroundColor Cyan
-	Write-Host "2. Uninstall" -ForegroundColor Cyan
+	Write-Host "Service Task: $taskName" -ForegroundColor DarkGray
+	Write-Host "Service State: $state" -ForegroundColor DarkGray
+	if (-not [string]::IsNullOrWhiteSpace($lastResult)) {
+		Write-Host "Last Task Result: $lastResult" -ForegroundColor DarkGray
+	}
+	Write-Host "-------------------------------------------" -ForegroundColor Yellow
+	Write-Host "1. Install App" -ForegroundColor Cyan
+	Write-Host "2. Start Console" -ForegroundColor Cyan
+	Write-Host "3. Install Service (current user)" -ForegroundColor Cyan
+	Write-Host "4. Install Service (current user, autostart)" -ForegroundColor Cyan
+	Write-Host "5. Start Service" -ForegroundColor Cyan
+	Write-Host "6. Stop Service" -ForegroundColor Cyan
+	Write-Host "7. Uninstall Service" -ForegroundColor Cyan
+	Write-Host "8. Uninstall App" -ForegroundColor Cyan
 	Write-Host "0. Exit" -ForegroundColor Cyan
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -440,37 +758,36 @@ $choice = ""
 do {
 	Show-n8nMenu
 	$choice = Read-Host "Enter your choice"
-	if ([string]::IsNullOrWhiteSpace($choice)) { $choice = "1" }
+	if ([string]::IsNullOrWhiteSpace($choice)) { continue }
 
 	switch ($choice) {
 		"1" {
-			$settings = Get-n8nSetting
-
-			Write-Host ""
-			Write-Host "Default n8n ports:" -ForegroundColor White
-			Write-Host "  HTTP : $($global:defaultPort)" -ForegroundColor Cyan
-			if ($settings.Port -ne $global:defaultPort) {
-				Write-Host "Saved n8n HTTP port: $($settings.Port)" -ForegroundColor DarkGray
-			}
-			Write-Host ""
-			Write-Host "If you are already running a container instance on the default port, choose a different port for Windows." -ForegroundColor DarkGray
-			Write-Host "Example (Windows): 5679" -ForegroundColor DarkGray
-
-			Write-Host ""
-			Write-Host "n8n installation / data locations:" -ForegroundColor White
-			Write-Host "  App data root : $global:installRoot" -ForegroundColor Cyan
-			Write-Host "  User data     : $global:userDataRoot" -ForegroundColor Cyan
-			Write-Host "  Settings file : $global:settingsPath" -ForegroundColor Cyan
-			Write-Host ""
-
-			$port = Read-ValidatedPort -Prompt "Enter n8n HTTP port" -DefaultPort $settings.Port
-			Set-n8nSetting -Port $port
-			Install-n8nIfMissing
-			Start-n8nWithEnv -Port $port
+			Install-n8n
 		}
 		"2" {
+			Start-n8nConsole
+		}
+		"3" {
+			Install-n8nService
+		}
+		"4" {
+			Install-n8nService -AutoStart
+		}
+		"5" {
+			if (-not (Test-Path -LiteralPath $global:settingsPath)) {
+				Write-Warning "n8n service requires saved port. Run 'Install App' first."
+				break
+			}
+			Start-n8nService
+		}
+		"6" {
+			Stop-n8nService
+		}
+		"7" {
+			Uninstall-n8nService
+		}
+		"8" {
 			Uninstall-n8n
-			Read-Host "`nPress Enter to continue"
 		}
 		"0" { return }
 		default {
