@@ -40,6 +40,24 @@ Windows 11                        ← real, bare-metal host
     │
     ├── WSL2 default distro (e.g. Ubuntu) ← Required for WSL2 initialization
     │
+    ├── WSL2 distro "OpenClaw" (imported via wsl --import)  ← dedicated, disposable
+    │   │
+    │   ├── Node.js ≥ 22
+    │   ├── openclaw CLI + Gateway daemon (systemd user service)
+    │   │   ├── listens on 127.0.0.1:18789 (Control UI / WebSocket)
+    │   │   ├── listens on 127.0.0.1:18793 (Canvas host)
+    │   │   └── config/state: ~/.openclaw/
+    │   │
+    │   ├── Agent sandbox (optional, Docker-in-WSL or Podman)
+    │   │   └── throwaway containers for shell/file tool execution
+    │   │
+    │   └── Channel connections (outbound)
+    │       ├── WhatsApp (Baileys / WhatsApp Web protocol)
+    │       ├── Telegram (Bot API / grammY)
+    │       ├── Discord (Bot API / discord.js)
+    │       ├── Signal / iMessage / Slack / Teams / etc.
+    │       └── WebChat (built-in, via Control UI)
+    │
     ├── Podman Desktop (optional UI on Windows)  ← GUI for Podman
     │
     ├── Podman CLI (Windows `podman.exe`)        ← CLI used by scripts/terminal
