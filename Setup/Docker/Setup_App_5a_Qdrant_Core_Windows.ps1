@@ -33,7 +33,12 @@ $global:qdrantExePath = Join-Path $global:installRoot "qdrant.exe"
 $global:githubRepoOwner = "qdrant"
 $global:githubRepoName = "qdrant"
 $global:githubLatestReleaseApiUrl = "https://api.github.com/repos/$($global:githubRepoOwner)/$($global:githubRepoName)/releases/latest"
+$global:githubLatestReleaseWebUrl = "https://github.com/$($global:githubRepoOwner)/$($global:githubRepoName)/releases/latest"
 $global:githubUserAgent = "VsAiCompanion-Qdrant-Windows-Setup"
+
+# Optional: GitHub token to avoid API rate limiting.
+# If missing, the script will prompt for it (for this run only) when needed.
+$global:githubTokenEnvVarName = "GITHUB_TOKEN"
 
 $global:qdrantWebUiRepoOwner = "qdrant"
 $global:qdrantWebUiRepoName = "qdrant-web-ui"
@@ -249,6 +254,76 @@ function Set-QdrantSetting {
 }
 
 #==============================================================================
+# Function: Read-GitHubTokenForThisRun
+#==============================================================================
+<#
+.SYNOPSIS
+	Prompts for a GitHub token and stores it in the process environment.
+.DESCRIPTION
+	Asks the user for a token only when needed. The token is stored in $env:GITHUB_TOKEN
+	for this PowerShell process only (not persisted).
+.OUTPUTS
+	[void]
+#>
+function Read-GitHubTokenForThisRun {
+	[CmdletBinding()]
+	param()
+
+	$token = [Environment]::GetEnvironmentVariable($global:githubTokenEnvVarName, "Process")
+	if ([string]::IsNullOrWhiteSpace($token)) {
+		$token = [Environment]::GetEnvironmentVariable($global:githubTokenEnvVarName, "User")
+	}
+
+	if (-not [string]::IsNullOrWhiteSpace($token)) {
+		return
+	}
+
+	Write-Host ""
+	Write-Host "GitHub API rate limits can block downloads." -ForegroundColor Yellow
+	Write-Host "Provide a GitHub Personal Access Token (classic or fine-grained) with read access to public repos." -ForegroundColor DarkGray
+	Write-Host "Leave blank to continue unauthenticated (may fail if rate limited)." -ForegroundColor DarkGray
+	$token = Read-Host "Enter GitHub token (will be used for this run only)"
+
+	if (-not [string]::IsNullOrWhiteSpace($token)) {
+		[Environment]::SetEnvironmentVariable($global:githubTokenEnvVarName, $token, "Process")
+	}
+}
+
+#==============================================================================
+# Function: Get-GitHubApiHeaders
+#==============================================================================
+<#
+.SYNOPSIS
+	Builds GitHub API headers.
+.DESCRIPTION
+	Creates a User-Agent header and, if present, adds an Authorization header using
+	the token from $env:GITHUB_TOKEN to increase rate limits.
+.OUTPUTS
+	[hashtable]
+#>
+function Get-GitHubApiHeaders {
+	[CmdletBinding()]
+	[OutputType([hashtable])]
+	param()
+
+	$headers = @{
+		"User-Agent" = $global:githubUserAgent
+		"Accept"     = "application/vnd.github+json"
+	}
+
+	$token = [Environment]::GetEnvironmentVariable($global:githubTokenEnvVarName, "Process")
+	if ([string]::IsNullOrWhiteSpace($token)) {
+		$token = [Environment]::GetEnvironmentVariable($global:githubTokenEnvVarName, "User")
+	}
+
+	if (-not [string]::IsNullOrWhiteSpace($token)) {
+		$headers["Authorization"] = "Bearer $token"
+	}
+
+	return $headers
+}
+
+#==============================================================================
 # Function: Get-QdrantLatestRelease
 #==============================================================================
 <#
@@ -256,6 +331,7 @@ function Set-QdrantSetting {
 	Fetches the latest Qdrant release metadata from GitHub.
 .DESCRIPTION
 	Uses the GitHub REST API to retrieve the latest release and its assets.
+	Falls back to parsing the GitHub Releases page when the API rate limit is exceeded.
 .OUTPUTS
 	[object]
 #>
@@ -265,14 +341,122 @@ function Get-QdrantLatestRelease {
 	param()
 
 	try {
-		$headers = @{
-			"User-Agent" = $global:githubUserAgent
-			"Accept"     = "application/vnd.github+json"
-		}
+		$headers = Get-GitHubApiHeaders
 		return Invoke-RestMethod -Uri $global:githubLatestReleaseApiUrl -Headers $headers -Method Get -ErrorAction Stop
 	}
 	catch {
+		$errText = "$_"
+		if ($errText -match "API rate limit exceeded") {
+			Read-GitHubTokenForThisRun
+			try {
+				$headers = Get-GitHubApiHeaders
+				return Invoke-RestMethod -Uri $global:githubLatestReleaseApiUrl -Headers $headers -Method Get -ErrorAction Stop
+			}
+			catch {
+				$errText2 = "$_"
+				if ($errText2 -match "API rate limit exceeded") {
+					Write-Warning "GitHub API rate limit exceeded. Falling back to parsing $($global:githubLatestReleaseWebUrl)."
+					$tag = Get-GitHubLatestReleaseTagFromWeb -LatestReleaseUrl $global:githubLatestReleaseWebUrl
+					return Get-GitHubReleaseByTag -Owner $global:githubRepoOwner -Repo $global:githubRepoName -Tag $tag
+				}
+				throw
+			}
+		}
+
 		throw "Failed to query GitHub latest release API: $_"
+	}
+}
+
+#==============================================================================
+# Function: Get-GitHubLatestReleaseTagFromWeb
+#==============================================================================
+<#
+.SYNOPSIS
+	Gets the latest GitHub release tag from the /releases/latest redirect.
+.DESCRIPTION
+	Uses an HTTP request to the GitHub web UI endpoint (not the API), then extracts
+	the tag from the final redirected URL.
+.PARAMETER LatestReleaseUrl
+	The GitHub releases/latest URL.
+.OUTPUTS
+	[string]
+#>
+function Get-GitHubLatestReleaseTagFromWeb {
+	[CmdletBinding()]
+	[OutputType([string])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$LatestReleaseUrl
+	)
+
+	try {
+		$headers = @{ "User-Agent" = $global:githubUserAgent }
+		$response = Invoke-WebRequest -Uri $LatestReleaseUrl -Headers $headers -MaximumRedirection 0 -ErrorAction SilentlyContinue
+
+		# If MaximumRedirection=0, GitHub should respond with 302 and a Location header.
+		$location = $null
+		if ($response -and $response.Headers) {
+			$location = $response.Headers["Location"]
+		}
+
+		# Some environments follow redirects anyway; fall back to the final ResponseUri.
+		if ([string]::IsNullOrWhiteSpace($location) -and $response -and $response.BaseResponse -and $response.BaseResponse.ResponseUri) {
+			$location = [string]$response.BaseResponse.ResponseUri.AbsoluteUri
+		}
+
+		if ([string]::IsNullOrWhiteSpace($location)) {
+			throw "No redirect location returned."
+		}
+
+		if ($location -match "/tag/(?<tag>[^/?#]+)") {
+			return $Matches["tag"]
+		}
+
+		throw "Could not extract tag from redirect URL '$location'."
+	}
+	catch {
+		throw "Failed to determine latest release tag from '$LatestReleaseUrl': $_"
+	}
+}
+
+#==============================================================================
+# Function: Get-GitHubReleaseByTag
+#==============================================================================
+<#
+.SYNOPSIS
+	Fetches a GitHub release by tag.
+.DESCRIPTION
+	Calls the GitHub REST API endpoint /releases/tags/{tag}.
+.PARAMETER Owner
+	GitHub organization/user.
+.PARAMETER Repo
+	Repository name.
+.PARAMETER Tag
+	Release tag.
+.OUTPUTS
+	[object]
+#>
+function Get-GitHubReleaseByTag {
+	[CmdletBinding()]
+	[OutputType([object])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Owner,
+
+		[Parameter(Mandatory = $true)]
+		[string]$Repo,
+
+		[Parameter(Mandatory = $true)]
+		[string]$Tag
+	)
+
+	$uri = "https://api.github.com/repos/$Owner/$Repo/releases/tags/$Tag"
+	try {
+		$headers = Get-GitHubApiHeaders
+		return Invoke-RestMethod -Uri $uri -Headers $headers -Method Get -ErrorAction Stop
+	}
+	catch {
+		throw "Failed to query GitHub release by tag API ($uri): $_"
 	}
 }
 
@@ -284,6 +468,7 @@ function Get-QdrantLatestRelease {
 	Fetches the latest Qdrant Web UI release metadata from GitHub.
 .DESCRIPTION
 	Uses the GitHub REST API to retrieve the latest release and its assets.
+	Falls back to HTML scraping of the GitHub Releases page when the API rate limit is exceeded.
 .OUTPUTS
 	[object]
 #>
@@ -293,13 +478,29 @@ function Get-QdrantWebUiLatestRelease {
 	param()
 
 	try {
-		$headers = @{
-			"User-Agent" = $global:githubUserAgent
-			"Accept"     = "application/vnd.github+json"
-		}
+		$headers = Get-GitHubApiHeaders
 		return Invoke-RestMethod -Uri $global:qdrantWebUiLatestReleaseApiUrl -Headers $headers -Method Get -ErrorAction Stop
 	}
 	catch {
+		$errText = "$_"
+		if ($errText -match "API rate limit exceeded") {
+			Read-GitHubTokenForThisRun
+			try {
+				$headers = Get-GitHubApiHeaders
+				return Invoke-RestMethod -Uri $global:qdrantWebUiLatestReleaseApiUrl -Headers $headers -Method Get -ErrorAction Stop
+			}
+			catch {
+				$errText2 = "$_"
+				if ($errText2 -match "API rate limit exceeded") {
+					$webLatest = "https://github.com/$($global:qdrantWebUiRepoOwner)/$($global:qdrantWebUiRepoName)/releases/latest"
+					Write-Warning "GitHub API rate limit exceeded. Falling back to parsing $webLatest."
+					$tag = Get-GitHubLatestReleaseTagFromWeb -LatestReleaseUrl $webLatest
+					return Get-GitHubReleaseByTag -Owner $global:qdrantWebUiRepoOwner -Repo $global:qdrantWebUiRepoName -Tag $tag
+				}
+				throw
+			}
+		}
+
 		throw "Failed to query GitHub Qdrant Web UI latest release API: $_"
 	}
 }
