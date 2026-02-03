@@ -143,12 +143,13 @@ function Test-WSLStatus {
 	# Test if WSL is working by trying a simple command that should work on both versions
 	Write-Host "Testing WSL functionality..."
 	$testOutput = wsl --help 2>&1
-	$testString = $testOutput -join " "
+	# Clean null characters from WSL output before string comparison
+	$testString = ($testOutput -join " ") -replace '\x00', ''
 
 	if ($testString -like "*Copyright (c) Microsoft Corporation*" -and $testString -like "*Usage: wsl.exe*") {
 		Write-Host "WSL help command is working properly."
 	}
 	else {
-		Write-Warning "WSL may not be functioning correctly. Output: $testOutput"
+		Write-Warning "WSL may not be functioning correctly. Output: $testString"
 	}
 }

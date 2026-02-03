@@ -1,9 +1,10 @@
 ################################################################################
 # File         : Setup_App_OpenClaw.ps1
-# Description  : Installs and manages OpenClaw AI agent platform in a dedicated
-#                WSL2 distro. OpenClaw provides multi-channel AI communication
-#                (WhatsApp, Telegram, Discord, etc.) with optional sandbox support.
-# Usage        : Run as Administrator for WSL distro management.
+# Description  : Installs and manages OpenClaw AI agent platform within an
+#                existing WSL2 distro. OpenClaw provides multi-channel AI
+#                communication (WhatsApp, Telegram, Discord, etc.).
+#                NOTE: Run Setup_Core_WSL_OpenClaw.ps1 first to create the distro.
+# Usage        : Run as Administrator for service management.
 ################################################################################
 
 using namespace System
@@ -22,9 +23,7 @@ Set-ScriptLocation
 #==============================================================================
 
 $global:appName = "OpenClaw"
-$global:wslDistroName = "OpenClaw"
-$global:wslDistroBaseImage = "Ubuntu-24.04"
-$global:settingsVersion = 1
+$global:wslDistroName = "OpenClaw-WSL"
 
 # Network ports
 $global:controlUiPort = 18789
@@ -33,8 +32,6 @@ $global:canvasPort = 18793
 # Paths
 $global:programDataRoot = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
 $global:installRoot = Join-Path $global:programDataRoot $global:appName
-$global:settingsPath = Join-Path $global:installRoot "settings.json"
-$global:wslExportPath = Join-Path $global:installRoot "distro-backup"
 
 # OpenClaw installation paths inside WSL
 $global:openclawConfigPath = "~/.openclaw"
@@ -43,121 +40,8 @@ $global:openclawServiceName = "openclaw"
 # Node.js minimum version
 $global:nodeMinVersion = 22
 
-# Default settings
-$global:defaultSettings = @{
-    SandboxMode = "none"
-    AutoStart   = $false
-}
-
-#==============================================================================
-# Function: New-Directory
-#==============================================================================
-<#
-.SYNOPSIS
-    Creates a directory if it does not exist.
-.DESCRIPTION
-    Ensures the specified directory exists, creating it (and parents) if needed.
-.PARAMETER Path
-    Directory path to ensure exists.
-.OUTPUTS
-    [void]
-#>
-function New-Directory {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Path
-    )
-
-    if (-not (Test-Path -LiteralPath $Path)) {
-        if ($PSCmdlet.ShouldProcess($Path, "Create directory")) {
-            New-Item -ItemType Directory -Path $Path -Force | Out-Null
-            Write-Host "Created directory: $Path" -ForegroundColor DarkGray
-        }
-    }
-}
-
-#==============================================================================
-# Function: Get-OpenClawSetting
-#==============================================================================
-<#
-.SYNOPSIS
-    Loads persisted OpenClaw settings.
-.DESCRIPTION
-    Reads settings from $global:settingsPath if present. Returns defaults when missing/invalid.
-.OUTPUTS
-    [pscustomobject]
-#>
-function Get-OpenClawSetting {
-    [CmdletBinding()]
-    [OutputType([pscustomobject])]
-    param()
-
-    if (Test-Path -LiteralPath $global:settingsPath) {
-        try {
-            $content = Get-Content -LiteralPath $global:settingsPath -Raw -Encoding UTF8
-            $settings = $content | ConvertFrom-Json
-            if ($null -ne $settings) {
-                return [PSCustomObject]@{
-                    Version     = if ($null -ne $settings.Version) { $settings.Version } else { $global:settingsVersion }
-                    SandboxMode = if ($settings.SandboxMode) { $settings.SandboxMode } else { $global:defaultSettings.SandboxMode }
-                    AutoStart   = if ($null -ne $settings.AutoStart) { $settings.AutoStart } else { $global:defaultSettings.AutoStart }
-                }
-            }
-        }
-        catch {
-            Write-Warning "Failed to load settings from '$($global:settingsPath)'. Using defaults. Details: $_"
-        }
-    }
-
-    return [PSCustomObject]@{
-        Version     = $global:settingsVersion
-        SandboxMode = $global:defaultSettings.SandboxMode
-        AutoStart   = $global:defaultSettings.AutoStart
-    }
-}
-
-#==============================================================================
-# Function: Set-OpenClawSetting
-#==============================================================================
-<#
-.SYNOPSIS
-    Saves persisted OpenClaw settings.
-.DESCRIPTION
-    Writes a small JSON file to $global:settingsPath.
-.PARAMETER SandboxMode
-    Sandbox mode for agent tools (none, docker, podman).
-.PARAMETER AutoStart
-    Whether to auto-start OpenClaw service on WSL startup.
-.OUTPUTS
-    [void]
-#>
-function Set-OpenClawSetting {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param(
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("none", "docker", "podman")]
-        [string]$SandboxMode = "none",
-
-        [Parameter(Mandatory = $false)]
-        [bool]$AutoStart = $false
-    )
-
-    New-Directory -Path $global:installRoot
-
-    $settings = [PSCustomObject]@{
-        Version     = $global:settingsVersion
-        UpdatedUtc  = (Get-Date).ToUniversalTime().ToString("o")
-        InstallRoot = $global:installRoot
-        SandboxMode = $SandboxMode
-        AutoStart   = $AutoStart
-    }
-
-    if ($PSCmdlet.ShouldProcess($global:settingsPath, "Save settings")) {
-        $settings | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $global:settingsPath -Encoding UTF8
-        Write-Host "Saved settings to: $($global:settingsPath)" -ForegroundColor DarkGray
-    }
-}
+# Default gateway password (user can override during installation)
+$global:defaultGatewayPassword = "openclaw"
 
 #==============================================================================
 # Function: Test-WSLDistroExists
@@ -289,116 +173,6 @@ function Invoke-WSLCommand {
 }
 
 #==============================================================================
-# Function: Install-WSLDistro
-#==============================================================================
-<#
-.SYNOPSIS
-    Installs a new WSL distro for OpenClaw.
-.DESCRIPTION
-    Creates a new WSL distro by installing from the Microsoft Store base image,
-    then configures it for OpenClaw use.
-.OUTPUTS
-    [bool] True if successful, false otherwise.
-#>
-function Install-WSLDistro {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    [OutputType([bool])]
-    param()
-
-    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Install WSL Distro")) {
-        return $false
-    }
-
-    Write-Host "Installing WSL distro '$($global:wslDistroName)'..." -ForegroundColor Yellow
-
-    if (Test-WSLDistroExists -DistroName $global:wslDistroName) {
-        Write-Host "WSL distro '$($global:wslDistroName)' already exists." -ForegroundColor Green
-        return $true
-    }
-
-    Write-Host "Installing base Ubuntu distro..." -ForegroundColor Cyan
-    $installOutput = wsl --install --distribution $global:wslDistroBaseImage --no-launch 2>&1
-    Write-Host $installOutput
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to install base Ubuntu distro."
-        return $false
-    }
-
-    New-Directory -Path $global:installRoot
-
-    $exportPath = Join-Path $global:installRoot "ubuntu-base.tar"
-    Write-Host "Exporting base distro for import as '$($global:wslDistroName)'..." -ForegroundColor Cyan
-
-    wsl --export $global:wslDistroBaseImage $exportPath 2>&1 | Write-Host
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to export base distro."
-        return $false
-    }
-
-    $distroInstallPath = Join-Path $global:installRoot "wsl-distro"
-    New-Directory -Path $distroInstallPath
-
-    Write-Host "Importing distro as '$($global:wslDistroName)'..." -ForegroundColor Cyan
-    wsl --import $global:wslDistroName $distroInstallPath $exportPath 2>&1 | Write-Host
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to import distro."
-        return $false
-    }
-
-    Remove-Item -LiteralPath $exportPath -Force -ErrorAction SilentlyContinue
-
-    Write-Host "WSL distro '$($global:wslDistroName)' installed successfully." -ForegroundColor Green
-    return $true
-}
-
-#==============================================================================
-# Function: Uninstall-WSLDistro
-#==============================================================================
-<#
-.SYNOPSIS
-    Unregisters and removes the OpenClaw WSL distro.
-.DESCRIPTION
-    Uses 'wsl --unregister' to completely remove the distro and its filesystem.
-.OUTPUTS
-    [bool] True if successful, false otherwise.
-#>
-function Uninstall-WSLDistro {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    [OutputType([bool])]
-    param()
-
-    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
-        Write-Host "WSL distro '$($global:wslDistroName)' does not exist." -ForegroundColor Yellow
-        return $true
-    }
-
-    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Unregister WSL Distro")) {
-        return $false
-    }
-
-    Write-Host "Unregistering WSL distro '$($global:wslDistroName)'..." -ForegroundColor Yellow
-    Write-Warning "This will delete all data in the distro. This cannot be undone!"
-
-    $confirm = Read-Host "Are you sure you want to unregister the distro? (Y/N)"
-    if ($confirm -ne "Y") {
-        Write-Host "Operation cancelled." -ForegroundColor Yellow
-        return $false
-    }
-
-    wsl --unregister $global:wslDistroName 2>&1 | Write-Host
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Failed to unregister distro."
-        return $false
-    }
-
-    Write-Host "WSL distro '$($global:wslDistroName)' unregistered successfully." -ForegroundColor Green
-    return $true
-}
-
-#==============================================================================
 # Function: Install-NodeJS
 #==============================================================================
 <#
@@ -458,7 +232,7 @@ function Install-NodeJS {
 .SYNOPSIS
     Installs the OpenClaw CLI and gateway in the WSL distro.
 .DESCRIPTION
-    Uses npm to install the openclaw package globally.
+    Uses the official OpenClaw installer script from https://openclaw.ai/install.sh
 .OUTPUTS
     [bool] True if successful, false otherwise.
 #>
@@ -483,8 +257,8 @@ function Install-OpenClawCLI {
         }
     }
 
-    Write-Host "Installing OpenClaw via npm..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "npm install -g @anthropic/openclaw"
+    Write-Host "Installing OpenClaw via npm (this may take several minutes)..." -ForegroundColor Cyan
+    & wsl --distribution $global:wslDistroName -- npm install -g openclaw@latest
 
     $finalVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw --version 2>/dev/null || echo 'installation-failed'"
 
@@ -498,16 +272,68 @@ function Install-OpenClawCLI {
 }
 
 #==============================================================================
+# Function: Initialize-OpenClawConfig
+#==============================================================================
+<#
+.SYNOPSIS
+    Initializes OpenClaw configuration with API key.
+.DESCRIPTION
+    Runs openclaw onboard in non-interactive mode to configure the gateway
+    with the provided Anthropic API key.
+.PARAMETER AnthropicApiKey
+    The Anthropic API key for Claude access.
+.OUTPUTS
+    [bool] True if successful, false otherwise.
+#>
+function Initialize-OpenClawConfig {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$AnthropicApiKey
+    )
+
+    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Initialize OpenClaw Configuration")) {
+        return $false
+    }
+
+    Write-Host "Initializing OpenClaw configuration..." -ForegroundColor Yellow
+
+    $onboardCommand = @(
+        "openclaw onboard --non-interactive --accept-risk",
+        "--mode local",
+        "--auth-choice apiKey",
+        "--anthropic-api-key `"$AnthropicApiKey`"",
+        "--gateway-port $($global:controlUiPort)",
+        "--gateway-bind loopback",
+        "--install-daemon",
+        "--daemon-runtime node",
+        "--skip-skills"
+    ) -join " "
+
+    Write-Host "Running OpenClaw onboarding..." -ForegroundColor Cyan
+    $result = Invoke-WSLCommand -DistroName $global:wslDistroName -Command $onboardCommand
+
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "OpenClaw configuration initialized successfully." -ForegroundColor Green
+        return $true
+    }
+    else {
+        Write-Warning "OpenClaw onboarding returned non-zero exit code. Output: $result"
+        return $false
+    }
+}
+
+#==============================================================================
 # Function: Install-OpenClawService
 #==============================================================================
 <#
 .SYNOPSIS
     Configures OpenClaw as a systemd user service.
 .DESCRIPTION
-    Creates a systemd user service file for the OpenClaw gateway daemon
-    and optionally enables it for auto-start.
-.PARAMETER AutoStart
-    Enable service auto-start on WSL startup.
+    Creates a systemd user service file for the OpenClaw gateway daemon.
+.PARAMETER GatewayPassword
+    Password for gateway authentication.
 .OUTPUTS
     [bool] True if successful, false otherwise.
 #>
@@ -516,7 +342,7 @@ function Install-OpenClawService {
     [OutputType([bool])]
     param(
         [Parameter(Mandatory = $false)]
-        [bool]$AutoStart = $false
+        [string]$GatewayPassword = $global:defaultGatewayPassword
     )
 
     if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Install OpenClaw Service")) {
@@ -532,7 +358,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/openclaw gateway
+ExecStart=/usr/bin/openclaw gateway --dev --allow-unconfigured --auth password --password $GatewayPassword
 Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production
@@ -549,14 +375,8 @@ WantedBy=default.target
 
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user daemon-reload"
 
-    if ($AutoStart) {
-        Write-Host "Enabling auto-start..." -ForegroundColor Cyan
-        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user enable $($global:openclawServiceName)"
-
-        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "loginctl enable-linger \$USER 2>/dev/null || true"
-    }
-
     Write-Host "OpenClaw service configured successfully." -ForegroundColor Green
+    Write-Host "Gateway password: $GatewayPassword" -ForegroundColor Cyan
     return $true
 }
 
@@ -582,7 +402,7 @@ function Start-OpenClawService {
     Write-Host "Starting OpenClaw service..." -ForegroundColor Yellow
 
     if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
-        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please install first."
+        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please run Setup_Core_WSL_OpenClaw.ps1 first."
         return
     }
 
@@ -666,7 +486,8 @@ function Get-OpenClawServiceStatus {
 .SYNOPSIS
     Performs full OpenClaw installation.
 .DESCRIPTION
-    Orchestrates the complete installation: WSL distro, Node.js, OpenClaw CLI, and service.
+    Orchestrates the complete installation: Node.js, OpenClaw CLI, and service.
+    Requires the WSL distro to already exist (run Setup_Core_WSL_OpenClaw.ps1 first).
 .OUTPUTS
     [void]
 #>
@@ -680,11 +501,19 @@ function Install-OpenClaw {
 
     Write-Host ""
     Write-Host "===========================================" -ForegroundColor Yellow
-    Write-Host "OpenClaw Full Installation" -ForegroundColor White
+    Write-Host "OpenClaw Installation" -ForegroundColor White
     Write-Host "===========================================" -ForegroundColor Yellow
     Write-Host ""
+
+    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
+        Write-Error "WSL distro '$($global:wslDistroName)' not found."
+        Write-Host ""
+        Write-Host "Please run Setup_Core_WSL_OpenClaw.ps1 first to create the distro." -ForegroundColor Yellow
+        Write-Host ""
+        return
+    }
+
     Write-Host "This will install:" -ForegroundColor Cyan
-    Write-Host "  - Dedicated WSL2 distro: $($global:wslDistroName)" -ForegroundColor Cyan
     Write-Host "  - Node.js $($global:nodeMinVersion)+" -ForegroundColor Cyan
     Write-Host "  - OpenClaw CLI and Gateway" -ForegroundColor Cyan
     Write-Host "  - Systemd user service" -ForegroundColor Cyan
@@ -694,55 +523,67 @@ function Install-OpenClaw {
     Write-Host "  - Canvas Host: 127.0.0.1:$($global:canvasPort)" -ForegroundColor Cyan
     Write-Host ""
 
+    Write-Host "===========================================" -ForegroundColor Yellow
+    Write-Host "Configuration" -ForegroundColor White
+    Write-Host "===========================================" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "OpenClaw requires an Anthropic API key to function." -ForegroundColor Cyan
+    Write-Host "Get your API key from: https://console.anthropic.com/settings/keys" -ForegroundColor Cyan
+    Write-Host ""
+
+    $anthropicApiKey = Read-Host "Enter your Anthropic API key (or press Enter to skip)"
+    $anthropicApiKey = $anthropicApiKey.Trim()
+
+    Write-Host ""
+    Write-Host "The gateway password is used to authenticate with the Control UI." -ForegroundColor Cyan
+    Write-Host "Default password: $($global:defaultGatewayPassword)" -ForegroundColor Cyan
+    Write-Host ""
+
+    $gatewayPassword = Read-Host "Enter gateway password (or press Enter for default)"
+    $gatewayPassword = $gatewayPassword.Trim()
+    if ([string]::IsNullOrEmpty($gatewayPassword)) {
+        $gatewayPassword = $global:defaultGatewayPassword
+    }
+
+    Write-Host ""
+
     Test-AdminPrivilege
 
     Test-WSLStatus
 
-    $settings = Get-OpenClawSetting
-
     Write-Host ""
-    $sandboxChoice = Read-Host "Configure sandbox mode for agent tools? (none/docker/podman) [default: $($settings.SandboxMode)]"
-    if ([string]::IsNullOrWhiteSpace($sandboxChoice)) {
-        $sandboxChoice = $settings.SandboxMode
-    }
-
-    $autoStartChoice = Read-Host "Enable auto-start on WSL startup? (Y/N) [default: $(if ($settings.AutoStart) { 'Y' } else { 'N' })]"
-    $autoStart = if ([string]::IsNullOrWhiteSpace($autoStartChoice)) { $settings.AutoStart } else { $autoStartChoice -eq 'Y' }
-
-    Set-OpenClawSetting -SandboxMode $sandboxChoice -AutoStart $autoStart
-
-    Write-Host ""
-    Write-Host "Step 1: Installing WSL Distro..." -ForegroundColor White
-    if (-not (Install-WSLDistro)) {
-        Write-Error "Failed to install WSL distro. Aborting."
-        return
-    }
-
-    Write-Host ""
-    Write-Host "Step 2: Installing Node.js..." -ForegroundColor White
+    Write-Host "Step 1: Installing Node.js..." -ForegroundColor White
     if (-not (Install-NodeJS)) {
         Write-Error "Failed to install Node.js. Aborting."
         return
     }
 
     Write-Host ""
-    Write-Host "Step 3: Installing OpenClaw CLI..." -ForegroundColor White
+    Write-Host "Step 2: Installing OpenClaw CLI..." -ForegroundColor White
     if (-not (Install-OpenClawCLI)) {
         Write-Error "Failed to install OpenClaw CLI. Aborting."
         return
     }
 
-    Write-Host ""
-    Write-Host "Step 4: Configuring Service..." -ForegroundColor White
-    if (-not (Install-OpenClawService -AutoStart $autoStart)) {
-        Write-Error "Failed to configure service. Aborting."
-        return
+    if (-not [string]::IsNullOrEmpty($anthropicApiKey)) {
+        Write-Host ""
+        Write-Host "Step 3: Configuring OpenClaw with API key..." -ForegroundColor White
+        if (-not (Initialize-OpenClawConfig -AnthropicApiKey $anthropicApiKey)) {
+            Write-Warning "OpenClaw configuration may not be complete. You can run 'openclaw onboard' manually later."
+        }
+
+        Write-Host ""
+        Write-Host "Step 4: Configuring Service..." -ForegroundColor White
+    }
+    else {
+        Write-Host ""
+        Write-Host "Step 3: Configuring Service (skipped API configuration)..." -ForegroundColor White
+        Write-Host "Note: You can run 'openclaw onboard' later to configure the API key." -ForegroundColor Yellow
     }
 
-    if ($sandboxChoice -ne "none") {
-        Write-Host ""
-        Write-Host "Step 5: Configuring Sandbox ($sandboxChoice)..." -ForegroundColor White
-        Install-OpenClawSandbox -Mode $sandboxChoice
+    if (-not (Install-OpenClawService -GatewayPassword $gatewayPassword)) {
+        Write-Error "Failed to configure service. Aborting."
+        return
     }
 
     Write-Host ""
@@ -750,57 +591,14 @@ function Install-OpenClaw {
     Write-Host "OpenClaw Installation Complete!" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host ""
+    Write-Host "Gateway password: $gatewayPassword" -ForegroundColor Cyan
+    Write-Host ""
     Write-Host "To start the service, use option 5 from the menu or run:" -ForegroundColor Cyan
     Write-Host "  wsl -d $($global:wslDistroName) -- systemctl --user start $($global:openclawServiceName)" -ForegroundColor White
     Write-Host ""
     Write-Host "Then access the Control UI at: http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
+    Write-Host "Enter the password '$gatewayPassword' when prompted in the UI." -ForegroundColor Cyan
     Write-Host ""
-}
-
-#==============================================================================
-# Function: Install-OpenClawSandbox
-#==============================================================================
-<#
-.SYNOPSIS
-    Configures sandbox mode for OpenClaw agent tools.
-.DESCRIPTION
-    Installs Docker or Podman inside the WSL distro for sandboxed tool execution.
-.PARAMETER Mode
-    Sandbox mode: docker or podman.
-.OUTPUTS
-    [void]
-#>
-function Install-OpenClawSandbox {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param(
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("docker", "podman")]
-        [string]$Mode
-    )
-
-    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Install Sandbox ($Mode)")) {
-        return
-    }
-
-    Write-Host "Installing $Mode for sandbox mode..." -ForegroundColor Yellow
-
-    if ($Mode -eq "docker") {
-        Write-Host "Installing Docker..." -ForegroundColor Cyan
-        Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get update && apt-get install -y docker.io"
-        Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "usermod -aG docker \$USER"
-        Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "systemctl enable docker && systemctl start docker"
-    }
-    elseif ($Mode -eq "podman") {
-        Write-Host "Installing Podman..." -ForegroundColor Cyan
-        Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get update && apt-get install -y podman"
-    }
-
-    Write-Host "Sandbox ($Mode) configured. Update OpenClaw config to use sandbox mode." -ForegroundColor Green
-    Write-Host "Edit ~/.openclaw/config.yaml and set:" -ForegroundColor Cyan
-    Write-Host "  agents:" -ForegroundColor White
-    Write-Host "    defaults:" -ForegroundColor White
-    Write-Host "      sandbox:" -ForegroundColor White
-    Write-Host "        mode: $Mode" -ForegroundColor White
 }
 
 #==============================================================================
@@ -808,9 +606,10 @@ function Install-OpenClawSandbox {
 #==============================================================================
 <#
 .SYNOPSIS
-    Uninstalls OpenClaw and optionally removes the WSL distro.
+    Uninstalls OpenClaw application.
 .DESCRIPTION
-    Stops services, optionally backs up data, and removes the installation.
+    Stops services, removes the OpenClaw package and service files.
+    Preserves the WSL distro and Node.js for potential reinstallation.
 .OUTPUTS
     [void]
 #>
@@ -828,23 +627,35 @@ function Uninstall-OpenClaw {
     Write-Host "===========================================" -ForegroundColor Yellow
     Write-Host ""
 
-    Stop-OpenClawService
-
-    $removeDistro = Read-Host "Remove WSL distro '$($global:wslDistroName)'? This deletes ALL data. (Y/N)"
-    if ($removeDistro -eq "Y") {
-        Uninstall-WSLDistro
+    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
+        Write-Warning "WSL distro '$($global:wslDistroName)' not found. Nothing to uninstall."
+        return
     }
 
-    $removeSettings = Read-Host "Remove Windows settings and backup folder? (Y/N)"
-    if ($removeSettings -eq "Y") {
-        if (Test-Path -LiteralPath $global:installRoot) {
-            Remove-Item -LiteralPath $global:installRoot -Recurse -Force -ErrorAction SilentlyContinue
-            Write-Host "Removed: $($global:installRoot)" -ForegroundColor Green
-        }
+    Stop-OpenClawService
+
+    Write-Host "Disabling and removing service..." -ForegroundColor Cyan
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user disable $($global:openclawServiceName) 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -f ~/.config/systemd/user/$($global:openclawServiceName).service"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user daemon-reload"
+
+    Write-Host "Uninstalling OpenClaw..." -ForegroundColor Cyan
+    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "npm uninstall -g openclaw 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -f ~/.local/bin/openclaw 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -rf ~/.openclaw/bin 2>/dev/null || true"
+
+    $removeConfig = Read-Host "Remove OpenClaw configuration (~/.openclaw)? (Y/N)"
+    if ($removeConfig -eq "Y") {
+        Write-Host "Removing configuration directory..." -ForegroundColor Cyan
+        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -rf ~/.openclaw"
     }
 
     Write-Host ""
-    Write-Host "OpenClaw uninstallation complete." -ForegroundColor Green
+    Write-Host "OpenClaw uninstalled successfully." -ForegroundColor Green
+    Write-Host "The WSL distro and Node.js have been preserved." -ForegroundColor DarkGray
+    Write-Host "To reinstall OpenClaw, use option 2 from the menu." -ForegroundColor DarkGray
+    Write-Host "To remove the distro entirely, run Setup_Core_WSL_OpenClaw.ps1." -ForegroundColor DarkGray
+    Write-Host ""
 }
 
 #==============================================================================
@@ -869,7 +680,7 @@ function Update-OpenClaw {
     Write-Host "Updating OpenClaw..." -ForegroundColor Yellow
 
     if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
-        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please install first."
+        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please run Setup_Core_WSL_OpenClaw.ps1 first."
         return
     }
 
@@ -879,57 +690,14 @@ function Update-OpenClaw {
         Stop-OpenClawService
     }
 
-    Write-Host "Updating OpenClaw via npm..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "npm update -g @anthropic/openclaw"
+    Write-Host "Updating OpenClaw via npm (this may take a few minutes)..." -ForegroundColor Cyan
+    & wsl --distribution $global:wslDistroName -- npm update -g openclaw
 
     $newVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw --version"
     Write-Host "OpenClaw updated to: $newVersion" -ForegroundColor Green
 
     if ($wasRunning) {
         Start-OpenClawService
-    }
-}
-
-#==============================================================================
-# Function: Backup-OpenClawDistro
-#==============================================================================
-<#
-.SYNOPSIS
-    Exports the OpenClaw WSL distro to a tar file.
-.DESCRIPTION
-    Uses 'wsl --export' to create a backup of the entire distro.
-.OUTPUTS
-    [void]
-#>
-function Backup-OpenClawDistro {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param()
-
-    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Backup Distro")) {
-        return
-    }
-
-    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
-        Write-Error "WSL distro '$($global:wslDistroName)' not found."
-        return
-    }
-
-    New-Directory -Path $global:wslExportPath
-
-    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-    $exportFile = Join-Path $global:wslExportPath "$($global:wslDistroName)-$timestamp.tar"
-
-    Write-Host "Exporting distro to: $exportFile" -ForegroundColor Yellow
-    Write-Host "This may take several minutes..." -ForegroundColor Cyan
-
-    wsl --export $global:wslDistroName $exportFile 2>&1 | Write-Host
-
-    if ($LASTEXITCODE -eq 0) {
-        $fileSize = [math]::Round((Get-Item $exportFile).Length / 1MB, 2)
-        Write-Host "Backup complete: $exportFile ($fileSize MB)" -ForegroundColor Green
-    }
-    else {
-        Write-Error "Backup failed."
     }
 }
 
@@ -961,20 +729,25 @@ function Show-OpenClawStatus {
     Write-Host "  Name:   $($global:wslDistroName)" -ForegroundColor Cyan
     Write-Host "  Status: $distroStatus" -ForegroundColor $(if ($distroStatus -eq "Running") { "Green" } elseif ($distroStatus -eq "Stopped") { "Yellow" } else { "Red" })
 
-    if ($distroExists) {
-        $serviceStatus = Get-OpenClawServiceStatus
+    if (-not $distroExists) {
         Write-Host ""
-        Write-Host "Service:" -ForegroundColor White
-        Write-Host "  Status: $serviceStatus" -ForegroundColor $(if ($serviceStatus -eq "active") { "Green" } else { "Yellow" })
-
-        $nodeVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "node --version 2>/dev/null || echo 'not installed'"
-        $openclawVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw --version 2>/dev/null || echo 'not installed'"
-
+        Write-Host "WSL distro not found. Run Setup_Core_WSL_OpenClaw.ps1 to create it." -ForegroundColor Yellow
         Write-Host ""
-        Write-Host "Versions:" -ForegroundColor White
-        Write-Host "  Node.js:  $nodeVersion" -ForegroundColor Cyan
-        Write-Host "  OpenClaw: $openclawVersion" -ForegroundColor Cyan
+        return
     }
+
+    $serviceStatus = Get-OpenClawServiceStatus
+    Write-Host ""
+    Write-Host "Service:" -ForegroundColor White
+    Write-Host "  Status: $serviceStatus" -ForegroundColor $(if ($serviceStatus -eq "active") { "Green" } else { "Yellow" })
+
+    $nodeVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "node --version 2>/dev/null || echo 'not installed'"
+    $openclawVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw --version 2>/dev/null || echo 'not installed'"
+
+    Write-Host ""
+    Write-Host "Versions:" -ForegroundColor White
+    Write-Host "  Node.js:  $nodeVersion" -ForegroundColor Cyan
+    Write-Host "  OpenClaw: $openclawVersion" -ForegroundColor Cyan
 
     Write-Host ""
     Write-Host "Network Connectivity:" -ForegroundColor White
@@ -999,36 +772,6 @@ function Show-OpenClawStatus {
     Write-Host "  Canvas Host: http://127.0.0.1:$($global:canvasPort)/" -ForegroundColor Cyan
 
     Write-Host ""
-    Write-Host "Settings:" -ForegroundColor White
-    Write-Host "  Config Path: $($global:settingsPath)" -ForegroundColor DarkGray
-    Write-Host "  Distro Path: $($global:installRoot)" -ForegroundColor DarkGray
-}
-
-#==============================================================================
-# Function: Open-OpenClawShell
-#==============================================================================
-<#
-.SYNOPSIS
-    Opens an interactive shell in the OpenClaw WSL distro.
-.DESCRIPTION
-    Launches a bash shell in the OpenClaw distro.
-.OUTPUTS
-    [void]
-#>
-function Open-OpenClawShell {
-    [CmdletBinding()]
-    param()
-
-    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
-        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please install first."
-        return
-    }
-
-    Write-Host "Opening shell in '$($global:wslDistroName)'..." -ForegroundColor Cyan
-    Write-Host "Type 'exit' to return to PowerShell." -ForegroundColor DarkGray
-    Write-Host ""
-
-    wsl --distribution $global:wslDistroName
 }
 
 #==============================================================================
@@ -1061,19 +804,15 @@ function Show-OpenClawLogs {
 # Main Menu Loop
 ################################################################################
 
-New-Directory -Path $global:installRoot
-
-$menuTitle = "OpenClaw Management Menu"
+$menuTitle = "OpenClaw Application Menu"
 $menuItems = [ordered]@{
-    "1" = "Show Status & Test Connection"
-    "2" = "Install OpenClaw (Full)"
+    "1" = "Show Status and Test Connection"
+    "2" = "Install OpenClaw"
     "3" = "Uninstall OpenClaw"
     "4" = "Update OpenClaw"
     "5" = "Start Service"
     "6" = "Stop Service"
-    "7" = "Backup Distro"
-    "8" = "Show Logs"
-    "S" = "Open Shell"
+    "7" = "Show Logs"
     "0" = "Exit menu"
 }
 
@@ -1084,9 +823,7 @@ $menuActions = @{
     "4" = { Update-OpenClaw }
     "5" = { Start-OpenClawService }
     "6" = { Stop-OpenClawService }
-    "7" = { Backup-OpenClawDistro }
-    "8" = { Show-OpenClawLogs }
-    "S" = { Open-OpenClawShell }
+    "7" = { Show-OpenClawLogs }
 }
 
 Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
