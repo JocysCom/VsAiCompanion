@@ -40,8 +40,6 @@ $global:openclawServiceName = "openclaw"
 # Node.js minimum version
 $global:nodeMinVersion = 22
 
-# Default gateway password (user can override during installation)
-$global:defaultGatewayPassword = "openclaw"
 
 #==============================================================================
 # Function: Test-WSLDistroExists
@@ -332,18 +330,13 @@ function Initialize-OpenClawConfig {
     Configures OpenClaw as a systemd user service.
 .DESCRIPTION
     Creates a systemd user service file for the OpenClaw gateway daemon.
-.PARAMETER GatewayPassword
-    Password for gateway authentication.
 .OUTPUTS
     [bool] True if successful, false otherwise.
 #>
 function Install-OpenClawService {
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType([bool])]
-    param(
-        [Parameter(Mandatory = $false)]
-        [string]$GatewayPassword = $global:defaultGatewayPassword
-    )
+    param()
 
     if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Install OpenClaw Service")) {
         return $false
@@ -358,7 +351,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/openclaw gateway --dev --allow-unconfigured --auth password --password $GatewayPassword
+ExecStart=/usr/bin/openclaw gateway --dev --allow-unconfigured
 Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production
@@ -376,7 +369,6 @@ WantedBy=default.target
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user daemon-reload"
 
     Write-Host "OpenClaw service configured successfully." -ForegroundColor Green
-    Write-Host "Gateway password: $GatewayPassword" -ForegroundColor Cyan
     return $true
 }
 
@@ -531,18 +523,13 @@ function Install-OpenClaw {
     Write-Host "Get your API key from: https://console.anthropic.com/settings/keys" -ForegroundColor Cyan
     Write-Host ""
 
-    $anthropicApiKey = Read-Host "Enter your Anthropic API key (or press Enter to skip)"
-    $anthropicApiKey = $anthropicApiKey.Trim()
-
-    Write-Host ""
-    Write-Host "The gateway password is used to authenticate with the Control UI." -ForegroundColor Cyan
-    Write-Host "Default password: $($global:defaultGatewayPassword)" -ForegroundColor Cyan
-    Write-Host ""
-
-    $gatewayPassword = Read-Host "Enter gateway password (or press Enter for default)"
-    $gatewayPassword = $gatewayPassword.Trim()
-    if ([string]::IsNullOrEmpty($gatewayPassword)) {
-        $gatewayPassword = $global:defaultGatewayPassword
+    $secureApiKey = Read-Host "Enter your Anthropic API key (or press Enter to skip)" -AsSecureString
+    $anthropicApiKey = ""
+    if ($secureApiKey.Length -gt 0) {
+        $bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureApiKey)
+        $anthropicApiKey = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
+        [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+        $anthropicApiKey = $anthropicApiKey.Trim()
     }
 
     Write-Host ""
@@ -581,7 +568,7 @@ function Install-OpenClaw {
         Write-Host "Note: You can run 'openclaw onboard' later to configure the API key." -ForegroundColor Yellow
     }
 
-    if (-not (Install-OpenClawService -GatewayPassword $gatewayPassword)) {
+    if (-not (Install-OpenClawService)) {
         Write-Error "Failed to configure service. Aborting."
         return
     }
@@ -591,13 +578,11 @@ function Install-OpenClaw {
     Write-Host "OpenClaw Installation Complete!" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host ""
-    Write-Host "Gateway password: $gatewayPassword" -ForegroundColor Cyan
-    Write-Host ""
     Write-Host "To start the service, use option 5 from the menu or run:" -ForegroundColor Cyan
     Write-Host "  wsl -d $($global:wslDistroName) -- systemctl --user start $($global:openclawServiceName)" -ForegroundColor White
     Write-Host ""
-    Write-Host "Then access the Control UI at: http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
-    Write-Host "Enter the password '$gatewayPassword' when prompted in the UI." -ForegroundColor Cyan
+    Write-Host "After starting the service, get the dashboard URL with:" -ForegroundColor Cyan
+    Write-Host "  wsl -d $($global:wslDistroName) -- openclaw dashboard --no-open" -ForegroundColor White
     Write-Host ""
 }
 
