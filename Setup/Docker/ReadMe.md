@@ -40,7 +40,7 @@ Windows 11                        ← real, bare-metal host
     │
     ├── WSL2 default distro (e.g. Ubuntu) ← Required for WSL2 initialization
     │
-    ├── WSL2 distro "OpenClaw" (imported via wsl --import)  ← dedicated, disposable
+    ├── WSL2 distro "OpenClaw-WSL" (Ubuntu) (imported via wsl --import)  ← dedicated, disposable
     │   │
     │   ├── Node.js ≥ 22
     │   ├── openclaw CLI + Gateway daemon (systemd user service)
