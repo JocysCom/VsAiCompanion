@@ -574,15 +574,27 @@ function Install-OpenClaw {
     }
 
     Write-Host ""
+    Write-Host "Step 5: Starting Service..." -ForegroundColor White
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user start $($global:openclawServiceName)"
+
+    Start-Sleep -Seconds 3
+
+    $status = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user is-active $($global:openclawServiceName)"
+    if ($status -notmatch "active") {
+        Write-Warning "Service may not have started correctly. Status: $status"
+    }
+
+    Write-Host ""
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host "OpenClaw Installation Complete!" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host ""
-    Write-Host "To start the service, use option 5 from the menu or run:" -ForegroundColor Cyan
-    Write-Host "  wsl -d $($global:wslDistroName) -- systemctl --user start $($global:openclawServiceName)" -ForegroundColor White
+
+    Write-Host "Getting dashboard URL..." -ForegroundColor Cyan
+    $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
     Write-Host ""
-    Write-Host "After starting the service, get the dashboard URL with:" -ForegroundColor Cyan
-    Write-Host "  wsl -d $($global:wslDistroName) -- openclaw dashboard --no-open" -ForegroundColor White
+    Write-Host "Dashboard URL:" -ForegroundColor Cyan
+    Write-Host "  $dashboardOutput" -ForegroundColor White
     Write-Host ""
 }
 

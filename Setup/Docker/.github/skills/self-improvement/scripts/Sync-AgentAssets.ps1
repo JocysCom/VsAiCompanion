@@ -1,5 +1,5 @@
-# Script: Update-AgentInstructions.ps1
-# Location: .ai/skills/self-improvement/tools/Update-AgentInstructions.ps1
+# Script: Sync-AgentAssets.ps1
+# Location: .ai/skills/self-improvement/tools/Sync-AgentAssets.ps1
 # Description:
 #   Synchronises AI agent instruction files and skills from master sources under `.ai/`.
 #   - Instructions: copies `*.instructions.md` from `.ai/` into agent-specific outputs.
@@ -12,19 +12,25 @@
 
 param(
     [Parameter(Position = 0)]
-    [string]$Mode
+    [string]$Mode,
+
+    [switch]$NoClear
 )
 
 # Combine remaining args so Windows PowerShell (-File) invocations like:
-#   Update-AgentInstructions.ps1 GitHub CoPilot
+#   Sync-AgentAssets.ps1 GitHub CoPilot
 # work the same as:
-#   Update-AgentInstructions.ps1 "GitHub CoPilot"
+#   Sync-AgentAssets.ps1 "GitHub CoPilot"
 if ($args.Count -gt 0) {
     $ModeFromArgs = ($args -join ' ')
     if (-not $Mode -or $Mode -eq '') {
         $Mode = $ModeFromArgs
     }
 }
+
+# Allow calling via the old filename (if invoked through a copied/renamed script).
+# This only affects displayed script name in prompts/logs.
+$scriptName = [System.IO.Path]::GetFileName($MyInvocation.MyCommand.Path)
 
 # Strict mode
 Set-StrictMode -Version Latest
@@ -251,6 +257,75 @@ function Update-SingleFileAgent {
     Write-Host "Updated: $relativeTarget"
 }
 
+function Invoke-RoboCopyMirror {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDirectory,
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationDirectory,
+        [Parameter(Mandatory = $true)]
+        [string]$Label
+    )
+
+    if (-not (Test-Path $SourceDirectory -PathType Container)) {
+        Write-Host "No skills folder found at: $SourceDirectory"
+        return
+    }
+
+    Ensure-Directory -Path $DestinationDirectory
+
+    Write-Host "`r`n--- Mirroring skills to $Label ---"
+    Write-Host "Source:      $SourceDirectory"
+    Write-Host "Destination: $DestinationDirectory"
+
+    # /MIR      = mirror (copy + delete removed)
+    # /FFT      = tolerate 2s timestamp granularity
+    # /R:1 /W:1 = retry quickly
+    # /NFL/NDL  = no file/dir listing (keep output compact)
+    # /NJH/NJS  = no job header/summary
+    # /NP       = no progress
+    # /XD       = exclude version control/build dirs
+    $excludedDirs = @('.git', '.vs', 'bin', 'obj')
+
+    $args = @(
+        $SourceDirectory,
+        $DestinationDirectory,
+        '/MIR',
+        '/FFT',
+        '/R:1',
+        '/W:1',
+        '/NFL',
+        '/NDL',
+        '/NJH',
+        '/NJS',
+        '/NP'
+    )
+
+    foreach ($d in $excludedDirs) {
+        $args += '/XD'
+        $args += $d
+    }
+
+    $exe = 'robocopy'
+    # Do not echo the full robocopy command; it is noisy and can wrap in some terminals.
+    Write-Host "robocopy <source> <destination> /MIR /NFL /NDL /NJH /NJS /NP ..."
+
+    & $exe @args | Out-Null
+    $exitCode = $LASTEXITCODE
+
+    # Robocopy uses bitmask exit codes.
+    # 0-7 are success with various flags; >= 8 indicates failure.
+    if ($exitCode -ge 8) {
+        throw "Robocopy failed with exit code $exitCode. Command: $cmd"
+    }
+
+    # IMPORTANT: robocopy returns 1+ for successful copies.
+    # Ensure PowerShell script does not propagate a non-zero exit code for success cases.
+    $global:LASTEXITCODE = 0
+
+    Write-Host "Mirrored skills to $Label (robocopy exit code $exitCode)."
+}
+
 function Sync-SkillsToRoo {
     param(
         [Parameter(Mandatory = $true)]
@@ -258,29 +333,9 @@ function Sync-SkillsToRoo {
     )
 
     $srcSkillsRoot = Join-Path $RepoRoot ".ai\skills"
-    if (-not (Test-Path $srcSkillsRoot -PathType Container)) {
-        Write-Host "No skills folder found at: $srcSkillsRoot"
-        return
-    }
-
     $rooSkillsRoot = Join-Path $RepoRoot ".roo\skills"
-    Ensure-Directory -Path $rooSkillsRoot
 
-    $skillDirs = @(Get-ChildItem -Path $srcSkillsRoot -Directory | Sort-Object Name)
-    foreach ($sd in $skillDirs) {
-        $src = $sd.FullName
-        $dst = Join-Path $rooSkillsRoot $sd.Name
-
-        Write-Host "`r`n--- Syncing skill '$($sd.Name)' to Roo ---"
-
-        # Mirror directory (copy new/updated files only). Do not delete extra files in destination.
-        $srcFiles = @(Get-ChildItem -Path $src -Recurse -File)
-        foreach ($sf in $srcFiles) {
-            $rel = $sf.FullName.Substring($src.Length).TrimStart('\\')
-            $targetFile = Join-Path $dst $rel
-            Copy-FileIfDifferent -SourcePath $sf.FullName -TargetPath $targetFile
-        }
-    }
+    Invoke-RoboCopyMirror -SourceDirectory $srcSkillsRoot -DestinationDirectory $rooSkillsRoot -Label "Roo (.roo\\skills)"
 }
 
 function Sync-SkillsToGitHub {
@@ -290,33 +345,15 @@ function Sync-SkillsToGitHub {
     )
 
     $srcSkillsRoot = Join-Path $RepoRoot ".ai\skills"
-    if (-not (Test-Path $srcSkillsRoot -PathType Container)) {
-        Write-Host "No skills folder found at: $srcSkillsRoot"
-        return
-    }
-
     $githubSkillsRoot = Join-Path $RepoRoot ".github\skills"
-    Ensure-Directory -Path $githubSkillsRoot
 
-    $skillDirs = @(Get-ChildItem -Path $srcSkillsRoot -Directory | Sort-Object Name)
-    foreach ($sd in $skillDirs) {
-        $src = $sd.FullName
-        $dst = Join-Path $githubSkillsRoot $sd.Name
-
-        Write-Host "`r`n--- Syncing skill '$($sd.Name)' to GitHub ---"
-
-        # Mirror directory (copy new/updated files only). Do not delete extra files in destination.
-        $srcFiles = @(Get-ChildItem -Path $src -Recurse -File)
-        foreach ($sf in $srcFiles) {
-            $rel = $sf.FullName.Substring($src.Length).TrimStart('\\')
-            $targetFile = Join-Path $dst $rel
-            Copy-FileIfDifferent -SourcePath $sf.FullName -TargetPath $targetFile
-        }
-    }
+    Invoke-RoboCopyMirror -SourceDirectory $srcSkillsRoot -DestinationDirectory $githubSkillsRoot -Label "GitHub (.github\\skills)"
 }
 
 # --- Main Script ---
-Clear-Host
+if (-not $NoClear) {
+    Clear-Host
+}
 
 # We are located under `.ai/skills/<skill>/tools`. Find repo root by going up 4 levels.
 $scriptDir = $PSScriptRoot

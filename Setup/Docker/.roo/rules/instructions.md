@@ -18,19 +18,23 @@ A concise ruleset is easier to read, understand, and follow, maximizing its effe
 ## Rule: Validate PowerShell Scripts After Modification
 
 **Description:**
-To maintain code quality and catch potential issues early, all PowerShell scripts (`*.ps1`) in this project should be validated using the `PSScriptAnalyzer` module after any modifications are made.
+To maintain code quality and catch potential issues early, all PowerShell scripts (`*.ps1`) in this project should be validated using the preconfigured validation script after any modifications are made.
 
 **Procedure:**
 
 1. Ensure the `PSScriptAnalyzer` module is installed:
    `Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -Confirm:$false`
-2. After modifying a `.ps1` file, run the analyzer on it with some rules excluded (allows to focus on critical issues):
-   `Invoke-ScriptAnalyzer -Path .\path\to\your\script.ps1 -ExcludeRule PSAvoidGlobalVars, PSReviewUnusedParameter, PSAvoidUsingWriteHost, PSUseSingularNouns`
+2. After modifying `.ps1` files, use the preconfigured validation script:
+   - **Validate all scripts:** `.\.ai\scripts\validate-scripts-powershell.ps1`
+   - **Validate specific pattern:** `.\.ai\scripts\validate-scripts-powershell.ps1 -FilePattern "Setup_App_*.ps1"`
+   - **Validate single file:** `.\.ai\scripts\validate-scripts-powershell.ps1 -FilePattern "Setup_Core_1_WSL2.ps1"`
 3. Review the output for any warnings or errors.
 4. Address the identified issues before committing the changes. See the "Suppressing Acceptable Warnings" rule below for specific cases.
 
+**Note:** The validation script automatically excludes project-specific rules (PSAvoidGlobalVars, PSReviewUnusedParameter, PSAvoidUsingWriteHost, PSUseSingularNouns) and auto-fixes formatting issues.
+
 **Rationale:**
-Using `PSScriptAnalyzer` helps enforce best practices, improve script reliability, and reduce potential runtime errors.
+Using `PSScriptAnalyzer` via the preconfigured validation script helps enforce best practices, improve script reliability, and reduce potential runtime errors while ensuring consistent rule exclusions across the project.
 
 ## Rule: Suppressing Acceptable PSScriptAnalyzer Warnings
 
