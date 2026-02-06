@@ -1172,7 +1172,14 @@ function Show-ImageDownloadOptions {
 		if ($null -eq $dt) { continue }
 		$dg = $null
 		if ($tagDigest.ContainsKey($t)) { $dg = [string]$tagDigest[$t] }
-		$semverEntries += [PSCustomObject]@{ Tag = [string]$t; Major = [int]$matches['maj']; LastUpdated = $dt; Digest = $dg }
+		$semverEntries += [PSCustomObject]@{
+			Tag         = [string]$t
+			Major       = [int]$matches['maj']
+			Minor       = [int]$matches['min']
+			Patch       = [int]$matches['pat']
+			LastUpdated = $dt
+			Digest      = $dg
+		}
 	}
 	if (-not $semverEntries -or $semverEntries.Count -eq 0) { return $null }
 
@@ -1197,7 +1204,10 @@ function Show-ImageDownloadOptions {
 		$forMajor = @(
 			$semverEntries |
 				Where-Object { $_.Major -eq $m } |
-				Sort-Object LastUpdated -Descending |
+				Sort-Object `
+					@{ Expression = { $_.Minor }; Descending = $true }, `
+					@{ Expression = { $_.Patch }; Descending = $true }, `
+					@{ Expression = { $_.LastUpdated }; Descending = $true } |
 				Select-Object -First $topN
 		)
 
@@ -1237,7 +1247,15 @@ function Show-ImageDownloadOptions {
 				$dgShort = " [$dgShort]"
 			}
 
-			$choices += [PSCustomObject]@{ Major = $m; Tag = $sv.Tag; When = $sv.LastUpdated; Digest = $svDigest; Label = "Download from: Remote (internet) $m.x: $($sv.Tag)$dgShort $tagLabel" }
+			$choices += [PSCustomObject]@{
+				Major = $m
+				Minor = $sv.Minor
+				Patch = $sv.Patch
+				Tag   = $sv.Tag
+				When  = $sv.LastUpdated
+				Digest = $svDigest
+				Label = "Download from: Remote (internet) $m.x: $($sv.Tag)$dgShort $tagLabel"
+			}
 		}
 	}
 
@@ -1246,6 +1264,8 @@ function Show-ImageDownloadOptions {
 	$choices = @(
 		$choices | Sort-Object `
 			@{ Expression = { $_.Major }; Descending = $true }, `
+			@{ Expression = { $_.Minor }; Descending = $true }, `
+			@{ Expression = { $_.Patch }; Descending = $true }, `
 			@{ Expression = { $_.When }; Descending = $true }
 	)
 
