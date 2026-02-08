@@ -159,10 +159,10 @@ function Get-n8nContainerConfig {
 				if ($env -match "^(N8N_|WEBHOOK_)" `
 						-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ENABLED=" `
 						-and $env -notmatch "^N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=" `
-						-and $env -notmatch "^N8N_RUNNERS_ENABLED=" `
 						-and $env -notmatch "^N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=" `
 						-and $env -notmatch "^N8N_TRUST_HOST_HEADERS=" `
 						-and $env -notmatch "^N8N_LOG_LEVEL=" `
+						-and $env -notmatch "^N8N_RUNNERS_DISABLED_RUNNERS=" `
 						-and $env -notmatch "^NODE_OPTIONS=") {
 					$envVars += $env
 				}
@@ -298,8 +298,29 @@ function Start-n8nContainer {
 		$runOptions = @("--add-host", "host.local:$HostIpForContainer") + $runOptions
 	}
 
-	# Add self-signed certificate acceptance if requested
+	# Mount corporate CA certificates if available in the Podman VM
+	$corpCertsAvailable = $false
+	if ($global:containerEngine -ne "docker") {
+		$vmCertPath = "/etc/pki/ca-trust/source/anchors/corporate_ca.pem"
+		$containerCertPath = "/etc/ssl/certs/corporate_ca.pem"
+		& $global:enginePath machine ssh "test -f $vmCertPath" 2>$null
+		if ($LASTEXITCODE -eq 0) {
+			$corpCertsAvailable = $true
+			Write-Host "Corporate CA certificates detected in Podman VM. Mounting into container..."
+			$runOptions += "--volume"
+			$runOptions += "${vmCertPath}:${containerCertPath}:ro"
+			$runOptions += "--env"
+			$runOptions += "NODE_EXTRA_CA_CERTS=$containerCertPath"
+		}
+	}
+
+	# Add self-signed certificate acceptance if requested (fallback/legacy option)
 	if ($AcceptSelfSigned) {
+		if ($corpCertsAvailable) {
+			Write-Warning "Corporate CA certificates are already mounted with NODE_EXTRA_CA_CERTS."
+			Write-Warning "NODE_TLS_REJECT_UNAUTHORIZED=0 disables ALL TLS verification and is less secure."
+			Write-Warning "Consider setting 'Accept self-signed certificates' to N in future."
+		}
 		Write-Host "Adding NODE_TLS_REJECT_UNAUTHORIZED=0 for self-signed certificate acceptance"
 		$runOptions += "--env"
 		$runOptions += "NODE_TLS_REJECT_UNAUTHORIZED=0"
@@ -323,8 +344,8 @@ function Start-n8nContainer {
 	# Run the container
 	if ($PSCmdlet.ShouldProcess($global:containerName, "Start Container with Image '$Image'")) {
 		Write-Host "Starting n8n container with image: $Image"
-		Write-Host "& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image"
-		& $global:enginePath machine ssh sudo $global:containerEngine run $runOptions $Image
+		Write-Host "& $global:enginePath run $runOptions $Image"
+		& $global:enginePath run @runOptions $Image
 
 		if ($LASTEXITCODE -eq 0) {
 			Write-Host "Waiting for container startup..."

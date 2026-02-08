@@ -99,7 +99,7 @@ function CheckPodmanMachineAvailable {
 	Checks if the default Podman machine is currently running.
 .DESCRIPTION
 	First checks if a Podman machine is available. If so, it runs 'podman machine ls --format json'
-	and checks the 'State' property of the first machine listed (usually 'default').
+	and checks the 'Running' property of the first machine listed (usually 'default').
 .OUTPUTS
 	[bool] Returns $true if a machine exists and its state is 'Running', $false otherwise.
 .EXAMPLE
@@ -115,7 +115,7 @@ function CheckPodmanMachineRunning {
 	try {
 		$machineListJson = & podman machine ls --format json 2>&1
 		$machines = $machineListJson | ConvertFrom-Json
-		return ($null -ne $machines) -and ($machines.Count -gt 0) -and ($machines[0].State -eq "Running")
+		return ($null -ne $machines) -and ($machines.Count -gt 0) -and ($machines[0].Running -eq $true)
 	}
 	catch {
 		Write-Verbose "Error checking Podman machine running state: $_"
@@ -203,15 +203,9 @@ else {
 				$machines = $machineListJson | ConvertFrom-Json
 
 				foreach ($machine in $machines) {
-					$machineState = $machine.State
 					$machineName = $machine.Name
-
-					if ($machineState -eq "Running") {
-						Write-Host "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
-					}
-					else {
-						Write-Host "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
-					}
+					$machineState = if ($machine.Running) { "Running" } else { "Stopped" }
+					Write-Host "Podman Machine '$machineName': AVAILABLE (Status: $machineState)"
 				}
 			}
 			catch {
@@ -849,6 +843,94 @@ function Remove-PodmanComponent {
 	}
 }
 
+#==============================================================================
+# Function: Install-CorporateCACerts
+#==============================================================================
+<#
+.SYNOPSIS
+	Installs corporate CA certificates into the Podman Machine VM.
+.DESCRIPTION
+	Copies the trusted root certificates PEM bundle from the Windows host into the
+	Podman Machine VM (Fedora CoreOS) and updates the VM's system CA trust store.
+
+	This enables tools inside the VM (curl, wget, etc.) to trust corporate CA
+	certificates used by TLS-inspecting firewalls. Container-level trust is handled
+	separately by mounting the certificate file into containers and setting
+	environment variables such as NODE_EXTRA_CA_CERTS.
+
+	The PEM file is expected at Files\trusted_root_certificates.pem relative to the
+	script directory. Run Setup_Util_SaveTrustedRootCertificates.ps1 first to
+	export corporate CA certificates from HTTPS connections.
+.OUTPUTS
+	[bool] Returns $true if certificates were installed successfully, $false otherwise.
+.EXAMPLE
+	Install-CorporateCACerts
+.NOTES
+	Requires the Podman machine to be running.
+	The function is idempotent; it can be called multiple times safely.
+	Uses podman machine ssh to transfer the certificate and update-ca-trust
+	to rebuild the Fedora CoreOS CA bundle.
+#>
+function Install-CorporateCACerts {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$pemFile = Join-Path $PSScriptRoot "Files\trusted_root_certificates.pem"
+	$vmCertPath = "/etc/pki/ca-trust/source/anchors/corporate_ca.pem"
+
+	if (-not (Test-Path $pemFile)) {
+		Write-Warning "Corporate CA certificate file not found: $pemFile"
+		Write-Host "Run Setup_Util_SaveTrustedRootCertificates.ps1 first to export certificates."
+		return $false
+	}
+
+	if (-not (CheckPodmanMachineRunning)) {
+		Write-Error "Podman machine is not running. Please start it first."
+		return $false
+	}
+
+	if (-not $PSCmdlet.ShouldProcess("Podman Machine VM", "Install corporate CA certificates at $vmCertPath")) {
+		return $false
+	}
+
+	Write-Host "Installing corporate CA certificates into Podman Machine VM..."
+	Write-Host "Source: $pemFile"
+	Write-Host "Destination (VM): $vmCertPath"
+
+	$pemBytes = [System.IO.File]::ReadAllBytes($pemFile)
+	$pemBase64 = [Convert]::ToBase64String($pemBytes)
+
+	Write-Host "Copying certificates to VM..."
+	& podman machine ssh "echo '$pemBase64' | base64 -d | sudo tee $vmCertPath > /dev/null"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to copy certificate file into Podman VM."
+		return $false
+	}
+
+	Write-Host "Updating CA trust store in Podman VM..."
+	& podman machine ssh "sudo update-ca-trust"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to update CA trust in Podman VM."
+		return $false
+	}
+
+	& podman machine ssh "sudo test -f $vmCertPath"
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Certificate file not found in VM after installation."
+		return $false
+	}
+
+	Write-Host ""
+	Write-Host "Corporate CA certificates installed successfully." -ForegroundColor Green
+	Write-Host "VM cert path: $vmCertPath"
+	Write-Host "The VM system CA bundle has been updated via update-ca-trust."
+	Write-Host ""
+	Write-Host "Containers started after this point will automatically mount the"
+	Write-Host "certificate and set NODE_EXTRA_CA_CERTS, SSL_CERT_FILE, etc."
+	return $true
+}
+
 #############################################
 # Main Script Execution - Using Invoke-MenuLoop
 #############################################
@@ -860,7 +942,7 @@ $menuItems = [ordered]@{
 	"2" = "Install Podman CLI"
 	"3" = "Install Podman Desktop (UI)"
 	"4" = "Initialize Podman Machine"
-	# Option 5 (Move Machine) removed
+	"5" = "Install Corporate CA Certificates"
 	"6" = "Register Podman Service"
 	"7" = "Remove Podman Components"
 	"0" = "Exit"
@@ -876,7 +958,7 @@ $menuActions = @{
 			Start-PodmanMachine
 		}
 	}
-	# Action for option 5 removed
+	"5" = { Install-CorporateCACerts }
 	"6" = { Install-PodmanService }
 	"7" = { Remove-PodmanComponent }
 	# "0" action is handled internally by Invoke-MenuLoop

@@ -239,12 +239,12 @@
           "TZ": "Europe/London",
           "N8N_COMMUNITY_PACKAGES_ENABLED": "true",
           "N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE": "true",
-          "N8N_RUNNERS_ENABLED": "true",
           "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS": "true",
           "N8N_TRUST_HOST_HEADERS": "true",
           "N8N_LOG_LEVEL": "info",
           "NODE_OPTIONS": "--max-old-space-size=12288",
-          "NODES_EXCLUDE": "[]"
+          "NODES_EXCLUDE": "[]",
+          "N8N_RUNNERS_DISABLED_RUNNERS": "python"
         },
         "restart": "always",
         "resources": {
@@ -253,6 +253,14 @@
         },
         "additionalHosts": {
           "host.local": "host-gateway"
+        },
+        "corporateCerts": {
+          "hostPemFile": "Files/trusted_root_certificates.pem",
+          "vmPath": "/etc/pki/ca-trust/source/anchors/corporate_ca.pem",
+          "containerPath": "/etc/ssl/certs/corporate_ca.pem",
+          "envVars": {
+            "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/corporate_ca.pem"
+          }
         }
       }
     },

@@ -34,7 +34,6 @@ $global:baseEnvVars = @{
 	TZ                                      = $global:defaultTimeZone
 	N8N_COMMUNITY_PACKAGES_ENABLED          = "true"
 	N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE = "true"
-	N8N_RUNNERS_ENABLED                     = "true"
 	N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS   = "true"
 	N8N_TRUST_HOST_HEADERS                  = "true"
 	N8N_LOG_LEVEL                           = "info"
