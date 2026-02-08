@@ -58,7 +58,7 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 #>
 function Get-ContainerVolumeInfo {
     [CmdletBinding()]
-    [OutputType([array])]
+    [OutputType([object[]])]
     param()
 
     Write-Host "`nScanning containers for volume information..."
@@ -67,7 +67,7 @@ function Get-ContainerVolumeInfo {
 
     if (-not $allContainers) {
         Write-Warning "No containers found."
-        return @()
+        return [object[]]@()
     }
 
     $results = @()
@@ -113,7 +113,7 @@ function Get-ContainerVolumeInfo {
         }
     }
 
-    return $results
+    return [object[]]$results
 }
 
 #==============================================================================

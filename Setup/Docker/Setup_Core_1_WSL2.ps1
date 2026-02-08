@@ -1,8 +1,9 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to enable virtualization features on Windows.
-#                Provides a menu to enable either Windows Subsystem for Linux (WSL)
-#                or Hyper-V. For WSL, it ensures WSL2 is the default and converts
-#                existing distributions if necessary.
+#                Provides a menu to enable Windows Subsystem for Linux (WSL),
+#                Hyper-V, or configure WSL2 mirrored networking for corporate
+#                environments. For WSL, it ensures WSL2 is the default and
+#                converts existing distributions if necessary.
 # Usage        : Run as Administrator.
 ################################################################################
 
@@ -51,7 +52,7 @@ function Enable-WSL2 {
 
 	# Run wsl --install and show output in real-time
 	try {
-		$installResult = wsl --install
+		$null = wsl --install
 		Write-Host "Exit Code: $LASTEXITCODE" -ForegroundColor Gray
 	}
 	catch {
@@ -112,7 +113,7 @@ function Enable-WSL2 {
 				}
 			}
 			catch {
-				# Not an Azure VM or metadata service unavailable
+				Write-Verbose "Not an Azure VM or metadata service unavailable."
 			}
 
 			if ($isAzureVM) {
@@ -134,16 +135,6 @@ function Enable-WSL2 {
 				# Check if current VM size supports nested virtualization
 				$supportedSizes = @("Dv3", "Dsv3", "Ev3", "Esv3", "Dv4", "Dsv4", "Ev4", "Esv4", "Dv5", "Dsv5", "Ev5", "Esv5", "Fsv2", "M")
 				$isSupported = $false
-				$isGpuVM = $false
-
-				# Check for GPU VM series that don't support nested virtualization
-				$gpuSeries = @("NC", "ND", "NV")
-				foreach ($gpu in $gpuSeries) {
-					if ($vmSize -like "*$gpu*") {
-						$isGpuVM = $true
-						break
-					}
-				}
 
 				foreach ($size in $supportedSizes) {
 					if ($vmSize -like "*$size*") {
@@ -259,23 +250,21 @@ $menuTitle = "Select virtualization feature to enable"
 $menuItems = [ordered]@{
 	"1" = "Windows Subsystem for Linux (WSL)"
 	"2" = "Hyper-V"
-	# "0" = "Exit" # Implicit exit choice
+	"3" = "Configure WSL2 Mirrored Networking (for corporate VPN/firewall)"
 }
 
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
 		Write-Host "Enabling/Verifying WSL..."
-		# Call existing function to check and enable WSL, then ensure WSL2 is set up.
 		Test-WSLStatus
 		Enable-WSL2
 		Write-Host "WSL setup completed successfully."
-		exit 0 # Exit script after successful action
+		exit 0
 	}
 	"2" = {
 		Write-Host "Enabling Hyper-V..."
 		try {
-			# Check if the Hyper-V feature is already enabled.
 			$hyperVFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -ErrorAction SilentlyContinue
 			if ($hyperVFeature -and $hyperVFeature.State -eq "Enabled") {
 				Write-Host "Hyper-V is already enabled."
@@ -288,23 +277,33 @@ $menuActions = @{
 				}
 				else {
 					Write-Error "Failed to enable Hyper-V."
-					exit 1 # Exit script on error
+					exit 1
 				}
 			}
 			Write-Host "Hyper-V setup completed successfully."
-			exit 0 # Exit script after successful action
+			exit 0
 		}
 		catch {
 			Write-Error "An error occurred while enabling Hyper-V: $_"
-			exit 1 # Exit script on error
+			exit 1
 		}
 	}
-	# Note: "0" action is handled internally by Invoke-MenuLoop to exit the loop.
-	# The script will then terminate naturally.
+	"3" = {
+		$currentMode = Get-WSLNetworkingMode
+		Write-Host ""
+		Write-Host "Current WSL2 networking mode: $currentMode" -ForegroundColor Cyan
+		if (Set-WSLMirroredNetworking) {
+			$restartNow = Read-Host "Restart WSL now to apply changes? (Y/N, default is N)"
+			if ($restartNow -eq "Y") {
+				Write-Host "Shutting down WSL to apply networking changes..."
+				& wsl.exe --shutdown 2>&1 | Out-Null
+				Write-Host "WSL shutdown complete. Start Podman with: podman machine start" -ForegroundColor Green
+			}
+		}
+	}
 }
 
-# Invoke the Menu Loop (will exit after one valid choice due to 'exit' in actions)
+# Invoke the Menu Loop
 Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
 
-# This line will only be reached if the user enters '0' or an invalid choice repeatedly until they enter '0'.
 Write-Host "Exited without making a selection."

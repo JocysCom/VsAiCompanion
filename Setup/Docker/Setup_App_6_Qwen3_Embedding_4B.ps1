@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to manage Qwen3-Embedding-4B using Ollama.
 #                Uses ollama/ollama Docker image with qwen3-embedding:4b model.
 #                Provides OpenAI-compatible API endpoint (/v1/embeddings).
@@ -160,6 +160,7 @@ $global:gpuDeviceIds = "all"     # Use "all" or specific IDs like "0" or "0,1"
 #>
 function Test-GpuAvailability {
 	[CmdletBinding()]
+	[OutputType([bool])]
 	param()
 
 	try {
@@ -184,7 +185,7 @@ function Test-GpuAvailability {
 		# Check container engine GPU support
 		if ($global:enginePath -match "docker") {
 			Write-Host "  Testing Docker GPU access..." -ForegroundColor Yellow
-			$testResult = & $global:enginePath run --rm --gpus all nvidia/cuda:12.0.0-base-ubuntu22.04 nvidia-smi 2>&1
+			$null = & $global:enginePath run --rm --gpus all nvidia/cuda:12.0.0-base-ubuntu22.04 nvidia-smi 2>&1
 			if ($LASTEXITCODE -eq 0) {
 				Write-Host "  ✅ Docker GPU support verified." -ForegroundColor Green
 				return $true

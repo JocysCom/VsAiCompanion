@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Description  : Script to install and configure NVIDIA Container Toolkit in WSL2.
 #                Enables GPU acceleration for Docker, Podman, Containerd, and CRI-O.
 #                Installs toolkit, configures runtime, and verifies GPU access.
@@ -35,6 +35,7 @@ Set-ScriptLocation
 #>
 function Test-NvidiaDrivers {
 	[CmdletBinding()]
+	[OutputType([bool])]
 	param()
 
 	try {
@@ -113,13 +114,14 @@ function Test-NvidiaDrivers {
 #>
 function Test-WSL2NvidiaSupport {
 	[CmdletBinding()]
+	[OutputType([bool])]
 	param()
 
 	try {
 		Write-Host "Testing NVIDIA GPU access in WSL2..." -ForegroundColor Yellow
 
 		# Test nvidia-smi in WSL
-		$wslResult = wsl nvidia-smi 2>&1
+		$null = wsl nvidia-smi 2>&1
 		if ($LASTEXITCODE -ne 0) {
 			Write-Warning "nvidia-smi not accessible in WSL2."
 			Write-Host "This is normal if Container Toolkit is not installed yet." -ForegroundColor Yellow
@@ -150,6 +152,7 @@ function Test-WSL2NvidiaSupport {
 #>
 function Get-WSLDistribution {
 	[CmdletBinding()]
+	[OutputType([string])]
 	param()
 
 	try {
@@ -184,6 +187,7 @@ function Get-WSLDistribution {
 #>
 function Install-NvidiaContainerToolkit {
 	[CmdletBinding()]
+	[OutputType([bool])]
 	param()
 
 	Write-Host "`n=== Installing NVIDIA Container Toolkit in WSL2 Ubuntu ===" -ForegroundColor Cyan
@@ -306,7 +310,7 @@ sudo apt-get update
 }
 
 #==============================================================================
-# Function: Configure-ContainerRuntime
+# Function: Set-ContainerRuntime
 #==============================================================================
 <#
 .SYNOPSIS
@@ -318,15 +322,20 @@ sudo apt-get update
 .OUTPUTS
 	[bool] Returns $true if configuration succeeds, $false otherwise.
 .EXAMPLE
-	Configure-ContainerRuntime -Runtime "docker"
+	Set-ContainerRuntime -Runtime "docker"
 #>
-function Configure-ContainerRuntime {
-	[CmdletBinding()]
+function Set-ContainerRuntime {
+	[CmdletBinding(SupportsShouldProcess=$true)]
+	[OutputType([bool])]
 	param(
 		[Parameter(Mandatory=$true)]
 		[ValidateSet("docker", "podman", "containerd", "crio")]
 		[string]$Runtime
 	)
+
+	if (-not $PSCmdlet.ShouldProcess("$Runtime runtime", "Configure NVIDIA Container Toolkit")) {
+		return $false
+	}
 
 	Write-Host "`n=== Configuring $Runtime Runtime ===" -ForegroundColor Cyan
 
@@ -391,6 +400,7 @@ function Configure-ContainerRuntime {
 #>
 function Test-ContainerGPUAccess {
 	[CmdletBinding()]
+	[OutputType([bool])]
 	param(
 		[Parameter(Mandatory=$false)]
 		[ValidateSet("docker", "podman")]
@@ -526,7 +536,7 @@ function Show-NvidiaToolkitStatus {
 }
 
 #==============================================================================
-# Function: Configure-PodmanMachineCDI
+# Function: Set-PodmanMachineCDI
 #==============================================================================
 <#
 .SYNOPSIS
@@ -534,11 +544,16 @@ function Show-NvidiaToolkitStatus {
 .DESCRIPTION
 	Installs NVIDIA Container Toolkit inside Podman's WSL2 machine and generates CDI specs.
 .EXAMPLE
-	Configure-PodmanMachineCDI
+	Set-PodmanMachineCDI
 #>
-function Configure-PodmanMachineCDI {
-	[CmdletBinding()]
+function Set-PodmanMachineCDI {
+	[CmdletBinding(SupportsShouldProcess=$true)]
+	[OutputType([bool])]
 	param()
+
+	if (-not $PSCmdlet.ShouldProcess("Podman Machine", "Configure CDI for NVIDIA GPU")) {
+		return $false
+	}
 
 	Write-Host "`n=== Configuring CDI for Windows Podman Machine ===" -ForegroundColor Cyan
 
@@ -658,9 +673,9 @@ function Install-FullStack {
 	}
 
 	# Configure Docker if available
-	$dockerAvailable = wsl command -v docker 2>&1
+	$null = wsl command -v docker 2>&1
 	if ($LASTEXITCODE -eq 0) {
-		Configure-ContainerRuntime -Runtime "docker"
+		Set-ContainerRuntime -Runtime "docker"
 		Test-ContainerGPUAccess -Runtime "docker"
 	}
 	else {
@@ -668,9 +683,9 @@ function Install-FullStack {
 	}
 
 	# Configure Podman if available
-	$podmanAvailable = wsl command -v podman 2>&1
+	$null = wsl command -v podman 2>&1
 	if ($LASTEXITCODE -eq 0) {
-		Configure-ContainerRuntime -Runtime "podman"
+		Set-ContainerRuntime -Runtime "podman"
 		Test-ContainerGPUAccess -Runtime "podman"
 	}
 	else {
@@ -698,6 +713,7 @@ function Install-FullStack {
 #>
 function Install-AutoDetect {
 	[CmdletBinding()]
+	[OutputType([bool])]
 	param()
 
 	Write-Host "`n=== Auto-Detecting Container Engine Setup ===" -ForegroundColor Cyan
@@ -707,27 +723,27 @@ function Install-AutoDetect {
 	if ($podmanWindows) {
 		Write-Host "✅ Detected: Podman Desktop (Windows)" -ForegroundColor Green
 		Write-Host "   Installing NVIDIA Container Toolkit in Podman machine..." -ForegroundColor Yellow
-		return Configure-PodmanMachineCDI
+		return Set-PodmanMachineCDI
 	}
 
 	# Check for WSL2 Docker
-	$dockerWSL = wsl command -v docker 2>&1
+	$null = wsl command -v docker 2>&1
 	if ($LASTEXITCODE -eq 0) {
 		Write-Host "✅ Detected: Docker in WSL2" -ForegroundColor Green
 		Write-Host "   Installing NVIDIA Container Toolkit in WSL2..." -ForegroundColor Yellow
 		if (Install-NvidiaContainerToolkit) {
-			return Configure-ContainerRuntime -Runtime "docker"
+			return Set-ContainerRuntime -Runtime "docker"
 		}
 		return $false
 	}
 
 	# Check for WSL2 Podman
-	$podmanWSL = wsl command -v podman 2>&1
+	$null = wsl command -v podman 2>&1
 	if ($LASTEXITCODE -eq 0) {
 		Write-Host "✅ Detected: Podman in WSL2" -ForegroundColor Green
 		Write-Host "   Installing NVIDIA Container Toolkit in WSL2..." -ForegroundColor Yellow
 		if (Install-NvidiaContainerToolkit) {
-			return Configure-ContainerRuntime -Runtime "podman"
+			return Set-ContainerRuntime -Runtime "podman"
 		}
 		return $false
 	}
@@ -755,7 +771,7 @@ $menuActions = @{
 			podman run --rm --device nvidia.com/gpu=all --security-opt=label=disable nvidia/cuda:12.0.0-base-ubuntu22.04 nvidia-smi
 		}
 		else {
-			$dockerWSL = wsl command -v docker 2>&1
+			$null = wsl command -v docker 2>&1
 			if ($LASTEXITCODE -eq 0) {
 				Test-ContainerGPUAccess -Runtime "docker"
 			}

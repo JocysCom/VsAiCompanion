@@ -278,10 +278,10 @@ function Update-EnvironmentVariable {
 }
 
 #==============================================================================
-# Function: ConvertFrom-SecureString
+# Function: Unprotect-SecureString
 #==============================================================================
 
-function ConvertFrom-SecureString {
+function Unprotect-SecureString {
     param([SecureString]$SecureString)
     $plainText = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(
         [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString)
@@ -333,7 +333,7 @@ function Get-EnvironmentVariableWithDefault {
         $masked = "$pre****$suf"
         $prompt = "`nEnter $PromptText [default: $masked]"
         $secureInput = Read-Host $prompt -AsSecureString
-        $inputValue = ConvertFrom-SecureString -SecureString $secureInput
+        $inputValue = Unprotect-SecureString -SecureString $secureInput
 
         if ([string]::IsNullOrWhiteSpace($inputValue)) {
             return $existingValue
@@ -347,7 +347,7 @@ function Get-EnvironmentVariableWithDefault {
         Write-Host "`n> Environment variable '$EnvVarName' is empty or not set." -ForegroundColor Yellow
         $prompt = "`nEnter $PromptText [default: $DefaultValue]"
         $secureInput = Read-Host $prompt -AsSecureString
-        $inputValue = ConvertFrom-SecureString -SecureString $secureInput
+        $inputValue = Unprotect-SecureString -SecureString $secureInput
 
         if ([string]::IsNullOrWhiteSpace($inputValue)) {
             return $DefaultValue
@@ -574,7 +574,7 @@ function Save-ScriptSettings {
 }
 
 #==============================================================================
-# Function: Load-ScriptSettings
+# Function: Import-ScriptSettings
 #==============================================================================
 <#
 .SYNOPSIS
@@ -587,14 +587,14 @@ function Save-ScriptSettings {
 .OUTPUTS
 	[object] Returns the loaded settings object or $null if not found or invalid.
 .EXAMPLE
-	$settings = Load-ScriptSettings
+	$settings = Import-ScriptSettings
 	if ($settings) {
 		$acceptSelfSigned = $settings.AcceptSelfSigned
 	}
 .NOTES
 	Reads from Backup/<script_name>.json file. Returns $null if file doesn't exist.
 #>
-function Load-ScriptSettings {
+function Import-ScriptSettings {
 	[CmdletBinding()]
 	[OutputType([object])]
 	param(

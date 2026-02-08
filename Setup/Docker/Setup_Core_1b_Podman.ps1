@@ -346,6 +346,8 @@ function Install-PodmanCLI {
 	Initializes a new default Podman machine using WSL.
 .DESCRIPTION
 	Ensures WSL is correctly set up by calling Test-WSLStatus.
+	Checks the WSL2 networking mode and offers to configure mirrored networking
+	if not already set (recommended for corporate environments).
 	Verifies that at least one Linux distribution is installed via WSL.
 	Runs 'podman machine init' to create the default machine configuration and WSL distribution.
 	Starts the newly created machine using 'podman machine start'.
@@ -355,12 +357,31 @@ function Install-PodmanCLI {
 	Initialize-PodmanMachine
 .NOTES
 	Requires administrative privileges if WSL features need enabling.
-	Uses Test-WSLStatus helper function.
+	Uses Test-WSLStatus and Get-WSLNetworkingMode helper functions.
 	Uses Write-Host for status messages.
 #>
 function Initialize-PodmanMachine {
 	# Ensure that WSL and required Windows features are enabled
 	Test-WSLStatus
+
+	# Check WSL2 networking mode and offer mirrored networking
+	$networkingMode = Get-WSLNetworkingMode
+	Write-Host "Current WSL2 networking mode: $networkingMode" -ForegroundColor Cyan
+	if ($networkingMode -ne "mirrored") {
+		Write-Host ""
+		Write-Host "WSL2 is using '$networkingMode' networking mode." -ForegroundColor Yellow
+		Write-Host "In corporate environments with VPN or firewall restrictions," -ForegroundColor Yellow
+		Write-Host "mirrored networking is recommended so that Podman containers" -ForegroundColor Yellow
+		Write-Host "share the same external IP address as the Windows host." -ForegroundColor Yellow
+		Write-Host ""
+		$configureMirrored = Read-Host "Configure WSL2 mirrored networking now? (Y/N, default is Y)"
+		if ($configureMirrored -ne "N") {
+			Set-WSLMirroredNetworking -Force
+			Write-Host "Restarting WSL to apply networking changes..."
+			& wsl.exe --shutdown 2>&1 | Out-Null
+			Start-Sleep -Seconds 2
+		}
+	}
 
 	# Verify a Linux distribution is installed via WSL
 	Write-Host "Verifying that a Linux distribution is installed via wsl.exe..."
@@ -370,11 +391,10 @@ function Initialize-PodmanMachine {
 		return $false
 	}
 
-	# Initialize the machine with default settings first
+	# Initialize the machine with default settings
 	Write-Host "Initializing Podman machine with default settings..."
-	$initArgs = @("machine", "init") # Args for splatting
+	$initArgs = @("machine", "init")
 
-	# Execute the command to create the machine
 	Write-Host "Executing: podman $($initArgs -join ' ')"
 	$initOutput = & podman @initArgs 2>&1
 	Write-Host $initOutput
@@ -394,7 +414,6 @@ function Initialize-PodmanMachine {
 
 	Write-Host "Podman machine initialized and started successfully with default settings."
 
-	# Show the current location of the machine's disk
 	$userProfile = $env:USERPROFILE
 	$podmanFolder = Join-Path $userProfile ".local\share\containers\podman\machine\wsl\wsldist\podman-machine-default"
 	Write-Host "Current machine location: $podmanFolder"

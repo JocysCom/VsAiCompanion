@@ -1,7 +1,9 @@
 ################################################################################
-# File         : Setup_0_WSL.ps1
+# File         : Setup_Helper_WSLFunctions.ps1
 # Description  : Contains WSL helper functions for setup scripts:
-#                - Check-WSLStatus: Verify WSL installation and required features.
+#                - Test-WSLStatus: Verify WSL installation and required features.
+#                - Get-WSLNetworkingMode: Read the current networkingMode from .wslconfig.
+#                - Set-WSLMirroredNetworking: Configure WSL2 mirrored networking in .wslconfig.
 ################################################################################
 
 #==============================================================================
@@ -56,7 +58,7 @@ function Test-WSLStatus {
 
 			# Run wsl --install and show output in real-time
 			try {
-				$installOutput = wsl --install
+				wsl --install | Out-Null
 				Write-Host "Exit Code: $LASTEXITCODE" -ForegroundColor Gray
 			}
 			catch {
@@ -152,4 +154,221 @@ function Test-WSLStatus {
 	else {
 		Write-Warning "WSL may not be functioning correctly. Output: $testString"
 	}
+}
+
+#==============================================================================
+# Function: Get-WSLNetworkingMode
+#==============================================================================
+<#
+.SYNOPSIS
+	Reads the current WSL2 networkingMode from the user's .wslconfig file.
+.DESCRIPTION
+	Parses %UserProfile%\.wslconfig for the [wsl2] section and returns the value
+	of the networkingMode setting. Returns 'nat' (the WSL2 default) when the file
+	or setting does not exist.
+.OUTPUTS
+	[string] The current networking mode ('nat', 'mirrored', or other configured value).
+.EXAMPLE
+	$mode = Get-WSLNetworkingMode
+	Write-Host "Current WSL2 networking mode: $mode"
+#>
+function Get-WSLNetworkingMode {
+	[CmdletBinding()]
+	[OutputType([string])]
+	param()
+
+	$wslConfigPath = Join-Path $env:USERPROFILE ".wslconfig"
+	if (-not (Test-Path $wslConfigPath)) {
+		return "nat"
+	}
+
+	$lines = Get-Content -Path $wslConfigPath -ErrorAction SilentlyContinue
+	if (-not $lines) {
+		return "nat"
+	}
+
+	$inWsl2Section = $false
+	foreach ($line in $lines) {
+		$trimmed = $line.Trim()
+		if ($trimmed -match '^\[(.+)\]$') {
+			$inWsl2Section = ($Matches[1] -eq 'wsl2')
+			continue
+		}
+		if ($inWsl2Section -and $trimmed -match '^networkingMode\s*=\s*(.+)$') {
+			return $Matches[1].Trim()
+		}
+	}
+
+	return "nat"
+}
+
+#==============================================================================
+# Function: Set-WSLMirroredNetworking
+#==============================================================================
+<#
+.SYNOPSIS
+	Configures WSL2 mirrored networking mode in the user's .wslconfig file.
+.DESCRIPTION
+	Creates or updates %UserProfile%\.wslconfig to set networkingMode=mirrored,
+	dnsTunneling=true, and autoProxy=true under the [wsl2] section. Preserves
+	all existing settings in the file (e.g., kernelCommandLine for cgroups).
+
+	Mirrored networking mode (available since WSL 2.0.0 on Windows 11 22H2+)
+	makes WSL2 share the host's network interfaces directly. This ensures:
+	- WSL2 traffic uses the same external IP address as the Windows host
+	- VPN connections on the host are automatically available inside WSL2
+	- DNS resolution uses the same DNS servers as the host
+	- Corporate proxy settings are inherited automatically
+
+	This is essential for corporate environments where firewalls whitelist
+	traffic by source IP address.
+.PARAMETER Force
+	Skip the confirmation prompt and apply changes immediately.
+.OUTPUTS
+	[bool] Returns $true if changes were applied (or already correct), $false if
+	the user declined or an error occurred.
+.EXAMPLE
+	Set-WSLMirroredNetworking
+.EXAMPLE
+	Set-WSLMirroredNetworking -Force
+.NOTES
+	Requires a WSL restart for changes to take effect. Use
+	Setup_Util_RestartPodmanAndWSL.ps1 or 'wsl --shutdown' after applying.
+#>
+function Set-WSLMirroredNetworking {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $false)]
+		[switch]$Force
+	)
+
+	$wslConfigPath = Join-Path $env:USERPROFILE ".wslconfig"
+	$currentMode = Get-WSLNetworkingMode
+
+	Write-Host ""
+	Write-Host "==================== WSL2 Network Configuration ===================="
+	Write-Host "Config file: $wslConfigPath"
+	Write-Host "Current networking mode: $currentMode"
+
+	if ($currentMode -eq "mirrored") {
+		Write-Host "WSL2 is already configured for mirrored networking." -ForegroundColor Green
+		Write-Host "=================================================================="
+		return $true
+	}
+
+	Write-Host ""
+	Write-Host "MIRRORED NETWORKING MODE" -ForegroundColor Cyan
+	Write-Host "========================" -ForegroundColor Cyan
+	Write-Host "Mirrored mode makes WSL2 share the host's network interfaces."
+	Write-Host "Benefits:" -ForegroundColor White
+	Write-Host "  - WSL2/Podman traffic uses the SAME external IP as Windows" -ForegroundColor White
+	Write-Host "  - VPN connections are automatically available inside WSL2" -ForegroundColor White
+	Write-Host "  - DNS resolves the same corporate hostnames" -ForegroundColor White
+	Write-Host "  - Corporate proxy settings are inherited" -ForegroundColor White
+	Write-Host ""
+	Write-Host "This is required for corporate environments where firewalls" -ForegroundColor Yellow
+	Write-Host "whitelist traffic by source IP address." -ForegroundColor Yellow
+	Write-Host ""
+
+	if (-not $Force) {
+		Write-Host "WARNING: This will modify $wslConfigPath" -ForegroundColor Yellow
+		Write-Host "A WSL restart is required after this change." -ForegroundColor Yellow
+		$confirm = Read-Host "Configure WSL2 mirrored networking? (Y/N, default is Y)"
+		if ($confirm -eq "N") {
+			Write-Host "Skipped. No changes made."
+			Write-Host "=================================================================="
+			return $false
+		}
+	}
+
+	if (-not $PSCmdlet.ShouldProcess($wslConfigPath, "Set WSL2 networkingMode=mirrored")) {
+		return $false
+	}
+
+	$desiredSettings = @{
+		"networkingMode"   = "mirrored"
+		"dnsTunneling"     = "true"
+		"autoProxy"        = "true"
+	}
+
+	if (Test-Path $wslConfigPath) {
+		$lines = Get-Content -Path $wslConfigPath
+	}
+	else {
+		$lines = @()
+	}
+
+	$inWsl2Section = $false
+	$wsl2SectionFound = $false
+	$wsl2SectionEnd = -1
+	$existingKeys = @{}
+
+	for ($i = 0; $i -lt $lines.Count; $i++) {
+		$trimmed = $lines[$i].Trim()
+		if ($trimmed -match '^\[(.+)\]$') {
+			if ($inWsl2Section) {
+				$wsl2SectionEnd = $i - 1
+			}
+			$inWsl2Section = ($Matches[1] -eq 'wsl2')
+				if ($inWsl2Section) {
+					$wsl2SectionFound = $true
+				}
+			continue
+		}
+		if ($inWsl2Section -and $trimmed -match '^([^=]+?)\s*=\s*(.*)$') {
+			$existingKeys[$Matches[1].Trim()] = $i
+		}
+	}
+	if ($inWsl2Section -and $wsl2SectionEnd -eq -1) {
+		$wsl2SectionEnd = $lines.Count - 1
+	}
+
+	$outputLines = [System.Collections.ArrayList]::new()
+	foreach ($line in $lines) {
+		$null = $outputLines.Add($line)
+	}
+
+	if (-not $wsl2SectionFound) {
+		if ($outputLines.Count -gt 0) {
+			$null = $outputLines.Add("")
+		}
+		$null = $outputLines.Add("[wsl2]")
+		foreach ($key in $desiredSettings.Keys) {
+			$null = $outputLines.Add("$key=$($desiredSettings[$key])")
+		}
+	}
+	else {
+		foreach ($key in $desiredSettings.Keys) {
+			$value = $desiredSettings[$key]
+			if ($existingKeys.ContainsKey($key)) {
+				$lineIndex = $existingKeys[$key]
+				$outputLines[$lineIndex] = "$key=$value"
+			}
+			else {
+				$insertAt = $wsl2SectionEnd + 1
+				$outputLines.Insert($insertAt, "$key=$value")
+				$wsl2SectionEnd++
+				foreach ($k in @($existingKeys.Keys)) {
+					if ($existingKeys[$k] -ge $insertAt) {
+						$existingKeys[$k]++
+					}
+				}
+			}
+		}
+	}
+
+	Set-Content -Path $wslConfigPath -Value $outputLines -Encoding UTF8
+	Write-Host ""
+	Write-Host "Updated $wslConfigPath with mirrored networking settings:" -ForegroundColor Green
+	foreach ($key in $desiredSettings.Keys) {
+		Write-Host "  $key = $($desiredSettings[$key])" -ForegroundColor White
+	}
+	Write-Host ""
+	Write-Host "IMPORTANT: A WSL restart is required for changes to take effect." -ForegroundColor Yellow
+	Write-Host "Run: wsl --shutdown" -ForegroundColor Yellow
+	Write-Host "Then restart Podman: podman machine start" -ForegroundColor Yellow
+	Write-Host "Or use: .\Setup_Util_RestartPodmanAndWSL.ps1 -FullShutdown" -ForegroundColor Yellow
+	Write-Host "=================================================================="
+	return $true
 }

@@ -977,12 +977,12 @@ function Get-AvailableImages {
 		}
 		else {
 			Write-Host "No images found." -ForegroundColor Yellow
-			return @()
+			return [string[]]@()
 		}
 	}
 	catch {
 		Write-Error "Failed to retrieve images: $_"
-		return @()
+		return [string[]]@()
 	}
 }
 
@@ -1021,12 +1021,12 @@ function Get-AvailableVolumes {
 		}
 		else {
 			Write-Host "No volumes found." -ForegroundColor Yellow
-			return @()
+			return [string[]]@()
 		}
 	}
 	catch {
 		Write-Error "Failed to retrieve volumes: $_"
-		return @()
+		return [string[]]@()
 	}
 }
 
@@ -1177,7 +1177,7 @@ function Get-AvailableImageBackups {
 	$imageBackupPath = Join-Path $global:backupFolder $global:dockerImagesFolder
 	if (-not (Test-Path $imageBackupPath)) {
 		Write-Host "Image backup directory does not exist: $imageBackupPath" -ForegroundColor Yellow
-		return @()
+		return [string[]]@()
 	}
 
 	$backupFiles = @(
@@ -1190,7 +1190,7 @@ function Get-AvailableImageBackups {
 	}
 	else {
 		Write-Host "No image backup files found." -ForegroundColor Yellow
-		return @()
+		return [string[]]@()
 	}
 }
 
@@ -1219,7 +1219,7 @@ function Get-AvailableVolumeBackups {
 	$volumeBackupPath = Join-Path $global:backupFolder $global:dockerVolumesFolder
 	if (-not (Test-Path $volumeBackupPath)) {
 		Write-Host "Volume backup directory does not exist: $volumeBackupPath" -ForegroundColor Yellow
-		return @()
+		return [string[]]@()
 	}
 
 	$backupFiles = Get-ChildItem -Path $volumeBackupPath -Filter "*-volume-*.tar" | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name
@@ -1229,7 +1229,7 @@ function Get-AvailableVolumeBackups {
 	}
 	else {
 		Write-Host "No volume backup files found." -ForegroundColor Yellow
-		return @()
+		return [string[]]@()
 	}
 }
 

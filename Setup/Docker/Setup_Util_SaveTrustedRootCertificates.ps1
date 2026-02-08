@@ -25,7 +25,7 @@ foreach ($HostName in $HostNames) {
 	$SslStream = New-Object System.Net.Security.SslStream(
 		$TcpClient.GetStream(),
 		$true,
-		[System.Net.Security.RemoteCertificateValidationCallback] { param($sender, $certificate, $chain, $sslPolicyErrors) return $true },
+		[System.Net.Security.RemoteCertificateValidationCallback] { param($callbackSender, $certificate, $chain, $sslPolicyErrors) return $true },
 		$null
 	)
 	Write-Host "Performing SSL handshake for $HostName"

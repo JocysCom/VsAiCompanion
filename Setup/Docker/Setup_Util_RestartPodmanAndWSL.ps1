@@ -1,9 +1,10 @@
 ################################################################################
-# Description  : Simple utility to restart Podman machine and WSL so changes to
+# Description  : Utility to restart Podman machine and WSL so changes to
 #                %UserProfile%\.wslconfig take effect, and to reinitialize the
 #                WSL-backed Podman VM (podman-machine-default by default).
+#                Optionally verifies DNS and external IP consistency after restart.
 # Usage        : .\Setup_Util_RestartPodmanAndWSL.ps1
-#                .\Setup_Util_RestartPodmanAndWSL.ps1 -DistroName "podman-machine-default" -FullShutdown -VerboseDNSCheck
+#                .\Setup_Util_RestartPodmanAndWSL.ps1 -FullShutdown -VerboseDNSCheck -VerifyNetwork
 ################################################################################
 
 [CmdletBinding()]
@@ -18,8 +19,16 @@ param(
     [int]$DelaySeconds = 2,
 
     [Parameter(Mandatory=$false, HelpMessage="Show resolv.conf and DNS checks inside Podman VM after restart.")]
-    [switch]$VerboseDNSCheck
+    [switch]$VerboseDNSCheck,
+
+    [Parameter(Mandatory=$false, HelpMessage="Verify external IP consistency across Windows, Podman VM, and containers after restart.")]
+    [switch]$VerifyNetwork
 )
+
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
+. "$PSScriptRoot\Setup_Helper_NetworkTests.ps1"
+. "$PSScriptRoot\Setup_Helper_WSLFunctions.ps1"
 
 #==============================================================================
 # Function: Restart-PodmanAndWSL
@@ -29,10 +38,12 @@ param(
     Restarts the Podman machine and WSL so global .wslconfig changes are applied.
 .DESCRIPTION
     Performs these steps:
-      1) Stop the Podman machine if running
-      2) Restart WSL (either terminate a specific distro or full shutdown)
-      3) Start the Podman machine again
-      4) Optionally verify DNS inside the Podman VM (resolv.conf + basic checks)
+      1) Show current .wslconfig networking settings
+      2) Stop the Podman machine if running
+      3) Restart WSL (either terminate a specific distro or full shutdown)
+      4) Start the Podman machine again
+      5) Optionally verify DNS inside the Podman VM (resolv.conf + basic checks)
+      6) Optionally verify external IP consistency across all layers
 
     This ensures that changes to %UserProfile%\.wslconfig (e.g., dnsTunneling=true,
     networkingMode=mirrored, autoProxy=true) take effect for the WSL-backed
@@ -47,15 +58,18 @@ param(
 .PARAMETER VerboseDNSCheck
     When specified, prints /etc/resolv.conf, getent hosts, and curl status
     inside the Podman VM after restart.
+.PARAMETER VerifyNetwork
+    When specified, runs Test-NetworkIPConsistency after restart to verify
+    that the Podman VM uses the same external IP as the Windows host.
 .EXAMPLE
     PS C:\> .\Setup_Util_RestartPodmanAndWSL.ps1
 .EXAMPLE
-    PS C:\> .\Setup_Util_RestartPodmanAndWSL.ps1 -FullShutdown -VerboseDNSCheck
+    PS C:\> .\Setup_Util_RestartPodmanAndWSL.ps1 -FullShutdown -VerboseDNSCheck -VerifyNetwork
 .NOTES
     Requires Podman CLI in PATH.
 #>
 function Restart-PodmanAndWSL {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [Parameter(Mandatory=$false)]
         [string]$DistroName = "podman-machine-default",
@@ -67,10 +81,30 @@ function Restart-PodmanAndWSL {
         [int]$DelaySeconds = 2,
 
         [Parameter(Mandatory=$false)]
-        [switch]$VerboseDNSCheck
+        [switch]$VerboseDNSCheck,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$VerifyNetwork
     )
 
     Write-Host "==================== Restart Podman + WSL ===================="
+
+    # Show current .wslconfig networking settings
+    $networkingMode = Get-WSLNetworkingMode
+    Write-Host "Current WSL2 networking mode: $networkingMode" -ForegroundColor Cyan
+    $wslConfigPath = Join-Path $env:USERPROFILE ".wslconfig"
+    if (Test-Path $wslConfigPath) {
+        Write-Host "Current .wslconfig contents:"
+        Get-Content $wslConfigPath | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
+    }
+    else {
+        Write-Host ".wslconfig not found at $wslConfigPath" -ForegroundColor Yellow
+    }
+    Write-Host ""
+
+    if (-not $PSCmdlet.ShouldProcess($DistroName, "Restart Podman machine and WSL distro")) {
+        return
+    }
 
     # Step 1: Stop Podman machine
     try {
@@ -137,8 +171,14 @@ function Restart-PodmanAndWSL {
         }
     }
 
+    # Step 5: Optional external IP consistency verification
+    if ($VerifyNetwork) {
+        Write-Host "`n==================== Network IP Verification ===================="
+        Test-NetworkIPConsistency
+    }
+
     Write-Host "=============================================================="
 }
 
 # Invoke with provided parameters
-Restart-PodmanAndWSL -DistroName $DistroName -FullShutdown:$FullShutdown -DelaySeconds $DelaySeconds -VerboseDNSCheck:$VerboseDNSCheck
+Restart-PodmanAndWSL -DistroName $DistroName -FullShutdown:$FullShutdown -DelaySeconds $DelaySeconds -VerboseDNSCheck:$VerboseDNSCheck -VerifyNetwork:$VerifyNetwork

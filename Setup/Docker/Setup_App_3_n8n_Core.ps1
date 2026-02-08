@@ -127,14 +127,14 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 .NOTES
 	Uses 'engine inspect'. Modifies the extracted environment variables list.
 	Requires user interaction via Read-Host for domain, TLS, and DNS configuration.
-	Loads and saves settings using Load-ScriptSettings and Save-ScriptSettings functions.
+	Loads and saves settings using Import-ScriptSettings and Save-ScriptSettings functions.
 #>
 function Get-n8nContainerConfig {
 	$envVars = @()
 	$imageName = $config.imageName # Default image name from manifest
 
 	# Load existing settings
-	$existingSettings = Load-ScriptSettings
+	$existingSettings = Import-ScriptSettings
 
 	# Initialize default values
 	$defaultAcceptSelfSigned = $false
@@ -705,6 +705,7 @@ $menuItems = [ordered]@{
 	"7" = "Export Volume (Data)"
 	"8" = "Import Volume (Data)"
 	"9" = "Check for Updates"
+	"N" = "Test Network IP Consistency"
 	"R" = "Restart Container"
 	"P" = "Reset Admin Password"
 	"0" = "Exit menu"
@@ -720,6 +721,10 @@ $menuActions = @{
 			-DisplayName $global:containerName `
 			-TcpPort $hostPort `
 			-HttpPort $hostPort
+		Test-NetworkIPConsistency -ContainerName $global:containerName -EnginePath $global:enginePath
+	}
+	"N" = {
+		Test-NetworkIPConsistency -ContainerName $global:containerName -EnginePath $global:enginePath
 	}
 	"2" = { Install-n8nContainer }
 	"3" = {

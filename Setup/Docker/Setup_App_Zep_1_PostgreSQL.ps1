@@ -261,7 +261,7 @@ function Test-PostgresConnectionAndExtension {
 }
 
 #==============================================================================
-# Function: Ensure-NetworkExists
+# Function: Assert-NetworkExists
 #==============================================================================
 <#
 .SYNOPSIS
@@ -276,11 +276,11 @@ function Test-PostgresConnectionAndExtension {
 .OUTPUTS
     [bool] Returns $true if network exists or is created successfully, $false otherwise.
 .EXAMPLE
-    Ensure-NetworkExists -NetworkName "zep_network" -EnginePath $global:enginePath
+    Assert-NetworkExists -NetworkName "zep_network" -EnginePath $global:enginePath
 .NOTES
     Uses docker/podman network commands.
 #>
-function Ensure-NetworkExists {
+function Assert-NetworkExists {
     [CmdletBinding(SupportsShouldProcess=$true)]
     [OutputType([bool])]
     param(
@@ -338,7 +338,7 @@ function Ensure-NetworkExists {
 .EXAMPLE
 	Start-PostgresContainer -Image "postgres:17" -EnvVars @("POSTGRES_DB=zep")
 .NOTES
-	Relies on Test-TCPPort, Ensure-NetworkExists, and Test-PostgresConnectionAndExtension functions.
+	Relies on Test-TCPPort, Assert-NetworkExists, and Test-PostgresConnectionAndExtension functions.
 #>
 function Start-PostgresContainer {
 	[CmdletBinding(SupportsShouldProcess = $true)]
@@ -352,7 +352,7 @@ function Start-PostgresContainer {
 	)
 
 	# Ensure network exists
-	if (-not (Ensure-NetworkExists -NetworkName $global:networkName -EnginePath $global:enginePath)) {
+	if (-not (Assert-NetworkExists -NetworkName $global:networkName -EnginePath $global:enginePath)) {
 		Write-Error "Failed to create/verify network. Cannot start container."
 		return $false
 	}

@@ -82,6 +82,104 @@ Windows 11                        ← real, bare-metal host
                 └── GPU access via: --device nvidia.com/gpu=all
 ```
 
+### Network Architecture
+
+WSL2 supports two networking modes that affect how containers communicate with external services. The scripts configure **mirrored networking** by default, which is required for corporate environments.
+
+#### Mirrored Mode (Recommended — configured by `Setup_Core_1_WSL2.ps1`)
+
+In mirrored mode, WSL2 shares the host's network interfaces directly. All outbound traffic from containers uses the **same external IP address** as the Windows host, and VPN/proxy settings are inherited automatically.
+
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│ Windows Host (e.g., IP: 10.1.2.50 via VPN)                          │
+│                                                                     │
+│  %UserProfile%\.wslconfig:                                          │
+│    [wsl2]                                                           │
+│    networkingMode=mirrored    ← WSL2 shares host network interfaces │
+│    dnsTunneling=true          ← DNS queries go through Windows      │
+│    autoProxy=true             ← proxy settings inherited            │
+│                                                                     │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │ WSL2 podman-machine-default (Fedora CoreOS)                    │ │
+│  │ IP: same as host (10.1.2.50) ← mirrored!                       │ │
+│  │                                                                │ │
+│  │  ┌──────────────────────┐  ┌─────────────────────────────┐     │ │
+│  │  │ n8n container        │  │ other containers            │     │ │
+│  │  │ Podman bridge 10.88… │  │ Podman bridge 10.88…        │     │ │
+│  │  └──────────┬───────────┘  └───────────────┬─────────────┘     │ │
+│  │             │                              │                   │ │
+│  │             └──────────┬───────────────────┘                   │ │
+│  │                        │                                       │ │
+│  └────────────────────────┼───────────────────────────────────────┘ │
+│                           │                                         │
+│                    Same IP: 10.1.2.50                               │
+│                           │                                         │
+└───────────────────────────┼─────────────────────────────────────────┘
+                            │
+                   Corporate Firewall ← recognises host IP → ALLOWED
+                            │
+                   Azure OpenAI / Internal Endpoints
+```
+
+#### NAT Mode (Default WSL2 — problematic for corporate networks)
+
+Without mirrored networking, WSL2 creates a separate virtual network with its own IP. Outbound traffic may use a different external IP, causing corporate firewalls to block connections.
+
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│ Windows Host (IP: 10.1.2.50 via VPN)                               │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ vEthernet (WSL) — virtual switch: 172.28.0.1                │   │
+│  │                                                              │   │
+│  │  ┌────────────────────────────────────────────────────────┐  │   │
+│  │  │ WSL2 podman-machine-default: 172.28.x.y ← different!  │  │   │
+│  │  │                                                        │  │   │
+│  │  │  ┌─────────────┐  ┌─────────────┐                     │  │   │
+│  │  │  │ n8n 10.88…  │  │ other 10.88…│                     │  │   │
+│  │  │  └──────┬──────┘  └──────┬──────┘                     │  │   │
+│  │  │         └────────┬───────┘                             │  │   │
+│  │  └──────────────────┼─────────────────────────────────────┘  │   │
+│  │                     │ NAT translation                        │   │
+│  └─────────────────────┼────────────────────────────────────────┘   │
+│                        │                                            │
+│                 Different IP: 10.1.2.51 or other                   │
+│                        │                                            │
+└────────────────────────┼────────────────────────────────────────────┘
+                         │
+                Corporate Firewall ← unknown IP → BLOCKED
+                         │
+                Azure OpenAI / Internal Endpoints
+```
+
+#### Verifying Network Configuration
+
+Use the external IP consistency test to verify all layers share the same IP:
+
+```powershell
+# From any setup script's helper context:
+Test-NetworkIPConsistency -ContainerName "n8n"
+
+# Example output (mirrored mode — all IPs match):
+#   Windows host   : 203.0.113.42
+#   Podman VM      : 203.0.113.42
+#   Container 'n8n': 203.0.113.42
+#   RESULT: All tested layers share the same external IP address.
+```
+
+To configure mirrored networking:
+
+```powershell
+# Option 1: Run the WSL2 setup script and choose option 3
+.\Setup_Core_1_WSL2.ps1
+
+# Option 2: The Podman machine init (Setup_Core_1b_Podman.ps1) offers to configure it automatically
+
+# After configuration, restart WSL and Podman:
+.\Setup_Util_RestartPodmanAndWSL.ps1 -FullShutdown -VerifyNetwork
+```
+
 ## Available Services
 
 All services are containerized and can be managed through the provided PowerShell scripts. Each service runs on a specific TCP port and uses a Docker image for deployment.

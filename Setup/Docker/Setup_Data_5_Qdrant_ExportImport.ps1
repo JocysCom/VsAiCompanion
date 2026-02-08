@@ -68,7 +68,7 @@ function Test-QdrantConnection {
 
 	try {
 		Write-Host "Testing connection to Qdrant API at $global:qdrantApiUrl..."
-		$response = Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections" -Method Get -TimeoutSec 10
+		$null = Invoke-RestMethod -Uri "$global:qdrantApiUrl/collections" -Method Get -TimeoutSec 10
 		Write-Host "Successfully connected to Qdrant API." -ForegroundColor Green
 		return $true
 	}
@@ -111,12 +111,12 @@ function Get-QdrantCollections {
 		}
 		else {
 			Write-Host "No collections found in Qdrant database." -ForegroundColor Yellow
-			return @()
+			return [PSCustomObject[]]@()
 		}
 	}
 	catch {
 		Write-Error "Failed to retrieve collections: $_"
-		return @()
+		return [PSCustomObject[]]@()
 	}
 }
 
