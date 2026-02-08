@@ -146,18 +146,37 @@ function Test-HTTPPort {
 		$Timeout = 1
 	}
 
-	Write-Host -NoNewline "$serviceName HTTP test at $Uri..."
+	# Resolve hostname to IPv4 to avoid IPv6 timeouts when Podman only binds to 0.0.0.0.
+	$uriObj = [Uri]$Uri
+	$hostName = $uriObj.Host
+	try {
+		$ipAddresses = [System.Net.Dns]::GetHostAddresses($hostName)
+		$ipv4 = $ipAddresses | Where-Object { $_.AddressFamily -eq 'InterNetwork' } | Select-Object -First 1
+		if ($ipv4) {
+			$builder = [UriBuilder]$uriObj
+			$builder.Host = $ipv4.ToString()
+			$resolvedUri = $builder.Uri.ToString()
+		}
+		else {
+			$resolvedUri = $Uri
+		}
+	}
+	catch {
+		$resolvedUri = $Uri
+	}
+
+	Write-Host -NoNewline "$serviceName HTTP test at $Uri (resolved: $resolvedUri)..."
 	$deadline = [DateTime]::UtcNow.AddSeconds($Timeout)
 	$didPrintDot = $false
 
 	while ([DateTime]::UtcNow -lt $deadline) {
 		try {
-			# Some endpoints (or older PowerShell / TLS setups) behave better with HttpWebRequest.
-			$request = [System.Net.HttpWebRequest]::Create($Uri)
+			$request = [System.Net.HttpWebRequest]::Create($resolvedUri)
 			$request.Method = "GET"
 			$request.Timeout = 1000
 			$request.ReadWriteTimeout = 1000
 			$request.AllowAutoRedirect = $true
+			$request.Proxy = [System.Net.WebProxy]::new()
 
 			$response = $null
 			try {

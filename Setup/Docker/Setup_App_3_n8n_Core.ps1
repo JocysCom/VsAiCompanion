@@ -275,22 +275,12 @@ function Start-n8nContainer {
 		[bool]$UseDNS = $false
 	)
 
-	# Determine host IP for container networking (optional)
-	$HostIpForContainer = $null
-	$addHost = $false
-	try {
-		$hostIpRaw = & $global:enginePath machine ssh "grep nameserver /etc/resolv.conf | cut -d' ' -f2"
-		if (-not [string]::IsNullOrWhiteSpace($hostIpRaw)) {
-			$HostIpForContainer = $hostIpRaw.Trim()
-			Write-Host "Host IP for container: $HostIpForContainer"
-			$addHost = $true
-		} else {
-			Write-Warning "Could not determine host IP for container. Skipping custom --add-host mapping."
-		}
-	}
-	catch {
-		Write-Warning "Failed to query host IP using '$global:enginePath machine ssh'. Skipping custom --add-host mapping."
-	}
+	# Use the container engine's built-in 'host-gateway' resolution for --add-host.
+	# This avoids using WSL2's DNS proxy IP (e.g., 10.255.255.254 from /etc/resolv.conf)
+	# which is not a valid host IP for container-to-host communication.
+	$HostIpForContainer = "host-gateway"
+	$addHost = $true
+	Write-Host "Host mapping for container: host.local -> host-gateway (auto-resolved by $global:containerEngine)"
 
 	# Build the run command
 	$runOptions = @(
