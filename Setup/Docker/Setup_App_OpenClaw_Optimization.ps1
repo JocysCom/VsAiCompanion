@@ -352,7 +352,7 @@ function Invoke-Step1ModelRouting {
     [CmdletBinding()]
     param()
 
-    Show-StepHeader -StepNumber 1 -TotalSteps 4 -Title "Default Model Selection"
+    Show-StepHeader -StepNumber 1 -TotalSteps 5 -Title "Default Model Selection"
 
     Write-Host "COST SAVINGS: 90% reduction on routine tasks" -ForegroundColor Green
     Write-Host ""
@@ -401,7 +401,7 @@ function Invoke-Step2Heartbeat {
     [CmdletBinding()]
     param()
 
-    Show-StepHeader -StepNumber 2 -TotalSteps 4 -Title "Heartbeat Optimization"
+    Show-StepHeader -StepNumber 2 -TotalSteps 5 -Title "Heartbeat Optimization"
 
     Write-Host "COST SAVINGS: `$5-15/month → `$0-1/month" -ForegroundColor Green
     Write-Host ""
@@ -515,7 +515,7 @@ function Invoke-Step3CachingInfo {
     [CmdletBinding()]
     param()
 
-    Show-StepHeader -StepNumber 3 -TotalSteps 4 -Title "Prompt Caching (Info)"
+    Show-StepHeader -StepNumber 3 -TotalSteps 5 -Title "Prompt Caching (Info)"
 
     Write-Host "AUTOMATIC SAVINGS: 90% discount on repeated content" -ForegroundColor Green
     Write-Host ""
@@ -559,7 +559,7 @@ function Invoke-Step4RateLimits {
     [CmdletBinding()]
     param()
 
-    Show-StepHeader -StepNumber 3 -TotalSteps 4 -Title "Rate Limits & Budget Controls"
+    Show-StepHeader -StepNumber 4 -TotalSteps 5 -Title "Rate Limits & Budget Controls"
 
     Write-Host "COST SAVINGS: Prevents `$100+ overnight disasters" -ForegroundColor Green
     Write-Host ""
@@ -609,7 +609,7 @@ function Invoke-Step5WorkspaceFiles {
     [CmdletBinding()]
     param()
 
-    Show-StepHeader -StepNumber 4 -TotalSteps 4 -Title "Lean Workspace Templates"
+    Show-StepHeader -StepNumber 5 -TotalSteps 5 -Title "Lean Workspace Templates"
 
     Write-Host "COST SAVINGS: 80% context reduction (50KB → 8KB)" -ForegroundColor Green
     Write-Host ""
@@ -859,7 +859,12 @@ WantedBy=default.target
 .SYNOPSIS
     Applies the OpenClaw configuration based on wizard selections.
 .DESCRIPTION
-    Generates and writes the openclaw.json config file.
+    Reads the existing openclaw.json config file and merges only the
+    optimization-related settings (model routing, heartbeat) into it.
+    Preserves all existing settings like API keys, channel integrations,
+    skills, and other user customizations.
+    Uses jq for safe JSON merging. Falls back to Python if jq is unavailable.
+    Creates a timestamped backup before making changes.
 .OUTPUTS
     [bool] True if successful, false otherwise.
 #>
@@ -875,9 +880,10 @@ function Set-OpenClawConfig {
     Write-Host ""
     Write-Host "Applying OpenClaw configuration..." -ForegroundColor Yellow
 
-    # Backup existing config
+    # Create timestamped backup of existing config
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmm"
     Write-Host "Backing up existing config..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cp $($global:openclawConfigFile) $($global:openclawConfigFile).backup 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cp $($global:openclawConfigFile) $($global:openclawConfigFile).backup-$timestamp 2>/dev/null || true"
 
     # Determine primary model
     $primaryModel = if ($global:wizardConfig.UseHaikuDefault) { $global:defaultModel } else { $global:complexModel }
@@ -889,55 +895,58 @@ function Set-OpenClawConfig {
         default { $null }
     }
 
-    # Build heartbeat config (inside agents.defaults)
-    $heartbeatConfig = ""
-    if ($heartbeatModel) {
-        $heartbeatConfig = @"
-      "heartbeat": {
-        "every": "$($global:heartbeatInterval)",
-        "model": "$heartbeatModel",
-        "session": "main",
-        "prompt": "$($global:heartbeatPrompt)"
-      },
-"@
-    }
-
-    # Build full config
-    # Note: OpenClaw schema:
-    #   - models only support "alias" and "params", NOT "cache"
-    #   - heartbeat goes under agents.defaults, NOT at root
-    #   - cache config is not supported at agents.defaults level
-    $configJson = @"
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "$primaryModel"
-      },
-$heartbeatConfig
-      "models": {
-        "$($global:complexModel)": {
-          "alias": "sonnet"
-        },
-        "$($global:defaultModel)": {
-          "alias": "haiku"
-        },
-        "$($global:criticalModel)": {
-          "alias": "opus"
-        }
-      }
-    }
-  }
-}
-"@
-
-    # Write config
-    Write-Host "Writing configuration..." -ForegroundColor Cyan
-    $escapedJson = $configJson -replace '"', '\"' -replace '\$', '\$'
+    # Ensure config directory exists
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "mkdir -p $($global:openclawConfigPath)"
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "echo `"$escapedJson`" > $($global:openclawConfigFile)"
 
-    Write-Host "OpenClaw configuration applied." -ForegroundColor Green
+    # Check if jq is available for safe JSON merging
+    $jqAvailable = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "command -v jq >/dev/null 2>&1 && echo 'yes' || echo 'no'"
+
+    if ($jqAvailable -match "no") {
+        Write-Host "Installing jq for safe config merging..." -ForegroundColor Cyan
+        Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get update -y -qq && apt-get install -y -qq jq 2>/dev/null"
+        $jqAvailable = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "command -v jq >/dev/null 2>&1 && echo 'yes' || echo 'no'"
+    }
+
+    if ($jqAvailable -match "yes") {
+        Write-Host "Merging optimization settings into existing config..." -ForegroundColor Cyan
+
+        # Build jq merge expression that only touches optimization keys
+        $jqExpr = '.agents.defaults.model.primary = \"' + $primaryModel + '\"'
+        $jqExpr += ' | .agents.defaults.models[\"' + $global:complexModel + '\"].alias = \"sonnet\"'
+        $jqExpr += ' | .agents.defaults.models[\"' + $global:defaultModel + '\"].alias = \"haiku\"'
+        $jqExpr += ' | .agents.defaults.models[\"' + $global:criticalModel + '\"].alias = \"opus\"'
+
+        if ($heartbeatModel) {
+            $jqExpr += ' | .agents.defaults.heartbeat.every = \"' + $global:heartbeatInterval + '\"'
+            $jqExpr += ' | .agents.defaults.heartbeat.model = \"' + $heartbeatModel + '\"'
+            $jqExpr += ' | .agents.defaults.heartbeat.session = \"main\"'
+            $jqExpr += ' | .agents.defaults.heartbeat.prompt = \"' + $global:heartbeatPrompt + '\"'
+        }
+
+        # Read existing config or start with empty object, then apply changes
+        $mergeCmd = "if [ -f $($global:openclawConfigFile) ]; then cat $($global:openclawConfigFile) | jq '$jqExpr' > $($global:openclawConfigFile).tmp && mv $($global:openclawConfigFile).tmp $($global:openclawConfigFile); else echo '{}' | jq '$jqExpr' > $($global:openclawConfigFile); fi"
+
+        Invoke-WSLCommand -DistroName $global:wslDistroName -Command $mergeCmd
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Config merge failed. Restoring backup..."
+            Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cp $($global:openclawConfigFile).backup-$timestamp $($global:openclawConfigFile) 2>/dev/null || true"
+            return $false
+        }
+
+        Write-Host "Configuration merged successfully (existing settings preserved)." -ForegroundColor Green
+    }
+    else {
+        Write-Warning "jq is not available. Cannot safely merge config."
+        Write-Warning "Skipping config file changes to avoid destroying existing settings."
+        Write-Host "Please manually update $($global:openclawConfigFile) with:" -ForegroundColor Yellow
+        Write-Host "  - Primary model: $primaryModel" -ForegroundColor DarkGray
+        if ($heartbeatModel) {
+            Write-Host "  - Heartbeat model: $heartbeatModel" -ForegroundColor DarkGray
+        }
+        return $false
+    }
+
     return $true
 }
 
@@ -1310,24 +1319,22 @@ function Test-OptimizationStatus {
 
         # Check heartbeat
         Write-Host "   - Heartbeat: " -NoNewline -ForegroundColor DarkGray
-        if ($configContent -match "ollama") {
+        if ($configContent -match '"heartbeat"' -and $configContent -match "ollama") {
             Write-Host "Ollama (free)" -ForegroundColor Green
         }
-        elseif ($configContent -match "haiku.*heartbeat|heartbeat.*haiku") {
+        elseif ($configContent -match '"heartbeat"' -and $configContent -match "claude-haiku") {
             Write-Host "Haiku (cheap)" -ForegroundColor Green
         }
+        elseif ($configContent -match '"heartbeat"') {
+            Write-Host "Configured" -ForegroundColor Green
+        }
         else {
-            Write-Host "Default (may be expensive)" -ForegroundColor Yellow
+            Write-Host "Not configured (uses default model)" -ForegroundColor Yellow
         }
 
-        # Check caching
+        # Caching is automatic with Anthropic API — no config key
         Write-Host "   - Caching: " -NoNewline -ForegroundColor DarkGray
-        if ($configContent -match '"cache".*"enabled".*true') {
-            Write-Host "Enabled" -ForegroundColor Green
-        }
-        else {
-            Write-Host "Not enabled" -ForegroundColor Yellow
-        }
+        Write-Host "Automatic (Anthropic API)" -ForegroundColor Green
     }
     else {
         Write-Host "Not found" -ForegroundColor Yellow
