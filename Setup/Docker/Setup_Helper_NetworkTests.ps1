@@ -320,6 +320,7 @@ function Test-NetworkIPConsistency {
 	$ipifyUrl = "https://api.ipify.org?format=text"
 	$allIPs = @()
 	$allMatch = $true
+	$machineRunning = $false
 
 	Write-Host ""
 	Write-Host "==================== External IP Consistency Test ===================="
@@ -344,7 +345,7 @@ function Test-NetworkIPConsistency {
 		try {
 			$machineListJson = & $EnginePath machine ls --format json 2>$null
 			$machines = $machineListJson | ConvertFrom-Json
-			$machineRunning = ($null -ne $machines) -and ($machines.Count -gt 0) -and ($machines[0].State -match '^[Rr]unning$')
+			$machineRunning = ($null -ne $machines) -and ($machines.Count -gt 0) -and ($machines[0].Running -eq $true)
 		}
 		catch {
 			$machineRunning = $false
@@ -377,15 +378,14 @@ function Test-NetworkIPConsistency {
 		Write-Host "  Podman VM      : SKIPPED (Podman CLI not found)" -ForegroundColor Yellow
 	}
 
-	# Layer 3: Container (optional)
+	# Layer 3: Container (optional — only if Podman VM is running)
 	$containerIP = $null
-	if (-not [string]::IsNullOrWhiteSpace($ContainerName) -and $EnginePath) {
+	if (-not [string]::IsNullOrWhiteSpace($ContainerName) -and $EnginePath -and $machineRunning) {
 		try {
 			$containerRunning = & $EnginePath ps --filter "name=^${ContainerName}$" --format "{{.ID}}" 2>$null
 			if (-not [string]::IsNullOrWhiteSpace($containerRunning)) {
-				$containerEngine = Split-Path -Leaf $EnginePath
-				$fetchCmd = "curl -s $ipifyUrl 2>/dev/null || wget -qO- $ipifyUrl 2>/dev/null || node -e `"require('https').get('$ipifyUrl',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>console.log(d))}).on('error',e=>process.exit(1))`""
-				$containerIPRaw = & $EnginePath machine ssh "sudo $containerEngine exec $ContainerName sh -c `"$fetchCmd`"" 2>$null
+				$nodeScript = "const h=require('https');h.get('$ipifyUrl',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>console.log(d))}).on('error',e=>process.exit(1))"
+				$containerIPRaw = & $EnginePath exec $ContainerName node -e $nodeScript 2>$null
 				if (-not [string]::IsNullOrWhiteSpace($containerIPRaw)) {
 					$containerIP = $containerIPRaw.Trim()
 					$color = if ($windowsIP -and $containerIP -eq $windowsIP) { "Green" } else { "Red" }
@@ -393,7 +393,7 @@ function Test-NetworkIPConsistency {
 					$allIPs += $containerIP
 				}
 				else {
-					Write-Host "  Container '$ContainerName': FAILED (empty response; curl/wget may not be installed)" -ForegroundColor Yellow
+					Write-Host "  Container '$ContainerName': FAILED (empty response from container)" -ForegroundColor Yellow
 				}
 			}
 			else {
@@ -403,6 +403,9 @@ function Test-NetworkIPConsistency {
 		catch {
 			Write-Host "  Container '$ContainerName': FAILED ($($_.Exception.Message))" -ForegroundColor Red
 		}
+	}
+	elseif (-not [string]::IsNullOrWhiteSpace($ContainerName)) {
+		Write-Host "  Container '$ContainerName': SKIPPED (Podman VM not running)" -ForegroundColor Yellow
 	}
 
 	# Compare results
