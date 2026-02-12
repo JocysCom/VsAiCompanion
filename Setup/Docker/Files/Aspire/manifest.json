@@ -247,12 +247,13 @@
           "N8N_RUNNERS_DISABLED_RUNNERS": "python"
         },
         "restart": "always",
+        "networkMode": "host",
         "resources": {
           "memory": "14g",
           "memorySwap": "14g"
         },
         "additionalHosts": {
-          "host.local": "host-gateway"
+          "host.local": "127.0.0.1"
         },
         "corporateCerts": {
           "hostPemFile": "Files/trusted_root_certificates.pem",

@@ -65,21 +65,30 @@ $manifestConfig = $manifest.resources.'n8n'
 
 # Create consolidated configuration object
 $config = [PSCustomObject]@{
-    imageName     = $manifestConfig.properties.image
-    volumeName    = $manifestConfig.properties.volumes[0].name
-    containerPort = $manifestConfig.properties.bindings[0].containerPort
-    hostPort      = $manifestConfig.properties.bindings[0].hostPort
-    dataPath      = $manifestConfig.properties.volumes[0].containerPath
-    restartPolicy = $manifestConfig.properties.restart
-    environment   = $manifestConfig.properties.environment
-    memoryLimit   = $manifestConfig.properties.resources.memory
-    memorySwap    = $manifestConfig.properties.resources.memorySwap
+    imageName       = $manifestConfig.properties.image
+    volumeName      = $manifestConfig.properties.volumes[0].name
+    containerPort   = $manifestConfig.properties.bindings[0].containerPort
+    hostPort        = $manifestConfig.properties.bindings[0].hostPort
+    dataPath        = $manifestConfig.properties.volumes[0].containerPath
+    restartPolicy   = $manifestConfig.properties.restart
+    networkMode     = if ($manifestConfig.properties.networkMode) { $manifestConfig.properties.networkMode } else { "bridge" }
+    additionalHosts = $manifestConfig.properties.additionalHosts
+    environment     = $manifestConfig.properties.environment
+    memoryLimit     = $manifestConfig.properties.resources.memory
+    memorySwap      = $manifestConfig.properties.resources.memorySwap
 }
 
+$optionalProperties = @("additionalHosts")
 Write-Host "Configuration loaded from Aspire manifest:"
 foreach ($property in $config.PSObject.Properties) {
 	$name = $property.Name
 	$value = $property.Value
+	if ($optionalProperties -contains $name) {
+		if ($null -ne $value) {
+			Write-Host "  $($name): $value"
+		}
+		continue
+	}
 	if ($null -eq $value -or ($value -is [string] -and [string]::IsNullOrEmpty($value))) {
 		Write-Error "Configuration property '$name' is missing or empty in manifest."
 		exit 1
@@ -275,27 +284,40 @@ function Start-n8nContainer {
 		[bool]$UseDNS = $false
 	)
 
-	# Use the container engine's built-in 'host-gateway' resolution for --add-host.
-	# This avoids using WSL2's DNS proxy IP (e.g., 10.255.255.254 from /etc/resolv.conf)
-	# which is not a valid host IP for container-to-host communication.
-	$HostIpForContainer = "host-gateway"
-	$addHost = $true
-	Write-Host "Host mapping for container: host.local -> host-gateway (auto-resolved by $global:containerEngine)"
+	$useHostNetwork = ($config.networkMode -eq "host")
 
 	# Build the run command
 	$runOptions = @(
 		"--memory",      $config.memoryLimit,
 		"--memory-swap", $config.memorySwap,
-		"--detach", # Run container in background.
-		"--publish", "$($config.hostPort):$($config.containerPort)", # Map host port to container port.
-		"--volume", "$($config.volumeName):$($config.dataPath)", # Mount the named volume for persistent data.
-		"--name", $global:containerName,         # Assign a name to the container.
+		"--detach",
+		"--volume", "$($config.volumeName):$($config.dataPath)",
+		"--name", $global:containerName,
 		"--restart", $config.restartPolicy
-		#"--cap-add", "NET_RAW",
-		#"--cap-add", "NET_ADMIN",
 	)
-	if ($addHost) {
-		$runOptions = @("--add-host", "host.local:$HostIpForContainer") + $runOptions
+
+	if ($useHostNetwork) {
+		# Host network mode: container shares the VM's network namespace.
+		# In WSL2 mirrored mode, localhost traffic reaches the Windows host.
+		# No --publish needed (ports are directly accessible on the host).
+		$runOptions += "--network"
+		$runOptions += "host"
+		Write-Host "Network mode: host (container shares VM network; use 'localhost' to reach Windows host services)"
+	}
+	else {
+		# Bridge network mode: use --publish for port mapping.
+		$runOptions += "--publish"
+		$runOptions += "$($config.hostPort):$($config.containerPort)"
+		Write-Host "Network mode: bridge (port $($config.hostPort) published)"
+	}
+
+	# Apply additional host mappings from manifest (e.g., host.local -> localhost).
+	# Works in both host and bridge modes for backwards compatibility.
+	if ($config.additionalHosts) {
+		foreach ($hostEntry in $config.additionalHosts.PSObject.Properties) {
+			$runOptions = @("--add-host", "$($hostEntry.Name):$($hostEntry.Value)") + $runOptions
+			Write-Host "  Host mapping: $($hostEntry.Name) -> $($hostEntry.Value)"
+		}
 	}
 
 	# Mount corporate CA certificates if available in the Podman VM
