@@ -72,9 +72,10 @@ Windows 11                        ← real, bare-metal host
         │
         └── podman (rootless) daemon  ← container engine running as that user
             │
-            ├── container "n8n"       ← Linux container, NOT a VM
+            ├── container "n8n"       ← Linux container, --network host
             │   ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root n8n /bin/sh`
-            │   └── node /usr/bin/n8n ← the real application
+            │   ├── node /usr/bin/n8n ← the real application
+            │   └── host.local → 127.0.0.1 (reaches Windows host services via mirrored loopback)
             │
             └── container "qwen3-embedding-4b" ← Linux container, NOT a VM
                 ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root qwen3-embedding-4b /bin/sh`
@@ -90,6 +91,8 @@ WSL2 supports two networking modes that affect how containers communicate with e
 
 In mirrored mode, WSL2 shares the host's network interfaces directly. All outbound traffic from containers uses the **same external IP address** as the Windows host, and VPN/proxy settings are inherited automatically.
 
+Containers that need to reach Windows host services (e.g., SQL Server) use `--network host` mode with `--add-host host.local:127.0.0.1`. This makes `host.local` resolve to `127.0.0.1`, which in host network mode reaches the Windows host via mirrored loopback — no firewall rules needed.
+
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Windows Host (e.g., IP: 10.1.2.50 via VPN)                          │
@@ -100,16 +103,20 @@ In mirrored mode, WSL2 shares the host's network interfaces directly. All outbou
 │    dnsTunneling=true          ← DNS queries go through Windows      │
 │    autoProxy=true             ← proxy settings inherited            │
 │                                                                     │
+│  SQL Server listening on localhost:1433                             │
+│                                                                     │
 │  ┌────────────────────────────────────────────────────────────────┐ │
 │  │ WSL2 podman-machine-default (Fedora CoreOS)                    │ │
 │  │ IP: same as host (10.1.2.50) ← mirrored!                       │ │
 │  │                                                                │ │
-│  │  ┌──────────────────────┐  ┌─────────────────────────────┐     │ │
-│  │  │ n8n container        │  │ other containers            │     │ │
-│  │  │ Podman bridge 10.88… │  │ Podman bridge 10.88…        │     │ │
-│  │  └──────────┬───────────┘  └───────────────┬─────────────┘     │ │
-│  │             │                              │                   │ │
-│  │             └──────────┬───────────────────┘                   │ │
+│  │  ┌──────────────────────────┐  ┌──────────────────────────┐    │ │
+│  │  │ n8n container            │  │ other containers         │    │ │
+│  │  │ --network host           │  │ Podman bridge 10.88…     │    │ │
+│  │  │ host.local → 127.0.0.1   │  └──────────────┬───────────┘    │ │
+│  │  │   ↓ loopback → Windows   │                 │                │ │
+│  │  └──────────┬───────────────┘                 │                │ │
+│  │             │                                 │                │ │
+│  │             └──────────┬──────────────────────┘                │ │
 │  │                        │                                       │ │
 │  └────────────────────────┼───────────────────────────────────────┘ │
 │                           │                                         │
