@@ -19,6 +19,7 @@ Set-ScriptLocation
 #############################################
 $global:backupDir = "Backup"
 $global:containerName = "n8n"
+$global:n8nPort = 5678
 $global:containerEngine = Select-ContainerEngine
 # Exit if no engine was selected
 if (-not $global:containerEngine) {
@@ -36,6 +37,7 @@ $global:enginePath = Get-EnginePath -EngineName $global:containerEngine
 $localBackupDir = Join-Path -Path $PSScriptRoot -ChildPath $global:backupDir
 $localWorkflowsPath = Join-Path -Path $localBackupDir -ChildPath "n8n_workflows.json"
 $localCredentialsPath = Join-Path -Path $localBackupDir -ChildPath "n8n_credentials.json"
+$localExecutionsPath = Join-Path -Path $localBackupDir -ChildPath "n8n_executions.json"
 $containerTempDir = "/tmp"
 $containerWorkflowsPath = "$containerTempDir/n8n_workflows.json"
 $containerCredentialsPath = "$containerTempDir/n8n_credentials.json"
@@ -574,6 +576,161 @@ function Expand-JsonArrayItemsToFiles {
     Write-Host "--- Finished expanding JSON items. Processed $itemsProcessed/$($jsonArray.Count) items to '$FullOutputDirectoryPath' ($itemsSkipped skipped) ---"
 }
 
+#==============================================================================
+# Function: Invoke-ExportExecution
+#==============================================================================
+<#
+.SYNOPSIS
+    Exports n8n workflow execution history to a local JSON file.
+.DESCRIPTION
+    Queries the n8n REST API (GET /executions) to retrieve all execution records
+    with cursor-based pagination. Requires an n8n API key which can be generated
+    in the n8n UI under Settings > API > Create API Key.
+    Collects every page of results and writes the combined array to a JSON file
+    in the local backup directory.
+    Requires the n8n container to be running and accessible on the configured port.
+.OUTPUTS
+    [bool] $true if successful, $false otherwise.
+#>
+function Invoke-ExportExecution {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$targetDescription = "n8n execution history from container '$($global:containerName)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Export")) {
+		Write-Host "Skipped export due to -WhatIf."
+		return $false
+	}
+
+	Write-Host "--- Starting Execution History Export ---"
+	Write-Host "An n8n API key is required. Generate one in: n8n UI > Settings > API > Create API Key"
+	$apiKey = Read-Host "Enter n8n API key (or press Enter to cancel)" -MaskInput
+	if ([string]::IsNullOrWhiteSpace($apiKey)) {
+		Write-Warning "No API key provided. Cancelling export."
+		return $false
+	}
+	$keyLength = $apiKey.Length
+	$visibleChars = [Math]::Min(8, $keyLength)
+	$maskedDisplay = "$($apiKey.Substring(0, $visibleChars))...(length=$keyLength)"
+	Write-Host "Using API key: $maskedDisplay"
+	$headers = @{ "X-N8N-API-KEY" = $apiKey }
+	$requestTimeoutSec = 30
+
+	Write-Host "Validating API key..."
+	$validationUri = "http://localhost:$($global:n8nPort)/api/v1/workflows?limit=1"
+	try {
+		Invoke-RestMethod -Uri $validationUri -Method Get -Headers $headers -TimeoutSec $requestTimeoutSec -ErrorAction Stop | Out-Null
+		Write-Host "API key validated successfully." -ForegroundColor Green
+	}
+	catch {
+		$errMsg = "$_"
+		if ($errMsg -match "unauthorized|401|header required") {
+			Write-Error "API key is invalid or expired. Please generate a new key in: n8n UI > Settings > API > Create API Key"
+		}
+		else {
+			Write-Error "Failed to connect to n8n API at localhost:$($global:n8nPort). Ensure the container is running. Error: $errMsg"
+		}
+		Write-Host "--- Finished Execution History Export ---"
+		return $false
+	}
+
+	$exportSuccess = $true
+	$allExecutions = [System.Collections.Generic.List[object]]::new()
+	$baseUri = "http://localhost:$($global:n8nPort)/api/v1/executions"
+	$pageSize = 250
+	try {
+		$nextCursor = $null
+		$pageCount = 0
+		do {
+			$uri = "$($baseUri)?limit=$pageSize&includeData=true"
+			if ($nextCursor) {
+				$uri += "&cursor=$nextCursor"
+			}
+			$pageCount++
+			Write-Host "Fetching execution page $pageCount (cursor=$nextCursor)..."
+			$response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -TimeoutSec $requestTimeoutSec -ErrorAction Stop
+			$items = $response.data
+			if ($items -and $items.Count -gt 0) {
+				foreach ($item in $items) {
+					$allExecutions.Add($item)
+				}
+				Write-Host "  Retrieved $($items.Count) executions (total so far: $($allExecutions.Count))."
+			}
+			else {
+				Write-Host "  No executions returned on page $pageCount."
+			}
+			$nextCursor = $response.nextCursor
+		} while ($nextCursor)
+
+		Write-Host "Total executions retrieved: $($allExecutions.Count)."
+
+		if ($allExecutions.Count -eq 0) {
+			Write-Warning "No execution records found to export."
+			Write-Host "--- Finished Execution History Export ---"
+			return $true
+		}
+
+		$jsonOutput = $allExecutions | ConvertTo-Json -Depth 20 -ErrorAction Stop
+		Set-Content -Path $localExecutionsPath -Value $jsonOutput -Encoding UTF8 -Force -ErrorAction Stop
+		Write-Host "Execution history saved to '$localExecutionsPath'." -ForegroundColor Green
+	}
+	catch {
+		Write-Error "Execution history export failed: $_"
+		$exportSuccess = $false
+	}
+	Write-Host "--- Finished Execution History Export ---"
+	return $exportSuccess
+}
+
+#==============================================================================
+# Function: Invoke-ExportContainerLogs
+#==============================================================================
+<#
+.SYNOPSIS
+    Exports the n8n container log output to a local text file.
+.DESCRIPTION
+    Runs '<engine> logs --timestamps <container>' to capture the full container
+    log stream (stdout + stderr) — the same output shown in the Podman Desktop
+    or Docker Desktop log window — and saves it to a timestamped text file in
+    the local backup directory.
+.OUTPUTS
+    [bool] $true if successful, $false otherwise.
+#>
+function Invoke-ExportContainerLogs {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([bool])]
+	param()
+
+	$targetDescription = "container logs for '$($global:containerName)'"
+	if (-not $PSCmdlet.ShouldProcess($targetDescription, "Export")) {
+		Write-Host "Skipped export due to -WhatIf."
+		return $false
+	}
+
+	Write-Host "--- Starting Container Log Export ---"
+	$exportSuccess = $true
+	try {
+		$timestamp = Get-Date -Format "yyyyMMdd-HHmm"
+		$logFileName = "n8n_container_logs_$timestamp.txt"
+		$logFilePath = Join-Path -Path $localBackupDir -ChildPath $logFileName
+		Write-Host "Running: $($global:enginePath) logs --timestamps $($global:containerName)"
+		$logOutput = & $global:enginePath logs --timestamps $global:containerName 2>&1
+		if ($LASTEXITCODE -ne 0) {
+			Write-Error "Failed to retrieve container logs. Exit Code: $LASTEXITCODE. Output: $logOutput"
+			throw "Container logs command failed."
+		}
+		$logOutput | Out-File -FilePath $logFilePath -Encoding UTF8 -Force -ErrorAction Stop
+		$lineCount = ($logOutput | Measure-Object -Line).Lines
+		Write-Host "Container logs saved to '$logFilePath' ($lineCount lines)." -ForegroundColor Green
+	}
+	catch {
+		Write-Error "Container log export failed: $_"
+		$exportSuccess = $false
+	}
+	Write-Host "--- Finished Container Log Export ---"
+	return $exportSuccess
+}
 
 ################################################################################
 # Main Menu Loop using Generic Function
@@ -584,9 +741,11 @@ $menuTitle = "n8n Export/Import Menu"
 $menuItems = [ordered]@{
 	"1" = "Export Workflows"
 	"2" = "Export Credentials"
-	"3" = "Import Workflows"
-	"4" = "Import Credentials"
-	"S" = "Show Container Status" # Added for convenience
+	"3" = "Export Execution History"
+	"4" = "Import Workflows"
+	"5" = "Import Credentials"
+	"L" = "Export Container Logs"
+	"S" = "Show Container Status"
 	"0" = "Exit menu"
 }
 
@@ -594,17 +753,18 @@ $menuItems = [ordered]@{
 $menuActions = @{
 	"1" = { Invoke-ExportWorkflow }
 	"2" = { Invoke-ExportCredential }
-	"3" = { Invoke-ImportWorkflow }
-	"4" = { Invoke-ImportCredential }
+	"3" = { Invoke-ExportExecution }
+	"4" = { Invoke-ImportWorkflow }
+	"5" = { Invoke-ImportCredential }
+	"L" = { Invoke-ExportContainerLogs }
 	"S" = {
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName $global:containerName `
-			-TcpPort 5678 ` # Assuming default n8n port
-		-HttpPort 5678
+			-TcpPort $global:n8nPort `
+			-HttpPort $global:n8nPort
 	}
-	# Note: "0" action is handled internally by Invoke-MenuLoop
 }
 
 # Ensure backup directory exists before showing menu
