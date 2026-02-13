@@ -242,6 +242,10 @@
           "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS": "true",
           "N8N_TRUST_HOST_HEADERS": "true",
           "N8N_LOG_LEVEL": "info",
+          "N8N_LOG_OUTPUT": "console,file",
+          "N8N_LOG_FILE_LOCATION": "/home/node/.n8n/logs/n8n.log",
+          "N8N_LOG_FILE_MAX_SIZE": "100",
+          "N8N_LOG_FILE_MAX_COUNT": "30",
           "NODE_OPTIONS": "--max-old-space-size=12288",
           "NODES_EXCLUDE": "[]",
           "N8N_RUNNERS_DISABLED_RUNNERS": "python"
