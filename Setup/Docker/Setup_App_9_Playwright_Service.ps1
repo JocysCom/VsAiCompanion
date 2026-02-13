@@ -173,11 +173,11 @@ function Install-PlaywrightServiceContainer {
 	#############################################
 	# Step 5: Wait and Test Connectivity
 	#############################################
-	Write-Host "Waiting 15 seconds for Playwright service container to initialize..."
-	Start-Sleep -Seconds 15
+	Write-Host "Waiting for container startup..."
 
 	Write-Host "Testing Playwright service connectivity on port $($config.hostPort)..."
 	if (Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Playwright Service") {
+		$null = Test-HTTPPort -Uri "http://localhost:$($config.hostPort)/health" -serviceName "Playwright Service"
 		Write-Host "Playwright service is now running and accessible at localhost:$($config.hostPort)"
 		Write-Host "Network alias '$($config.networkAlias)' is available for other containers on the '$($config.networkName)' network."
 	}
@@ -233,17 +233,23 @@ function Update-PlaywrightServiceContainer {
 		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
-	# Call simplified Update-Container (handles check, remove, pull)
-	$updateResult = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $config.imageName
+	# Call Update-Container (handles check, acquire image, and remove)
+	$updateResult = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
+	if ($updateResult -eq $false) {
+		Write-Host "Container '$($global:containerName)' not found, or update was canceled/no update available." -ForegroundColor Yellow
+		Write-Host "You can use 'Install container' to create it first." -ForegroundColor Gray
+		return
+	}
 
-	if ($updateResult -eq $true) {
+	$targetImage = $updateResult
+	if ($targetImage) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container
 		try {
 			Install-PlaywrightServiceContainer
 		}
 		catch {
-			Write-Error "Failed to start updated Playwright service container: $_"
+			Write-Error "Failed to start updated Playwright service container: $($_.Exception.Message)"
 			if ($backupMade) {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
@@ -254,10 +260,6 @@ function Update-PlaywrightServiceContainer {
 				}
 			}
 		}
-	}
-	elseif ($updateResult -eq $false) {
-		Write-Host "No update available or update was canceled by user." -ForegroundColor Yellow
-		Write-Host "Container is already up to date." -ForegroundColor Green
 	}
 	else {
 		Write-Error "Update process failed during check, removal, or pull."

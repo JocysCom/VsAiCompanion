@@ -75,7 +75,7 @@ function Test-TCPPort {
 					}
 				}
 
-				Write-Host -NoNewline "$serviceName TCP test on port $Port at $ComputerName (IP: $ip)..."
+				Write-Host -NoNewline "$serviceName. TCP test on port $Port at $ComputerName (IP: $ip)..."
 			}
 
 			$client = New-Object System.Net.Sockets.TcpClient
@@ -86,7 +86,8 @@ function Test-TCPPort {
 				if ($connected -and $client.Connected) {
 					$client.Close()
 					if ($didPrintDot) { Write-Host "" }
-					Write-Host "$serviceName TCP test succeeded on port $Port at $ComputerName (IP: $ip)."
+					Write-Host ""
+					Write-Host "  └─ ✅ Test succeeded."
 					return $true
 				}
 			}
@@ -104,7 +105,8 @@ function Test-TCPPort {
 	}
 
 	if ($didPrintDot) { Write-Host "" }
-	Write-Error "$serviceName TCP test failed on port $Port at $ComputerName after $Timeout seconds."
+	Write-Host ""
+	Write-Error "  └─ ❌ Test failed after $Timeout seconds."
 	return $false
 }
 
@@ -139,7 +141,13 @@ function Test-HTTPPort {
 		[string] $serviceName,
 
 		[Parameter(Mandatory = $false)]
-		[int] $Timeout = 60
+		[int] $Timeout = 60,
+
+		[Parameter(Mandatory = $false)]
+		[string] $Method = "GET",
+
+		[Parameter(Mandatory = $false)]
+		[string] $Body
 	)
 
 	if ($Timeout -lt 1) {
@@ -165,18 +173,28 @@ function Test-HTTPPort {
 		$resolvedUri = $Uri
 	}
 
-	Write-Host -NoNewline "$serviceName HTTP test at $Uri (resolved: $resolvedUri)..."
+	$resolvedIp = if ($ipv4) { $ipv4.ToString() } else { $resolvedUri }
+	Write-Host -NoNewline "$serviceName. HTTP $Method test at $Uri (resolved: $resolvedIp)..."
 	$deadline = [DateTime]::UtcNow.AddSeconds($Timeout)
 	$didPrintDot = $false
 
 	while ([DateTime]::UtcNow -lt $deadline) {
 		try {
 			$request = [System.Net.HttpWebRequest]::Create($resolvedUri)
-			$request.Method = "GET"
+			$request.Method = $Method
 			$request.Timeout = 1000
 			$request.ReadWriteTimeout = 1000
 			$request.AllowAutoRedirect = $true
 			$request.Proxy = [System.Net.WebProxy]::new()
+
+			if ($Body) {
+				$request.ContentType = "application/json"
+				$bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($Body)
+				$request.ContentLength = $bodyBytes.Length
+				$stream = $request.GetRequestStream()
+				$stream.Write($bodyBytes, 0, $bodyBytes.Length)
+				$stream.Close()
+			}
 
 			$response = $null
 			try {
@@ -191,7 +209,8 @@ function Test-HTTPPort {
 
 			if ($statusCode -ge 200 -and $statusCode -lt 400) {
 				if ($didPrintDot) { Write-Host "" }
-				Write-Host "$serviceName HTTP test succeeded at $Uri. Status code: $statusCode."
+				Write-Host ""
+				Write-Host "  └─ ✅ Test succeeded. Status code: $statusCode."
 				return $true
 			}
 		}
@@ -203,7 +222,8 @@ function Test-HTTPPort {
 					$statusCode = [int]([System.Net.HttpWebResponse]$webEx.Response).StatusCode
 					if ($statusCode -ge 100 -and $statusCode -lt 600) {
 						if ($didPrintDot) { Write-Host "" }
-						Write-Host "$serviceName HTTP test succeeded at $Uri. Status code: $statusCode."
+						Write-Host ""
+						Write-Host "  └─ ✅ Test succeeded. Status code: $statusCode."
 						return $true
 					}
 				}
@@ -220,7 +240,8 @@ function Test-HTTPPort {
 	}
 
 	if ($didPrintDot) { Write-Host "" }
-	Write-Error "$serviceName HTTP test failed at $Uri after $Timeout seconds."
+	Write-Host ""
+	Write-Error "  └─ ❌ Test failed after $Timeout seconds."
 	return $false
 }
 

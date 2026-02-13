@@ -169,8 +169,7 @@ function Install-FirecrawlRedisContainer {
 	#############################################
 	# Step 5: Wait and Test Connectivity
 	#############################################
-	Write-Host "Waiting 10 seconds for Redis container to initialize..."
-	Start-Sleep -Seconds 10
+	Write-Host "Waiting for container startup..."
 
 	Write-Host "Testing Redis container connectivity on port $($config.containerPort)..."
 	if (Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Firecrawl Redis") {
@@ -220,7 +219,7 @@ function Update-FirecrawlRedisContainer {
 		$createBackup = Read-Host "Create backup before updating? (Y/N, default is Y)"
 		if ($createBackup -ne "N") {
 			Write-Host "Saving '$($global:containerName)' Container Image..."
-			Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName
+			Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName
 			Write-Host "Exporting '$($config.volumeName)' Volume..."
 			$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			$backupMade = $true
@@ -230,8 +229,9 @@ function Update-FirecrawlRedisContainer {
 		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
-	# Call simplified Update-Container (handles check, remove, pull)
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $config.imageName) {
+	# Call Update-Container (handles check, acquire image, and remove)
+	$targetImage = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
+	if ($targetImage) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container
 		try {
@@ -243,7 +243,7 @@ function Update-FirecrawlRedisContainer {
 				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 				if ($restore -ne "N") {
 					Write-Host "Loading '$($global:containerName)' Container Image..."
-					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
+					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
 					Write-Host "Importing '$($config.volumeName)' Volume..."
 					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 				}
@@ -256,7 +256,7 @@ function Update-FirecrawlRedisContainer {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
 				Write-Host "Loading '$($global:containerName)' Container Image..."
-				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName
+				Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
 				Write-Host "Importing '$($config.volumeName)' Volume..."
 				$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
 			}
@@ -297,8 +297,8 @@ $menuActions = @{
 	"3" = {
 		Remove-ContainerAndVolume -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName
 	}
-	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $global:imageName }
-	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $global:imageName }
+	"4" = { Backup-ContainerImage -Engine $global:enginePath -ImageName $config.imageName }
+	"5" = { Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName }
 	"6" = { Update-FirecrawlRedisContainer }
 	"7" = {
 		$null = Backup-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName

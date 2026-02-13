@@ -38,7 +38,7 @@
     "firecrawl-postgres": {
       "type": "container.v0",
       "properties": {
-        "image": "postgres:16-alpine",
+        "image": "firecrawl-nuq-postgres:latest",
         "volumes": [
           {
             "name": "firecrawl-postgres-data",

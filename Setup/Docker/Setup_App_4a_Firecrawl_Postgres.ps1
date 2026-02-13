@@ -93,6 +93,12 @@ foreach ($property in $config.PSObject.Properties) {
 	Uses Write-Host for status messages.
 #>
 function Install-FirecrawlPostgresContainer {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $false)]
+		[string]$ImageName = $config.imageName
+	)
+
 	#############################################
 	# Step 1: Ensure Network Exists
 	#############################################
@@ -102,24 +108,24 @@ function Install-FirecrawlPostgresContainer {
 	}
 
 	#############################################
-	# Step 2: Pull PostgreSQL Image (or Restore)
+	# Step 2: Build nuq-postgres image from Firecrawl's official Dockerfile
 	#############################################
-	$existingImage = & $global:enginePath images --filter "reference=$($config.imageName)" --format "{{.ID}}"
-	if (-not $existingImage) {
-		if (-not (Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName)) {
-			Write-Host "No backup restored. Pulling PostgreSQL image '$($config.imageName)'..."
-			if (-not (Invoke-PullImage -Engine $global:enginePath -ImageName $config.imageName -PullOptions $global:pullOptions)) {
-				Write-Error "Image pull failed for '$($config.imageName)'."
-				exit 1
-			}
-		}
-		else {
-			Write-Host "Using restored backup image '$($config.imageName)'."
-		}
+	$buildDir = Join-Path (Split-Path -Parent $PSCommandPath) "Files\nuq-postgres"
+	if (-not (Test-Path $buildDir)) { $null = New-Item -ItemType Directory -Path $buildDir -Force }
+
+	$dockerfileUrl = "https://raw.githubusercontent.com/firecrawl/firecrawl/main/apps/nuq-postgres/Dockerfile"
+	$nuqSqlUrl = "https://raw.githubusercontent.com/firecrawl/firecrawl/main/apps/nuq-postgres/nuq.sql"
+
+	Invoke-DownloadFile -SourceUrl $dockerfileUrl -DestinationPath (Join-Path $buildDir "Dockerfile") -ForceDownload
+	Invoke-DownloadFile -SourceUrl $nuqSqlUrl -DestinationPath (Join-Path $buildDir "nuq.sql") -ForceDownload
+
+	Write-Host "Building nuq-postgres image from Firecrawl's official Dockerfile..."
+	& $global:enginePath build -t $ImageName $buildDir
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Failed to build nuq-postgres image."
+		exit 1
 	}
-	else {
-		Write-Host "PostgreSQL image already exists. Skipping pull."
-	}
+	Write-Host "nuq-postgres image built successfully."
 
 	#############################################
 	# Step 3: Remove Existing Container (if any)
@@ -158,7 +164,7 @@ function Install-FirecrawlPostgresContainer {
 	)
 
 	# Execute the command using splatting
-	& $global:enginePath run @runOptions $config.imageName
+	& $global:enginePath run @runOptions $ImageName
 	if ($LASTEXITCODE -ne 0) {
 		Write-Error "Failed to start PostgreSQL container '$global:containerName'."
 		exit 1
@@ -197,28 +203,14 @@ function Install-FirecrawlPostgresContainer {
 		Write-Host ""
 		Write-Warning "PostgreSQL may still be initializing. Check container logs if needed:"
 		Write-Host "$global:enginePath logs $global:containerName"
-	}else{
-
-		$sqlScriptName = "$(Split-Path -Leaf $PSCommandPath).sql"
-
-		Write-Host "Copy $sqlScriptName into the running $($global:containerName) container"
-		& $global:enginePath cp "$sqlScriptName" "$($global:containerName):/tmp/$sqlScriptName"
-
-
-		Write-Host "Execute $sqlScriptName inside the container."
-		$null = & $global:enginePath exec -e PGPASSWORD="$($config.databasePassword)" -i "$($global:containerName)" `
-			psql -U "$($config.databaseUser)" -d "$($config.databaseName)" -v ON_ERROR_STOP=1 -f "/tmp/$sqlScriptName"
-
+	}
+	else {
+		Write-Host "Applying NuQ schema (idempotent) from baked-in /docker-entrypoint-initdb.d/010-nuq.sql..."
+		$null = & $global:enginePath exec -e PGPASSWORD="$($config.databasePassword)" "$($global:containerName)" `
+			psql -U "$($config.databaseUser)" -d "$($config.databaseName)" -f "/docker-entrypoint-initdb.d/010-nuq.sql" 2>&1
 		Write-Host "Verify NuQ"
 		& $global:enginePath exec "$($global:containerName)" `
 			psql -U "$($config.databaseUser)" -d "$($config.databaseName)" -c "\dt nuq.*"
-
-
-		# Uses stdin with -f -  (psql treats "-" as "read from STDIN")
-		#$null = & $global:enginePath exec -i firecrawl-postgres `
-		#  psql $connectionString `
-		#  -v ON_ERROR_STOP=1 -f - < $sqlScriptName
-
 	}
 
 	Write-Host "PostgreSQL database '$($config.databaseName)' is accessible via network alias '$($config.networkAlias)' on port $($config.containerPort)."
@@ -271,12 +263,13 @@ function Update-FirecrawlPostgresContainer {
 		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
-	# Call simplified Update-Container (handles check, remove, pull)
-	if (Update-Container -Engine $global:enginePath -ContainerName $global:containerName -ImageName $config.imageName) {
+	# Call Update-Container (handles check, acquire image, and remove)
+	$targetImage = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
+	if ($targetImage) {
 		Write-Host "Core update steps successful. Starting new container..."
 		# Start the new container
 		try {
-			Install-FirecrawlPostgresContainer
+			Install-FirecrawlPostgresContainer -ImageName $targetImage
 		}
 		catch {
 			Write-Error "Failed to start updated PostgreSQL container: $($_.Exception.Message)"

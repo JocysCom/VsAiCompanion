@@ -191,66 +191,32 @@ function Test-FirecrawlAPIDependency {
 	Designed to be called after the container is running.
 #>
 function Test-FirecrawlUIAvailability {
-	Write-Host "Testing Firecrawl UI and service availability..."
+	Write-Host ""
+	Write-Host "Main Services:" -ForegroundColor White
 
-	$endpoints = @{
-		"Main Interface"  = $global:firecrawlBaseUrl
-		"Liveness Check"  = $global:firecrawlHealthUrl
-		"Readiness Check" = $global:firecrawlReadinessUrl
-		"Admin Dashboard" = $global:firecrawlAdminUrl
+	$endpoints = [ordered]@{
+		"Liveness Check"  = @{ Url = $global:firecrawlHealthUrl }
+		"Readiness Check" = @{ Url = $global:firecrawlReadinessUrl }
+		"Main Interface"  = @{ Url = $global:firecrawlBaseUrl }
+		"Admin Dashboard" = @{ Url = $global:firecrawlAdminUrl }
+		"API Endpoints"   = @{ Url = "$global:firecrawlBaseUrl/v1/scrape"; Method = "POST"; Body = '{"url":"https://example.com"}' }
 	}
 
 	$results = @{}
 
 	foreach ($endpoint in $endpoints.GetEnumerator()) {
 		$name = $endpoint.Key
-		$url = $endpoint.Value
-
-		Write-Host "  Testing $name..." -NoNewline
-
-		try {
-			# Use a simple HTTP test with short timeout
-			$response = Invoke-WebRequest -Uri $url -Method GET -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
-			if ($response.StatusCode -eq 200) {
-				$results[$name] = @{ Status = "Available"; Url = $url; Icon = "✅" }
-				Write-Host " ✅ Available" -ForegroundColor Green
-			}
-			else {
-				$results[$name] = @{ Status = "Error ($($response.StatusCode))"; Url = $url; Icon = "❌" }
-				Write-Host " ❌ Error ($($response.StatusCode))" -ForegroundColor Red
-			}
-		}
-		catch {
-			# Check if it's a 404 or other HTTP error
-			if ($_.Exception.Response.StatusCode -eq 404) {
-				$results[$name] = @{ Status = "Not Found (404)"; Url = $url; Icon = "❌" }
-				Write-Host " ❌ Not Found (404)" -ForegroundColor Red
-			}
-			else {
-				$results[$name] = @{ Status = "Unavailable"; Url = $url; Icon = "❌" }
-				Write-Host " ❌ Unavailable" -ForegroundColor Red
-			}
-		}
-	}
-
-	# Test API endpoints separately (they require POST, not GET)
-	Write-Host "  Testing API Endpoints..." -NoNewline
-	try {
-		# Test if the API endpoint structure is available by checking a simple endpoint
-		$testUrl = "$global:firecrawlBaseUrl/v0/health/liveness"
-		$response = Invoke-WebRequest -Uri $testUrl -Method GET -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
-		if ($response.StatusCode -eq 200) {
-			$results["API Endpoints"] = @{ Status = "Available (v0 & v1)"; Url = "$global:firecrawlBaseUrl/v1/scrape (POST)"; Icon = "✅" }
-			Write-Host " ✅ Available (v0 & v1)" -ForegroundColor Green
+		$cfg = $endpoint.Value
+		$testParams = @{ Uri = $cfg.Url; serviceName = $name; Timeout = 10 }
+		if ($cfg.Method) { $testParams["Method"] = $cfg.Method }
+		if ($cfg.Body) { $testParams["Body"] = $cfg.Body }
+		$testResult = Test-HTTPPort @testParams
+		if ($testResult) {
+			$results[$name] = @{ Status = "Available"; Url = $cfg.Url; Icon = "✅" }
 		}
 		else {
-			$results["API Endpoints"] = @{ Status = "Error ($($response.StatusCode))"; Url = "$global:firecrawlBaseUrl/v1/scrape (POST)"; Icon = "❌" }
-			Write-Host " ❌ Error ($($response.StatusCode))" -ForegroundColor Red
+			$results[$name] = @{ Status = "Unavailable"; Url = $cfg.Url; Icon = "❌" }
 		}
-	}
-	catch {
-		$results["API Endpoints"] = @{ Status = "Unavailable"; Url = "$global:firecrawlBaseUrl/v1/scrape (POST)"; Icon = "❌" }
-		Write-Host " ❌ Unavailable" -ForegroundColor Red
 	}
 
 	return $results
@@ -279,61 +245,14 @@ function Show-FirecrawlServicesSummary {
 	)
 
 	Write-Host ""
-	Write-Host "==========================================" -ForegroundColor Cyan
-	Write-Host "🔥 Firecrawl Services Available" -ForegroundColor Yellow
-	Write-Host "==========================================" -ForegroundColor Cyan
-
-	# Main Firecrawl Services
-	Write-Host ""
-	Write-Host "Main Services:" -ForegroundColor White
-	foreach ($service in $UIStatus.GetEnumerator()) {
-		$name = $service.Key
-		$info = $service.Value
-		$icon = $info.Icon
-		$url = $info.Url
-		$status = $info.Status
-
-		Write-Host "$icon $($name.PadRight(20)): $url" -ForegroundColor $(if ($icon -eq "✅") { "Green" } else { "Red" })
-		if ($icon -eq "❌") {
-			Write-Host "   └─ Status: $status" -ForegroundColor Gray
-		}
-	}
-
-	# Related Services
-	Write-Host ""
 	Write-Host "Related Services:" -ForegroundColor White
 
-	# Test Redis availability
 	$redisPort = [int]$config.environment.REDIS_PORT
-	$redisAvailable = Test-TCPPort -ComputerName "localhost" -Port $redisPort -serviceName "Redis"
-	$redisIcon = if ($redisAvailable) { "✅" } else { "❌" }
-	Write-Host "$redisIcon Redis Cache        : $global:redisUrl" -ForegroundColor $(if ($redisAvailable) { "Green" } else { "Red" })
+	$null = Test-TCPPort -ComputerName "localhost" -Port $redisPort -serviceName "Redis Cache ($global:redisUrl)"
 
-	# Test Playwright availability
 	$playwrightUrl = $config.environment.PLAYWRIGHT_MICROSERVICE_URL
 	$playwrightPort = if ($playwrightUrl -match ":(\d+)/") { [int]$Matches[1] } else { 3000 }
-	$playwrightAvailable = Test-TCPPort -ComputerName "localhost" -Port $playwrightPort -serviceName "Playwright"
-	$playwrightIcon = if ($playwrightAvailable) { "✅" } else { "❌" }
-	Write-Host "$playwrightIcon Playwright Service: $global:playwrightUrl" -ForegroundColor $(if ($playwrightAvailable) { "Green" } else { "Red" })
-
-	# Usage Notes
-	Write-Host ""
-	Write-Host "Usage Notes:" -ForegroundColor White
-	Write-Host "• ✅ = Service is available and responding" -ForegroundColor Gray
-	Write-Host "• ❌ = Service is not available or not responding" -ForegroundColor Gray
-
-	# Check if any UI features are missing and provide guidance
-	$missingServices = $UIStatus.Values | Where-Object { $_.Icon -eq "❌" }
-	if ($missingServices.Count -gt 0) {
-		Write-Host ""
-		Write-Host "Troubleshooting:" -ForegroundColor Yellow
-		Write-Host "• Some UI features may require development mode or additional configuration" -ForegroundColor Gray
-		Write-Host "• Admin Dashboard may need specific environment variables" -ForegroundColor Gray
-		Write-Host "• Try accessing the main interface first: $global:firecrawlBaseUrl" -ForegroundColor Gray
-	}
-
-	Write-Host ""
-	Write-Host "==========================================" -ForegroundColor Cyan
+	$null = Test-TCPPort -ComputerName "localhost" -Port $playwrightPort -serviceName "Playwright Service ($global:playwrightUrl)"
 }
 
 #==============================================================================
@@ -441,8 +360,7 @@ function Install-FirecrawlContainer {
 	#############################################
 	# Step 6: Wait and Test Connectivity
 	#############################################
-	Write-Host "Waiting 20 seconds for containers to fully start..."
-	Start-Sleep -Seconds 20
+	Write-Host "Waiting for container startup..."
 
 	Write-Host "Testing Firecrawl API connectivity on port $($config.hostPort)..."
 	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Firecrawl API"
@@ -541,13 +459,12 @@ function Invoke-StartFirecrawlForUpdate {
 	}
 
 	# Wait and Test Connectivity (same as in Install-FirecrawlContainer)
-	Write-Host "Waiting 20 seconds for container to fully start..."
-	Start-Sleep -Seconds 20
+	Write-Host "Waiting for container startup..."
 	Write-Host "Testing Firecrawl API connectivity on port $($config.hostPort)..."
-	Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Firecrawl API"
-	Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Firecrawl API"
+	$null = Test-TCPPort -ComputerName "localhost" -Port $config.hostPort -serviceName "Firecrawl API"
+	$null = Test-HTTPPort -Uri "http://localhost:$($config.hostPort)" -serviceName "Firecrawl API"
 	Write-Host "Testing Redis container connectivity on port $([int]$config.environment.REDIS_PORT)..."
-	Test-TCPPort -ComputerName "localhost" -Port ([int]$config.environment.REDIS_PORT) -serviceName "Firecrawl Redis"
+	$null = Test-TCPPort -ComputerName "localhost" -Port ([int]$config.environment.REDIS_PORT) -serviceName "Firecrawl Redis"
 	Write-Host "Firecrawl container updated successfully."
 }
 
@@ -597,37 +514,24 @@ function Update-FirecrawlContainer {
 		Write-Warning "Container '$global:containerName' not found. Skipping backup prompt."
 	}
 
-	# Call simplified Update-Container (handles check, remove, pull)
-	# Pass volume name for removal step
+	# Call Update-Container (handles check, acquire image, and remove)
 	$updateResult = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
 
-	if ($updateResult -eq $true) {
-		Write-Host "Core update steps successful. Starting new container..."
-		# Start the new container using the dedicated start function
-		try {
-			# Invoke-StartFirecrawlForUpdate expects these params, pass configuration values
-			Invoke-StartFirecrawlForUpdate -EnginePath $global:enginePath -ContainerEngineType "docker" -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
-			# Success message is handled within Invoke-StartFirecrawlForUpdate
-		}
-		catch {
-			Write-Error "Failed to start updated Firecrawl container: $_"
-			if ($backupMade) {
-				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-				if ($restore -ne "N") {
-					Write-Host "Loading '$global:containerName' Container Image..."
-					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
-					Write-Host "Importing '$($config.volumeName)' Volume..."
-					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
-				}
-			}
-		}
+	if ($updateResult -eq $false) {
+		Write-Host "No update available, update canceled, or container '$($global:containerName)' not found." -ForegroundColor Yellow
+		return
 	}
-	elseif ($updateResult -eq $false) {
-		Write-Host "No update available or update was canceled by user." -ForegroundColor Yellow
-		Write-Host "Container is already up to date." -ForegroundColor Green
+
+	$targetImage = $updateResult
+	Write-Host "Core update steps successful. Starting new container..."
+	# Start the new container using the dedicated start function
+	try {
+		# Invoke-StartFirecrawlForUpdate expects these params, pass configuration values
+		Invoke-StartFirecrawlForUpdate -EnginePath $global:enginePath -ContainerEngineType $global:containerEngine -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $targetImage
+		# Success message is handled within Invoke-StartFirecrawlForUpdate
 	}
-	else {
-		Write-Error "Update process failed during check, removal, or pull."
+	catch {
+		Write-Error "Failed to start updated Firecrawl container: $($_.Exception.Message)"
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
@@ -662,22 +566,14 @@ $menuItems = [ordered]@{
 # Define Menu Actions
 $menuActions = @{
 	"1" = {
-		# Show status for Firecrawl itself
 		Show-ContainerStatus -ContainerName $global:containerName `
 			-ContainerEngine $global:containerEngine `
 			-EnginePath $global:enginePath `
 			-DisplayName "Firecrawl API" `
-			-TcpPort $config.hostPort `
-			-HttpPort $config.hostPort `
 			-DelaySeconds 0
 
-		# Show status for the associated Redis container
-		Show-ContainerStatus -ContainerName $global:redisContainerName `
-			-ContainerEngine $global:containerEngine `
-			-EnginePath $global:enginePath `
-			-DisplayName "Firecrawl Redis" `
-			-TcpPort ([int]$config.environment.REDIS_PORT) `
-			-DelaySeconds 3
+		$uiTestResults = Test-FirecrawlUIAvailability
+		Show-FirecrawlServicesSummary -UIStatus $uiTestResults
 	}
 	"2" = { Install-FirecrawlContainer }
 	"3" = {

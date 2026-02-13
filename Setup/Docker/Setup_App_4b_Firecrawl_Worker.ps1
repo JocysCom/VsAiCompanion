@@ -246,8 +246,7 @@ function Install-FirecrawlWorkerContainer {
 	#############################################
 	# Step 5: Wait and Verify Container Status
 	#############################################
-	Write-Host "Waiting 15 seconds for Firecrawl Worker container to initialize..."
-	Start-Sleep -Seconds 15
+	Write-Host "Waiting for container startup..."
 
 	# Check if container is running
 	$runningContainer = & $global:enginePath ps --filter "name=^$global:containerName$" --format "{{.Names}}"
