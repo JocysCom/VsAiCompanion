@@ -194,3 +194,18 @@ All hardcoded strings, numbers, and configuration values in PowerShell scripts m
 
 **Rationale:**
 Using global variables instead of hardcoded values improves maintainability, makes configuration changes easier, reduces errors, and ensures consistency across the codebase. It also makes scripts more flexible and reusable.
+
+## Rule: Check Container Logs When Debugging Installation Failures
+
+**Description:**
+When a container fails to start or a readiness check times out, always check container engine logs (`podman logs` or `docker logs`) **before** attempting code-level fixes.
+
+**Procedure:**
+
+1. Run `podman logs --tail 30 <container-name>` (or `docker logs`) to retrieve recent output.
+2. Analyse for FATAL/ERROR messages to identify the root cause (e.g., data version incompatibility, missing environment variables, permission errors).
+3. Apply the appropriate fix based on log findings.
+4. Only after understanding the root cause should script-level changes (such as increasing timeouts) be considered.
+
+**Rationale:**
+Container failures often stem from runtime issues visible only in container logs. Checking logs first prevents wasted effort on incorrect fixes.

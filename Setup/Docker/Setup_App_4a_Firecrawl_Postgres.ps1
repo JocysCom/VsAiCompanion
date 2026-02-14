@@ -173,19 +173,25 @@ function Install-FirecrawlPostgresContainer {
 	#############################################
 	# Step 5: Wait and Test Connectivity
 	#############################################
-	Write-Host "Waiting for PostgreSQL container to initialize (this may take up to 60 seconds)..."
+	Write-Host "Waiting for PostgreSQL container to initialize..."
+	Start-Sleep -Seconds 5
 
-	# PostgreSQL needs more time to initialize than Redis
-	$maxWait = 60
+	$maxWait = 90
 	$waitInterval = 5
 	$elapsed = 0
 	$isReady = $false
 
 	while ($elapsed -lt $maxWait -and -not $isReady) {
-		Start-Sleep -Seconds $waitInterval
-		$elapsed += $waitInterval
+		$containerState = & $global:enginePath inspect --format "{{.State.Status}}" $global:containerName 2>$null
+		if ($containerState -ne "running") {
+			Write-Host ""
+			Write-Error "Container '$global:containerName' is not running (state: $containerState). Showing last 20 log lines:"
+			& $global:enginePath logs --tail 20 $global:containerName
+			Write-Host ""
+			Write-Warning "If the data volume was created by a different PostgreSQL major version, uninstall (menu option 3) to remove the volume, then reinstall."
+			return
+		}
 
-		# Test if PostgreSQL is ready using pg_isready
 		$null = & $global:enginePath exec $global:containerName pg_isready -U $config.databaseUser -d $config.databaseName 2>$null
 		if ($LASTEXITCODE -eq 0) {
 			$isReady = $true
@@ -194,6 +200,8 @@ function Install-FirecrawlPostgresContainer {
 		}
 		else {
 			Write-Host "." -NoNewline
+			Start-Sleep -Seconds $waitInterval
+			$elapsed += $waitInterval
 		}
 	}
 
@@ -201,8 +209,8 @@ function Install-FirecrawlPostgresContainer {
 
 	if (-not $isReady) {
 		Write-Host ""
-		Write-Warning "PostgreSQL may still be initializing. Check container logs if needed:"
-		Write-Host "$global:enginePath logs $global:containerName"
+		Write-Warning "PostgreSQL did not become ready within $maxWait seconds. Showing last 20 log lines:"
+		& $global:enginePath logs --tail 20 $global:containerName
 	}
 	else {
 		Write-Host "Applying NuQ schema (idempotent) from baked-in /docker-entrypoint-initdb.d/010-nuq.sql..."
@@ -263,29 +271,12 @@ function Update-FirecrawlPostgresContainer {
 		Write-Warning "Container '$($global:containerName)' not found. Skipping backup prompt."
 	}
 
-	# Call Update-Container (handles check, acquire image, and remove)
-	$targetImage = Update-Container -Engine $global:enginePath -ContainerName $global:containerName -VolumeName $config.volumeName -ImageName $config.imageName
-	if ($targetImage) {
-		Write-Host "Core update steps successful. Starting new container..."
-		# Start the new container
-		try {
-			Install-FirecrawlPostgresContainer -ImageName $targetImage
-		}
-		catch {
-			Write-Error "Failed to start updated PostgreSQL container: $($_.Exception.Message)"
-			if ($backupMade) {
-				$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
-				if ($restore -ne "N") {
-					Write-Host "Loading '$($global:containerName)' Container Image..."
-					Test-AndRestoreBackup -Engine $global:enginePath -ImageName $config.imageName
-					Write-Host "Importing '$($config.volumeName)' Volume..."
-					$null = Restore-ContainerVolume -EngineType $global:containerEngine -VolumeName $config.volumeName
-				}
-			}
-		}
+	# Locally-built image: rebuild and reinstall instead of pulling from registry.
+	try {
+		Install-FirecrawlPostgresContainer
 	}
-	else {
-		Write-Error "Update process failed during check, removal, or pull."
+	catch {
+		Write-Error "Failed to rebuild and start PostgreSQL container: $($_.Exception.Message)"
 		if ($backupMade) {
 			$restore = Read-Host "Would you like to restore from backup? (Y/N, default is Y)"
 			if ($restore -ne "N") {
