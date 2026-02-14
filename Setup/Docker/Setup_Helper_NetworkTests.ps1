@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # File         : Setup_Helper_NetworkTests.ps1
 # Description  : Contains network testing helper functions for setup scripts:
 #                - Test-TCPPort: Test connectivity to a specific TCP port.
