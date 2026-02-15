@@ -43,7 +43,7 @@ $global:nodeMinVersion = 24
 # Backup configuration
 $global:backupFolder = ".\Backup"
 $global:openclawBackupSubfolder = "openclaw_data"
-$global:workspacePath = "~/workspace"
+$global:workspacePath = "~/.openclaw/workspace"
 
 # Windows Scheduled Task "service" to auto-start WSL distro.
 # WSL distros are per-user (HKCU), so SYSTEM/NetworkService cannot see them.
@@ -1092,30 +1092,54 @@ function Show-OpenClawLogs {
 }
 
 #==============================================================================
-# Function: Backup-OpenClawData
+# Function: Backup-OpenClawArchive
 #==============================================================================
 <#
 .SYNOPSIS
-    Backs up OpenClaw bot personality, memory, and configuration files.
+    Creates a tar.gz backup archive from specified WSL directories.
 .DESCRIPTION
-    Creates a timestamped tar.gz archive containing the OpenClaw configuration
-    directory (~/.openclaw) and the workspace directory (~/workspace) which holds
-    SOUL.md, USER.md, IDENTITY.md, MEMORY.md, HEARTBEAT.md, TOOLS.md, skills,
-    tools, and daily memory files. The archive is saved to the local Backup folder.
+    Checks which of the specified directories exist in the WSL distro home,
+    creates a tar.gz archive, and copies it to the Windows backup folder.
+    Shared helper used by Backup-OpenClawPersonality and Backup-OpenClawSystem.
+.PARAMETER FilePrefix
+    Prefix for the backup filename (e.g., 'openclaw-personality', 'openclaw-system').
+.PARAMETER WslDirectories
+    Array of directory names relative to ~ to include in the backup.
+.PARAMETER ExcludePatterns
+    Optional array of tar --exclude patterns (e.g., '.openclaw/workspace').
+.PARAMETER DisplayName
+    Human-readable name for display messages (e.g., 'Personality', 'System').
+.PARAMETER DisplayItems
+    Array of strings describing what will be backed up, shown to the user.
 .OUTPUTS
     [void]
 #>
-function Backup-OpenClawData {
+function Backup-OpenClawArchive {
     [CmdletBinding(SupportsShouldProcess = $true)]
-    param()
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePrefix,
 
-    if (-not $PSCmdlet.ShouldProcess("OpenClaw", "Backup Personality Data")) {
+        [Parameter(Mandatory = $true)]
+        [string[]]$WslDirectories,
+
+        [Parameter(Mandatory = $false)]
+        [string[]]$ExcludePatterns = @(),
+
+        [Parameter(Mandatory = $true)]
+        [string]$DisplayName,
+
+        [Parameter(Mandatory = $true)]
+        [string[]]$DisplayItems
+    )
+
+    if (-not $PSCmdlet.ShouldProcess("OpenClaw", "Backup $DisplayName")) {
         return
     }
 
     Write-Host ""
     Write-Host "===========================================" -ForegroundColor Yellow
-    Write-Host "OpenClaw Data Backup" -ForegroundColor White
+    Write-Host "OpenClaw $DisplayName Backup" -ForegroundColor White
     Write-Host "===========================================" -ForegroundColor Yellow
     Write-Host ""
 
@@ -1125,14 +1149,9 @@ function Backup-OpenClawData {
     }
 
     Write-Host "This will back up:" -ForegroundColor Cyan
-    Write-Host "  - Configuration:  ~/.openclaw/ (openclaw.json, API keys, etc.)" -ForegroundColor DarkGray
-    Write-Host "  - Personality:    ~/workspace/SOUL.md, IDENTITY.md" -ForegroundColor DarkGray
-    Write-Host "  - User Context:   ~/workspace/USER.md" -ForegroundColor DarkGray
-    Write-Host "  - Memory:         ~/workspace/MEMORY.md, memory/*.md" -ForegroundColor DarkGray
-    Write-Host "  - Bot Skills:     ~/workspace/skills/" -ForegroundColor DarkGray
-    Write-Host "  - Bot Tools:      ~/workspace/tools/" -ForegroundColor DarkGray
-    Write-Host "  - Heartbeat:      ~/workspace/HEARTBEAT.md" -ForegroundColor DarkGray
-    Write-Host "  - Optimization:   ~/workspace/OPTIMIZATION.md, TOOLS.md" -ForegroundColor DarkGray
+    foreach ($item in $DisplayItems) {
+        Write-Host "  - $item" -ForegroundColor DarkGray
+    }
     Write-Host ""
 
     $backupDir = Join-Path $global:backupFolder $global:openclawBackupSubfolder
@@ -1142,21 +1161,22 @@ function Backup-OpenClawData {
     }
 
     $timestamp = Get-Date -Format "yyyyMMdd-HHmm"
-    $backupFileName = "openclaw-data-$timestamp.tar.gz"
+    $backupFileName = "$FilePrefix-$timestamp.tar.gz"
     $backupFilePath = Join-Path $backupDir $backupFileName
 
     Write-Host "Checking available data directories..." -ForegroundColor Cyan
 
-    $configDirExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/.openclaw && echo 'yes' || echo 'no'"
-    $workspaceDirExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/workspace && echo 'yes' || echo 'no'"
-
     $dirsTrimmed = ""
-    if ($configDirExists -match "yes") { $dirsTrimmed += " .openclaw" }
-    if ($workspaceDirExists -match "yes") { $dirsTrimmed += " workspace" }
+    foreach ($dir in $WslDirectories) {
+        $exists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/$dir && echo 'yes' || echo 'no'"
+        if ($exists -match "yes") {
+            $dirsTrimmed += " $dir"
+        }
+    }
     $dirsTrimmed = $dirsTrimmed.Trim()
 
     if ([string]::IsNullOrWhiteSpace($dirsTrimmed)) {
-        Write-Warning "No OpenClaw data directories found (~/.openclaw or ~/workspace)."
+        Write-Warning "No data directories found for $DisplayName backup."
         Write-Host "Nothing to back up." -ForegroundColor Yellow
         return
     }
@@ -1165,7 +1185,11 @@ function Backup-OpenClawData {
 
     Write-Host "Creating backup archive..." -ForegroundColor Cyan
     $wslTarPath = "/tmp/$backupFileName"
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cd ~ && tar -czf $wslTarPath $dirsTrimmed"
+    $excludeArgs = ""
+    foreach ($pattern in $ExcludePatterns) {
+        $excludeArgs += " --exclude='$pattern'"
+    }
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cd ~ && tar -czf $wslTarPath$excludeArgs $dirsTrimmed"
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to create backup archive in WSL."
@@ -1190,7 +1214,7 @@ function Backup-OpenClawData {
 
     Write-Host ""
     Write-Host "===========================================" -ForegroundColor Green
-    Write-Host "Backup Complete!" -ForegroundColor Green
+    Write-Host "$DisplayName Backup Complete!" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host ""
     Write-Host "File: $backupFilePath" -ForegroundColor Cyan
@@ -1198,12 +1222,12 @@ function Backup-OpenClawData {
     Write-Host ""
 
     Write-Host "Archive contents:" -ForegroundColor White
-    $wslBackupPath = "/tmp/openclaw-list-$timestamp.tar.gz"
-    $wslUncListPath = "\\wsl`$\$($global:wslDistroName)\tmp\openclaw-list-$timestamp.tar.gz"
+    $wslListPath = "/tmp/$FilePrefix-list-$timestamp.tar.gz"
+    $wslUncListPath = "\\wsl`$\$($global:wslDistroName)\tmp\$FilePrefix-list-$timestamp.tar.gz"
     try {
         Copy-Item -Path $backupFilePath -Destination $wslUncListPath -Force -ErrorAction SilentlyContinue
-        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "tar -tzf $wslBackupPath 2>/dev/null | head -30"
-        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -f $wslBackupPath"
+        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "tar -tzf $wslListPath 2>/dev/null | head -30"
+        Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -f $wslListPath"
     }
     catch {
         Write-Host "  (unable to list contents)" -ForegroundColor DarkGray
@@ -1212,30 +1236,42 @@ function Backup-OpenClawData {
 }
 
 #==============================================================================
-# Function: Restore-OpenClawData
+# Function: Restore-OpenClawArchive
 #==============================================================================
 <#
 .SYNOPSIS
-    Restores OpenClaw bot personality, memory, and configuration files from backup.
+    Restores an OpenClaw backup archive by listing available files and prompting the user.
 .DESCRIPTION
-    Lists available backup archives and prompts the user to select one.
-    Extracts the selected archive back into the WSL distro home directory,
-    restoring ~/.openclaw and ~/workspace with all personality files, memory,
-    skills, tools, and configuration.
+    Lists available backup archives matching the specified file prefix,
+    prompts the user to select one, and extracts it into the WSL distro home directory.
+    Automatically stops the OpenClaw service before restoring to prevent the running
+    process from overwriting restored files during its own save cycle. Restarts the
+    service afterwards if it was previously running.
+    Shared helper used by Restore-OpenClawPersonality and Restore-OpenClawSystem.
+.PARAMETER FilePrefix
+    Prefix for matching backup filenames (e.g., 'openclaw-personality', 'openclaw-system').
+.PARAMETER DisplayName
+    Human-readable name for display messages (e.g., 'Personality', 'System').
 .OUTPUTS
     [void]
 #>
-function Restore-OpenClawData {
+function Restore-OpenClawArchive {
     [CmdletBinding(SupportsShouldProcess = $true)]
-    param()
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePrefix,
 
-    if (-not $PSCmdlet.ShouldProcess("OpenClaw", "Restore Personality Data")) {
+        [Parameter(Mandatory = $true)]
+        [string]$DisplayName
+    )
+
+    if (-not $PSCmdlet.ShouldProcess("OpenClaw", "Restore $DisplayName")) {
         return
     }
 
     Write-Host ""
     Write-Host "===========================================" -ForegroundColor Yellow
-    Write-Host "OpenClaw Data Restore" -ForegroundColor White
+    Write-Host "OpenClaw $DisplayName Restore" -ForegroundColor White
     Write-Host "===========================================" -ForegroundColor Yellow
     Write-Host ""
 
@@ -1250,13 +1286,13 @@ function Restore-OpenClawData {
         return
     }
 
-    $backupFiles = Get-ChildItem -Path $backupDir -Filter "openclaw-data-*.tar.gz" | Sort-Object LastWriteTime -Descending
+    $backupFiles = Get-ChildItem -Path $backupDir -Filter "$FilePrefix-*.tar.gz" | Sort-Object LastWriteTime -Descending
     if (-not $backupFiles) {
-        Write-Warning "No backup files found in '$backupDir'."
+        Write-Warning "No $DisplayName backup files found in '$backupDir'."
         return
     }
 
-    Write-Host "Available backups:" -ForegroundColor Cyan
+    Write-Host "Available $DisplayName backups:" -ForegroundColor Cyan
     Write-Host ""
     for ($i = 0; $i -lt $backupFiles.Count; $i++) {
         $file = $backupFiles[$i]
@@ -1285,7 +1321,6 @@ function Restore-OpenClawData {
     Write-Host ""
     Write-Host "Selected: $($selectedBackup.Name)" -ForegroundColor Cyan
 
-    # Convert Windows path to WSL /mnt/ path for direct access
     $winFullPath = (Resolve-Path $selectedBackup.FullName).Path
     $wslMntPath = $winFullPath
     if ($winFullPath -match '^([A-Z]):\\(.*)$') {
@@ -1299,54 +1334,173 @@ function Restore-OpenClawData {
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "tar -tzf '$wslMntPath' 2>/dev/null | head -30"
     Write-Host ""
 
-    Write-Host "WARNING: This will overwrite existing files in ~/.openclaw and ~/workspace." -ForegroundColor Yellow
+    Write-Host "WARNING: This will overwrite existing $DisplayName files." -ForegroundColor Yellow
     $confirm = Read-Host "Proceed with restore? (Y/N)"
     if ($confirm -ne "Y") {
         Write-Host "Restore cancelled." -ForegroundColor Yellow
         return
     }
 
+    $wasRunning = (Get-OpenClawServiceStatus) -eq "active"
+    if ($wasRunning) {
+        Write-Host ""
+        Write-Host "Stopping OpenClaw service to prevent file overwrites during restore..." -ForegroundColor Yellow
+        Stop-OpenClawService
+        Start-Sleep -Seconds 2
+    }
+
     Write-Host ""
-    Write-Host "Restoring files..." -ForegroundColor Cyan
+    Write-Host "Restoring $DisplayName files..." -ForegroundColor Cyan
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cd ~ && tar -xzf '$wslMntPath'"
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to extract backup archive."
+        if ($wasRunning) {
+            Write-Host "Restarting OpenClaw service..." -ForegroundColor Yellow
+            Start-OpenClawService
+        }
         return
     }
 
     Write-Host ""
     Write-Host "===========================================" -ForegroundColor Green
-    Write-Host "Restore Complete!" -ForegroundColor Green
+    Write-Host "$DisplayName Restore Complete!" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host ""
+
     Write-Host "Restored files:" -ForegroundColor Cyan
-
-    $configExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/.openclaw && echo 'yes' || echo 'no'"
-    $workspaceExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/workspace && echo 'yes' || echo 'no'"
-
-    Write-Host "  Configuration (~/.openclaw): $(if ($configExists -match 'yes') { 'Restored' } else { 'Not found in backup' })" -ForegroundColor $(if ($configExists -match 'yes') { "Green" } else { "Yellow" })
-    Write-Host "  Workspace (~/workspace):     $(if ($workspaceExists -match 'yes') { 'Restored' } else { 'Not found in backup' })" -ForegroundColor $(if ($workspaceExists -match 'yes') { "Green" } else { "Yellow" })
-
-    if ($workspaceExists -match "yes") {
-        $soulExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -f ~/workspace/SOUL.md && echo 'yes' || echo 'no'"
-        $identityExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -f ~/workspace/IDENTITY.md && echo 'yes' || echo 'no'"
-        $userExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -f ~/workspace/USER.md && echo 'yes' || echo 'no'"
-        $memoryExists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/workspace/memory && echo 'yes' || echo 'no'"
-        $skillsExist = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/workspace/skills && echo 'yes' || echo 'no'"
-        $toolsExist = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test -d ~/workspace/tools && echo 'yes' || echo 'no'"
-
-        Write-Host "    SOUL.md:     $(if ($soulExists -match 'yes') { 'OK' } else { 'Not found' })" -ForegroundColor $(if ($soulExists -match 'yes') { "Green" } else { "DarkGray" })
-        Write-Host "    IDENTITY.md: $(if ($identityExists -match 'yes') { 'OK' } else { 'Not found' })" -ForegroundColor $(if ($identityExists -match 'yes') { "Green" } else { "DarkGray" })
-        Write-Host "    USER.md:     $(if ($userExists -match 'yes') { 'OK' } else { 'Not found' })" -ForegroundColor $(if ($userExists -match 'yes') { "Green" } else { "DarkGray" })
-        Write-Host "    memory/:     $(if ($memoryExists -match 'yes') { 'OK' } else { 'Not found' })" -ForegroundColor $(if ($memoryExists -match 'yes') { "Green" } else { "DarkGray" })
-        Write-Host "    skills/:     $(if ($skillsExist -match 'yes') { 'OK' } else { 'Not found' })" -ForegroundColor $(if ($skillsExist -match 'yes') { "Green" } else { "DarkGray" })
-        Write-Host "    tools/:      $(if ($toolsExist -match 'yes') { 'OK' } else { 'Not found' })" -ForegroundColor $(if ($toolsExist -match 'yes') { "Green" } else { "DarkGray" })
+    $archiveEntries = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "tar -tzf '$wslMntPath' 2>/dev/null"
+    foreach ($entry in $archiveEntries) {
+        $entryTrimmed = ($entry -join "").Trim()
+        if ([string]::IsNullOrWhiteSpace($entryTrimmed)) { continue }
+        $testFlag = if ($entryTrimmed.EndsWith("/")) { "-d" } else { "-f" }
+        $exists = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "test $testFlag ~/$entryTrimmed && echo 'yes' || echo 'no'"
+        $ok = $exists -match 'yes'
+        Write-Host "  ${entryTrimmed}: $(if ($ok) { 'OK' } else { 'MISSING' })" -ForegroundColor $(if ($ok) { "Green" } else { "Red" })
     }
 
+    if ($wasRunning) {
+        Write-Host ""
+        Write-Host "Restarting OpenClaw service..." -ForegroundColor Yellow
+        Start-OpenClawService
+    }
+    else {
+        Write-Host ""
+        Write-Host "Note: Start the OpenClaw service for restored files to take effect." -ForegroundColor Yellow
+    }
     Write-Host ""
-    Write-Host "Note: Restart the OpenClaw service for config changes to take effect." -ForegroundColor Yellow
-    Write-Host ""
+}
+
+#==============================================================================
+# Function: Backup-OpenClawPersonality
+#==============================================================================
+<#
+.SYNOPSIS
+    Backs up OpenClaw personality files (~/workspace/).
+.DESCRIPTION
+    Creates a timestamped tar.gz archive of the workspace directory containing
+    SOUL.md, USER.md, IDENTITY.md, MEMORY.md, HEARTBEAT.md, TOOLS.md,
+    OPTIMIZATION.md, skills/, tools/, and memory/ subdirectories.
+    Analogous to backing up a container volume (data) separately from its image.
+.OUTPUTS
+    [void]
+#>
+function Backup-OpenClawPersonality {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    $displayItems = @(
+        "Personality:    ~/.openclaw/workspace/SOUL.md, IDENTITY.md"
+        "User Context:   ~/.openclaw/workspace/USER.md"
+        "Memory:         ~/.openclaw/workspace/MEMORY.md, memory/*.md"
+        "Bot Skills:     ~/.openclaw/workspace/skills/"
+        "Bot Tools:      ~/.openclaw/workspace/tools/"
+        "Heartbeat:      ~/.openclaw/workspace/HEARTBEAT.md"
+        "Optimization:   ~/.openclaw/workspace/OPTIMIZATION.md, TOOLS.md"
+    )
+
+    Backup-OpenClawArchive `
+        -FilePrefix "openclaw-personality" `
+        -WslDirectories @(".openclaw/workspace") `
+        -DisplayName "Personality" `
+        -DisplayItems $displayItems
+}
+
+#==============================================================================
+# Function: Restore-OpenClawPersonality
+#==============================================================================
+<#
+.SYNOPSIS
+    Restores OpenClaw personality files from a backup archive.
+.DESCRIPTION
+    Lists available personality backup archives and prompts the user to select one.
+    Extracts the selected archive back into ~/workspace/ in the WSL distro,
+    restoring all personality, memory, skills, and tools files.
+    The system configuration (~/.openclaw/) is NOT affected.
+.OUTPUTS
+    [void]
+#>
+function Restore-OpenClawPersonality {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    Restore-OpenClawArchive `
+        -FilePrefix "openclaw-personality" `
+        -DisplayName "Personality"
+}
+
+#==============================================================================
+# Function: Backup-OpenClawSystem
+#==============================================================================
+<#
+.SYNOPSIS
+    Backs up OpenClaw system configuration (~/.openclaw/).
+.DESCRIPTION
+    Creates a timestamped tar.gz archive of the ~/.openclaw directory containing
+    openclaw.json, API keys, gateway configuration, and service definitions.
+    Analogous to backing up a container image separately from its volume data.
+.OUTPUTS
+    [void]
+#>
+function Backup-OpenClawSystem {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    $displayItems = @(
+        "Configuration:  ~/.openclaw/openclaw.json"
+        "API Keys:       ~/.openclaw/ (stored credentials)"
+        "Gateway Config: ~/.openclaw/ (port bindings, daemon settings)"
+    )
+
+    Backup-OpenClawArchive `
+        -FilePrefix "openclaw-system" `
+        -WslDirectories @(".openclaw") `
+        -ExcludePatterns @(".openclaw/workspace") `
+        -DisplayName "System" `
+        -DisplayItems $displayItems
+}
+
+#==============================================================================
+# Function: Restore-OpenClawSystem
+#==============================================================================
+<#
+.SYNOPSIS
+    Restores OpenClaw system configuration from a backup archive.
+.DESCRIPTION
+    Lists available system backup archives and prompts the user to select one.
+    Extracts the selected archive back into ~/.openclaw/ in the WSL distro,
+    restoring gateway configuration, API keys, and service definitions.
+    The personality files (~/workspace/) are NOT affected.
+.OUTPUTS
+    [void]
+#>
+function Restore-OpenClawSystem {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    Restore-OpenClawArchive `
+        -FilePrefix "openclaw-system" `
+        -DisplayName "System"
 }
 
 ################################################################################
@@ -1427,8 +1581,10 @@ function Show-OpenClawMenu {
     Write-Host "7. Update App" -ForegroundColor Cyan
     Write-Host "8. Uninstall App" -ForegroundColor Cyan
     Write-Host "9. Show Logs" -ForegroundColor Cyan
-    Write-Host "A. Backup Data (personality, memory, config)" -ForegroundColor Cyan
-    Write-Host "B. Restore Data (personality, memory, config)" -ForegroundColor Cyan
+    Write-Host "A. Backup Personality (.openclaw/workspace: SOUL.md, memory, skills)" -ForegroundColor Cyan
+    Write-Host "B. Restore Personality" -ForegroundColor Cyan
+    Write-Host "C. Backup System (.openclaw config, excluding workspace)" -ForegroundColor Cyan
+    Write-Host "D. Restore System" -ForegroundColor Cyan
     Write-Host "0. Exit" -ForegroundColor Cyan
     Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -1472,10 +1628,16 @@ do {
             Show-OpenClawLogs
         }
         "A" {
-            Backup-OpenClawData
+            Backup-OpenClawPersonality
         }
         "B" {
-            Restore-OpenClawData
+            Restore-OpenClawPersonality
+        }
+        "C" {
+            Backup-OpenClawSystem
+        }
+        "D" {
+            Restore-OpenClawSystem
         }
         "0" { return }
         default {
