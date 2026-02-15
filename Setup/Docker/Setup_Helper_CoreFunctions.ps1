@@ -628,3 +628,249 @@ function Import-ScriptSettings {
 		return $null
 	}
 }
+
+#==============================================================================
+# Function: Test-IsAdministrator
+#==============================================================================
+<#
+.SYNOPSIS
+	Checks if the current session is running with Administrator privileges.
+.DESCRIPTION
+	Uses [Security.Principal.WindowsPrincipal] to check for the Administrator role.
+	Unlike Test-AdminPrivilege, this returns a boolean instead of exiting.
+.OUTPUTS
+	[bool] True if running as Administrator, false otherwise.
+.EXAMPLE
+	if (Test-IsAdministrator) { Write-Host "Elevated." }
+#>
+function Test-IsAdministrator {
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param()
+
+	return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+#==============================================================================
+# Function: Install-ScheduledTaskService
+#==============================================================================
+<#
+.SYNOPSIS
+	Registers a Scheduled Task as a per-user "service" using a wrapper script.
+.DESCRIPTION
+	Creates or replaces a Scheduled Task that runs a PowerShell wrapper script
+	as the current user. Supports three modes:
+
+	- Manual (no -AutoStart): No trigger, task must be started manually.
+	- Pre-login (-AutoStart -PreLogin): AtStartup trigger + S4U logon.
+	  Starts at Windows boot before user login. Requires Administrator.
+	- Post-login (-AutoStart without -PreLogin): AtLogOn trigger + Interactive
+	  logon. Starts when the user logs in. No admin required.
+
+	Both auto-start modes run as the current user ($env:UserName). This is
+	required for WSL-based services because WSL distros are per-user (HKCU)
+	and cannot be accessed by SYSTEM or NetworkService.
+
+	Used by: n8n, Qdrant, OpenClaw.
+.PARAMETER TaskName
+	Name of the Scheduled Task to register.
+.PARAMETER WrapperScriptPath
+	Full path to the PowerShell wrapper script to execute.
+.PARAMETER AutoStart
+	If set, adds a trigger. Without this switch the task is registered with no
+	trigger (manual start only). Combine with -PreLogin for AtStartup mode.
+.PARAMETER PreLogin
+	When combined with -AutoStart, uses AtStartup trigger + S4U logon (starts
+	before user login). Requires Administrator; if not elevated, a UAC prompt
+	is shown automatically. Without -PreLogin, uses AtLogOn + Interactive.
+.OUTPUTS
+	[void]
+.EXAMPLE
+	Install-ScheduledTaskService -TaskName "MyApp-Service" -WrapperScriptPath "C:\MyApp\wrapper.ps1" -AutoStart -PreLogin
+.NOTES
+	AtStartup + S4U requires Administrator elevation. When not already elevated,
+	the function automatically triggers a UAC prompt to register the task in an
+	elevated child process. If the user declines UAC, the operation is cancelled.
+	View registered tasks in: Task Scheduler (taskschd.msc) or Sysinternals Autoruns.
+#>
+function Install-ScheduledTaskService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param(
+		[Parameter(Mandatory = $true, HelpMessage = "Name of the Scheduled Task.")]
+		[string]$TaskName,
+
+		[Parameter(Mandatory = $true, HelpMessage = "Full path to the PowerShell wrapper script.")]
+		[string]$WrapperScriptPath,
+
+		[Parameter(Mandatory = $false)]
+		[switch]$AutoStart,
+
+		[Parameter(Mandatory = $false)]
+		[switch]$PreLogin
+	)
+
+	if (-not (Test-Path -LiteralPath $WrapperScriptPath)) {
+		throw "Wrapper script not found: $WrapperScriptPath"
+	}
+
+	$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$WrapperScriptPath`""
+	$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew
+
+	$isAdmin = Test-IsAdministrator
+	$trigger = $null
+
+	if ($AutoStart -and $PreLogin) {
+		if (-not $isAdmin) {
+			Write-Host "Pre-login (AtStartup) mode requires Administrator elevation." -ForegroundColor Yellow
+			Write-Host "A UAC prompt will appear to register the task..." -ForegroundColor Cyan
+			$elevatedCmd = @'
+$ErrorActionPreference = "Stop"
+try {
+	   $existing = Get-ScheduledTask -TaskName "__TASK__" -ErrorAction SilentlyContinue
+	   if ($existing) { Unregister-ScheduledTask -TaskName "__TASK__" -Confirm:$false }
+	   $action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"__PATH__`""
+	   $trigger = New-ScheduledTaskTrigger -AtStartup
+	   $principal = New-ScheduledTaskPrincipal -UserId "__USER__" -LogonType S4U -RunLevel Limited
+	   $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew
+	   $task = New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings
+	   Register-ScheduledTask -TaskName "__TASK__" -InputObject $task -Force | Out-Null
+	   exit 0
+} catch { exit 1 }
+'@
+			$elevatedCmd = $elevatedCmd.Replace('__TASK__', $TaskName).Replace('__PATH__', $WrapperScriptPath).Replace('__USER__', $env:UserName)
+			$cmdBytes = [System.Text.Encoding]::Unicode.GetBytes($elevatedCmd)
+			$cmdEncoded = [Convert]::ToBase64String($cmdBytes)
+			try {
+				$proc = Start-Process -FilePath "PowerShell.exe" -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", $cmdEncoded -Verb RunAs -Wait -PassThru
+			}
+			catch {
+				Write-Warning "UAC elevation was declined or failed."
+				return
+			}
+			if ($proc.ExitCode -eq 0) {
+				$verifyTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+				if ($verifyTask) {
+					Write-Host "Scheduled task '$TaskName' registered (runs at Windows startup, before login)." -ForegroundColor Green
+				}
+				else {
+					Write-Warning "Elevated process completed but task '$TaskName' was not found."
+				}
+			}
+			else {
+				Write-Warning "Elevated registration failed (exit code: $($proc.ExitCode))."
+			}
+			return
+		}
+		Write-Host "Registering AtStartup service '$TaskName' (pre-login, S4U)..." -ForegroundColor Cyan
+		$trigger = New-ScheduledTaskTrigger -AtStartup
+		$principal = New-ScheduledTaskPrincipal -UserId "$env:UserName" -LogonType S4U -RunLevel Limited
+	}
+	elseif ($AutoStart) {
+		Write-Host "Registering AtLogOn service '$TaskName' (post-login, Interactive)..." -ForegroundColor Cyan
+		$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:UserName
+		$principal = New-ScheduledTaskPrincipal -UserId "$env:UserName" -LogonType Interactive -RunLevel Limited
+	}
+	else {
+		$principal = New-ScheduledTaskPrincipal -UserId "$env:UserName" -LogonType Interactive -RunLevel Limited
+	}
+
+	Uninstall-ScheduledTaskService -TaskName $TaskName -WrapperScriptPath $null
+
+	$task = if ($trigger) { New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings } else { New-ScheduledTask -Action $action -Principal $principal -Settings $settings }
+
+	if ($PSCmdlet.ShouldProcess($TaskName, "Register Scheduled Task")) {
+		Register-ScheduledTask -TaskName $TaskName -InputObject $task -Force | Out-Null
+	}
+
+	if ($AutoStart -and $PreLogin) {
+		Write-Host "Scheduled task '$TaskName' registered (runs at Windows startup, before login)." -ForegroundColor Green
+	}
+	elseif ($AutoStart) {
+		Write-Host "Scheduled task '$TaskName' registered (runs at user logon, after login)." -ForegroundColor Green
+	}
+	else {
+		Write-Host "Scheduled task '$TaskName' registered (manual start only)." -ForegroundColor Green
+	}
+}
+
+#==============================================================================
+# Function: Uninstall-ScheduledTaskService
+#==============================================================================
+<#
+.SYNOPSIS
+	Stops and removes a Scheduled Task "service".
+.DESCRIPTION
+	Stops the running task if present, unregisters it from Task Scheduler,
+	and optionally removes the wrapper script file.
+
+	Used by: n8n, Qdrant, OpenClaw.
+.PARAMETER TaskName
+	Name of the Scheduled Task to remove.
+.PARAMETER WrapperScriptPath
+	Optional path to the wrapper script file to delete. Pass $null to skip deletion.
+.OUTPUTS
+	[void]
+.EXAMPLE
+	Uninstall-ScheduledTaskService -TaskName "MyApp-Service" -WrapperScriptPath "C:\MyApp\wrapper.ps1"
+.NOTES
+	Safe to call even if the task does not exist.
+	View registered tasks in: Task Scheduler (taskschd.msc) or Sysinternals Autoruns.
+#>
+function Uninstall-ScheduledTaskService {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	param(
+		[Parameter(Mandatory = $true, HelpMessage = "Name of the Scheduled Task.")]
+		[string]$TaskName,
+
+		[Parameter(Mandatory = $false, HelpMessage = "Path to wrapper script to remove (or `$null to skip).")]
+		[AllowNull()]
+		[string]$WrapperScriptPath
+	)
+
+	try { Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue | Out-Null } catch { Write-Verbose "Task '$TaskName' was not running or does not exist." }
+
+	if ($PSCmdlet.ShouldProcess($TaskName, "Unregister Scheduled Task")) {
+		Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+	}
+
+	if ($WrapperScriptPath -and (Test-Path -LiteralPath $WrapperScriptPath)) {
+		if ($PSCmdlet.ShouldProcess($WrapperScriptPath, "Remove wrapper script")) {
+			Remove-Item -LiteralPath $WrapperScriptPath -Force -ErrorAction SilentlyContinue
+		}
+	}
+}
+
+#==============================================================================
+# Function: Get-ScheduledTaskServiceStatus
+#==============================================================================
+<#
+.SYNOPSIS
+	Gets the status of a Scheduled Task "service".
+.DESCRIPTION
+	Returns the state of the specified Scheduled Task, or 'Not Registered'
+	if the task does not exist.
+
+	Used by: n8n, Qdrant, OpenClaw.
+.PARAMETER TaskName
+	Name of the Scheduled Task to check.
+.OUTPUTS
+	[string] Task state: Running, Ready, Disabled, or "Not Registered".
+.EXAMPLE
+	$status = Get-ScheduledTaskServiceStatus -TaskName "MyApp-Service"
+.NOTES
+	View registered tasks in: Task Scheduler (taskschd.msc) or Sysinternals Autoruns.
+#>
+function Get-ScheduledTaskServiceStatus {
+	[CmdletBinding()]
+	[OutputType([string])]
+	param(
+		[Parameter(Mandatory = $true, HelpMessage = "Name of the Scheduled Task.")]
+		[string]$TaskName
+	)
+
+	$existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+	if (-not $existing) {
+		return "Not Registered"
+	}
+	return $existing.State.ToString()
+}

@@ -1,4 +1,4 @@
-## Overview
+﻿## Overview
 
 This solution uses containerization to simplify the installation, integration, and management of several AI and automation tools on Windows. The provided PowerShell scripts work with Docker or Podman to deploy containerized applications that are easy to install, update, and maintain. These tools eliminate complex manual configurations and dependency issues by isolating each service in its own container, allowing focus on solving business problems instead of technical setup.
 
@@ -42,7 +42,7 @@ Windows 11                        ← real, bare-metal host
     │
     ├── WSL2 distro "OpenClaw-WSL" (Ubuntu) (imported via wsl --import)  ← dedicated, disposable
     │   │
-    │   ├── Node.js ≥ 22
+    │   ├── Node.js ≥ 24
     │   ├── openclaw CLI + Gateway daemon (systemd user service)
     │   │   ├── listens on 127.0.0.1:18789 (Control UI / WebSocket)
     │   │   ├── listens on 127.0.0.1:18793 (Canvas host)
@@ -187,6 +187,70 @@ To configure mirrored networking:
 .\Setup_Util_RestartPodmanAndWSL.ps1 -FullShutdown -VerifyNetwork
 ```
 
+## Auto-Start Mechanisms
+
+This project uses two different approaches to ensure services start automatically when Windows boots. The approach depends on whether the service runs inside a Podman-managed container or directly inside a WSL2 distro.
+
+### Approach 1: Windows Service (`sc.exe`) — Podman
+
+| Item | Value |
+|---|---|
+| **Service Name** | `PodmanMachineStart` |
+| **Used By** | Podman machine (`Setup_Core_1b_Podman.ps1`) |
+| **Runs As** | `SYSTEM` account (pre-login, no user session required) |
+| **Mechanism** | `sc.exe create` registers a native Windows service that executes a batch file to start the Podman machine at boot |
+| **Requires Admin** | Yes (to create/delete the service) |
+
+**Why SYSTEM works for Podman:** Podman has its own machine-management layer (`podman machine start`) that does not depend on a per-user WSL distro registration. The SYSTEM account can invoke `podman machine start` directly.
+
+**Manual removal:**
+
+```powershell
+sc.exe stop PodmanMachineStart
+sc.exe delete PodmanMachineStart
+```
+
+### Approach 2: Scheduled Task — n8n, Qdrant, OpenClaw
+
+| Item | Value |
+|---|---|
+| **Task Names** | `VsAiCompanion-n8n`, `VsAiCompanion-Qdrant`, `OpenClaw-WSL-Boot` |
+| **Used By** | n8n (`Setup_App_3_n8n_Core_Windows.ps1`), Qdrant (`Setup_App_5a_Qdrant_Core_Windows.ps1`), OpenClaw (`Setup_App_OpenClaw.ps1`) |
+| **Runs As** | Current user account |
+| **Mechanism** | `Register-ScheduledTask` creates a task that launches a PowerShell wrapper script |
+| **Requires Admin** | Depends on sub-mode (see below) |
+
+These services run inside WSL2 distros, which are registered per-user (`HKCU`). The SYSTEM account cannot see user-registered distros, so the task must run as the current user. Two sub-modes are available:
+
+| Sub-Mode | Trigger | Logon Type | Admin Required | Starts |
+|---|---|---|---|---|
+| **Pre-login** | `AtStartup` | S4U (Service-for-User) | Yes (auto-elevated via UAC) | Before any user logs in |
+| **Post-login** | `AtLogOn` | Interactive | No | When the user logs in |
+
+The shared function `Install-ScheduledTaskService` (in `Setup_Helper_CoreFunctions.ps1`) handles elevation automatically. When pre-login mode is selected and the script is not already elevated, it launches a UAC prompt to register the task in an elevated child process. The user only needs to approve the UAC dialog; no manual "Run as Administrator" is required.
+
+**Manual removal:**
+
+```powershell
+# List the tasks
+Get-ScheduledTask -TaskName "VsAiCompanion-*", "OpenClaw-*" | Format-Table TaskName, State
+
+# Remove a specific task
+Unregister-ScheduledTask -TaskName "VsAiCompanion-n8n" -Confirm:$false
+Unregister-ScheduledTask -TaskName "VsAiCompanion-Qdrant" -Confirm:$false
+Unregister-ScheduledTask -TaskName "OpenClaw-WSL-Boot" -Confirm:$false
+```
+
+### Viewing Auto-Start Items
+
+| Tool | What It Shows | How to Open |
+|---|---|---|
+| **Task Scheduler** | Scheduled Tasks (Approach 2) | Run `taskschd.msc` — look under the root `\` folder for task names listed above |
+| **Services** | Windows Services (Approach 1) | Run `services.msc` — search for `PodmanMachineStart` |
+| **Sysinternals Autoruns** | Both approaches in a unified view | Download from [Autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) — check the **Services** tab for Podman and the **Scheduled Tasks** tab for n8n/Qdrant/OpenClaw |
+
+> **Tip:** [Sysinternals Autoruns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) is the recommended tool for a complete overview of all auto-start entries on a Windows system. It shows services, scheduled tasks, startup programs, and more in a single interface.
+
 ## Available Services
 
 All services are containerized and can be managed through the provided PowerShell scripts. Each service runs on a specific TCP port and uses a Docker image for deployment.
@@ -292,15 +356,18 @@ These scripts handle the deployment and management of specific containerized app
 - **Setup_App_2a_OpenWebUI_Pipelines.ps1**: Deploys the Pipelines container for AI workflow orchestration (supports Docker/Podman).
 - **Setup_App_2b_OpenWebUI_UI.ps1**: Installs the Open WebUI container for managing AI models and interfaces (supports Docker/Podman).
 - **Setup_App_3_n8n_Core.ps1**: Installs the n8n container for workflow automation (supports Docker/Podman).
+- **Setup_App_3_n8n_Core_Windows.ps1**: Installs n8n natively on Windows (no container) with Scheduled Task auto-start service.
 - **Setup_App_4a_Firecrawl_Postgres.ps1**: Installs the dedicated PostgreSQL container for Firecrawl.
 - **Setup_App_4a_Firecrawl_Redis.ps1**: Installs the dedicated Redis container for Firecrawl data storage and queuing (supports Docker/Podman).
 - **Setup_App_4b_Firecrawl_Worker.ps1**: Installs the Firecrawl Worker container for background processing (requires Redis, Postgres, and Playwright).
 - **Setup_App_4c_Firecrawl_API.ps1**: Installs the Firecrawl API container for web crawling (requires Redis, Postgres, and Playwright).
 - **Setup_App_5a_Qdrant_Core.ps1**: Installs the Qdrant vector database container (supports Docker/Podman).
+- **Setup_App_5a_Qdrant_Core_Windows.ps1**: Installs Qdrant natively on Windows (no container) with Scheduled Task auto-start service.
 - **Setup_App_5b_Qdrant_MCPServer.ps1**: Builds and runs the Qdrant MCP Server container from source (supports Docker/Podman).
 - **Setup_App_6_Qwen3_Embedding_4B.ps1**: Installs Ollama with the Qwen3-Embedding-4B model (supports Docker/Podman).
 - **Setup_App_8_CloudBeaver_Core.ps1**: Installs the CloudBeaver container for web-based database administration (supports Docker/Podman).
 - **Setup_App_9_Playwright_Service.ps1**: Installs the Playwright Service container for web rendering (supports Docker/Podman).
+- **Setup_App_OpenClaw.ps1**: Installs OpenClaw multi-channel AI gateway in a dedicated WSL2 distro with Scheduled Task auto-start service.
 - **Setup_App_Zep_1_PostgreSQL.ps1**: Installs PostgreSQL with pgvector for Zep.
 - **Setup_App_Zep_2_Neo4j.ps1**: Installs Neo4j for Zep Graphiti.
 - **Setup_App_Zep_3_Graphiti.ps1**: Installs the Graphiti service for Zep.

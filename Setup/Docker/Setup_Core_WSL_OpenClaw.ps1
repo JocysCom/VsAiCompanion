@@ -467,6 +467,91 @@ function Open-WSLShell {
     wsl --distribution $global:wslDistroName
 }
 
+#==============================================================================
+# Function: Start-WSLDistro
+#==============================================================================
+<#
+.SYNOPSIS
+    Starts the OpenClaw WSL distro.
+.DESCRIPTION
+    Boots the WSL distro by running a lightweight command inside it.
+    If the distro is already running, reports the current state.
+.OUTPUTS
+    [void]
+#>
+function Start-WSLDistro {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
+        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please install first."
+        return
+    }
+
+    $status = Get-WSLDistroStatus -DistroName $global:wslDistroName
+    if ($status -eq "Running") {
+        Write-Host "WSL distro '$($global:wslDistroName)' is already running." -ForegroundColor Green
+        return
+    }
+
+    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Start WSL Distro")) {
+        return
+    }
+
+    Write-Host "Starting WSL distro '$($global:wslDistroName)'..." -ForegroundColor Yellow
+    wsl --distribution $global:wslDistroName -- echo "Distro started" 2>&1 | Write-Host
+
+    $newStatus = Get-WSLDistroStatus -DistroName $global:wslDistroName
+    if ($newStatus -eq "Running") {
+        Write-Host "WSL distro '$($global:wslDistroName)' started successfully." -ForegroundColor Green
+    }
+    else {
+        Write-Warning "Distro status after start attempt: $newStatus"
+    }
+}
+
+#==============================================================================
+# Function: Stop-WSLDistro
+#==============================================================================
+<#
+.SYNOPSIS
+    Stops the OpenClaw WSL distro.
+.DESCRIPTION
+    Uses 'wsl --terminate' to shut down the running distro.
+    If the distro is already stopped, reports the current state.
+.OUTPUTS
+    [void]
+#>
+function Stop-WSLDistro {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
+        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please install first."
+        return
+    }
+
+    $status = Get-WSLDistroStatus -DistroName $global:wslDistroName
+    if ($status -eq "Stopped") {
+        Write-Host "WSL distro '$($global:wslDistroName)' is already stopped." -ForegroundColor Yellow
+        return
+    }
+
+    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Stop WSL Distro")) {
+        return
+    }
+
+    Write-Host "Stopping WSL distro '$($global:wslDistroName)'..." -ForegroundColor Yellow
+    wsl --terminate $global:wslDistroName 2>&1 | Write-Host
+
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "WSL distro '$($global:wslDistroName)' stopped successfully." -ForegroundColor Green
+    }
+    else {
+        Write-Warning "Failed to stop distro. Exit code: $LASTEXITCODE"
+    }
+}
+
 ################################################################################
 # Main Menu Loop
 ################################################################################
@@ -482,8 +567,10 @@ $menuItems = [ordered]@{
     "1" = "Show Distro Status"
     "2" = "Install Ubuntu Distro"
     "3" = "Uninstall Ubuntu Distro"
-    "4" = "Backup Distro (Export)"
-    "5" = "Restore Distro (Import)"
+    "4" = "Start Distro"
+    "5" = "Stop Distro"
+    "6" = "Backup Distro (Export)"
+    "7" = "Restore Distro (Import)"
     "S" = "Open Shell"
     "0" = "Exit menu"
 }
@@ -492,8 +579,10 @@ $menuActions = @{
     "1" = { Show-WSLDistroStatus }
     "2" = { $null = Install-WSLDistro }
     "3" = { $null = Uninstall-WSLDistro }
-    "4" = { Backup-WSLDistro }
-    "5" = { Restore-WSLDistro }
+    "4" = { Start-WSLDistro }
+    "5" = { Stop-WSLDistro }
+    "6" = { Backup-WSLDistro }
+    "7" = { Restore-WSLDistro }
     "S" = { Open-WSLShell }
 }
 

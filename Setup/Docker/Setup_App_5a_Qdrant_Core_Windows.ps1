@@ -940,19 +940,15 @@ finally {
 .SYNOPSIS
 	Installs a Scheduled Task as a per-user "service" for Qdrant.
 .DESCRIPTION
-	Creates/updates a Scheduled Task that runs a wrapper PowerShell script as the current user.
-	Optionally enables auto-start at user logon.
-.PARAMETER AutoStart
-	If set, registers the task with an AtLogOn trigger; otherwise registers without trigger.
+	Installs Qdrant, writes a service wrapper script, and registers a Scheduled Task
+	using the shared Install-ScheduledTaskService helper. Interactively asks
+	whether to enable auto-start and which mode (pre-login or post-login).
 .OUTPUTS
 	[void]
 #>
 function Install-QdrantService {
 	[CmdletBinding(SupportsShouldProcess = $true)]
-	param(
-		[Parameter(Mandatory = $false)]
-		[switch]$AutoStart
-	)
+	param()
 
 	Install-Qdrant
 	Write-QdrantServiceWrapper
@@ -961,20 +957,27 @@ function Install-QdrantService {
 		throw "Wrapper script was not created: $($global:qdrantServiceWrapperPath)"
 	}
 
-	$taskName = $global:qdrantServiceTaskName
-	$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$($global:qdrantServiceWrapperPath)`""
-	$principal = New-ScheduledTaskPrincipal -UserId "$env:UserName" -LogonType Interactive -RunLevel Limited
-	$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew
-
-	$trigger = $null
-	if ($AutoStart) {
-		$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:UserName
+	$installParams = @{
+		TaskName          = $global:qdrantServiceTaskName
+		WrapperScriptPath = $global:qdrantServiceWrapperPath
 	}
 
-	$task = if ($trigger) { New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings } else { New-ScheduledTask -Action $action -Principal $principal -Settings $settings }
+	Write-Host ""
+	$autoChoice = Read-Host "Enable automatic start? (Y/N, default: Y)"
+	if ([string]::IsNullOrWhiteSpace($autoChoice) -or $autoChoice.Trim().ToUpper() -eq "Y") {
+		$installParams.AutoStart = $true
+		Write-Host ""
+		Write-Host "  1. Pre-login  - starts at Windows boot, before login (may request elevation)" -ForegroundColor Cyan
+		Write-Host "  2. Post-login - starts when current user logs in" -ForegroundColor Cyan
+		Write-Host ""
+		$modeChoice = Read-Host "Select start mode (1/2, default: 2)"
+		if ($modeChoice.Trim() -eq "1") {
+			$installParams.PreLogin = $true
+		}
+	}
 
-	if ($PSCmdlet.ShouldProcess($taskName, "Register Scheduled Task")) {
-		Register-ScheduledTask -TaskName $taskName -InputObject $task -Force | Out-Null
+	if ($PSCmdlet.ShouldProcess($global:qdrantServiceTaskName, "Install Qdrant Scheduled Task Service")) {
+		Install-ScheduledTaskService @installParams
 	}
 }
 
@@ -985,7 +988,8 @@ function Install-QdrantService {
 .SYNOPSIS
 	Uninstalls the Scheduled Task "service" for Qdrant.
 .DESCRIPTION
-	Stops and unregisters the task, and optionally removes the wrapper script.
+	Delegates to the shared Uninstall-ScheduledTaskService helper.
+	Stops the task, unregisters it, and removes the wrapper script.
 .OUTPUTS
 	[void]
 #>
@@ -993,18 +997,8 @@ function Uninstall-QdrantService {
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param()
 
-	$taskName = $global:qdrantServiceTaskName
-
-	try { Stop-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue | Out-Null } catch { Write-Verbose "Failed to stop scheduled task '$taskName' (may not exist or already stopped)." }
-
-	if ($PSCmdlet.ShouldProcess($taskName, "Unregister Scheduled Task")) {
-		Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-	}
-
-	if (Test-Path -LiteralPath $global:qdrantServiceWrapperPath) {
-		if ($PSCmdlet.ShouldProcess($global:qdrantServiceWrapperPath, "Remove wrapper script")) {
-			Remove-Item -LiteralPath $global:qdrantServiceWrapperPath -Force -ErrorAction SilentlyContinue
-		}
+	if ($PSCmdlet.ShouldProcess($global:qdrantServiceTaskName, "Uninstall Qdrant Scheduled Task Service")) {
+		Uninstall-ScheduledTaskService -TaskName $global:qdrantServiceTaskName -WrapperScriptPath $global:qdrantServiceWrapperPath
 	}
 }
 
@@ -1165,6 +1159,7 @@ function Show-QdrantMenu {
 	$taskName = $global:qdrantServiceTaskName
 	$state = "Not Installed"
 	$lastResult = ""
+	$triggerMode = ""
 	try {
 		$t = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
 		if ($t) {
@@ -1176,29 +1171,47 @@ function Show-QdrantMenu {
 			else {
 				$state = "Installed"
 			}
+			$trigger = $t.Triggers | Select-Object -First 1
+			if ($trigger -is [Microsoft.Management.Infrastructure.CimInstance]) {
+				$cimClass = $trigger.CimClass.CimClassName
+				if ($cimClass -eq "MSFT_TaskBootTrigger") {
+					$triggerMode = "At Boot (pre-login)"
+				}
+				elseif ($cimClass -eq "MSFT_TaskLogonTrigger") {
+					$triggerMode = "At Logon (post-login)"
+				}
+				else {
+					$triggerMode = $cimClass
+				}
+			}
 		}
 	}
 	catch {
 		$state = "Unknown"
 	}
 
+	$isAdmin = Test-IsAdministrator
+	$adminTag = if ($isAdmin) { " [Admin]" } else { "" }
+
 	Write-Host "===========================================" -ForegroundColor Yellow
-	Write-Host "Qdrant (Windows)" -ForegroundColor White
+	Write-Host "Qdrant (Windows)$adminTag" -ForegroundColor White
 	Write-Host "===========================================" -ForegroundColor Yellow
 	Write-Host "Service Task: $taskName" -ForegroundColor DarkGray
 	Write-Host "Service State: $state" -ForegroundColor DarkGray
+	if (-not [string]::IsNullOrWhiteSpace($triggerMode)) {
+		Write-Host "Service Start: $triggerMode" -ForegroundColor DarkGray
+	}
 	if (-not [string]::IsNullOrWhiteSpace($lastResult)) {
 		Write-Host "Last Task Result: $lastResult" -ForegroundColor DarkGray
 	}
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 	Write-Host "1. Install App" -ForegroundColor Cyan
 	Write-Host "2. Start Console" -ForegroundColor Cyan
-	Write-Host "3. Install Service (current user)" -ForegroundColor Cyan
-	Write-Host "4. Install Service (current user, autostart)" -ForegroundColor Cyan
-	Write-Host "5. Start Service" -ForegroundColor Cyan
-	Write-Host "6. Stop Service" -ForegroundColor Cyan
-	Write-Host "7. Uninstall Service" -ForegroundColor Cyan
-	Write-Host "8. Uninstall App" -ForegroundColor Cyan
+	Write-Host "3. Install Service" -ForegroundColor Cyan
+	Write-Host "4. Start Service" -ForegroundColor Cyan
+	Write-Host "5. Stop Service" -ForegroundColor Cyan
+	Write-Host "6. Uninstall Service" -ForegroundColor Cyan
+	Write-Host "7. Uninstall App" -ForegroundColor Cyan
 	Write-Host "0. Exit" -ForegroundColor Cyan
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -1229,22 +1242,19 @@ do {
 			Install-QdrantService
 		}
 		"4" {
-			Install-QdrantService -AutoStart
-		}
-		"5" {
 			if (-not (Test-Path -LiteralPath $global:settingsPath)) {
 				Write-Warning "Qdrant service requires saved ports. Run 'Install App' first."
 				break
 			}
 			Start-QdrantService
 		}
-		"6" {
+		"5" {
 			Stop-QdrantService
 		}
-		"7" {
+		"6" {
 			Uninstall-QdrantService
 		}
-		"8" {
+		"7" {
 			Uninstall-Qdrant
 		}
 		"0" { return }

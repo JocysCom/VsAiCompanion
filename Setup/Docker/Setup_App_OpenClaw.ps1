@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # File         : Setup_App_OpenClaw.ps1
 # Description  : Installs and manages OpenClaw AI agent platform within an
 #                existing WSL2 distro. OpenClaw provides multi-channel AI
@@ -35,16 +35,56 @@ $global:installRoot = Join-Path $global:programDataRoot $global:appName
 
 # OpenClaw installation paths inside WSL
 $global:openclawConfigPath = "~/.openclaw"
-$global:openclawServiceName = "openclaw"
+$global:openclawServiceName = "openclaw-gateway"
 
-# Node.js minimum version
-$global:nodeMinVersion = 22
+# Node.js minimum version (LTS)
+$global:nodeMinVersion = 24
 
 # Backup configuration
 $global:backupFolder = ".\Backup"
 $global:openclawBackupSubfolder = "openclaw_data"
 $global:workspacePath = "~/workspace"
 
+# Windows Scheduled Task "service" to auto-start WSL distro.
+# WSL distros are per-user (HKCU), so SYSTEM/NetworkService cannot see them.
+# When elevated: AtStartup + S4U logon starts before user login.
+# When non-elevated: AtLogOn + Interactive logon starts at user login.
+$global:openclawServiceTaskName = "OpenClaw-WSL-Boot"
+$global:openclawServiceWrapperPath = Join-Path $global:installRoot "service-wrapper.ps1"
+$global:openclawServiceLogPath = Join-Path $global:installRoot "service.log"
+
+
+
+#==============================================================================
+# Function: Test-WSLMirroredNetworking
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if WSL2 mirrored networking is configured.
+.DESCRIPTION
+    Reads %USERPROFILE%\.wslconfig to check if networkingMode=mirrored is set.
+    WSL2 NAT mode (default) does not reliably forward ports from Windows to WSL.
+    Mirrored mode shares the host network stack, making WSL services accessible
+    on localhost from Windows.
+.OUTPUTS
+    [bool] True if mirrored networking is configured, false otherwise.
+#>
+function Test-WSLMirroredNetworking {
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param()
+
+    $wslConfigPath = Join-Path ([Environment]::GetFolderPath("UserProfile")) ".wslconfig"
+
+    if (Test-Path $wslConfigPath) {
+        $content = Get-Content $wslConfigPath -Raw
+        if ($content -match "networkingMode\s*=\s*mirrored") {
+            return $true
+        }
+    }
+
+    return $false
+}
 
 #==============================================================================
 # Function: Test-WSLDistroExists
@@ -142,6 +182,8 @@ function Get-WSLDistroStatus {
     Bash command to execute.
 .PARAMETER AsRoot
     Run command as root user.
+.PARAMETER Sensitive
+    Suppresses command logging to avoid exposing secrets (API keys, tokens).
 .OUTPUTS
     [string] Command output.
 #>
@@ -156,7 +198,10 @@ function Invoke-WSLCommand {
         [string]$Command,
 
         [Parameter(Mandatory = $false)]
-        [switch]$AsRoot
+        [switch]$AsRoot,
+
+        [Parameter(Mandatory = $false)]
+        [switch]$Sensitive
     )
 
     $wslArgs = @("--distribution", $DistroName)
@@ -165,7 +210,12 @@ function Invoke-WSLCommand {
     }
     $wslArgs += @("--", "bash", "-c", $Command)
 
-    Write-Host "Executing: $Command" -ForegroundColor DarkGray
+    if ($Sensitive) {
+        Write-Host "Executing: [command hidden - contains sensitive data]" -ForegroundColor DarkGray
+    }
+    else {
+        Write-Host "Executing: $Command" -ForegroundColor DarkGray
+    }
     $output = & wsl @wslArgs 2>&1
 
     if ($LASTEXITCODE -ne 0) {
@@ -208,19 +258,14 @@ function Install-NodeJS {
         Write-Host "Upgrading Node.js from $nodeVersion to v$($global:nodeMinVersion)+..." -ForegroundColor Cyan
     }
 
-    Write-Host "Updating package lists..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get update -y"
-
     Write-Host "Installing prerequisites..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get install -y ca-certificates curl gnupg"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get update -y && apt-get install -y ca-certificates curl gnupg"
 
-    Write-Host "Adding NodeSource repository..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "mkdir -p /etc/apt/keyrings"
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg"
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "echo 'deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$($global:nodeMinVersion).x nodistro main' > /etc/apt/sources.list.d/nodesource.list"
+    Write-Host "Adding NodeSource repository for Node.js $($global:nodeMinVersion).x..." -ForegroundColor Cyan
+    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "curl -fsSL https://deb.nodesource.com/setup_$($global:nodeMinVersion).x | bash -"
 
     Write-Host "Installing Node.js..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get update -y && apt-get install -y nodejs"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "apt-get install -y nodejs"
 
     $finalVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "node --version"
     Write-Host "Node.js installed: $finalVersion" -ForegroundColor Green
@@ -308,72 +353,33 @@ function Initialize-OpenClawConfig {
         "--auth-choice apiKey",
         "--anthropic-api-key `"$AnthropicApiKey`"",
         "--gateway-port $($global:controlUiPort)",
-        "--gateway-bind loopback",
+        "--gateway-bind lan",
         "--install-daemon",
         "--daemon-runtime node",
         "--skip-skills"
     ) -join " "
 
     Write-Host "Running OpenClaw onboarding..." -ForegroundColor Cyan
-    $result = Invoke-WSLCommand -DistroName $global:wslDistroName -Command $onboardCommand
+    $result = Invoke-WSLCommand -DistroName $global:wslDistroName -Command $onboardCommand -Sensitive
 
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "OpenClaw configuration initialized successfully." -ForegroundColor Green
-        return $true
-    }
-    else {
+    if ($LASTEXITCODE -ne 0) {
         Write-Warning "OpenClaw onboarding returned non-zero exit code. Output: $result"
         return $false
     }
-}
 
-#==============================================================================
-# Function: Install-OpenClawService
-#==============================================================================
-<#
-.SYNOPSIS
-    Configures OpenClaw as a systemd user service.
-.DESCRIPTION
-    Creates a systemd user service file for the OpenClaw gateway daemon.
-.OUTPUTS
-    [bool] True if successful, false otherwise.
-#>
-function Install-OpenClawService {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    [OutputType([bool])]
-    param()
+    Write-Host "OpenClaw configuration initialized successfully." -ForegroundColor Green
 
-    if (-not $PSCmdlet.ShouldProcess($global:wslDistroName, "Install OpenClaw Service")) {
-        return $false
+    Write-Host "Enabling loginctl linger for systemd user service persistence..." -ForegroundColor Cyan
+    $wslUser = (Invoke-WSLCommand -DistroName $global:wslDistroName -Command "whoami") -join ""
+    $wslUser = $wslUser.Trim()
+    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "loginctl enable-linger $wslUser"
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Linger enabled for user '$wslUser': systemd user services will persist across sessions." -ForegroundColor Green
+    }
+    else {
+        Write-Warning "Failed to enable linger. The gateway service may stop when the WSL session ends."
     }
 
-    Write-Host "Configuring OpenClaw systemd service..." -ForegroundColor Yellow
-
-    $serviceContent = @"
-[Unit]
-Description=OpenClaw Gateway Daemon
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/openclaw gateway --dev --allow-unconfigured
-Restart=on-failure
-RestartSec=5
-Environment=NODE_ENV=production
-
-[Install]
-WantedBy=default.target
-"@
-
-    $escapedContent = $serviceContent -replace '"', '\"' -replace '\$', '\$'
-
-    Write-Host "Creating systemd user service..." -ForegroundColor Cyan
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "mkdir -p ~/.config/systemd/user"
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "echo `"$escapedContent`" > ~/.config/systemd/user/$($global:openclawServiceName).service"
-
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user daemon-reload"
-
-    Write-Host "OpenClaw service configured successfully." -ForegroundColor Green
     return $true
 }
 
@@ -409,10 +415,18 @@ function Start-OpenClawService {
 
     $status = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user is-active $($global:openclawServiceName)"
 
-    if ($status -match "active") {
+    if ($status.Trim() -eq "active") {
         Write-Host "OpenClaw service started successfully." -ForegroundColor Green
         Write-Host "Control UI: http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
         Write-Host "Canvas:     http://127.0.0.1:$($global:canvasPort)/" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "Dashboard Access:" -ForegroundColor Cyan
+        $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
+        $dashboardText = ($dashboardOutput -join "`n").Trim()
+        Write-Host "  $dashboardText" -ForegroundColor White
+        Write-Host ""
+        Write-Host "This URL contains your access token." -ForegroundColor Yellow
+        Write-Host "Open it in your browser to access the OpenClaw Control UI." -ForegroundColor Yellow
     }
     else {
         Write-Warning "Service may not have started correctly. Status: $status"
@@ -472,8 +486,240 @@ function Get-OpenClawServiceStatus {
     }
 
     $status = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user is-active $($global:openclawServiceName) 2>/dev/null || echo 'not-configured'"
+    $trimmed = ($status -join " ").Trim()
+    if ($trimmed -eq "active") { return "active" }
+    if ($trimmed -match "inactive") { return "inactive" }
+    if ($trimmed -match "failed") { return "failed" }
+    if ($trimmed -match "not-configured") { return "not-configured" }
+    return $trimmed
+}
 
-    return $status.Trim()
+#==============================================================================
+# Function: Test-WSLVmIdleTimeout
+#==============================================================================
+<#
+.SYNOPSIS
+    Checks if vmIdleTimeout=-1 is set in .wslconfig.
+.DESCRIPTION
+    Reads %USERPROFILE%\.wslconfig and checks for vmIdleTimeout=-1 under [wsl2].
+    This setting prevents WSL from automatically shutting down idle distros,
+    which is required for OpenClaw to run 24/7 as a background service.
+.OUTPUTS
+    [bool] True if vmIdleTimeout=-1 is configured, false otherwise.
+#>
+function Test-WSLVmIdleTimeout {
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param()
+
+    $wslConfigPath = Join-Path ([Environment]::GetFolderPath("UserProfile")) ".wslconfig"
+
+    if (Test-Path $wslConfigPath) {
+        $content = Get-Content $wslConfigPath -Raw
+        if ($content -match "vmIdleTimeout\s*=\s*-1") {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+#==============================================================================
+# Function: Set-WSLVmIdleTimeout
+#==============================================================================
+<#
+.SYNOPSIS
+    Ensures vmIdleTimeout=-1 is set in .wslconfig to keep WSL running 24/7.
+.DESCRIPTION
+    Adds or updates the vmIdleTimeout=-1 setting under the [wsl2] section
+    of %USERPROFILE%\.wslconfig. This prevents WSL from automatically
+    stopping idle distros, which would kill the OpenClaw background service.
+    A WSL restart (wsl --shutdown) is required for the change to take effect.
+.OUTPUTS
+    [bool] True if the setting was added/updated, false if already set.
+#>
+function Set-WSLVmIdleTimeout {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([bool])]
+    param()
+
+    $wslConfigPath = Join-Path ([Environment]::GetFolderPath("UserProfile")) ".wslconfig"
+
+    if (-not $PSCmdlet.ShouldProcess($wslConfigPath, "Set vmIdleTimeout=-1")) {
+        return $false
+    }
+
+    if (Test-WSLVmIdleTimeout) {
+        Write-Host "vmIdleTimeout=-1 is already set in .wslconfig." -ForegroundColor Green
+        return $false
+    }
+
+    if (Test-Path $wslConfigPath) {
+        $content = Get-Content $wslConfigPath -Raw
+
+        if ($content -match "vmIdleTimeout\s*=") {
+            $content = $content -replace "vmIdleTimeout\s*=\s*\S+", "vmIdleTimeout=-1"
+            Write-Host "Updated vmIdleTimeout=-1 in .wslconfig." -ForegroundColor Green
+        }
+        elseif ($content -match "\[wsl2\]") {
+            $content = $content -replace "(\[wsl2\])", "`$1`nvmIdleTimeout=-1"
+            Write-Host "Added vmIdleTimeout=-1 to [wsl2] section in .wslconfig." -ForegroundColor Green
+        }
+        else {
+            $content = $content.TrimEnd() + "`n`n[wsl2]`nvmIdleTimeout=-1`n"
+            Write-Host "Added [wsl2] section with vmIdleTimeout=-1 to .wslconfig." -ForegroundColor Green
+        }
+
+        Set-Content -Path $wslConfigPath -Value $content -NoNewline
+    }
+    else {
+        $content = "[wsl2]`nvmIdleTimeout=-1`n"
+        Set-Content -Path $wslConfigPath -Value $content -NoNewline
+        Write-Host "Created .wslconfig with vmIdleTimeout=-1." -ForegroundColor Green
+    }
+
+    return $true
+}
+
+#==============================================================================
+# Function: Write-OpenClawServiceWrapper
+#==============================================================================
+<#
+.SYNOPSIS
+    Creates the service wrapper PowerShell script for the WSL keep-alive task.
+.DESCRIPTION
+    Generates a wrapper script at $global:openclawServiceWrapperPath that waits
+    for WSL availability and then runs 'wsl.exe -d <distro> -- sleep infinity'
+    to keep the distro running. Logs activity to $global:openclawServiceLogPath.
+    This pattern matches the n8n/Qdrant service wrapper approach.
+.OUTPUTS
+    [void]
+#>
+function Write-OpenClawServiceWrapper {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    $distroName = $global:wslDistroName
+    $logPath = $global:openclawServiceLogPath
+
+    $wrapper = @"
+`$ErrorActionPreference = 'Stop'
+`$logPath = '$logPath'
+
+New-Item -ItemType Directory -Path '$(Split-Path $logPath -Parent)' -Force | Out-Null
+
+function Write-ServiceLog {
+    param([string]`$Message)
+    "[`$(Get-Date -Format o)] `$Message" | Out-File -FilePath `$logPath -Append -Encoding UTF8
+}
+
+Write-ServiceLog "OpenClaw WSL keep-alive starting..."
+
+`$maxRetries = 30
+for (`$i = 1; `$i -le `$maxRetries; `$i++) {
+    `$wslOutput = wsl --list --quiet 2>&1
+    if (`$LASTEXITCODE -eq 0) {
+        Write-ServiceLog "WSL is available."
+        break
+    }
+    Write-ServiceLog "Waiting for WSL availability (attempt `$i/`$maxRetries)..."
+    Start-Sleep -Seconds 10
+}
+
+Write-ServiceLog "Starting WSL distro '$distroName' with sleep infinity..."
+`$p = Start-Process -FilePath "wsl.exe" -ArgumentList "-d $distroName -- sleep infinity" -WindowStyle Hidden -PassThru
+Write-ServiceLog "WSL keep-alive process started. PID=`$(`$p.Id)"
+"@
+
+    if ($PSCmdlet.ShouldProcess($global:openclawServiceWrapperPath, "Write OpenClaw service wrapper script")) {
+        New-Item -ItemType Directory -Path (Split-Path $global:openclawServiceWrapperPath -Parent) -Force | Out-Null
+        Set-Content -LiteralPath $global:openclawServiceWrapperPath -Value $wrapper -Encoding UTF8
+    }
+}
+
+#==============================================================================
+# Function: Install-OpenClawService
+#==============================================================================
+<#
+.SYNOPSIS
+    Installs a Scheduled Task as a per-user "service" to keep the WSL distro running.
+.DESCRIPTION
+    Writes a WSL keep-alive wrapper script and registers it as a Scheduled Task
+    using the shared Install-ScheduledTaskService helper. Interactively asks
+    whether to enable auto-start and which mode (pre-login or post-login).
+.OUTPUTS
+    [void]
+#>
+function Install-OpenClawService {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    Write-OpenClawServiceWrapper
+
+    if (-not (Test-Path -LiteralPath $global:openclawServiceWrapperPath)) {
+        throw "Wrapper script was not created: $($global:openclawServiceWrapperPath)"
+    }
+
+    $installParams = @{
+        TaskName          = $global:openclawServiceTaskName
+        WrapperScriptPath = $global:openclawServiceWrapperPath
+    }
+
+    Write-Host ""
+    $autoChoice = Read-Host "Enable automatic start? (Y/N, default: Y)"
+    if ([string]::IsNullOrWhiteSpace($autoChoice) -or $autoChoice.Trim().ToUpper() -eq "Y") {
+        $installParams.AutoStart = $true
+        Write-Host ""
+        Write-Host "  1. Pre-login  - starts at Windows boot, before login (may request elevation)" -ForegroundColor Cyan
+        Write-Host "  2. Post-login - starts when current user logs in" -ForegroundColor Cyan
+        Write-Host ""
+        $modeChoice = Read-Host "Select start mode (1/2, default: 2)"
+        if ($modeChoice.Trim() -eq "1") {
+            $installParams.PreLogin = $true
+        }
+    }
+
+    Install-ScheduledTaskService @installParams
+}
+
+#==============================================================================
+# Function: Uninstall-OpenClawService
+#==============================================================================
+<#
+.SYNOPSIS
+    Uninstalls the Scheduled Task "service" for OpenClaw WSL keep-alive.
+.DESCRIPTION
+    Delegates to the shared Uninstall-ScheduledTaskService helper.
+    Stops the task, unregisters it, and removes the wrapper script.
+.OUTPUTS
+    [void]
+#>
+function Uninstall-OpenClawService {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    if ($PSCmdlet.ShouldProcess($global:openclawServiceTaskName, "Uninstall OpenClaw WSL keep-alive service")) {
+        Uninstall-ScheduledTaskService -TaskName $global:openclawServiceTaskName -WrapperScriptPath $global:openclawServiceWrapperPath
+    }
+}
+
+#==============================================================================
+# Function: Get-OpenClawServiceTaskStatus
+#==============================================================================
+<#
+.SYNOPSIS
+    Gets the status of the WSL keep-alive Scheduled Task.
+.DESCRIPTION
+    Delegates to the shared Get-ScheduledTaskServiceStatus helper.
+.OUTPUTS
+    [string] Task state (Running, Ready, Disabled, Not Registered).
+#>
+function Get-OpenClawServiceTaskStatus {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    return Get-ScheduledTaskServiceStatus -TaskName $global:openclawServiceTaskName
 }
 
 #==============================================================================
@@ -510,6 +756,22 @@ function Install-OpenClaw {
         return
     }
 
+    if (-not (Test-WSLMirroredNetworking)) {
+        Write-Host ""
+        Write-Host "WARNING: WSL2 mirrored networking is NOT configured." -ForegroundColor Yellow
+        Write-Host "Without it, the OpenClaw service will run inside WSL but may NOT" -ForegroundColor Yellow
+        Write-Host "be accessible from Windows browsers (localhost forwarding is unreliable)." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "To fix this, run: .\Setup_Core_1_WSL2.ps1" -ForegroundColor Cyan
+        Write-Host "and select the option to configure mirrored networking." -ForegroundColor Cyan
+        Write-Host ""
+        $continueChoice = Read-Host "Continue installation anyway? (Y/N)"
+        if ($continueChoice -ne "Y") {
+            Write-Host "Installation cancelled. Run Setup_Core_1_WSL2.ps1 first." -ForegroundColor Yellow
+            return
+        }
+    }
+
     Write-Host "This will install:" -ForegroundColor Cyan
     Write-Host "  - Node.js $($global:nodeMinVersion)+" -ForegroundColor Cyan
     Write-Host "  - OpenClaw CLI and Gateway" -ForegroundColor Cyan
@@ -538,12 +800,6 @@ function Install-OpenClaw {
     }
 
     Write-Host ""
-
-    Test-AdminPrivilege
-
-    Test-WSLStatus
-
-    Write-Host ""
     Write-Host "Step 1: Installing Node.js..." -ForegroundColor White
     if (-not (Install-NodeJS)) {
         Write-Error "Failed to install Node.js. Aborting."
@@ -559,47 +815,38 @@ function Install-OpenClaw {
 
     if (-not [string]::IsNullOrEmpty($anthropicApiKey)) {
         Write-Host ""
-        Write-Host "Step 3: Configuring OpenClaw with API key..." -ForegroundColor White
+        Write-Host "Step 3: Configuring OpenClaw with API key and daemon service..." -ForegroundColor White
         if (-not (Initialize-OpenClawConfig -AnthropicApiKey $anthropicApiKey)) {
             Write-Warning "OpenClaw configuration may not be complete. You can run 'openclaw onboard' manually later."
         }
-
-        Write-Host ""
-        Write-Host "Step 4: Configuring Service..." -ForegroundColor White
     }
     else {
         Write-Host ""
-        Write-Host "Step 3: Configuring Service (skipped API configuration)..." -ForegroundColor White
-        Write-Host "Note: You can run 'openclaw onboard' later to configure the API key." -ForegroundColor Yellow
-    }
-
-    if (-not (Install-OpenClawService)) {
-        Write-Error "Failed to configure service. Aborting."
-        return
+        Write-Host "Step 3: Skipped API configuration." -ForegroundColor White
+        Write-Host "Note: Run 'openclaw onboard' inside WSL later to configure the API key and daemon." -ForegroundColor Yellow
     }
 
     Write-Host ""
-    Write-Host "Step 5: Starting Service..." -ForegroundColor White
-    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user start $($global:openclawServiceName)"
-
-    Start-Sleep -Seconds 3
-
-    $status = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user is-active $($global:openclawServiceName)"
-    if ($status -notmatch "active") {
-        Write-Warning "Service may not have started correctly. Status: $status"
+    # WSL2 shuts down idle VMs after vmIdleTimeout ms (default 60000 = 60s).
+    # Setting vmIdleTimeout=-1 disables the idle shutdown so the OpenClaw
+    # gateway service stays running 24/7 even when no terminal is attached.
+    # Ref: https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings
+    Write-Host ""
+    Write-Host "Step 4: Ensuring WSL stays running (vmIdleTimeout=-1)..." -ForegroundColor White
+    $vmIdleChanged = Set-WSLVmIdleTimeout
+    if ($vmIdleChanged) {
+        Write-Host "NOTE: A WSL restart (wsl --shutdown) is needed for vmIdleTimeout to take effect." -ForegroundColor Yellow
+        Write-Host "This will be done automatically after installation completes." -ForegroundColor Yellow
     }
 
     Write-Host ""
     Write-Host "===========================================" -ForegroundColor Green
-    Write-Host "OpenClaw Installation Complete!" -ForegroundColor Green
+    Write-Host "OpenClaw App Installation Complete!" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host ""
-
-    Write-Host "Getting dashboard URL..." -ForegroundColor Cyan
-    $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
-    Write-Host ""
-    Write-Host "Dashboard URL:" -ForegroundColor Cyan
-    Write-Host "  $dashboardOutput" -ForegroundColor White
+    Write-Host "Next steps:" -ForegroundColor Cyan
+    Write-Host "  1. Install Service - registers a Scheduled Task to keep WSL running" -ForegroundColor Cyan
+    Write-Host "  2. Start Service   - starts the OpenClaw gateway and shows dashboard URL" -ForegroundColor Cyan
     Write-Host ""
 }
 
@@ -636,10 +883,18 @@ function Uninstall-OpenClaw {
 
     Stop-OpenClawService
 
-    Write-Host "Disabling and removing service..." -ForegroundColor Cyan
+    Write-Host "Disabling and removing services..." -ForegroundColor Cyan
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user stop $($global:openclawServiceName) 2>/dev/null || true"
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user disable $($global:openclawServiceName) 2>/dev/null || true"
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -f ~/.config/systemd/user/$($global:openclawServiceName).service"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user stop openclaw 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user disable openclaw 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -f ~/.config/systemd/user/openclaw.service"
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user daemon-reload"
+
+    Write-Host "Killing any remaining OpenClaw processes..." -ForegroundColor Cyan
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "pkill -f 'openclaw' 2>/dev/null || true"
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "pkill -f 'openclaw-gateway' 2>/dev/null || true"
 
     Write-Host "Uninstalling OpenClaw..." -ForegroundColor Cyan
     Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "npm uninstall -g openclaw 2>/dev/null || true"
@@ -651,6 +906,14 @@ function Uninstall-OpenClaw {
         Write-Host "Removing configuration directory..." -ForegroundColor Cyan
         Invoke-WSLCommand -DistroName $global:wslDistroName -Command "rm -rf ~/.openclaw"
     }
+
+    Write-Host "Removing WSL keep-alive service (Scheduled Task)..." -ForegroundColor Cyan
+    Uninstall-OpenClawService
+
+    Write-Host "Disabling loginctl linger..." -ForegroundColor Cyan
+    $wslUser = (Invoke-WSLCommand -DistroName $global:wslDistroName -Command "whoami") -join ""
+    $wslUser = $wslUser.Trim()
+    Invoke-WSLCommand -DistroName $global:wslDistroName -AsRoot -Command "loginctl disable-linger $wslUser 2>/dev/null || true"
 
     Write-Host ""
     Write-Host "OpenClaw uninstalled successfully." -ForegroundColor Green
@@ -739,9 +1002,20 @@ function Show-OpenClawStatus {
     }
 
     $serviceStatus = Get-OpenClawServiceStatus
+    $vmIdleSet = Test-WSLVmIdleTimeout
+
     Write-Host ""
     Write-Host "Service:" -ForegroundColor White
     Write-Host "  Status: $serviceStatus" -ForegroundColor $(if ($serviceStatus -eq "active") { "Green" } else { "Yellow" })
+
+    Write-Host ""
+    Write-Host "WSL Keep-Alive (vmIdleTimeout=-1):" -ForegroundColor White
+    Write-Host "  Configured: $vmIdleSet" -ForegroundColor $(if ($vmIdleSet) { "Green" } else { "Red" })
+
+    $serviceTaskStatus = Get-OpenClawServiceTaskStatus
+    Write-Host ""
+    Write-Host "WSL Service Task ($($global:openclawServiceTaskName)):" -ForegroundColor White
+    Write-Host "  Status: $serviceTaskStatus" -ForegroundColor $(if ($serviceTaskStatus -eq "Running") { "Green" } elseif ($serviceTaskStatus -eq "Ready") { "Yellow" } else { "Red" })
 
     $nodeVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "node --version 2>/dev/null || echo 'not installed'"
     $openclawVersion = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw --version 2>/dev/null || echo 'not installed'"
@@ -754,24 +1028,39 @@ function Show-OpenClawStatus {
     Write-Host ""
     Write-Host "Network Connectivity:" -ForegroundColor White
 
-    $tcpControlUi = Test-TCPPort -ComputerName "localhost" -Port $global:controlUiPort -serviceName "Control UI"
-    $tcpCanvas = Test-TCPPort -ComputerName "localhost" -Port $global:canvasPort -serviceName "Canvas"
+    Write-Host ""
+    Write-Host "  WSL-internal (curl from inside WSL):" -ForegroundColor White
+    $wslHttpResult = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "curl -s --connect-timeout 5 --max-time 10 -o /dev/null -w '%{http_code}' http://127.0.0.1:$($global:controlUiPort)/ 2>/dev/null || echo '000'"
+    $wslHttpCode = ($wslHttpResult -join "").Trim()
+    $wslOk = ($wslHttpCode -eq "200")
+    Write-Host "    Control UI (port $($global:controlUiPort)): HTTP $wslHttpCode" -ForegroundColor $(if ($wslOk) { "Green" } else { "Red" })
 
+    Write-Host ""
+    Write-Host "  Windows-side (from host to WSL):" -ForegroundColor White
+    $tcpControlUi = Test-TCPPort -ComputerName "localhost" -Port $global:controlUiPort -serviceName "Control UI" -Timeout 15
     $httpControlUi = $false
     if ($tcpControlUi) {
-        $httpControlUi = Test-HTTPPort -Uri "http://localhost:$($global:controlUiPort)" -serviceName "Control UI"
+        $httpControlUi = Test-HTTPPort -Uri "http://localhost:$($global:controlUiPort)" -serviceName "Control UI" -Timeout 15
     }
 
     Write-Host ""
     Write-Host "Connectivity Summary:" -ForegroundColor White
-    Write-Host "  Control UI TCP ($($global:controlUiPort)): $(if ($tcpControlUi) { 'OK' } else { 'FAILED' })" -ForegroundColor $(if ($tcpControlUi) { "Green" } else { "Red" })
-    Write-Host "  Control UI HTTP:       $(if ($httpControlUi) { 'OK' } else { 'FAILED' })" -ForegroundColor $(if ($httpControlUi) { "Green" } else { "Red" })
-    Write-Host "  Canvas TCP ($($global:canvasPort)):     $(if ($tcpCanvas) { 'OK' } else { 'FAILED' })" -ForegroundColor $(if ($tcpCanvas) { "Green" } else { "Red" })
+    Write-Host "  WSL-internal HTTP:           $(if ($wslOk) { 'OK' } else { 'FAILED' })" -ForegroundColor $(if ($wslOk) { "Green" } else { "Red" })
+    Write-Host "  Windows TCP ($($global:controlUiPort)):       $(if ($tcpControlUi) { 'OK' } else { 'FAILED' })" -ForegroundColor $(if ($tcpControlUi) { "Green" } else { "Red" })
+    Write-Host "  Windows HTTP:                $(if ($httpControlUi) { 'OK' } else { 'FAILED' })" -ForegroundColor $(if ($httpControlUi) { "Green" } else { "Red" })
+
+    if ($wslOk -and -not $httpControlUi) {
+        Write-Host ""
+        Write-Host "  NOTE: Service works inside WSL but WSL2 port forwarding is not active." -ForegroundColor Yellow
+        Write-Host "  Fix: Enable mirrored networking in %USERPROFILE%\.wslconfig:" -ForegroundColor Yellow
+        Write-Host "    [wsl2]" -ForegroundColor DarkGray
+        Write-Host "    networkingMode=mirrored" -ForegroundColor DarkGray
+        Write-Host "  Then: wsl --shutdown && wsl -d $($global:wslDistroName)" -ForegroundColor Yellow
+    }
 
     Write-Host ""
     Write-Host "Access URLs:" -ForegroundColor White
     Write-Host "  Control UI:  http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
-    Write-Host "  Canvas Host: http://127.0.0.1:$($global:canvasPort)/" -ForegroundColor Cyan
 
     Write-Host ""
 }
@@ -1064,30 +1353,133 @@ function Restore-OpenClawData {
 # Main Menu Loop
 ################################################################################
 
-$menuTitle = "OpenClaw Application Menu"
-$menuItems = [ordered]@{
-    "1" = "Show Status and Test Connection"
-    "2" = "Install OpenClaw"
-    "3" = "Uninstall OpenClaw"
-    "4" = "Update OpenClaw"
-    "5" = "Start Service"
-    "6" = "Stop Service"
-    "7" = "Show Logs"
-    "8" = "Backup Data (personality, memory, config)"
-    "9" = "Restore Data (personality, memory, config)"
-    "0" = "Exit menu"
+#==============================================================================
+# Function: Show-OpenClawMenu
+#==============================================================================
+<#
+.SYNOPSIS
+    Shows the OpenClaw application menu.
+.DESCRIPTION
+    Provides options for install, service management, update, uninstall, logs, backup, and restore.
+    Displays current service task state and admin elevation status.
+.OUTPUTS
+    [void]
+#>
+function Show-OpenClawMenu {
+    [CmdletBinding()]
+    param()
+
+    $taskName = $global:openclawServiceTaskName
+    $state = "Not Installed"
+    $lastResult = ""
+    $triggerMode = ""
+    try {
+        $t = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+        if ($t) {
+            $info = Get-ScheduledTaskInfo -TaskName $taskName -ErrorAction SilentlyContinue
+            if ($info) {
+                if ($info.State) { $state = [string]$info.State } else { $state = "Installed" }
+                if ($null -ne $info.LastTaskResult) { $lastResult = [string]$info.LastTaskResult }
+            }
+            else {
+                $state = "Installed"
+            }
+            $trigger = $t.Triggers | Select-Object -First 1
+            if ($trigger -is [Microsoft.Management.Infrastructure.CimInstance]) {
+                $cimClass = $trigger.CimClass.CimClassName
+                if ($cimClass -eq "MSFT_TaskBootTrigger") {
+                    $triggerMode = "At Boot (pre-login)"
+                }
+                elseif ($cimClass -eq "MSFT_TaskLogonTrigger") {
+                    $triggerMode = "At Logon (post-login)"
+                }
+                else {
+                    $triggerMode = $cimClass
+                }
+            }
+        }
+    }
+    catch {
+        $state = "Unknown"
+    }
+
+    $isAdmin = Test-IsAdministrator
+    $adminTag = if ($isAdmin) { " [Admin]" } else { "" }
+
+    Write-Host "===========================================" -ForegroundColor Yellow
+    Write-Host "OpenClaw (WSL)$adminTag" -ForegroundColor White
+    Write-Host "===========================================" -ForegroundColor Yellow
+    Write-Host "Service Task: $taskName" -ForegroundColor DarkGray
+    Write-Host "Service State: $state" -ForegroundColor DarkGray
+    if (-not [string]::IsNullOrWhiteSpace($triggerMode)) {
+        Write-Host "Service Start: $triggerMode" -ForegroundColor DarkGray
+    }
+    if (-not [string]::IsNullOrWhiteSpace($lastResult)) {
+        Write-Host "Last Task Result: $lastResult" -ForegroundColor DarkGray
+    }
+    Write-Host "-------------------------------------------" -ForegroundColor Yellow
+    Write-Host "1. Show Status and Test Connection" -ForegroundColor Cyan
+    Write-Host "2. Install App" -ForegroundColor Cyan
+    Write-Host "3. Install Service" -ForegroundColor Cyan
+    Write-Host "4. Start Service" -ForegroundColor Cyan
+    Write-Host "5. Stop Service" -ForegroundColor Cyan
+    Write-Host "6. Uninstall Service" -ForegroundColor Cyan
+    Write-Host "7. Update App" -ForegroundColor Cyan
+    Write-Host "8. Uninstall App" -ForegroundColor Cyan
+    Write-Host "9. Show Logs" -ForegroundColor Cyan
+    Write-Host "A. Backup Data (personality, memory, config)" -ForegroundColor Cyan
+    Write-Host "B. Restore Data (personality, memory, config)" -ForegroundColor Cyan
+    Write-Host "0. Exit" -ForegroundColor Cyan
+    Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
 
-$menuActions = @{
-    "1" = { Show-OpenClawStatus }
-    "2" = { Install-OpenClaw }
-    "3" = { Uninstall-OpenClaw }
-    "4" = { Update-OpenClaw }
-    "5" = { Start-OpenClawService }
-    "6" = { Stop-OpenClawService }
-    "7" = { Show-OpenClawLogs }
-    "8" = { Backup-OpenClawData }
-    "9" = { Restore-OpenClawData }
-}
+#==============================================================================
+# Main
+#==============================================================================
 
-Invoke-MenuLoop -MenuTitle $menuTitle -MenuItems $menuItems -ActionMap $menuActions -ExitChoice "0"
+$choice = ""
+do {
+    Show-OpenClawMenu
+    $choice = Read-Host "Enter your choice"
+    if ([string]::IsNullOrWhiteSpace($choice)) { continue }
+
+    switch ($choice.ToUpper()) {
+        "1" {
+            Show-OpenClawStatus
+        }
+        "2" {
+            Install-OpenClaw
+        }
+        "3" {
+            Install-OpenClawService
+        }
+        "4" {
+            Start-OpenClawService
+        }
+        "5" {
+            Stop-OpenClawService
+        }
+        "6" {
+            Uninstall-OpenClawService
+        }
+        "7" {
+            Update-OpenClaw
+        }
+        "8" {
+            Uninstall-OpenClaw
+        }
+        "9" {
+            Show-OpenClawLogs
+        }
+        "A" {
+            Backup-OpenClawData
+        }
+        "B" {
+            Restore-OpenClawData
+        }
+        "0" { return }
+        default {
+            Write-Warning "Invalid selection."
+        }
+    }
+} while ($choice -ne "0")
