@@ -57,6 +57,9 @@ $global:openclawServiceLogPath = Join-Path $global:installRoot "service.log"
 $global:uiPasswordLength = 16
 $global:uiPasswordFile = Join-Path $global:installRoot "ui-password.txt"
 
+# External URL for reverse proxy access (set during install, stored in config)
+$global:externalUrlFile = Join-Path $global:installRoot "external-url.txt"
+
 
 
 #==============================================================================
@@ -284,14 +287,25 @@ function Set-OpenClawUIPassword {
     Set-Content -LiteralPath $global:uiPasswordFile -Value $password -Encoding UTF8
     Write-Host "UI password saved to: $($global:uiPasswordFile)" -ForegroundColor DarkGray
 
+    Write-Host ""
+    Write-Host "Gateway auth mode:" -ForegroundColor Cyan
+    Write-Host "  1. token    - authenticate with the dashboard token URL (recommended for local)" -ForegroundColor White
+    Write-Host "  2. password - authenticate with the UI password (required for remote/reverse proxy)" -ForegroundColor White
+    Write-Host ""
+    $authChoice = Read-Host "Select auth mode (1/2, default: 1)"
+    $authMode = "token"
+    if ($authChoice.Trim() -eq "2") {
+        $authMode = "password"
+    }
+
     $jqAvailable = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "command -v jq >/dev/null 2>&1 && echo 'yes' || echo 'no'"
     if ($jqAvailable -match "yes") {
         $configFile = "$($global:openclawConfigPath)/openclaw.json"
-        $jqCmd = "if [ -f $configFile ]; then cat $configFile | jq '.gateway.auth.password = `"$password`"' > $configFile.tmp && mv $configFile.tmp $configFile; fi"
+        $jqCmd = "if [ -f $configFile ]; then cat $configFile | jq '.gateway.auth.password = `"$password`" | .gateway.auth.mode = `"$authMode`"' > $configFile.tmp && mv $configFile.tmp $configFile; fi"
         Invoke-WSLCommand -DistroName $global:wslDistroName -Command $jqCmd -Sensitive
 
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "UI password injected into OpenClaw gateway config." -ForegroundColor Green
+            Write-Host "UI password injected into OpenClaw gateway config (auth mode: $authMode)." -ForegroundColor Green
         }
         else {
             Write-Warning "Failed to inject password into config. Password saved locally only."
@@ -299,7 +313,7 @@ function Set-OpenClawUIPassword {
     }
     else {
         Write-Warning "jq not available. Password saved locally but not injected into OpenClaw config."
-        Write-Host "Manually set gateway.auth.password in ~/.openclaw/openclaw.json" -ForegroundColor Yellow
+        Write-Host "Manually set gateway.auth.password and gateway.auth.mode in ~/.openclaw/openclaw.json" -ForegroundColor Yellow
     }
 
     return $password
@@ -519,9 +533,13 @@ function Start-OpenClawService {
         $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
         $dashboardLines = ($dashboardOutput -join "`n").Trim()
         $tokenUrl = ""
+        $gatewayToken = ""
         foreach ($line in $dashboardLines -split "`n") {
             if ($line -match "(https?://\S+)") {
                 $tokenUrl = $Matches[1]
+                if ($tokenUrl -match "[?&]token=([^&\s]+)") {
+                    $gatewayToken = $Matches[1]
+                }
                 break
             }
         }
@@ -534,24 +552,105 @@ function Start-OpenClawService {
         }
 
         Write-Host ""
-        Write-Host "This URL contains your access token." -ForegroundColor Yellow
-        Write-Host "Open it in your browser to access the OpenClaw Control UI." -ForegroundColor Yellow
-        Write-Host ""
 
         $savedPassword = Get-OpenClawUIPassword
         if ([string]::IsNullOrEmpty($savedPassword)) {
             Write-Host "Generating UI password for remote access..." -ForegroundColor Cyan
             $savedPassword = Set-OpenClawUIPassword
         }
+
+        Write-Host "Authentication:" -ForegroundColor Cyan
+        if (-not [string]::IsNullOrEmpty($gatewayToken)) {
+            Write-Host "  Gateway Token: $gatewayToken" -ForegroundColor White
+        }
         if (-not [string]::IsNullOrEmpty($savedPassword)) {
-            Write-Host "UI Password (for remote access): $savedPassword" -ForegroundColor White
-            Write-Host "Saved at: $($global:uiPasswordFile)" -ForegroundColor DarkGray
+            Write-Host "  UI Password:   $savedPassword" -ForegroundColor White
+            Write-Host "  Saved at:      $($global:uiPasswordFile)" -ForegroundColor DarkGray
+        }
+
+        Write-Host ""
+        Write-Host "Gateway auth mode:" -ForegroundColor Cyan
+        Write-Host "  1. token    - use the dashboard token URL (local access)" -ForegroundColor White
+        Write-Host "  2. password - use the UI password (required for remote/reverse proxy)" -ForegroundColor White
+        Write-Host ""
+        $authChoice = Read-Host "Select auth mode (1/2, default: 1)"
+        $newAuthMode = "token"
+        if ($authChoice.Trim() -eq "2") {
+            $newAuthMode = "password"
+        }
+
+        $currentMode = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "cat $($global:openclawConfigPath)/openclaw.json 2>/dev/null | jq -r '.gateway.auth.mode // empty'"
+        $currentModeText = ($currentMode -join "").Trim()
+
+        $configChanged = $false
+        if ($currentModeText -ne $newAuthMode) {
+            $jqCmd = "cat $($global:openclawConfigPath)/openclaw.json | jq '.gateway.auth.mode = `"$newAuthMode`"' > $($global:openclawConfigPath)/openclaw.json.tmp && mv $($global:openclawConfigPath)/openclaw.json.tmp $($global:openclawConfigPath)/openclaw.json"
+            Invoke-WSLCommand -DistroName $global:wslDistroName -Command $jqCmd -Sensitive
+            $configChanged = $true
+            Write-Host "Auth mode set to '$newAuthMode'." -ForegroundColor Green
+        }
+        else {
+            Write-Host "Auth mode already set to '$newAuthMode'." -ForegroundColor DarkGray
+        }
+
+        if ($newAuthMode -eq "password") {
+            $savedExternalUrl = ""
+            if (Test-Path $global:externalUrlFile) {
+                $savedExternalUrl = (Get-Content -LiteralPath $global:externalUrlFile -Raw).Trim()
+            }
+
+            Write-Host ""
+            Write-Host "External URL for reverse proxy access:" -ForegroundColor Cyan
+            if (-not [string]::IsNullOrEmpty($savedExternalUrl)) {
+                Write-Host "  Current: $savedExternalUrl" -ForegroundColor DarkGray
+            }
+            $externalUrlInput = Read-Host "External URL (e.g. https://evo.jocys.com, Enter to keep current, 'none' to clear)"
+            $externalUrlInput = $externalUrlInput.Trim().TrimEnd("/")
+
+            if ($externalUrlInput -eq "none") {
+                $savedExternalUrl = ""
+                if (Test-Path $global:externalUrlFile) {
+                    Remove-Item -LiteralPath $global:externalUrlFile -Force
+                }
+                $jqCmd = "cat $($global:openclawConfigPath)/openclaw.json | jq 'del(.gateway.controlUi.allowedOrigins)' > $($global:openclawConfigPath)/openclaw.json.tmp && mv $($global:openclawConfigPath)/openclaw.json.tmp $($global:openclawConfigPath)/openclaw.json"
+                Invoke-WSLCommand -DistroName $global:wslDistroName -Command $jqCmd
+                $configChanged = $true
+                Write-Host "allowedOrigins cleared." -ForegroundColor Yellow
+            }
+            elseif (-not [string]::IsNullOrEmpty($externalUrlInput)) {
+                $savedExternalUrl = $externalUrlInput
+                New-Item -ItemType Directory -Path (Split-Path $global:externalUrlFile -Parent) -Force | Out-Null
+                Set-Content -LiteralPath $global:externalUrlFile -Value $savedExternalUrl -Encoding UTF8
+            }
+
+            if (-not [string]::IsNullOrEmpty($savedExternalUrl)) {
+                $jqCmd = "cat $($global:openclawConfigPath)/openclaw.json | jq '.gateway.controlUi.allowedOrigins = [`"$savedExternalUrl`"] | .gateway.controlUi.dangerouslyDisableDeviceAuth = true | .gateway.trustedProxies = [`"127.0.0.1`"]' > $($global:openclawConfigPath)/openclaw.json.tmp && mv $($global:openclawConfigPath)/openclaw.json.tmp $($global:openclawConfigPath)/openclaw.json"
+                Invoke-WSLCommand -DistroName $global:wslDistroName -Command $jqCmd
+                $configChanged = $true
+                Write-Host "Reverse proxy config applied (allowedOrigins, trustedProxies, disableDeviceAuth)." -ForegroundColor Green
+            }
+        }
+
+        if ($configChanged) {
+            Write-Host "Restarting gateway..." -ForegroundColor Cyan
+            Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user restart $($global:openclawServiceName)"
+            Start-Sleep -Seconds 2
+            Write-Host "Gateway restarted." -ForegroundColor Green
+        }
+
+        Write-Host ""
+        if ($newAuthMode -eq "token") {
+            Write-Host "Open the dashboard URL above in your browser to access the Control UI." -ForegroundColor Yellow
+        }
+        else {
+            Write-Host "Open the Control UI, go to Settings, and enter the UI Password to connect." -ForegroundColor Yellow
         }
 
         Write-Host ""
         Write-Host "Docs:" -ForegroundColor White
         Write-Host "  https://docs.openclaw.ai/gateway/remote" -ForegroundColor DarkGray
         Write-Host "  https://docs.openclaw.ai/web/control-ui" -ForegroundColor DarkGray
+        Write-Host "  https://docs.openclaw.ai/web/dashboard" -ForegroundColor DarkGray
     }
     else {
         Write-Warning "Service may not have started correctly. Status: $statusText"
@@ -955,12 +1054,38 @@ function Install-OpenClaw {
     }
 
     Write-Host ""
+    Write-Host "Step 4: External URL for reverse proxy..." -ForegroundColor White
+    Write-Host "If you access this server via a reverse proxy (e.g. IIS, nginx)," -ForegroundColor Cyan
+    Write-Host "enter the external URL so the Control UI accepts WebSocket connections from it." -ForegroundColor Cyan
+    Write-Host ""
+    $externalUrl = Read-Host "External URL (e.g. https://evo.jocys.com, or press Enter to skip)"
+    $externalUrl = $externalUrl.Trim().TrimEnd("/")
+    if (-not [string]::IsNullOrEmpty($externalUrl)) {
+        New-Item -ItemType Directory -Path (Split-Path $global:externalUrlFile -Parent) -Force | Out-Null
+        Set-Content -LiteralPath $global:externalUrlFile -Value $externalUrl -Encoding UTF8
+        Write-Host "External URL saved to: $($global:externalUrlFile)" -ForegroundColor DarkGray
+
+        $jqAvailable = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "command -v jq >/dev/null 2>&1 && echo 'yes' || echo 'no'"
+        if ($jqAvailable -match "yes") {
+            $configFile = "$($global:openclawConfigPath)/openclaw.json"
+            $jqCmd = "if [ -f $configFile ]; then cat $configFile | jq '.gateway.controlUi.allowedOrigins = [`"$externalUrl`"] | .gateway.controlUi.dangerouslyDisableDeviceAuth = true | .gateway.trustedProxies = [`"127.0.0.1`"]' > $configFile.tmp && mv $configFile.tmp $configFile; fi"
+            Invoke-WSLCommand -DistroName $global:wslDistroName -Command $jqCmd
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "Reverse proxy config applied (allowedOrigins, trustedProxies, disableDeviceAuth)." -ForegroundColor Green
+            }
+        }
+    }
+    else {
+        Write-Host "Skipped. You can set gateway.controlUi.allowedOrigins later if needed." -ForegroundColor DarkGray
+    }
+
+    Write-Host ""
     # WSL2 shuts down idle VMs after vmIdleTimeout ms (default 60000 = 60s).
     # Setting vmIdleTimeout=-1 disables the idle shutdown so the OpenClaw
     # gateway service stays running 24/7 even when no terminal is attached.
     # Ref: https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings
     Write-Host ""
-    Write-Host "Step 4: Ensuring WSL stays running (vmIdleTimeout=-1)..." -ForegroundColor White
+    Write-Host "Step 5: Ensuring WSL stays running (vmIdleTimeout=-1)..." -ForegroundColor White
     $vmIdleChanged = Set-WSLVmIdleTimeout
     if ($vmIdleChanged) {
         Write-Host "NOTE: A WSL restart (wsl --shutdown) is needed for vmIdleTimeout to take effect." -ForegroundColor Yellow
@@ -1190,6 +1315,7 @@ function Show-OpenClawStatus {
     Write-Host "Access URLs:" -ForegroundColor White
     Write-Host "  Control UI:  http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
 
+    $gatewayToken = ""
     if ($serviceStatus -eq "active") {
         $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
         $dashboardLines = ($dashboardOutput -join "`n").Trim()
@@ -1197,6 +1323,9 @@ function Show-OpenClawStatus {
         foreach ($line in $dashboardLines -split "`n") {
             if ($line -match "(https?://\S+)") {
                 $tokenUrl = $Matches[1]
+                if ($tokenUrl -match "[?&]token=([^&\s]+)") {
+                    $gatewayToken = $Matches[1]
+                }
                 break
             }
         }
@@ -1206,17 +1335,25 @@ function Show-OpenClawStatus {
     }
 
     $savedPassword = Get-OpenClawUIPassword
+
+    Write-Host ""
+    Write-Host "Authentication:" -ForegroundColor White
+    if (-not [string]::IsNullOrEmpty($gatewayToken)) {
+        Write-Host "  Gateway Token: $gatewayToken" -ForegroundColor Cyan
+    }
     if (-not [string]::IsNullOrEmpty($savedPassword)) {
-        Write-Host ""
-        Write-Host "Authentication:" -ForegroundColor White
-        Write-Host "  UI Password:  $savedPassword" -ForegroundColor Cyan
-        Write-Host "  Saved at:     $($global:uiPasswordFile)" -ForegroundColor DarkGray
+        Write-Host "  UI Password:   $savedPassword" -ForegroundColor Cyan
+        Write-Host "  Saved at:      $($global:uiPasswordFile)" -ForegroundColor DarkGray
+    }
+    if ([string]::IsNullOrEmpty($gatewayToken) -and [string]::IsNullOrEmpty($savedPassword)) {
+        Write-Host "  (No credentials available. Start the service to generate.)" -ForegroundColor DarkGray
     }
 
     Write-Host ""
     Write-Host "Docs:" -ForegroundColor White
     Write-Host "  https://docs.openclaw.ai/gateway/remote" -ForegroundColor DarkGray
     Write-Host "  https://docs.openclaw.ai/web/control-ui" -ForegroundColor DarkGray
+    Write-Host "  https://docs.openclaw.ai/web/dashboard" -ForegroundColor DarkGray
 
     Write-Host ""
 }
