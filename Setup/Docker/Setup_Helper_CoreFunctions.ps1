@@ -874,3 +874,67 @@ function Get-ScheduledTaskServiceStatus {
 	}
 	return $existing.State.ToString()
 }
+
+#==============================================================================
+# Function: New-RandomPassword
+#==============================================================================
+<#
+.SYNOPSIS
+	Generates a cryptographically random alphanumeric password.
+.DESCRIPTION
+	Creates a password containing lowercase letters, uppercase letters, and digits.
+	Excludes ambiguous characters (0, O, 1, l, I) for easier manual entry when
+	connecting from remote machines. Guarantees at least one character from each
+	required category. Uses System.Security.Cryptography for secure randomness.
+.PARAMETER Length
+	Desired password length. Minimum 4, default 16.
+.OUTPUTS
+	[string] The generated password.
+.EXAMPLE
+	$pw = New-RandomPassword -Length 20
+.NOTES
+	Used by: OpenClaw (UI password for remote access).
+	Reusable by any script that needs a random alphanumeric credential.
+#>
+function New-RandomPassword {
+	[CmdletBinding(SupportsShouldProcess = $true)]
+	[OutputType([string])]
+	param(
+		[Parameter(Mandatory = $false)]
+		[ValidateRange(4, 128)]
+		[int]$Length = 16
+	)
+
+	if (-not $PSCmdlet.ShouldProcess("Password($Length chars)", "Generate")) {
+		return ""
+	}
+
+	$lower = "abcdefghjkmnpqrstuvwxyz"
+	$upper = "ABCDEFGHJKMNPQRSTUVWXYZ"
+	$digits = "23456789"
+	$allChars = $lower + $upper + $digits
+
+	$password = [char[]]::new($Length)
+	$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+	$bytes = [byte[]]::new(1)
+
+	$rng.GetBytes($bytes); $password[0] = $lower[$bytes[0] % $lower.Length]
+	$rng.GetBytes($bytes); $password[1] = $upper[$bytes[0] % $upper.Length]
+	$rng.GetBytes($bytes); $password[2] = $digits[$bytes[0] % $digits.Length]
+
+	for ($i = 3; $i -lt $Length; $i++) {
+		$rng.GetBytes($bytes)
+		$password[$i] = $allChars[$bytes[0] % $allChars.Length]
+	}
+
+	for ($i = $Length - 1; $i -gt 0; $i--) {
+		$rng.GetBytes($bytes)
+		$j = $bytes[0] % ($i + 1)
+		$temp = $password[$i]
+		$password[$i] = $password[$j]
+		$password[$j] = $temp
+	}
+
+	$rng.Dispose()
+	return -join $password
+}

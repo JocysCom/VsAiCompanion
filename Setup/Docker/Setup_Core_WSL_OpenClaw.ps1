@@ -499,11 +499,14 @@ function Start-WSLDistro {
     }
 
     Write-Host "Starting WSL distro '$($global:wslDistroName)'..." -ForegroundColor Yellow
-    wsl --distribution $global:wslDistroName -- echo "Distro started" 2>&1 | Write-Host
+    Start-Process -FilePath "wsl.exe" -ArgumentList "-d $($global:wslDistroName) -- sleep infinity" -WindowStyle Hidden
+
+    Start-Sleep -Seconds 3
 
     $newStatus = Get-WSLDistroStatus -DistroName $global:wslDistroName
     if ($newStatus -eq "Running") {
         Write-Host "WSL distro '$($global:wslDistroName)' started successfully." -ForegroundColor Green
+        Write-Host "A background keep-alive process is holding the distro running." -ForegroundColor DarkGray
     }
     else {
         Write-Warning "Distro status after start attempt: $newStatus"
@@ -542,6 +545,14 @@ function Stop-WSLDistro {
     }
 
     Write-Host "Stopping WSL distro '$($global:wslDistroName)'..." -ForegroundColor Yellow
+
+    Write-Host "Terminating keep-alive processes..." -ForegroundColor Cyan
+    $keepAliveProcs = Get-Process -Name "wsl" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -match "$($global:wslDistroName).*sleep infinity" }
+    foreach ($proc in $keepAliveProcs) {
+        Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+    }
+
     wsl --terminate $global:wslDistroName 2>&1 | Write-Host
 
     if ($LASTEXITCODE -eq 0) {

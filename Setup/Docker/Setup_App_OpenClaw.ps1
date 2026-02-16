@@ -53,6 +53,10 @@ $global:openclawServiceTaskName = "OpenClaw-WSL-Boot"
 $global:openclawServiceWrapperPath = Join-Path $global:installRoot "service-wrapper.ps1"
 $global:openclawServiceLogPath = Join-Path $global:installRoot "service.log"
 
+# UI password configuration (auto-generated alphanumeric password for remote access)
+$global:uiPasswordLength = 16
+$global:uiPasswordFile = Join-Path $global:installRoot "ui-password.txt"
+
 
 
 #==============================================================================
@@ -226,6 +230,82 @@ function Invoke-WSLCommand {
 }
 
 #==============================================================================
+# Function: Get-OpenClawUIPassword
+#==============================================================================
+<#
+.SYNOPSIS
+    Reads the saved UI password from the local file.
+.DESCRIPTION
+    Returns the UI password previously generated and stored on the Windows side.
+    Returns an empty string if no password file exists.
+.OUTPUTS
+    [string] The saved UI password, or empty string if not found.
+#>
+function Get-OpenClawUIPassword {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    if (Test-Path -LiteralPath $global:uiPasswordFile) {
+        return (Get-Content -LiteralPath $global:uiPasswordFile -Raw).Trim()
+    }
+    return ""
+}
+
+#==============================================================================
+# Function: Set-OpenClawUIPassword
+#==============================================================================
+<#
+.SYNOPSIS
+    Generates and sets a UI password for OpenClaw remote access.
+.DESCRIPTION
+    Generates a random alphanumeric password (lowercase + uppercase + digits),
+    saves it to a local file on the Windows side, and injects it into the
+    OpenClaw gateway configuration (openclaw.json) via jq. The password
+    provides an easier-to-type alternative to the long access token when
+    connecting from remote machines.
+.OUTPUTS
+    [string] The generated password, or empty string on failure.
+#>
+function Set-OpenClawUIPassword {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([string])]
+    param()
+
+    if (-not $PSCmdlet.ShouldProcess("OpenClaw", "Generate and set UI password")) {
+        return ""
+    }
+
+    $password = New-RandomPassword -Length $global:uiPasswordLength
+
+    Write-Host "Setting UI password for remote access..." -ForegroundColor Cyan
+
+    New-Item -ItemType Directory -Path (Split-Path $global:uiPasswordFile -Parent) -Force | Out-Null
+    Set-Content -LiteralPath $global:uiPasswordFile -Value $password -Encoding UTF8
+    Write-Host "UI password saved to: $($global:uiPasswordFile)" -ForegroundColor DarkGray
+
+    $jqAvailable = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "command -v jq >/dev/null 2>&1 && echo 'yes' || echo 'no'"
+    if ($jqAvailable -match "yes") {
+        $configFile = "$($global:openclawConfigPath)/openclaw.json"
+        $jqCmd = "if [ -f $configFile ]; then cat $configFile | jq '.gateway.auth.password = `"$password`"' > $configFile.tmp && mv $configFile.tmp $configFile; fi"
+        Invoke-WSLCommand -DistroName $global:wslDistroName -Command $jqCmd -Sensitive
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "UI password injected into OpenClaw gateway config." -ForegroundColor Green
+        }
+        else {
+            Write-Warning "Failed to inject password into config. Password saved locally only."
+        }
+    }
+    else {
+        Write-Warning "jq not available. Password saved locally but not injected into OpenClaw config."
+        Write-Host "Manually set gateway.auth.password in ~/.openclaw/openclaw.json" -ForegroundColor Yellow
+    }
+
+    return $password
+}
+
+#==============================================================================
 # Function: Install-NodeJS
 #==============================================================================
 <#
@@ -369,6 +449,15 @@ function Initialize-OpenClawConfig {
 
     Write-Host "OpenClaw configuration initialized successfully." -ForegroundColor Green
 
+    Write-Host "Generating UI password for remote access..." -ForegroundColor Cyan
+    $uiPassword = Set-OpenClawUIPassword
+    if (-not [string]::IsNullOrEmpty($uiPassword)) {
+        Write-Host ""
+        Write-Host "UI Password (for remote access): $uiPassword" -ForegroundColor White
+        Write-Host "This password is saved at: $($global:uiPasswordFile)" -ForegroundColor DarkGray
+        Write-Host ""
+    }
+
     Write-Host "Enabling loginctl linger for systemd user service persistence..." -ForegroundColor Cyan
     $wslUser = (Invoke-WSLCommand -DistroName $global:wslDistroName -Command "whoami") -join ""
     $wslUser = $wslUser.Trim()
@@ -409,27 +498,63 @@ function Start-OpenClawService {
         return
     }
 
+    Write-Host "Launching WSL keep-alive process..." -ForegroundColor Cyan
+    Start-Process -FilePath "wsl.exe" -ArgumentList "-d $($global:wslDistroName) -- sleep infinity" -WindowStyle Hidden
+    Start-Sleep -Seconds 2
+
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user start $($global:openclawServiceName)"
 
     Start-Sleep -Seconds 3
 
     $status = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user is-active $($global:openclawServiceName)"
+    $statusText = ($status -join " ").Trim()
 
-    if ($status.Trim() -eq "active") {
+    if ($statusText -eq "active") {
         Write-Host "OpenClaw service started successfully." -ForegroundColor Green
         Write-Host "Control UI: http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
         Write-Host "Canvas:     http://127.0.0.1:$($global:canvasPort)/" -ForegroundColor Cyan
         Write-Host ""
+
         Write-Host "Dashboard Access:" -ForegroundColor Cyan
         $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
-        $dashboardText = ($dashboardOutput -join "`n").Trim()
-        Write-Host "  $dashboardText" -ForegroundColor White
+        $dashboardLines = ($dashboardOutput -join "`n").Trim()
+        $tokenUrl = ""
+        foreach ($line in $dashboardLines -split "`n") {
+            if ($line -match "(https?://\S+)") {
+                $tokenUrl = $Matches[1]
+                break
+            }
+        }
+
+        if (-not [string]::IsNullOrEmpty($tokenUrl)) {
+            Write-Host "  $tokenUrl" -ForegroundColor White
+        }
+        else {
+            Write-Host "  $dashboardLines" -ForegroundColor White
+        }
+
         Write-Host ""
         Write-Host "This URL contains your access token." -ForegroundColor Yellow
         Write-Host "Open it in your browser to access the OpenClaw Control UI." -ForegroundColor Yellow
+        Write-Host ""
+
+        $savedPassword = Get-OpenClawUIPassword
+        if ([string]::IsNullOrEmpty($savedPassword)) {
+            Write-Host "Generating UI password for remote access..." -ForegroundColor Cyan
+            $savedPassword = Set-OpenClawUIPassword
+        }
+        if (-not [string]::IsNullOrEmpty($savedPassword)) {
+            Write-Host "UI Password (for remote access): $savedPassword" -ForegroundColor White
+            Write-Host "Saved at: $($global:uiPasswordFile)" -ForegroundColor DarkGray
+        }
+
+        Write-Host ""
+        Write-Host "Docs:" -ForegroundColor White
+        Write-Host "  https://docs.openclaw.ai/gateway/remote" -ForegroundColor DarkGray
+        Write-Host "  https://docs.openclaw.ai/web/control-ui" -ForegroundColor DarkGray
     }
     else {
-        Write-Warning "Service may not have started correctly. Status: $status"
+        Write-Warning "Service may not have started correctly. Status: $statusText"
         Write-Host "Check logs with: wsl -d $($global:wslDistroName) -- journalctl --user -u $($global:openclawServiceName) -f"
     }
 }
@@ -461,6 +586,9 @@ function Stop-OpenClawService {
     }
 
     Invoke-WSLCommand -DistroName $global:wslDistroName -Command "systemctl --user stop $($global:openclawServiceName)"
+
+    Write-Host "Stopping WSL keep-alive processes..." -ForegroundColor Cyan
+    Invoke-WSLCommand -DistroName $global:wslDistroName -Command "pkill -f 'sleep infinity' 2>/dev/null || true"
 
     Write-Host "OpenClaw service stopped." -ForegroundColor Green
 }
@@ -627,8 +755,8 @@ for (`$i = 1; `$i -le `$maxRetries; `$i++) {
 }
 
 Write-ServiceLog "Starting WSL distro '$distroName' with sleep infinity..."
-`$p = Start-Process -FilePath "wsl.exe" -ArgumentList "-d $distroName -- sleep infinity" -WindowStyle Hidden -PassThru
-Write-ServiceLog "WSL keep-alive process started. PID=`$(`$p.Id)"
+`$p = Start-Process -FilePath "wsl.exe" -ArgumentList "-d $distroName -- sleep infinity" -WindowStyle Hidden -PassThru -Wait
+Write-ServiceLog "WSL keep-alive process exited. PID=`$(`$p.Id) ExitCode=`$(`$p.ExitCode)"
 "@
 
     if ($PSCmdlet.ShouldProcess($global:openclawServiceWrapperPath, "Write OpenClaw service wrapper script")) {
@@ -1061,6 +1189,34 @@ function Show-OpenClawStatus {
     Write-Host ""
     Write-Host "Access URLs:" -ForegroundColor White
     Write-Host "  Control UI:  http://127.0.0.1:$($global:controlUiPort)/" -ForegroundColor Cyan
+
+    if ($serviceStatus -eq "active") {
+        $dashboardOutput = Invoke-WSLCommand -DistroName $global:wslDistroName -Command "openclaw dashboard --no-open 2>&1"
+        $dashboardLines = ($dashboardOutput -join "`n").Trim()
+        $tokenUrl = ""
+        foreach ($line in $dashboardLines -split "`n") {
+            if ($line -match "(https?://\S+)") {
+                $tokenUrl = $Matches[1]
+                break
+            }
+        }
+        if (-not [string]::IsNullOrEmpty($tokenUrl)) {
+            Write-Host "  Dashboard (token link): $tokenUrl" -ForegroundColor Cyan
+        }
+    }
+
+    $savedPassword = Get-OpenClawUIPassword
+    if (-not [string]::IsNullOrEmpty($savedPassword)) {
+        Write-Host ""
+        Write-Host "Authentication:" -ForegroundColor White
+        Write-Host "  UI Password:  $savedPassword" -ForegroundColor Cyan
+        Write-Host "  Saved at:     $($global:uiPasswordFile)" -ForegroundColor DarkGray
+    }
+
+    Write-Host ""
+    Write-Host "Docs:" -ForegroundColor White
+    Write-Host "  https://docs.openclaw.ai/gateway/remote" -ForegroundColor DarkGray
+    Write-Host "  https://docs.openclaw.ai/web/control-ui" -ForegroundColor DarkGray
 
     Write-Host ""
 }
