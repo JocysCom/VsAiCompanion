@@ -8,8 +8,15 @@
 using namespace System
 using namespace System.IO
 
+param(
+	[string]$AutoChoice = ""
+)
+
 # Ensure script runs from its own directory
 Set-Location -Path $PSScriptRoot
+
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
 
 #==============================================================================
 # Global Configuration
@@ -44,7 +51,6 @@ $global:baseEnvVars = @{
 $global:n8nServiceTaskName = "VsAiCompanion-n8n"
 $global:n8nServiceWrapperPath = Join-Path $global:installRoot "service-wrapper.ps1"
 $global:n8nServiceLogPath = Join-Path $global:installRoot "service.log"
-$global:n8nServicePidPath = Join-Path $global:installRoot "service.pid"
 $global:n8nServicePidPath = Join-Path $global:installRoot "service.pid"
 
 #==============================================================================
@@ -685,6 +691,49 @@ function Stop-n8nService {
 }
 
 #==============================================================================
+# Function: Invoke-AsAdministrator
+#==============================================================================
+<#
+.SYNOPSIS
+	Re-launches the script elevated for a specific menu choice.
+.DESCRIPTION
+	When the current session is not running as Administrator, starts a new elevated
+	PowerShell process that re-runs this script with the -AutoChoice parameter.
+	Returns $true if elevation was attempted (caller should skip local execution),
+	or $false if already elevated (caller should execute locally).
+.PARAMETER Choice
+	The menu choice number to pass to the elevated process.
+.OUTPUTS
+	[bool]
+#>
+function Invoke-AsAdministrator {
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Choice
+	)
+
+	if (Test-IsAdministrator) {
+		return $false
+	}
+
+	Write-Host "This operation requires Administrator privileges. Elevating..." -ForegroundColor Yellow
+	try {
+		$proc = Start-Process -FilePath "PowerShell.exe" `
+			-ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`"", "-AutoChoice", $Choice `
+			-Verb RunAs -Wait -PassThru
+		if ($proc.ExitCode -ne 0) {
+			Write-Warning "Elevated operation completed with exit code $($proc.ExitCode)."
+		}
+	}
+	catch {
+		Write-Warning "UAC elevation was declined or failed: $_"
+	}
+	return $true
+}
+
+#==============================================================================
 # Function: Show-n8nMenu
 #==============================================================================
 <#
@@ -733,12 +782,23 @@ function Show-n8nMenu {
 		$state = "Unknown"
 	}
 
+	$n8nCmd = Get-Command $global:n8nCommandName -ErrorAction SilentlyContinue
+	$appState = if ($n8nCmd) { "Installed ($($n8nCmd.Source))" } else { "Not Installed" }
+
+	$processState = "Stopped"
+	$n8nProcs = @(Get-Process -Name "n8n" -ErrorAction SilentlyContinue)
+	if ($n8nProcs.Count -gt 0) {
+		$processState = "Running (PID: $(($n8nProcs | ForEach-Object { $_.Id }) -join ', '))"
+	}
+
 	$isAdmin = Test-IsAdministrator
 	$adminTag = if ($isAdmin) { " [Admin]" } else { "" }
 
 	Write-Host "===========================================" -ForegroundColor Yellow
 	Write-Host "n8n (Windows)$adminTag" -ForegroundColor White
 	Write-Host "===========================================" -ForegroundColor Yellow
+	Write-Host "App State: $appState" -ForegroundColor DarkGray
+	Write-Host "Process State: $processState" -ForegroundColor DarkGray
 	Write-Host "Service Task: $taskName" -ForegroundColor DarkGray
 	Write-Host "Service State: $state" -ForegroundColor DarkGray
 	if (-not [string]::IsNullOrWhiteSpace($triggerMode)) {
@@ -748,13 +808,13 @@ function Show-n8nMenu {
 		Write-Host "Last Task Result: $lastResult" -ForegroundColor DarkGray
 	}
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
-	Write-Host "1. Install App" -ForegroundColor Cyan
+	Write-Host "1. Install App (admin)" -ForegroundColor Cyan
 	Write-Host "2. Start Console" -ForegroundColor Cyan
-	Write-Host "3. Install Service" -ForegroundColor Cyan
+	Write-Host "3. Install Service (admin)" -ForegroundColor Cyan
 	Write-Host "4. Start Service" -ForegroundColor Cyan
 	Write-Host "5. Stop Service" -ForegroundColor Cyan
-	Write-Host "6. Uninstall Service" -ForegroundColor Cyan
-	Write-Host "7. Uninstall App" -ForegroundColor Cyan
+	Write-Host "6. Uninstall Service (admin)" -ForegroundColor Cyan
+	Write-Host "7. Uninstall App (admin)" -ForegroundColor Cyan
 	Write-Host "0. Exit" -ForegroundColor Cyan
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -763,8 +823,24 @@ function Show-n8nMenu {
 # Main
 #==============================================================================
 
-New-Directory -Path $global:installRoot
-New-Directory -Path $global:userDataRoot
+if (Test-IsAdministrator) {
+	New-Directory -Path $global:installRoot
+	New-Directory -Path $global:userDataRoot
+}
+
+if (-not [string]::IsNullOrWhiteSpace($AutoChoice)) {
+	switch ($AutoChoice) {
+		"1" { Install-n8n }
+		"3" { Install-n8nService }
+		"6" { Uninstall-n8nService }
+		"7" { Uninstall-n8n }
+		default { Write-Warning "Unknown auto-choice: $AutoChoice" }
+	}
+	Write-Host ""
+	Write-Host "Press any key to close..." -ForegroundColor DarkGray
+	$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+	return
+}
 
 $choice = ""
 do {
@@ -774,12 +850,14 @@ do {
 
 	switch ($choice) {
 		"1" {
+			if (Invoke-AsAdministrator -Choice "1") { break }
 			Install-n8n
 		}
 		"2" {
 			Start-n8nConsole
 		}
 		"3" {
+			if (Invoke-AsAdministrator -Choice "3") { break }
 			Install-n8nService
 		}
 		"4" {
@@ -793,9 +871,11 @@ do {
 			Stop-n8nService
 		}
 		"6" {
+			if (Invoke-AsAdministrator -Choice "6") { break }
 			Uninstall-n8nService
 		}
 		"7" {
+			if (Invoke-AsAdministrator -Choice "7") { break }
 			Uninstall-n8n
 		}
 		"0" { return }

@@ -9,8 +9,15 @@
 using namespace System
 using namespace System.IO
 
+param(
+	[string]$AutoChoice = ""
+)
+
 # Ensure script runs from its own directory
 Set-Location -Path $PSScriptRoot
+
+# Dot-source the necessary helper function files.
+. "$PSScriptRoot\Setup_Helper_CoreFunctions.ps1"
 
 #==============================================================================
 # Global Configuration
@@ -51,7 +58,6 @@ $global:dashboardPath = "/dashboard"
 $global:qdrantServiceTaskName = "VsAiCompanion-Qdrant"
 $global:qdrantServiceWrapperPath = Join-Path $global:installRoot "service-wrapper.ps1"
 $global:qdrantServiceLogPath = Join-Path $global:installRoot "service.log"
-$global:qdrantServicePidPath = Join-Path $global:installRoot "service.pid"
 $global:qdrantServicePidPath = Join-Path $global:installRoot "service.pid"
 
 #==============================================================================
@@ -1142,6 +1148,49 @@ function Uninstall-Qdrant {
 }
 
 #==============================================================================
+# Function: Invoke-AsAdministrator
+#==============================================================================
+<#
+.SYNOPSIS
+	Re-launches the script elevated for a specific menu choice.
+.DESCRIPTION
+	When the current session is not running as Administrator, starts a new elevated
+	PowerShell process that re-runs this script with the -AutoChoice parameter.
+	Returns $true if elevation was attempted (caller should skip local execution),
+	or $false if already elevated (caller should execute locally).
+.PARAMETER Choice
+	The menu choice number to pass to the elevated process.
+.OUTPUTS
+	[bool]
+#>
+function Invoke-AsAdministrator {
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Choice
+	)
+
+	if (Test-IsAdministrator) {
+		return $false
+	}
+
+	Write-Host "This operation requires Administrator privileges. Elevating..." -ForegroundColor Yellow
+	try {
+		$proc = Start-Process -FilePath "PowerShell.exe" `
+			-ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`"", "-AutoChoice", $Choice `
+			-Verb RunAs -Wait -PassThru
+		if ($proc.ExitCode -ne 0) {
+			Write-Warning "Elevated operation completed with exit code $($proc.ExitCode)."
+		}
+	}
+	catch {
+		Write-Warning "UAC elevation was declined or failed: $_"
+	}
+	return $true
+}
+
+#==============================================================================
 # Function: Show-QdrantMenu
 #==============================================================================
 <#
@@ -1190,12 +1239,22 @@ function Show-QdrantMenu {
 		$state = "Unknown"
 	}
 
+	$appState = if (Test-Path -LiteralPath $global:qdrantExePath) { "Installed ($($global:qdrantExePath))" } else { "Not Installed" }
+
+	$processState = "Stopped"
+	$qdrantProcs = @(Get-Process -Name "qdrant" -ErrorAction SilentlyContinue)
+	if ($qdrantProcs.Count -gt 0) {
+		$processState = "Running (PID: $(($qdrantProcs | ForEach-Object { $_.Id }) -join ', '))"
+	}
+
 	$isAdmin = Test-IsAdministrator
 	$adminTag = if ($isAdmin) { " [Admin]" } else { "" }
 
 	Write-Host "===========================================" -ForegroundColor Yellow
 	Write-Host "Qdrant (Windows)$adminTag" -ForegroundColor White
 	Write-Host "===========================================" -ForegroundColor Yellow
+	Write-Host "App State: $appState" -ForegroundColor DarkGray
+	Write-Host "Process State: $processState" -ForegroundColor DarkGray
 	Write-Host "Service Task: $taskName" -ForegroundColor DarkGray
 	Write-Host "Service State: $state" -ForegroundColor DarkGray
 	if (-not [string]::IsNullOrWhiteSpace($triggerMode)) {
@@ -1205,13 +1264,13 @@ function Show-QdrantMenu {
 		Write-Host "Last Task Result: $lastResult" -ForegroundColor DarkGray
 	}
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
-	Write-Host "1. Install App" -ForegroundColor Cyan
+	Write-Host "1. Install App (admin)" -ForegroundColor Cyan
 	Write-Host "2. Start Console" -ForegroundColor Cyan
-	Write-Host "3. Install Service" -ForegroundColor Cyan
+	Write-Host "3. Install Service (admin)" -ForegroundColor Cyan
 	Write-Host "4. Start Service" -ForegroundColor Cyan
 	Write-Host "5. Stop Service" -ForegroundColor Cyan
-	Write-Host "6. Uninstall Service" -ForegroundColor Cyan
-	Write-Host "7. Uninstall App" -ForegroundColor Cyan
+	Write-Host "6. Uninstall Service (admin)" -ForegroundColor Cyan
+	Write-Host "7. Uninstall App (admin)" -ForegroundColor Cyan
 	Write-Host "0. Exit" -ForegroundColor Cyan
 	Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -1220,10 +1279,26 @@ function Show-QdrantMenu {
 # Main
 #==============================================================================
 
-New-Directory -Path $global:installRoot
-New-Directory -Path $global:storageRoot
-New-Directory -Path $global:downloadsRoot
-New-Directory -Path $global:staticRoot
+if (Test-IsAdministrator) {
+	New-Directory -Path $global:installRoot
+	New-Directory -Path $global:storageRoot
+	New-Directory -Path $global:downloadsRoot
+	New-Directory -Path $global:staticRoot
+}
+
+if (-not [string]::IsNullOrWhiteSpace($AutoChoice)) {
+	switch ($AutoChoice) {
+		"1" { Install-Qdrant }
+		"3" { Install-QdrantService }
+		"6" { Uninstall-QdrantService }
+		"7" { Uninstall-Qdrant }
+		default { Write-Warning "Unknown auto-choice: $AutoChoice" }
+	}
+	Write-Host ""
+	Write-Host "Press any key to close..." -ForegroundColor DarkGray
+	$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+	return
+}
 
 $choice = ""
 do {
@@ -1233,12 +1308,14 @@ do {
 
 	switch ($choice) {
 		"1" {
+			if (Invoke-AsAdministrator -Choice "1") { break }
 			Install-Qdrant
 		}
 		"2" {
 			Start-QdrantConsole
 		}
 		"3" {
+			if (Invoke-AsAdministrator -Choice "3") { break }
 			Install-QdrantService
 		}
 		"4" {
@@ -1252,9 +1329,11 @@ do {
 			Stop-QdrantService
 		}
 		"6" {
+			if (Invoke-AsAdministrator -Choice "6") { break }
 			Uninstall-QdrantService
 		}
 		"7" {
+			if (Invoke-AsAdministrator -Choice "7") { break }
 			Uninstall-Qdrant
 		}
 		"0" { return }
