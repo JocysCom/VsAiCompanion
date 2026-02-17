@@ -47,7 +47,7 @@ $global:ollamaEndpoint = "http://localhost:11434"
 # Model configuration
 $global:defaultModel = "anthropic/claude-haiku-4-5"
 $global:complexModel = "anthropic/claude-sonnet-4-5"
-$global:criticalModel = "anthropic/claude-opus-4"
+$global:criticalModel = "anthropic/claude-opus-4-6"
 
 # Heartbeat configuration
 $global:heartbeatInterval = "1h"

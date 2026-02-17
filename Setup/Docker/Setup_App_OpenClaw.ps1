@@ -1796,6 +1796,48 @@ function Restore-OpenClawSystem {
         -DisplayName "System"
 }
 
+#==============================================================================
+# Function: Invoke-OpenClawDoctor
+#==============================================================================
+<#
+.SYNOPSIS
+    Runs the OpenClaw doctor to diagnose and fix configuration issues.
+.DESCRIPTION
+    Executes 'openclaw doctor --fix' inside the WSL distro to detect and
+    auto-repair invalid config keys, missing directories, and permission
+    problems in ~/.openclaw/openclaw.json.
+.OUTPUTS
+    [void]
+#>
+function Invoke-OpenClawDoctor {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    if (-not $PSCmdlet.ShouldProcess("OpenClaw", "Run Doctor --fix")) {
+        return
+    }
+
+    if (-not (Test-WSLDistroExists -DistroName $global:wslDistroName)) {
+        Write-Error "WSL distro '$($global:wslDistroName)' not found. Please run Setup_Core_WSL_OpenClaw.ps1 first."
+        return
+    }
+
+    Write-Host ""
+    Write-Host "Running OpenClaw doctor --fix..." -ForegroundColor Yellow
+    Write-Host ""
+
+    & wsl --distribution $global:wslDistroName -- openclaw doctor --fix
+
+    Write-Host ""
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Doctor completed successfully." -ForegroundColor Green
+    }
+    else {
+        Write-Warning "Doctor exited with code $LASTEXITCODE. Review the output above."
+    }
+    Write-Host ""
+}
+
 ################################################################################
 # Main Menu Loop
 ################################################################################
@@ -1878,6 +1920,7 @@ function Show-OpenClawMenu {
     Write-Host "B. Restore Personality" -ForegroundColor Cyan
     Write-Host "C. Backup System (.openclaw config, excluding workspace)" -ForegroundColor Cyan
     Write-Host "D. Restore System" -ForegroundColor Cyan
+    Write-Host "E. Doctor (diagnose and fix config)" -ForegroundColor Cyan
     Write-Host "0. Exit" -ForegroundColor Cyan
     Write-Host "-------------------------------------------" -ForegroundColor Yellow
 }
@@ -1931,6 +1974,9 @@ do {
         }
         "D" {
             Restore-OpenClawSystem
+        }
+        "E" {
+            Invoke-OpenClawDoctor
         }
         "0" { return }
         default {
