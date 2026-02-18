@@ -248,7 +248,8 @@
           "N8N_LOG_FILE_MAX_COUNT": "30",
           "NODE_OPTIONS": "--max-old-space-size=12288",
           "NODES_EXCLUDE": "[]",
-          "N8N_RUNNERS_DISABLED_RUNNERS": "python"
+          "N8N_RUNNERS_DISABLED_RUNNERS": "python",
+          "N8N_LISTEN_ADDRESS": "0.0.0.0"
         },
         "restart": "always",
         "networkMode": "host",

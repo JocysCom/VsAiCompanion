@@ -311,12 +311,27 @@ function Start-n8nContainer {
 		Write-Host "Network mode: bridge (port $($config.hostPort) published)"
 	}
 
-	# Apply additional host mappings from manifest (e.g., host.local -> localhost).
-	# Works in both host and bridge modes for backwards compatibility.
+	# Apply additional host mappings from manifest (e.g., host.local -> 127.0.0.1).
+	# In Podman host-network mode on Azure/nested Hyper-V, the Podman VM gets its own IP
+	# on the 172.29.x.x subnet. In that case 127.0.0.1 is the VM's loopback, not Windows.
+	# Detect the vEthernet (WSL) interface IP on Windows and use it instead.
 	if ($config.additionalHosts) {
+		$wslWindowsIp = $null
+		if ($useHostNetwork -and $global:containerEngine -ne "docker") {
+			$wslIface = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "vEthernet (WSL)" -ErrorAction SilentlyContinue |
+				Select-Object -First 1
+			if ($wslIface) {
+				$wslWindowsIp = $wslIface.IPAddress
+				Write-Host "  Detected Windows WSL gateway IP: $wslWindowsIp (vEthernet (WSL))"
+			}
+		}
 		foreach ($hostEntry in $config.additionalHosts.PSObject.Properties) {
-			$runOptions = @("--add-host", "$($hostEntry.Name):$($hostEntry.Value)") + $runOptions
-			Write-Host "  Host mapping: $($hostEntry.Name) -> $($hostEntry.Value)"
+			$resolvedValue = $hostEntry.Value
+			if ($wslWindowsIp -and $resolvedValue -eq "127.0.0.1") {
+				$resolvedValue = $wslWindowsIp
+			}
+			$runOptions = @("--add-host", "$($hostEntry.Name):$resolvedValue") + $runOptions
+			Write-Host "  Host mapping: $($hostEntry.Name) -> $resolvedValue"
 		}
 	}
 

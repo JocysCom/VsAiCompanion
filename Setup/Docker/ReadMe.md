@@ -31,7 +31,7 @@ This system is designed to reduce technical debt and accelerate AI adoption.
 The following tree diagram illustrates how containers are installed and managed on a local Windows machine using WSL2 and Podman.
 
 ```text
-Windows 11                        ← real, bare-metal host
+Windows 11 / Windows Server (bare-metal or cloud VM)
 │
 ├── NVIDIA GPU Driver (installed on Windows)
 │   └── nvidia-smi.exe (C:\Windows\System32\)
@@ -74,8 +74,10 @@ Windows 11                        ← real, bare-metal host
             │
             ├── container "n8n"       ← Linux container, --network host
             │   ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root n8n /bin/sh`
-            │   ├── node /usr/bin/n8n ← the real application
-            │   └── host.local → 127.0.0.1 (reaches Windows host services via mirrored loopback)
+            │   ├── node /usr/bin/n8n ← the real application, binds 0.0.0.0:5678
+            │   └── host.local → <Windows-host-IP> (auto-detected by setup script)
+            │       ├── bare-metal:  host.local → 127.0.0.1  (shared loopback via mirrored WSL2)
+            │       └── cloud VM:    host.local → 172.29.112.1  (vEthernet (WSL) gateway IP)
             │
             └── container "qwen3-embedding-4b" ← Linux container, NOT a VM
                 ├── /bin/sh (root)    ← started by `sudo podman exec -it --user root qwen3-embedding-4b /bin/sh`
@@ -87,76 +89,95 @@ Windows 11                        ← real, bare-metal host
 
 WSL2 supports two networking modes that affect how containers communicate with external services. The scripts configure **mirrored networking** by default, which is required for corporate environments.
 
+> **Important — n8n IPv4 binding:** n8n must be started with `N8N_LISTEN_ADDRESS=0.0.0.0`
+> (set in [`Files/Aspire/manifest.json`](Files/Aspire/manifest.json)) to bind on IPv4.
+> Without this, n8n only listens on `[::1]:5678` (IPv6 loopback) and is unreachable
+> via `http://127.0.0.1:5678/` from Windows.
+
 #### Mirrored Mode (Recommended — configured by `Setup_Core_1_WSL2.ps1`)
 
-In mirrored mode, WSL2 shares the host's network interfaces directly. All outbound traffic from containers uses the **same external IP address** as the Windows host, and VPN/proxy settings are inherited automatically.
-
-Containers that need to reach Windows host services (e.g., SQL Server) use `--network host` mode with `--add-host host.local:127.0.0.1`. This makes `host.local` resolve to `127.0.0.1`, which in host network mode reaches the Windows host via mirrored loopback — no firewall rules needed.
+With `networkingMode=mirrored`, WSL2 shares the host's network. Behaviour differs between bare-metal and cloud VMs — the setup script auto-detects which case applies and sets `host.local` accordingly.
 
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│ Windows Host (e.g., IP: 10.1.2.50 via VPN)                          │
-│                                                                     │
-│  %UserProfile%\.wslconfig:                                          │
-│    [wsl2]                                                           │
-│    networkingMode=mirrored    ← WSL2 shares host network interfaces │
-│    dnsTunneling=true          ← DNS queries go through Windows      │
-│    autoProxy=true             ← proxy settings inherited            │
-│                                                                     │
-│  SQL Server listening on localhost:1433                             │
-│                                                                     │
-│  ┌────────────────────────────────────────────────────────────────┐ │
-│  │ WSL2 podman-machine-default (Fedora CoreOS)                    │ │
-│  │ IP: same as host (10.1.2.50) ← mirrored!                       │ │
-│  │                                                                │ │
-│  │  ┌──────────────────────────┐  ┌──────────────────────────┐    │ │
-│  │  │ n8n container            │  │ other containers         │    │ │
-│  │  │ --network host           │  │ Podman bridge 10.88…     │    │ │
-│  │  │ host.local → 127.0.0.1   │  └──────────────┬───────────┘    │ │
-│  │  │   ↓ loopback → Windows   │                 │                │ │
-│  │  └──────────┬───────────────┘                 │                │ │
-│  │             │                                 │                │ │
-│  │             └──────────┬──────────────────────┘                │ │
-│  │                        │                                       │ │
-│  └────────────────────────┼───────────────────────────────────────┘ │
-│                           │                                         │
-│                    Same IP: 10.1.2.50                               │
-│                           │                                         │
-└───────────────────────────┼─────────────────────────────────────────┘
-                            │
-                   Corporate Firewall ← recognises host IP → ALLOWED
-                            │
-                   Azure OpenAI / Internal Endpoints
+┌────────────────────────────────────────────────────────────────────────┐
+│ Windows Host                                                           │
+│   bare-metal: real hardware (e.g., IP: 10.1.2.50 via VPN)              │
+│   cloud VM:   Azure / nested Hyper-V (e.g., external IP: 20.x.x.x)     │
+│                                                                        │
+│  %UserProfile%\.wslconfig:                                             │
+│    [wsl2]                                                              │
+│    networkingMode=mirrored    ← WSL2 shares host network interfaces    │
+│    dnsTunneling=true          ← DNS queries go through Windows         │
+│    autoProxy=true             ← proxy settings inherited               │
+│                                                                        │
+│  SQL Server listening on 0.0.0.0:1433                                  │
+│                                                                        │
+│  Windows network interfaces:                                           │
+│    bare-metal: single NIC (e.g., 10.1.2.50), no vEthernet (WSL)        │
+│    cloud VM:   Ethernet → 172.16.208.4, vEthernet (WSL) → 172.29.112.1 │
+│                                                                        │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │ WSL2 podman-machine-default (Fedora CoreOS)                    │   │
+│   │   bare-metal: IP = host IP (10.1.2.50), truly mirrored         │   │
+│   │   cloud VM:   IP = 172.29.124.14 (own IP on vEthernet subnet)  │   │
+│   │   127.0.0.1 → bare-metal: Windows loopback ← reaches SQL       │   │
+│   │               cloud VM:   VM's own loopback (NOT Windows)      │   │
+│   │                                                                │   │
+│   │  ┌──────────────────────────────┐  ┌────────────────────────┐  │   │
+│   │  │ n8n container --network host │  │ other containers       │  │   │
+│   │  │ N8N_LISTEN_ADDRESS=0.0.0.0   │  │ Podman 10.88.0.0/16    │  │   │
+│   │  │ host.local →                 │  └───────────┬────────────┘  │   │
+│   │  │  bare-metal: 127.0.0.1       │              │               │   │
+│   │  │  cloud VM:   172.29.112.1    │              │               │   │
+│   │  │  (auto-detected by script)   │              │               │   │
+│   │  └──────────────┬───────────────┘              │               │   │
+│   │                 └────────────────┬─────────────┘               │   │
+│   │                                  │                             │   │
+│   └──────────────────────────────────┼─────────────────────────────┘   │
+│                                      │                                 │
+│    bare-metal: Same IP as host (10.1.2.50)                             │
+│    cloud VM:   Routes via Azure VNet (external IP: 20.x.x.x)           │
+│                                      │                                 │
+└──────────────────────────────────────┼─────────────────────────────────┘
+                                       │
+                             Corporate Firewall ← recognises host IP → ALLOWED
+                                       │
+                             Azure OpenAI / Internal Endpoints
 ```
+
+`Setup_App_3_n8n_Core.ps1` auto-detects the correct `host.local` IP:
+1. Checks for `vEthernet (WSL)` interface on Windows
+2. If found and `networkMode=host`: uses the detected IP instead of `127.0.0.1`
+3. Passes `--add-host host.local:<detected-ip>` to `podman run`
 
 #### NAT Mode (Default WSL2 — problematic for corporate networks)
 
 Without mirrored networking, WSL2 creates a separate virtual network with its own IP. Outbound traffic may use a different external IP, causing corporate firewalls to block connections.
 
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│ Windows Host (IP: 10.1.2.50 via VPN)                                │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐   │
-│  │ vEthernet (WSL) — virtual switch: 172.28.0.1                 │   │
-│  │                                                              │   │
-│  │  ┌────────────────────────────────────────────────────────┐  │   │
-│  │  │ WSL2 podman-machine-default: 172.28.x.y ← different!   │  │   │
-│  │  │                                                        │  │   │
-│  │  │  ┌─────────────┐  ┌─────────────┐                      │  │   │
-│  │  │  │ n8n 10.88…  │  │ other 10.88…│                      │  │   │
-│  │  │  └──────┬──────┘  └──────┬──────┘                      │  │   │
-│  │  │         └────────┬───────┘                             │  │   │
-│  │  └──────────────────┼─────────────────────────────────────┘  │   │
-│  │                     │ NAT translation                        │   │
-│  └─────────────────────┼────────────────────────────────────────┘   │
-│                        │                                            │
-│                 Different IP: 10.1.2.51 or other                    │
-│                        │                                            │
-└────────────────────────┼────────────────────────────────────────────┘
-                         │
+┌────────────────────────────────────────────────────────────────────┐
+│ Windows Host (IP: 10.1.2.50 via VPN)                               │
+│                                                                    │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │ vEthernet (WSL) — virtual switch: 172.28.0.1                 │  │
+│  │                                                              │  │
+│  │  ┌────────────────────────────────────────────────────────┐  │  │
+│  │  │ WSL2 podman-machine-default: 172.28.x.y ← different!   │  │  │
+│  │  │                                                        │  │  │
+│  │  │  ┌──────────────────┐  ┌───────────────────┐           │  │  │
+│  │  │  │ n8n 10.88.0.x/16 │  │ other 10.88.0.y/16│           │  │  │
+│  │  │  └──────┬───────────┘  └──────┬────────────┘           │  │  │
+│  │  │         └──────────┬──────────┘                        │  │  │
+│  │  └────────────────────┼───────────────────────────────────┘  │  │
+│  │                       │ NAT translation                      │  │
+│  └───────────────────────┼──────────────────────────────────────┘  │
+│                          │                                         │
+│                 Different IP: 10.1.2.51 or other                   │
+│                          │                                         │
+└──────────────────────────┼─────────────────────────────────────────┘
+                           │
                 Corporate Firewall ← unknown IP → BLOCKED
-                         │
+                           │
                 Azure OpenAI / Internal Endpoints
 ```
 
