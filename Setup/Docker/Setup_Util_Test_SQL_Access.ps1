@@ -45,16 +45,13 @@ Write-Host "Container  : $ContainerName"
 Write-Host ""
 
 # ---------------------------------------------------------------------------
-# Detect Windows WSL gateway IP (vEthernet (WSL) interface).
+# Detect Windows WSL gateway IP via shared helper.
 # On Azure / nested Hyper-V the Podman VM has its own 172.29.x.x IP.
 # In that case the Windows host is reachable via the vEthernet (WSL) IP,
 # NOT via 127.0.0.1 (which is the VM's own loopback).
 # ---------------------------------------------------------------------------
-$wslGatewayIp = $null
-$wslIface = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "vEthernet (WSL)" -ErrorAction SilentlyContinue |
-    Select-Object -First 1
-if ($wslIface) {
-    $wslGatewayIp = $wslIface.IPAddress
+$wslGatewayIp = Get-WSLGatewayIP
+if ($wslGatewayIp) {
     Write-Host ("WSL Gateway  : {0} (vEthernet (WSL))" -f $wslGatewayIp)
 }
 Write-Host ""

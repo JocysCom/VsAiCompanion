@@ -1,6 +1,7 @@
 ﻿################################################################################
 # File         : Setup_Helper_NetworkTests.ps1
 # Description  : Contains network testing helper functions for setup scripts:
+#                - Get-WSLGatewayIP: Detect the Windows-side WSL gateway IP.
 #                - Test-TCPPort: Test connectivity to a specific TCP port.
 #                - Test-HTTPPort: Test connectivity to an HTTP endpoint.
 #                - Test-WebSocketPort: Test connectivity to a WebSocket endpoint.
@@ -523,4 +524,43 @@ function Assert-NetworkExists {
 	}
 
 	return $false
+}
+
+#==============================================================================
+# Function: Get-WSLGatewayIP
+#==============================================================================
+<#
+.SYNOPSIS
+    Returns the Windows-side IP of the vEthernet (WSL) interface, if present.
+.DESCRIPTION
+    On bare-metal Windows with WSL2 mirrored networking, the Podman VM shares the
+    host's loopback (127.0.0.1 reaches Windows host services from inside the VM).
+
+    On cloud VMs (Azure / nested Hyper-V), the Podman VM gets its own IP on the
+    vEthernet (WSL) subnet. In that case 127.0.0.1 inside the VM is the VM's own
+    loopback, NOT Windows. The correct Windows-host IP is the vEthernet (WSL)
+    gateway address detected by this function.
+
+    Returns $null when no vEthernet (WSL) interface is found (bare-metal case),
+    indicating that 127.0.0.1 should be used as-is.
+.OUTPUTS
+    [string] The IPv4 address of the vEthernet (WSL) interface, or $null if not found.
+.EXAMPLE
+    PS C:\> $gwIp = Get-WSLGatewayIP
+    PS C:\> if ($gwIp) { Write-Host "Cloud VM gateway: $gwIp" } else { Write-Host "Bare-metal: use 127.0.0.1" }
+.NOTES
+    Used by container setup scripts to resolve host.local correctly in both
+    bare-metal and cloud VM environments.
+#>
+function Get-WSLGatewayIP {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    $wslIface = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "vEthernet (WSL)" -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    if ($wslIface) {
+        return $wslIface.IPAddress
+    }
+    return $null
 }
