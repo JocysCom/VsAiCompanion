@@ -1,1 +1,0 @@
-dotnet publish ChatBridge.csproj -f net8.0 -c Release -o .\bin\publish

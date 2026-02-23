@@ -1,1 +1,0 @@
-dotnet test "AspireTests.csproj" --framework net8.0
