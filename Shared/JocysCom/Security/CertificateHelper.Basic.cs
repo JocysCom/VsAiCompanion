@@ -18,8 +18,10 @@ namespace JocysCom.ClassLibrary.Security
 			error = null;
 			try
 			{
+#pragma warning disable SYSLIB0057 // X509 certificate constructors are obsolete; X509CertificateLoader not available on net48.
 				var singingCertificate = X509Certificate.CreateFromSignedFile(filePath);
 				certificate = new X509Certificate2(singingCertificate);
+#pragma warning restore SYSLIB0057
 			}
 			catch (Exception ex)
 			{

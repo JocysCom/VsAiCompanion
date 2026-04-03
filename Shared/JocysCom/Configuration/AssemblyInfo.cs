@@ -315,7 +315,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			try
 			{
 				s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-				_ = s.Read(b, 0, 2048);
+				var bytesToRead = (int)Math.Min(s.Length, b.Length);
+#if NET7_0_OR_GREATER
+				s.ReadExactly(b, 0, bytesToRead);
+#else
+				s.Read(b, 0, bytesToRead);
+#endif
 			}
 			finally
 			{

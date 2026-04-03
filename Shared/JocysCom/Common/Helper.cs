@@ -7,12 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
-#if NETFRAMEWORK
 using System.Windows.Threading;
-#else
-using System.Windows.Threading;
-#endif
 
 namespace JocysCom.ClassLibrary
 {
@@ -169,7 +164,11 @@ namespace JocysCom.ClassLibrary
 			else
 			{
 				var bytes = new byte[stream.Length];
+#if NET7_0_OR_GREATER
+				stream.ReadExactly(bytes, 0, (int)stream.Length);
+#else
 				stream.Read(bytes, 0, (int)stream.Length);
+#endif
 				results = (T)(object)bytes;
 			}
 			return results;
@@ -325,9 +324,6 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Executes the given delegate with automatic UI thread marshaling if WPF is available and needed.
 		/// </summary>
-		/// <param name="action">The delegate to execute.</param>
-		/// <param name="args">Arguments to pass to the delegate.</param>
-		/// <returns>A Task representing the execution.</returns>
 		private static async Task ExecuteWithUIThreadMarshaling(Delegate action, params object[] args)
 		{
 			// Check if WPF is available and we need UI thread marshaling
@@ -343,7 +339,6 @@ namespace JocysCom.ClassLibrary
 					}
 					catch (Exception ex)
 					{
-						// Log the exception but don't let it propagate to avoid crashing the UI thread
 						System.Diagnostics.Debug.WriteLine($"Error in debounced UI action: {ex}");
 					}
 				}));
@@ -358,7 +353,6 @@ namespace JocysCom.ClassLibrary
 		/// Attempts to get the WPF Dispatcher for the current application.
 		/// Returns null if WPF is not available or no dispatcher is found.
 		/// </summary>
-		/// <returns>The WPF Dispatcher or null if not available.</returns>
 		private static Dispatcher GetWpfDispatcher()
 		{
 			try
