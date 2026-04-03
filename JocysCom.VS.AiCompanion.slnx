@@ -27,8 +27,10 @@
   </Folder>
   <Folder Name="/Data/">
     <Project Path="Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />
-    <Project Path="Data\DataFunctions\JocysCom.VS.AiCompanion.DataFunctions.sqlproj" Type="{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}">
-      <Configuration Solution="*|*" Project="*|AnyCPU|Deploy" />
+    <Project Path="Data\DataFunctions\JocysCom.VS.AiCompanion.DataFunctions.sqlproj" Id="3c54106b-2d93-45bd-99ea-fac5b95d3c99">
+      <Platform Project="AnyCPU" />
+      <Build />
+      <Deploy />
     </Project>
   </Folder>
   <Project Path="App\JocysCom.VS.AiCompanion.App.csproj" />
@@ -36,8 +38,6 @@
   <Project Path="Clients\JocysCom.VS.AiCompanion.Clients.csproj" />
   <Project Path="Demo\JocysCom.VS.AiCompanion.Demo.csproj" />
   <Project Path="Engine\JocysCom.VS.AiCompanion.Engine.csproj" />
-  <Project Path="Extension\JocysCom.VS.AiCompanion.Extension.csproj" Type="Classic C#">
-    <Configuration Solution="*|arm64" Project="*|*|NoBuild" />
-  </Project>
+  <Project Path="Extension\JocysCom.VS.AiCompanion.Extension.csproj" Id="403400f8-39b7-69af-806f-cabfaaad6d7b" />
   <Project Path="Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 </Solution>
