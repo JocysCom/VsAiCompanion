@@ -234,6 +234,15 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
+		private void CopyMessage_Click(object sender, RoutedEventArgs e)
+		{
+			var text = MessageTextBox.Visibility == Visibility.Visible
+				? MessageTextBox.Text
+				: MessageTextBlock.Text;
+			if (!string.IsNullOrEmpty(text))
+				Clipboard.SetText(text);
+		}
+
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			Result = (MessageBoxResult)((Button)sender).Tag;

@@ -50,7 +50,13 @@
 					VerticalAlignment="Top"
 					Text="Message"
 					TextWrapping="Wrap"
-					Visibility="Collapsed" />
+					Visibility="Collapsed">
+					<TextBlock.ContextMenu>
+						<ContextMenu>
+							<MenuItem Click="CopyMessage_Click" Header="Copy" />
+						</ContextMenu>
+					</TextBlock.ContextMenu>
+				</TextBlock>
 				<TextBox
 					x:Name="MessageTextBox"
 					Margin="0,8,8,8"
@@ -108,7 +114,5 @@
 				</Button>
 			</StackPanel>
 		</Grid>
-
-
 	</Grid>
 </Window>
