@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System.Text.RegularExpressions;
 
 namespace JocysCom.VS.AiCompanion.ClientGenerator
@@ -25,18 +25,30 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			{"open_a_i_file", "file" },
 		};
 
-		private List<OpenApiSchema> knownSchemas = new List<OpenApiSchema>();
-		private List<OpenApiSchema> FoundClasses = new List<OpenApiSchema>();
-		private List<OpenApiSchema> FoundEnums = new List<OpenApiSchema>();
+		private List<IOpenApiSchema> knownSchemas = new List<IOpenApiSchema>();
+		private List<IOpenApiSchema> FoundClasses = new List<IOpenApiSchema>();
+		private List<IOpenApiSchema> FoundEnums = new List<IOpenApiSchema>();
+
+		/// <summary>
+		/// Component schemas by name, used to resolve a `$ref` back to its definition.
+		/// </summary>
+		private Dictionary<string, IOpenApiSchema> componentsByName = new Dictionary<string, IOpenApiSchema>();
+
+		/// <summary>
+		/// Reverse of <see cref="componentsByName"/>. Microsoft.OpenApi 3.x dropped the per-schema
+		/// `Reference` object, so a schema's name is only recoverable from the components dictionary key.
+		/// </summary>
+		private Dictionary<IOpenApiSchema, string> schemaNames = new Dictionary<IOpenApiSchema, string>();
 
 		public void GenerateModels(OpenApiDocument document, string outputDirectory)
 		{
-			var allShemas = document.Components.Schemas.Select(x => x.Value).ToList();
+			IndexComponentSchemas(document);
+			var allShemas = componentsByName.Values.ToList();
 			FoundClasses = allShemas
-				.Where(x => x.Enum == null || !x.Enum.Any())
+				.Where(x => !x.HasEnum())
 				.ToList();
 			FoundEnums = allShemas
-				.Where(x => x.Enum != null && x.Enum.Any())
+				.Where(x => x.HasEnum())
 				.ToList();
 			PopulateAliasMapping();
 			// Exclude all aliases.
@@ -52,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			FilesBefore = Directory.GetFiles(enumsPath, "*.cs").ToList();
 			foreach (var schema in FoundEnums)
 			{
-				var id = schema.Reference.Id;
+				var id = GetSchemaName(schema);
 				var csharpClassContent = GenerateEnum(schema);
 				string filePath = Path.Combine(enumsPath, GetCSharpClassName(id) + ".cs");
 				WriteHelper.SaveToFile(filePath, csharpClassContent, true);
@@ -62,13 +74,47 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			FilesBefore = Directory.GetFiles(modelsPath, "*.cs").ToList();
 			foreach (var schema in FoundClasses)
 			{
-				var id = schema.Reference.Id;
+				var id = GetSchemaName(schema);
 				var csharpClassContent = GenerateClass(schema);
 				string filePath = Path.Combine(modelsPath, GetCSharpClassName(id) + ".cs");
 				WriteHelper.SaveToFile(filePath, csharpClassContent, true);
 			}
 			CleanupFiles(modelsPath);
 		}
+
+		#region Schema Naming and Reference Resolution
+
+		/// <summary>
+		/// Record the name of every component schema so it can be recovered later.
+		/// </summary>
+		private void IndexComponentSchemas(OpenApiDocument document)
+		{
+			componentsByName.Clear();
+			schemaNames.Clear();
+			var schemas = document.Components?.Schemas;
+			if (schemas == null)
+				return;
+			foreach (var pair in schemas)
+			{
+				componentsByName[pair.Key] = pair.Value;
+				// Two names can point at the same schema instance; the first one wins.
+				if (!schemaNames.ContainsKey(pair.Value))
+					schemaNames.Add(pair.Value, pair.Key);
+			}
+		}
+
+		/// <summary>
+		/// Follow a `$ref` to the component schema it names. Inline schemas are returned unchanged.
+		/// </summary>
+		private IOpenApiSchema ResolveSchema(IOpenApiSchema schema)
+		{
+			var refId = schema.GetReferenceId();
+			return refId != null && componentsByName.TryGetValue(refId, out var target)
+				? target
+				: schema;
+		}
+
+		#endregion
 
 		public List<string> FilesBefore = new List<string>();
 		public List<string> FilesAfter = new List<string>();
@@ -86,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <summary>
 		/// Contains namse of all properties inherited from base classes.
 		/// </summary>
-		private Dictionary<OpenApiSchema, HashSet<string>> baseProperties = new Dictionary<OpenApiSchema, HashSet<string>>();
+		private Dictionary<IOpenApiSchema, HashSet<string>> baseProperties = new Dictionary<IOpenApiSchema, HashSet<string>>();
 
 		private void PopulateBaseProperties()
 		{
@@ -105,25 +151,22 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <summary>
 		/// Get all base properties of a schema, including inherited ones from base schemas
 		/// </summary>
-		private HashSet<string> GetAllBaseProperties(OpenApiSchema schema)
+		private HashSet<string> GetAllBaseProperties(IOpenApiSchema schema)
 		{
 			var properties = new HashSet<string>();
 			var currentSchema = schema;
 			while (currentSchema != null)
 			{
-				OpenApiSchema? baseSchema = FindBaseSchema(currentSchema);
+				IOpenApiSchema? baseSchema = FindBaseSchema(currentSchema);
 				if (baseSchema == null)
 				{
 					break; // No more base schema found, stop the loop
 				}
 
 				// Add base schema properties if the base schema is valid
-				if (baseSchema.Properties != null)
+				foreach (var property in baseSchema.GetProperties())
 				{
-					foreach (var property in baseSchema.Properties)
-					{
-						properties.Add(property.Key);
-					}
+					properties.Add(property.Key);
 				}
 
 				// Move up the inheritance chain
@@ -139,7 +182,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		///<summary>
 		///Maintains a mapping of schema aliases to their respective primary schema.
 		///</summary>
-		private Dictionary<OpenApiSchema, OpenApiSchema> schemaAliasMapping = new Dictionary<OpenApiSchema, OpenApiSchema>();
+		private Dictionary<IOpenApiSchema, IOpenApiSchema> schemaAliasMapping = new Dictionary<IOpenApiSchema, IOpenApiSchema>();
 
 		///<summary>
 		///Attempt to map schema aliases to their respective primary schema, considering each schema only once.
@@ -155,7 +198,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			while (foundNewPrimary);
 		}
 
-		public OpenApiSchema GetPrimarySchemaByAlias(OpenApiSchema schema)
+		public IOpenApiSchema GetPrimarySchemaByAlias(IOpenApiSchema schema)
 		{
 			return schemaAliasMapping.ContainsKey(schema)
 				? schemaAliasMapping[schema]
@@ -174,14 +217,14 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			{
 				for (int b = a + 1; b < FoundClasses.Count; b++)
 				{
-					OpenApiSchema schemaA = FoundClasses[a];
-					OpenApiSchema schemaB = FoundClasses[b];
+					IOpenApiSchema schemaA = FoundClasses[a];
+					IOpenApiSchema schemaB = FoundClasses[b];
 					schemaA = GetPrimarySchemaByAlias(schemaA);
 					schemaB = GetPrimarySchemaByAlias(schemaB);
 					if (schemaA != schemaB && AreSchemasAliases(schemaA, schemaB))
 					{
-						OpenApiSchema primarySchema = ChoosePrimarySchema(schemaA, schemaB);
-						OpenApiSchema aliasSchema = (primarySchema == schemaA) ? schemaB : schemaA;
+						IOpenApiSchema primarySchema = ChoosePrimarySchema(schemaA, schemaB);
+						IOpenApiSchema aliasSchema = (primarySchema == schemaA) ? schemaB : schemaA;
 						if (schemaAliasMapping.TryAdd(aliasSchema, primarySchema))
 							foundNewPrimary = true;
 						// Consolidate all the aliases of the non-primary to point to the detected primary schema.
@@ -197,14 +240,14 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		///<summary>
 		///Chooses the primary schema based on the shorter type name and sort order.
 		///</summary>
-		private static OpenApiSchema ChoosePrimarySchema(OpenApiSchema schemaA, OpenApiSchema schemaB)
+		private IOpenApiSchema ChoosePrimarySchema(IOpenApiSchema schemaA, IOpenApiSchema schemaB)
 		{
-			// Retrieve type name or reference ID as applicable
-			var typeNameA = schemaA.Type ?? schemaA.Reference?.Id ?? "";
-			var typeNameB = schemaB.Type ?? schemaB.Reference?.Id ?? "";
+			// Retrieve type name or component name as applicable
+			var typeNameA = schemaA.GetBaseType()?.ToString() ?? GetSchemaName(schemaA);
+			var typeNameB = schemaB.GetBaseType()?.ToString() ?? GetSchemaName(schemaB);
 
-			// If either schema does not have a type or a reference, it can't be compared
-			if (typeNameA == null || typeNameB == null)
+			// If either schema does not have a type or a name, it can't be compared
+			if (string.IsNullOrEmpty(typeNameA) || string.IsNullOrEmpty(typeNameB))
 			{
 				throw new InvalidOperationException("Cannot determine primary schema: one or both schemas lack type information.");
 			}
@@ -212,30 +255,34 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			int compareLength = typeNameA.Length.CompareTo(typeNameB.Length);
 			if (compareLength == 0)
 			{
-				// If the type names or reference IDs are of the same length, use sort order to decide
+				// If the type names or names are of the same length, use sort order to decide
 				return string.Compare(typeNameA, typeNameB, StringComparison.Ordinal) < 0 ? schemaA : schemaB;
 			}
 
-			// Choose the schema with the shorter type name or reference ID as the primary schema
+			// Choose the schema with the shorter type name or name as the primary schema
 			return compareLength < 0 ? schemaA : schemaB;
 		}
 
 		///<summary>
 		///Determines whether two schemas can be considered aliases based on their properties.
-		///This comparison includes only property names and types. Consider enhancing the comparison mechanism 
+		///This comparison includes only property names and types. Consider enhancing the comparison mechanism
 		///with additional schema constraints for a more sophisticated comparison.
 		///</summary>
 		///<remarks>
-		///The properties are compared by both names and types but may need to extend the comparison 
+		///The properties are compared by both names and types but may need to extend the comparison
 		///with additional schema constraints for a more sophisticated comparison.
 		///</remarks>
-		private static bool AreSchemasAliases(OpenApiSchema schemaA, OpenApiSchema schemaB)
+		private static bool AreSchemasAliases(IOpenApiSchema schemaA, IOpenApiSchema schemaB)
 		{
-			if (schemaA.Properties.Count != schemaB.Properties.Count)
+			var propertiesA = schemaA.GetProperties();
+			var propertiesB = schemaB.GetProperties();
+			if (propertiesA.Count != propertiesB.Count)
 				return false;
-			foreach (var propA in schemaA.Properties)
+			foreach (var propA in propertiesA)
 			{
-				if (!schemaB.Properties.TryGetValue(propA.Key, out var propB) || propA.Value.Type != propB.Type)
+				// Compare the base type only. 1.x kept nullability in a separate `Nullable` flag, so
+				// properties differing solely in nullability still matched; 3.x folds it into `Type`.
+				if (!propertiesB.TryGetValue(propA.Key, out var propB) || propA.Value.GetBaseType() != propB.GetBaseType())
 					return false;
 			}
 			return true;
@@ -256,44 +303,35 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// </summary>
 		/// <param name="schema">The schema to get the C# type for.</param>
 		/// <returns>String representation of the corresponding C# type.</returns>
-		private string GetCSharpTypeName(OpenApiSchema schema)
+		private string GetCSharpTypeName(IOpenApiSchema schema)
 		{
 			var csType = "object";
 			// Handle simple types
-			if (schema.Type == "string")
+			if (schema.IsType(JsonSchemaType.String))
 				csType = "string";
-			else if (schema.Type == "integer")
+			else if (schema.IsType(JsonSchemaType.Integer))
 				csType = schema.Format == "int64" ? "long" : "int";
-			else if (schema.Type == "boolean")
+			else if (schema.IsType(JsonSchemaType.Boolean))
 				csType = "bool";
-			else if (schema.Type == "number")
+			else if (schema.IsType(JsonSchemaType.Number))
 				csType = schema.Format == "float" ? "float" : "double";
-			else if (schema.Type == "array" && schema.Items != null)
+			else if (schema.IsType(JsonSchemaType.Array) && schema.Items != null)
 				csType = $"List<{GetCSharpTypeName(schema.Items)}>";
 
 			// Handle complex types
 			// Check if it is a reference to another complex type such as classes or enums
-			if (schema.Reference != null)
+			if (schema.IsReference())
 			{
-				var primarySchema = GetPrimarySchemaByAlias(schema);
-				var refId = primarySchema.Reference.Id;
-				var className = GetCSharpClassName(refId);
-
-				if (FoundEnums.Any(e => e.Reference?.Id == refId))
-				{
-					// It's an enum reference
-					csType = className;
-				}
-				else
-				{
-					// It's a class reference
-					csType = className;
-				}
+				// Resolve the `$ref` to its definition first, because the alias mapping is keyed
+				// by component schema, not by the reference that points at it.
+				var primarySchema = GetPrimarySchemaByAlias(ResolveSchema(schema));
+				// Enums and classes are both emitted as a single named C# type.
+				csType = GetCSharpClassName(GetSchemaName(primarySchema));
 			}
 			// Determine if the type is a numeric value type
 			var isValueType = numericTypes.Contains(csType);
 			// Handle nullable types for value types
-			if (schema.Nullable && (EnableNullable || isValueType))
+			if (schema.IsNullable() && (EnableNullable || isValueType))
 				csType += "?";
 
 			return csType;
@@ -321,11 +359,11 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// </summary>
 		/// <param name="schema">The schema to check.</param>
 		/// <returns>True if the schema corresponds to a reference type, false otherwise.</returns>
-		private bool IsReferenceType(OpenApiSchema schema)
+		private bool IsReferenceType(IOpenApiSchema schema)
 		{
 			// Add other reference types as necessary
-			return schema.Type == "string" || schema.Type == "object" || schema.Reference != null ||
-				   (schema.Type == "array" && schema.Items != null);
+			return schema.IsType(JsonSchemaType.String) || schema.IsType(JsonSchemaType.Object) || schema.IsReference() ||
+				   (schema.IsType(JsonSchemaType.Array) && schema.Items != null);
 		}
 
 		private static readonly HashSet<string> ReservedKeywords = new HashSet<string>
@@ -361,37 +399,40 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				: input;
 		}
 
-		public string GetSchemaName(OpenApiSchema? schema)
+		/// <summary>
+		/// Component name of a schema, resolving a `$ref` to the schema it points at.
+		/// </summary>
+		public string GetSchemaName(IOpenApiSchema? schema)
 		{
 			if (schema == null)
 				return string.Empty;
-			var s =
-				knownSchemas.FirstOrDefault(kv => kv.Equals(schema)) ??
-				FoundClasses.FirstOrDefault(kv => kv.Equals(schema));
-			return s?.Reference?.Id ?? "";
+			if (schemaNames.TryGetValue(schema, out var name))
+				return name;
+			// A `$ref` carries the target name even when the target itself was not indexed.
+			return schema.GetReferenceId() ?? string.Empty;
 		}
 
 		/// <summary>
-		/// Return the best candidate for the base class. It for 
+		/// Return the best candidate for the base class. It for
 		/// </summary>
 		/// <param name="schema"></param>
 		/// <param name="candidates"></param>
-		private OpenApiSchema? FindBaseSchema(OpenApiSchema schema)
+		private IOpenApiSchema? FindBaseSchema(IOpenApiSchema schema)
 		{
-			var currentSchemaPropertyNames = new HashSet<string>(schema.Properties.Keys);
+			var currentSchemaPropertyNames = new HashSet<string>(schema.GetProperties().Keys);
 			var candidateSchemas = knownSchemas
 				.Concat(FoundClasses)
 				.Except(new[] { schema })
 				// Must have properties.
-				.Where(x => x.Properties.Count > 0)
+				.Where(x => x.GetProperties().Count > 0)
 				.ToList();
 
-			OpenApiSchema? baseSchema = null;
+			IOpenApiSchema? baseSchema = null;
 			int maxMatchingProperties = -1;
 
 			foreach (var candidate in candidateSchemas)
 			{
-				var candidatePropertyNames = new HashSet<string>(candidate.Properties.Keys);
+				var candidatePropertyNames = new HashSet<string>(candidate.GetProperties().Keys);
 
 				// Ensure that the candidate has strictly fewer properties
 				if (candidatePropertyNames.Count < currentSchemaPropertyNames.Count)
@@ -413,10 +454,10 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <summary>
 		/// Returns true if both objects contain same properties.
 		/// </summary>
-		private static bool IsSame(OpenApiSchema a, OpenApiSchema b)
+		private static bool IsSame(IOpenApiSchema a, IOpenApiSchema b)
 		{
-			var count = a.Properties.Count();
-			if (count != b.Properties.Count())
+			var count = a.GetProperties().Count;
+			if (count != b.GetProperties().Count)
 				return false;
 			var isSame = count == CountMatchingProperties(a, b);
 			return isSame;
@@ -425,9 +466,11 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <summary>
 		/// Count mathing properties.
 		/// </summary>
-		private static int CountMatchingProperties(OpenApiSchema a, OpenApiSchema b)
+		private static int CountMatchingProperties(IOpenApiSchema a, IOpenApiSchema b)
 		{
-			var sameCount = a.Properties.Count(p => b.Properties.ContainsKey(p.Key) && b.Properties[p.Key].Type == p.Value.Type);
+			var propertiesB = b.GetProperties();
+			// Base type only, for the same reason as AreSchemasAliases.
+			var sameCount = a.GetProperties().Count(p => propertiesB.ContainsKey(p.Key) && propertiesB[p.Key].GetBaseType() == p.Value.GetBaseType());
 			return sameCount;
 		}
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿#nullable disable
+
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;

@@ -30,7 +30,6 @@
 			<Border Margin="5" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" CornerRadius="5">
 				<StackPanel Orientation="Vertical">
 					<Grid>
-						<Grid.ColumnDefinitions />
 						<StackPanel
 							x:Name="TitleBackStackPanel"
 							HorizontalAlignment="Stretch"

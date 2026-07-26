@@ -1,4 +1,6 @@
-﻿using JocysCom.Controls.UpdateControl.GitHub;
+﻿#nullable disable
+
+using JocysCom.Controls.UpdateControl.GitHub;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

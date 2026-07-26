@@ -1,4 +1,6 @@
-﻿#if NETFRAMEWORK
+﻿#nullable disable
+
+#if NETFRAMEWORK
 using System.Data.SqlClient;
 #else
 using Microsoft.Data.SqlClient;
@@ -37,9 +39,7 @@ namespace JocysCom.ClassLibrary.Data
 			}
 		}
 
-#if NETSTANDARD // .NET Standard
-	public int SetSessionUserCommentContext(IDbConnection connection, string comment = null) { return 0; }
-#elif NETCOREAPP // .NET Core
+#if !NETFRAMEWORK
 		public int SetSessionUserCommentContext(IDbConnection connection, string comment = null) { return 0; }
 #else // .NET Framework
 
@@ -230,10 +230,7 @@ namespace JocysCom.ClassLibrary.Data
 		public static string GetProviderConnectionString(string connectionString, out bool isEntity)
 		{
 			isEntity = false;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-			// EF Core does not support EF specific connection strings (metadata=res:... < this kind of connection strings).
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 			if (string.Compare(connectionString, "metadata=", true) == 0)
 			{
 				// Get connection string from entity connection string.
@@ -241,6 +238,8 @@ namespace JocysCom.ClassLibrary.Data
 				connectionString = ecsb.ProviderConnectionString;
 				isEntity = true;
 			}
+#else
+			// EF Core does not support EF specific connection strings (metadata=res:... < this kind of connection strings).
 #endif
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
@@ -266,11 +265,9 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			isEntity = false;
 			string connectionString = null;
-#if !NETSTANDARD
 			// Try to find entity connection.
 			var cs = System.Configuration.ConfigurationManager.ConnectionStrings[name];
 			connectionString = cs.ConnectionString;
-#endif
 			// If configuration section with not found then return.
 			// EF Core does not support EF specific connection strings (metadata=res:... < this kind of connection strings).
 #if NETFRAMEWORK // .NET Framework

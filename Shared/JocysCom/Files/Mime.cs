@@ -1,5 +1,4 @@
-#if NETSTANDARD // .NET Standard
-#else
+#nullable disable
 
 using Microsoft.Win32;
 using System;
@@ -194,5 +193,3 @@ namespace JocysCom.ClassLibrary.Files
 
 	}
 }
-
-#endif

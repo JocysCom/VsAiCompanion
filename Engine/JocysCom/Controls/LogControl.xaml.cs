@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -42,6 +44,7 @@ namespace JocysCom.ClassLibrary.Controls
 					? format
 					: string.Format(format, args);
 				LogTextBox.AppendText(text);
+				LogTextBox.ScrollToEnd();
 			});
 		}
 

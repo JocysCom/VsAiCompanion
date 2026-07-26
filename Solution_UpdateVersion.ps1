@@ -247,8 +247,6 @@ function GetConfigurationFiles
 	$items += (GetConfig "Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj")
 	$items += (GetConfig "Demo\JocysCom.VS.AiCompanion.Demo.csproj")
 	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
-	$items += (GetConfig "Extension\JocysCom.VS.AiCompanion.Extension.csproj")
-	$items += (GetConfig "Extension1\JocysCom.VS.AiCompanion.Extension1.csproj")
 	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
 	$items += (GetConfig "Plugins\LinkReader\JocysCom.VS.AiCompanion.Plugins.LinkReader.csproj")
 	$items += (GetConfig "Plugins\TeamsPlugin\JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.csproj")
@@ -258,9 +256,6 @@ function GetConfigurationFiles
 	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
 	# Update other files.
 	$items += (GetConfig "Data\DataFunctions\Properties\AssemblyInfo.cs")
-	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
-	$items += (GetConfig "Extension\source.extension.vsixmanifest")
-	$items += (GetConfig "Extension1\source.extension.vsixmanifest")
 	$items += (GetConfig "Setup\CustomActions\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
 	return $items

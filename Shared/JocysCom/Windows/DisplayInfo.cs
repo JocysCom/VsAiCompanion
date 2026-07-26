@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#nullable disable
+
+using System.Collections.Generic;
 using System.Drawing; // For Point and Rectangle
 using System.Windows;
 

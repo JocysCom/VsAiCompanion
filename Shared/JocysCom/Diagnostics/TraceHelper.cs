@@ -1,4 +1,6 @@
-﻿#if NETCOREAPP
+﻿#nullable disable
+
+#if !NETFRAMEWORK
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -136,7 +138,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		{
 
 			var source = new TraceSource(sourceName);
-#if NETCOREAPP
+#if !NETFRAMEWORK
 			// Web.config is not available in .NET Core, therefore must manually config.
 			Configure(source);
 #endif
@@ -146,7 +148,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			source.Close();
 		}
 
-#if NETCOREAPP
+#if !NETFRAMEWORK
 
 		#region TraceOptions
 

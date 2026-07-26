@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿#nullable disable
+
+using System.Security.Cryptography;
 
 namespace JocysCom.ClassLibrary.Security
 {

@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -225,9 +227,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				s += " - " + Description;
 			}
 
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 			// Add elevated tag.
 			var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
@@ -246,9 +246,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			return s.Trim();
 		}
 
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 		internal partial class NativeMethods
 		{
@@ -376,9 +374,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					return dt;
 				}
 			}
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60;

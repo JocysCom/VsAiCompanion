@@ -9,11 +9,3 @@ $file1target=[System.IO.Path]::Combine($filesDir, $file1)
 if ([System.IO.File]::Exists($file1source) -and -not [System.IO.File]::Exists($file1target)){
     [System.IO.File]::Copy($file1source, $file1target)
 }
-
-# Copy Visual Studio Extention (VSIX file)
-$file2="JocysCom.VS.AiCompanion.Extension.vsix"
-$file2source=[System.IO.Path]::Combine($PSScriptRoot, "..\Extension\bin\Release\", $file2)
-$file2target=[System.IO.Path]::Combine($filesDir, $file2)
-if ([System.IO.File]::Exists($file2source) -and -not [System.IO.File]::Exists($file2target)){
-    [System.IO.File]::Copy($file2source, $file2target)
-}

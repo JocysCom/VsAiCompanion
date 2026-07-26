@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Data;
 using System.Data.OleDb;
@@ -85,9 +87,7 @@ namespace JocysCom.ClassLibrary.Files
 				stream.Write(s);
 		}
 
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 		public static DataTable ReadWithOleDb(string path, bool haveHeader)
 		{

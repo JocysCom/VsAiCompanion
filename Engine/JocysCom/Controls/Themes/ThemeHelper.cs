@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿#nullable disable
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Linq;

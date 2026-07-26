@@ -284,11 +284,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static Microsoft.OpenApi.OpenApiDocument LoadOpenApiSpec(string openApiSpec)
 		{
-			var reader = new Microsoft.OpenApi.Readers.OpenApiStringReader();
-			//var readResult = reader.Read(openApiSpec, out var diagnostic);
-			//if (diagnostic.Errors.Count > 0)
-			//	throw new InvalidOperationException($"Failed to parse OpenAPI: {string.Join("; ", diagnostic.Errors.Select(e => e.Message))}");
-			//return readResult;
+			// Microsoft.OpenApi 3.x replaced OpenApiStringReader with OpenApiModelFactory:
+			//var result = Microsoft.OpenApi.Reader.OpenApiModelFactory.Parse(openApiSpec, Microsoft.OpenApi.OpenApiConstants.Json);
+			//if (result.Diagnostic?.Errors.Count > 0)
+			//	throw new InvalidOperationException($"Failed to parse OpenAPI: {string.Join("; ", result.Diagnostic.Errors.Select(e => e.Message))}");
+			//return result.Document;
 			return null;
 		}
 

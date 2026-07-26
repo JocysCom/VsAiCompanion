@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Processes;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.Processes;
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -16,6 +18,7 @@ namespace JocysCom.ClassLibrary.Controls
 			InitializeComponent();
 		}
 
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public Control SelectedControl { get; set; }
 
 		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }

@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace JocysCom.Controls.UpdateControl.GitHub
 {
 	public class @author

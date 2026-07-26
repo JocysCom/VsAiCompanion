@@ -36,8 +36,6 @@
   <Project Path="App\JocysCom.VS.AiCompanion.App.csproj" />
   <Project Path="ClientGenerator\JocysCom.VS.AiCompanion.ClientGenerator.csproj" />
   <Project Path="Clients\JocysCom.VS.AiCompanion.Clients.csproj" />
-  <Project Path="Demo\JocysCom.VS.AiCompanion.Demo.csproj" />
   <Project Path="Engine\JocysCom.VS.AiCompanion.Engine.csproj" />
-  <Project Path="Extension\JocysCom.VS.AiCompanion.Extension.csproj" Id="403400f8-39b7-69af-806f-cabfaaad6d7b" />
   <Project Path="Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 </Solution>

@@ -58,10 +58,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.8.0.x64"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.10.0.x64"
                     {
-                    "Name" = "8:.NET Desktop Runtime 8.0.6 (x64)"
-                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.8.0.x64"
+                    "Name" = "8:.NET Desktop Runtime 10.0.10 (x64)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.10.0.x64"
                     }
                 }
             }

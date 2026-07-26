@@ -1,4 +1,6 @@
-﻿/****************************** Module Header ******************************\
+﻿#nullable disable
+
+/****************************** Module Header ******************************\
  * Module Name:  NativeMethods.cs
  * Project:      CSCreateCabinet
  * Copyright (c) Microsoft Corporation.

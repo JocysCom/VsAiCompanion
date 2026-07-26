@@ -169,7 +169,14 @@ function Compress-ZipFileUsingCSharp {
     )
     # Create a temporary directory
     $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
-    
+
+    # Resolve to the canonical filesystem path before computing relative paths below.
+    # Get-ChildItem reports the on-disk casing (e.g. "D:\..."), but MSBuild may pass
+    # "d:\..." depending on how the build was invoked. String.Replace is case-sensitive,
+    # so an unresolved prefix would survive and produce an invalid path like
+    # "C:\Temp\xyz\D:\Projects\...", which fails with NotSupportedException.
+    $sourceRoot = (Resolve-Path -LiteralPath $sourceDir).Path.TrimEnd('\')
+
     $files = Get-ChildItem -Path $sourceDir -Recurse -File
     
     # Apply search pattern if specified
@@ -183,7 +190,7 @@ function Compress-ZipFileUsingCSharp {
     }
     
     foreach ($file in $files) {
-        $relativePath = $file.FullName.Replace($sourceDir, "").TrimStart("\")
+        $relativePath = $file.FullName.Substring($sourceRoot.Length).TrimStart("\")
         $targetPath = Join-Path -Path $tempSourceDir -ChildPath $relativePath
         
         # Ensure the directory structure exists
@@ -200,7 +207,7 @@ function Compress-ZipFileUsingCSharp {
     if (-not $ignoreEmptyFolders) {
         $directories = Get-ChildItem -Path $sourceDir -Recurse -Directory
         foreach ($dir in $directories) {
-            $relativePath = $dir.FullName.Replace($sourceDir, "").TrimStart("\")
+            $relativePath = $dir.FullName.Substring($sourceRoot.Length).TrimStart("\")
             $targetPath = Join-Path -Path $tempSourceDir -ChildPath $relativePath
             
             if (!(Test-Path $targetPath)) {

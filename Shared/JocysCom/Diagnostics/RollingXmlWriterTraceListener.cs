@@ -1,5 +1,4 @@
-﻿#if NETSTANDARD // .NET Standard
-#else
+﻿#nullable disable
 
 using System;
 using System.Diagnostics;
@@ -144,4 +143,3 @@ namespace JocysCom.ClassLibrary.Diagnostics
 
 	}
 }
-#endif

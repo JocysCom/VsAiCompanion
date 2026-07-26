@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,9 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 using System.Data.Objects.DataClasses;
 #endif
 
@@ -63,11 +63,6 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		#endregion
-
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
-#endif
 
 		/// <summary>
 		/// Raise event on same thread as the target of delegate.

@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Files;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.Files;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
@@ -386,14 +388,6 @@ namespace JocysCom.ClassLibrary.Windows
 
 			// Return null if no image is found or an error occurs
 			return null;
-		}
-
-		private static bool IsValidSvg(string content)
-		{
-			// Basic validation to check if content contains SVG tags
-			return !string.IsNullOrWhiteSpace(content) &&
-				   content.IndexOf("<svg", StringComparison.OrdinalIgnoreCase) > -1 &&
-				   content.IndexOf("</svg>", StringComparison.OrdinalIgnoreCase) > -1;
 		}
 
 		public static void SetDragDropEffects(IDataObject dataObject, DragDropEffects effects)

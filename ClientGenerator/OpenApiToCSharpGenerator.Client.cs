@@ -1,5 +1,7 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using System.Globalization;
 using System.Text;
+using System.Text.Json.Nodes;
 
 namespace JocysCom.VS.AiCompanion.ClientGenerator
 {
@@ -15,42 +17,48 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Initialize a string builder to construct the IClient interface
 			var sb = new StringBuilder();
 
+			// Resolve a `$ref` before applying the alias mapping, which is keyed by component schema.
+			Func<IOpenApiSchema, IOpenApiSchema> getPrimarySchema =
+				s => GetPrimarySchemaByAlias(ResolveSchema(s));
+
+			var paths = document.Paths ?? new OpenApiPaths();
+
 			// Check if any operations return or accept List<> types
 			bool needsGenericCollections = false;
 
-			foreach (var path in document.Paths)
+			foreach (var path in paths)
 			{
-				foreach (var operation in path.Value.Operations)
+				foreach (var operation in GetOperations(path.Value))
 				{
 					// Check response types
-					if (operation.Value.Responses.Any(r => r.Value.Content.Any(c =>
+					if (GetResponses(operation.Value).Any(r => GetContent(r.Value.Content).Any(c =>
 					{
 						var schema = c.Value.Schema;
-						return schema != null && (schema.Type == "array" ||
-							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+						return schema != null && (schema.IsType(JsonSchemaType.Array) ||
+							   (schema.IsReference() && GetCSharpTypeName(schema).Contains("List<")));
 					})))
 					{
 						needsGenericCollections = true;
 					}
 
 					// Check parameter types
-					if (operation.Value.Parameters.Any(p =>
+					if (GetParameters(operation.Value).Any(p =>
 					{
 						var schema = p.Schema;
-						return schema != null && (schema.Type == "array" ||
-							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
+						return schema != null && (schema.IsType(JsonSchemaType.Array) ||
+							   (schema.IsReference() && GetCSharpTypeName(schema).Contains("List<")));
 					}))
 					{
 						needsGenericCollections = true;
 					}
 
 					// Check request body
-					if (operation.Value.RequestBody?.Content.Any(c =>
+					if (GetContent(operation.Value.RequestBody?.Content).Any(c =>
 					{
 						var schema = c.Value.Schema;
-						return schema != null && (schema.Type == "array" ||
-							   (schema.Reference != null && GetCSharpTypeName(schema).Contains("List<")));
-					}) == true)
+						return schema != null && (schema.IsType(JsonSchemaType.Array) ||
+							   (schema.IsReference() && GetCSharpTypeName(schema).Contains("List<")));
+					}))
 					{
 						needsGenericCollections = true;
 					}
@@ -66,13 +74,13 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			sb.AppendLine("public interface IClient");
 			sb.AppendLine("{");
 			// Iterate through each path and method in the OpenAPI document
-			foreach (var path in document.Paths)
+			foreach (var path in paths)
 			{
-				foreach (var operation in path.Value.Operations)
+				foreach (var operation in GetOperations(path.Value))
 				{
 					// Generate method signature based on the operation, considering parameters and responses
 					// Use GetPrimarySchemaByAlias to determine the actual return type when necessary
-					var methodSignature = GenerateMethodSignature(path.Key, operation.Key, operation.Value, GetPrimarySchemaByAlias);
+					var methodSignature = GenerateMethodSignature(path.Key, operation.Key, operation.Value, getPrimarySchema);
 					sb.AppendLine(methodSignature);
 				}
 			}
@@ -83,43 +91,69 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			WriteHelper.WriteIfDifferent(interfaceFilePath, bytes);
 		}
 
+		#region Null-safe accessors
+
+		// Microsoft.OpenApi 3.x leaves absent collections null instead of materialising empty ones.
+
+		private static IEnumerable<KeyValuePair<HttpMethod, OpenApiOperation>> GetOperations(IOpenApiPathItem pathItem)
+			=> (IEnumerable<KeyValuePair<HttpMethod, OpenApiOperation>>?)pathItem?.Operations
+				?? Array.Empty<KeyValuePair<HttpMethod, OpenApiOperation>>();
+
+		private static IEnumerable<KeyValuePair<string, IOpenApiResponse>> GetResponses(OpenApiOperation operation)
+			=> (IEnumerable<KeyValuePair<string, IOpenApiResponse>>?)operation?.Responses
+				?? Array.Empty<KeyValuePair<string, IOpenApiResponse>>();
+
+		private static IEnumerable<KeyValuePair<string, IOpenApiMediaType>> GetContent(IDictionary<string, IOpenApiMediaType>? content)
+			=> content ?? (IEnumerable<KeyValuePair<string, IOpenApiMediaType>>)Array.Empty<KeyValuePair<string, IOpenApiMediaType>>();
+
+		private static IList<IOpenApiParameter> GetParameters(OpenApiOperation operation)
+			=> operation?.Parameters ?? (IList<IOpenApiParameter>)Array.Empty<IOpenApiParameter>();
+
+		#endregion
+
 		/// <summary>
 		/// Generates method signature based on OpenAPI Operation
 		/// </summary>
-		private string GenerateMethodSignature(string path, OperationType operationType, OpenApiOperation operation, Func<OpenApiSchema, OpenApiSchema> getPrimarySchema)
+		private string GenerateMethodSignature(string path, HttpMethod operationType, OpenApiOperation operation, Func<IOpenApiSchema, IOpenApiSchema> getPrimarySchema)
 		{
 			// Extract the method name from operation ID or generate a new one based on the path and operation type
-			var methodName = operation.OperationId ?? $"{operationType}{path.Replace("/", string.Empty)}";
+			// 3.x keys operations by HttpMethod, whose ToString() is upper case ("GET"); title case it so the
+			// generated identifier still reads as `get_pets` rather than `g_e_t_pets`.
+			var methodPrefix = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(operationType.Method.ToLowerInvariant());
+			var methodName = operation.OperationId ?? $"{methodPrefix}{path.Replace("/", string.Empty)}";
 			methodName = GetCSharpTypeName(methodName);
 
 			// Extract return type (check for primary schema if it's an alias)
 			string returnType = "void"; // Default return type if none is specified
-			if (operation.Responses.TryGetValue("200", out var response) && response.Content.Any())
+			var responses = operation.Responses;
+			if (responses != null && responses.TryGetValue("200", out var response) && GetContent(response.Content).Any())
 			{
-				var mediaType = response.Content.First().Value;
+				var mediaType = GetContent(response.Content).First().Value;
 				var schema = mediaType.Schema;
-				var primarySchema = getPrimarySchema(schema);
-
-				if (primarySchema.Reference != null)
+				if (schema != null)
 				{
-					// For referenced types, use the reference ID to get the class name
-					var refId = primarySchema.Reference.Id;
-					var className = GetCSharpClassName(refId);
+					var primarySchema = getPrimarySchema(schema);
 
-					// Explicitly check if the class name is a reserved keyword
-					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+					if (schema.IsReference())
 					{
-						returnType = "@" + className;
+						// For referenced types, use the resolved component name to get the class name
+						var className = GetCSharpClassName(GetSchemaName(primarySchema));
+
+						// Explicitly check if the class name is a reserved keyword
+						if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
+						{
+							returnType = "@" + className;
+						}
+						else
+						{
+							returnType = className;
+						}
 					}
 					else
 					{
-						returnType = className;
+						// For non-reference types, use the regular type mapping
+						returnType = GetCSharpTypeName(primarySchema);
 					}
-				}
-				else
-				{
-					// For non-reference types, use the regular type mapping
-					returnType = GetCSharpTypeName(primarySchema);
 				}
 			}
 
@@ -128,13 +162,15 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			signatureBuilder.Append($"\t{returnType} {methodName}(");
 
 			// Extract parameters from operation and add them to the method signature
-			foreach (var parameter in operation.Parameters)
+			var parameters = GetParameters(operation);
+			foreach (var parameter in parameters)
 			{
-				string parameterType;
-				if (parameter.Schema.Reference != null)
+				// 3.x allows a parameter to omit its schema; fall back to `object` rather than throwing.
+				var parameterSchema = parameter.Schema;
+				string parameterType = "object";
+				if (parameterSchema is OpenApiSchemaReference)
 				{
-					var refId = parameter.Schema.Reference.Id;
-					var className = GetCSharpClassName(refId);
+					var className = GetCSharpClassName(GetSchemaName(ResolveSchema(parameterSchema)));
 
 					// Explicitly check if the class name is a reserved keyword
 					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
@@ -146,19 +182,19 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 						parameterType = className;
 					}
 
-					if (parameter.Schema.Nullable)
+					if (parameterSchema.IsNullable())
 						parameterType += "?";
 				}
-				else
+				else if (parameterSchema != null)
 				{
-					parameterType = GetCSharpTypeName(getPrimarySchema(parameter.Schema));
+					parameterType = GetCSharpTypeName(getPrimarySchema(parameterSchema));
 				}
 
-				string parameterName = GetCSharpTypeName(parameter.Name);
+				string parameterName = GetCSharpTypeName(parameter.Name ?? string.Empty);
 
 				if (parameter.In == ParameterLocation.Header)
 				{
-					string defaultValue = parameter.Schema.Default != null ? $" = {GetDefaultValueAsString(parameter.Schema.Default)}" : string.Empty;
+					string defaultValue = parameterSchema?.Default != null ? $" = {GetDefaultValueAsString(parameterSchema.Default)}" : string.Empty;
 					signatureBuilder.Append($"{parameterType} {parameterName}{defaultValue}, ");
 				}
 				else if (parameter.In == ParameterLocation.Query || parameter.In == ParameterLocation.Path)
@@ -168,16 +204,15 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			}
 
 			// Check if there is a body parameter and add it
-			if (operation.RequestBody != null && operation.RequestBody.Content.Any())
+			var requestBodyContent = GetContent(operation.RequestBody?.Content);
+			if (operation.RequestBody != null && requestBodyContent.Any())
 			{
-				var schema = operation.RequestBody.Content.First().Value.Schema;
-				string requestBodyType;
+				var schema = requestBodyContent.First().Value.Schema;
+				string requestBodyType = "object";
 
-				if (schema.Reference != null)
+				if (schema is OpenApiSchemaReference)
 				{
-					var primarySchema = getPrimarySchema(schema);
-					var refId = primarySchema.Reference.Id;
-					var className = GetCSharpClassName(refId);
+					var className = GetCSharpClassName(GetSchemaName(getPrimarySchema(schema)));
 
 					// Explicitly check if the class name is a reserved keyword
 					if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
@@ -189,10 +224,10 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 						requestBodyType = className;
 					}
 
-					if (schema.Nullable)
+					if (schema.IsNullable())
 						requestBodyType += "?";
 				}
-				else
+				else if (schema != null)
 				{
 					requestBodyType = GetCSharpTypeName(getPrimarySchema(schema));
 				}
@@ -201,7 +236,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			}
 
 			// Remove trailing ", " if parameters have been added
-			if (operation.Parameters.Count > 0 || operation.RequestBody != null)
+			if (parameters.Count > 0 || operation.RequestBody != null)
 			{
 				signatureBuilder.Length -= 2;
 			}
@@ -211,7 +246,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			return signatureBuilder.ToString();
 		}
 
-		private string GetDefaultValueAsString(dynamic defaultValue)
+		private string GetDefaultValueAsString(JsonNode defaultValue)
 		{
 			// Placeholder for logic to convert OpenAPI default value to C# default value string representation
 			return "default";

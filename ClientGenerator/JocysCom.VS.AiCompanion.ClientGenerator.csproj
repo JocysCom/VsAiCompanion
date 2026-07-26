@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Platforms>AnyCPU</Platforms>
@@ -14,7 +14,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.OpenApi" />
-		<PackageReference Include="Microsoft.OpenApi.Readers"  />
+		<PackageReference Include="Microsoft.OpenApi.YamlReader"  />
 		<PackageReference Include="YamlDotNet"  />
 	</ItemGroup>
 	<ItemGroup>

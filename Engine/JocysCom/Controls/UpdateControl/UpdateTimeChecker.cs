@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.ComponentModel;
 using System;
 using System.ComponentModel;
 using System.Threading;

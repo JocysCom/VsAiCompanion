@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;

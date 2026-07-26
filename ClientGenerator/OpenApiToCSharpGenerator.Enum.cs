@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,10 +8,10 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 	public partial class OpenApiToCSharpGenerator
 	{
 
-		private string GenerateEnum(OpenApiSchema schema)
+		private string GenerateEnum(IOpenApiSchema schema)
 		{
 			var sb = new StringBuilder();
-			var enumName = GetCSharpClassName(schema.Reference.Id);
+			var enumName = GetCSharpClassName(GetSchemaName(schema));
 			sb.AppendLine("using System;");
 			sb.AppendLine();
 			sb.AppendLine($"namespace {BaseNamespace}");
@@ -20,7 +19,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			sb.AppendLine($"\tpublic enum {enumName}");
 			sb.AppendLine("\t{");
 			// Assume that the enum values are strings; adjust as needed if enums are integers or other types
-			var enumValues = schema.Enum.OfType<OpenApiString>().Select(e => e.Value);
+			var enumValues = schema.GetEnumStringValues();
 			foreach (var value in enumValues)
 			{
 				// Replace invalid characters and generate the enum member identifier

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -194,15 +196,6 @@ namespace JocysCom.ClassLibrary.Runtime
 				return null;
 			return JsonSerializers.GetOrAdd(type, x => new DataContractJsonSerializer(type, settings));
 		}
-
-		// DataContractJsonSerializerSettings requires .NET 4.5
-		static DataContractJsonSerializerSettings settings = new DataContractJsonSerializerSettings()
-		{
-			IgnoreExtensionDataObject = true,
-			// Simple dictionary format looks like this: { "Key1": "Value1", "Key2": "Value2" }
-			UseSimpleDictionaryFormat = true,
-		};
-
 
 		private static string Serialize(object o)
 		{

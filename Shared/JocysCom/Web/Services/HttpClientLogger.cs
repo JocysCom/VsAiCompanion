@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Diagnostics;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.Diagnostics;
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;

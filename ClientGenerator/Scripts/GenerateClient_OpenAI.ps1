@@ -3,7 +3,7 @@
 # Define paths
 $yamlUrl = "https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml"
 $yamlOutputFilePath = Join-Path $PSScriptRoot "..\..\Clients\OpenAI\openapi.yaml"
-$clientGeneratorExePath = Join-Path $PSScriptRoot "..\bin\Debug\net8.0\win-x64\JocysCom.VS.AiCompanion.ClientGenerator.exe"
+$clientGeneratorExePath = Join-Path $PSScriptRoot "..\bin\Debug\net10.0\win-x64\JocysCom.VS.AiCompanion.ClientGenerator.exe"
 $clientsModelOutputDir = Join-Path $PSScriptRoot "..\..\Clients\OpenAI"
 $enableNullable = $false
 

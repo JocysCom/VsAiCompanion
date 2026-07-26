@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System.Text;
 
 namespace JocysCom.VS.AiCompanion.ClientGenerator
@@ -7,10 +7,10 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 	public partial class OpenApiToCSharpGenerator
 	{
 
-		private string GenerateClass(OpenApiSchema schema)
+		private string GenerateClass(IOpenApiSchema schema)
 		{
 			var sb = new StringBuilder();
-			var className = GetCSharpClassName(schema.Reference.Id);
+			var className = GetCSharpClassName(GetSchemaName(schema));
 
 			// Check if the class name is a C# reserved keyword and add @ prefix if needed
 			if (ReservedKeywords.Contains(className) && !className.StartsWith("@"))
@@ -23,9 +23,11 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				className = "@" + className;
 			}
 
+			var properties = schema.GetProperties();
+
 			// Check if any property uses List<> before adding the using statement
-			bool needsGenericCollections = schema.Properties.Values.Any(p =>
-				p.Type == "array" || (p.Reference != null && GetCSharpTypeName(p).Contains("List<")));
+			bool needsGenericCollections = properties.Values.Any(p =>
+				p.IsType(JsonSchemaType.Array) || (p.IsReference() && GetCSharpTypeName(p).Contains("List<")));
 
 			if (needsGenericCollections)
 			{
@@ -40,7 +42,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				// If OneOf is used, consider representing it as an abstract class / interface.
 				sb.AppendLine($"\tpublic abstract class {className}");
 			}
-			else if (schema.Properties.Count == 0 && schema.Extensions.Count > 0)
+			else if (properties.Count == 0 && schema.GetExtensionCount() > 0)
 			{
 				// Example of how to handle extensions.
 				// You'll have to adjust this logic to fit your specific requirements.
@@ -50,7 +52,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			{
 				// Normal class generation with properties.
 				var baseSchema = FindBaseSchema(schema);
-				var baseClassName = GetCSharpClassName(baseSchema?.Reference?.Id ?? base_class);
+				var baseSchemaName = GetSchemaName(baseSchema);
+				var baseClassName = GetCSharpClassName(string.IsNullOrEmpty(baseSchemaName) ? base_class : baseSchemaName);
 
 				// Also check if base class name is a reserved keyword
 				if (ReservedKeywords.Contains(baseClassName) && !baseClassName.StartsWith("@"))
@@ -62,10 +65,10 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			}
 			sb.AppendLine("\t{");
 
-			if (schema.Properties.Count > 0)
+			if (properties.Count > 0)
 			{
 				var basePropertyNameSet = baseProperties[schema];
-				foreach (var property in schema.Properties)
+				foreach (var property in properties)
 				{
 					if (basePropertyNameSet.Contains(property.Key))
 						continue; // Skip inherited property
@@ -87,7 +90,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				// Handle OneOf, possibly create derived classes or use interfaces.
 				sb.AppendLine("\t\t// OneOf definitions need to be implemented based on the schemas provided.");
 			}
-			else if (schema.Extensions.Count > 0)
+			else if (schema.GetExtensionCount() > 0)
 			{
 				// Handle Extensions in some logic that applies to your requirements.
 				sb.AppendLine("\t\t// Extensions logic needs to be implemented based on the schemas provided.");

@@ -7,7 +7,7 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net10.0-windows</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
@@ -37,34 +37,11 @@
 		<NeutralLanguage>en</NeutralLanguage>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<PlatformTarget>x64</PlatformTarget>
+		<TargetFrameworks>net10.0-windows</TargetFrameworks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+	<ItemGroup>
 		<PackageReference Include="HtmlRenderer.PdfSharp.NetStandard2" />
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="System.Text.Json" />
-		<PackageReference Include="HtmlRenderer.PdfSharp" />
-		<PackageReference Include="System.Data.SQLite" />
-		<PackageReference Include="System.Data.SQLite.EF6" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<Reference Include="System.Device" />
-		<Reference Include="System.Net.Http" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="bblanchon.PDFium.Linux" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" />
 		<PackageReference Include="bblanchon.PDFium.macOS" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" />
 		<PackageReference Include="bblanchon.PDFium.Win32" ExcludeAssets="All" PrivateAssets="all" IncludeAssets="None" GeneratePathProperty="true" />
@@ -82,7 +59,6 @@
 		<PackageReference Include="SkiaSharp.NativeAssets.macOS" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Win32" ExcludeAssets="All" PrivateAssets="All" IncludeAssets="None" GeneratePathProperty="true" />
 		<PackageReference Include="System.Data.OleDb" />
-		<PackageReference Include="System.Formats.Asn1" />
 		<PackageReference Include="Tiktoken" />
 	</ItemGroup>
 	<ItemGroup>

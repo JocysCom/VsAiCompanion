@@ -1,3 +1,5 @@
+#nullable disable
+
 // ZipStorer, by Jaime Olivares
 // Website: http://github.com/jaime-olivares/zipstorer
 // Version: 4.0.1

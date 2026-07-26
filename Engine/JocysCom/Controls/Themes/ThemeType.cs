@@ -1,4 +1,5 @@
-﻿namespace JocysCom.ClassLibrary.Controls.Themes
+﻿#nullable disable
+namespace JocysCom.ClassLibrary.Controls.Themes
 {
 	public enum ThemeType
 	{

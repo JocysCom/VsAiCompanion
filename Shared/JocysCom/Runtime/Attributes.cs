@@ -1,3 +1,5 @@
+#nullable disable
+
 #if !NETFRAMEWORK
 #nullable disable
 using System.Runtime.CompilerServices;

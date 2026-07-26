@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Collections;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.Controls.UpdateControl.GitHub;
 using System;
 using System.ComponentModel;
